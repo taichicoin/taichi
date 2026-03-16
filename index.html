@@ -107,71 +107,47 @@
         font-weight:bold;
         cursor:pointer;
     }
-    /* 核心修改：按钮基础样式，增加过渡动画，让交互更顺滑 */
+    /* 核心修改：按钮基础样式，统一黄边空白风格，保留顺滑过渡 */
     .btn{
         display:block;
         padding:16px;
         border-radius:12px;
         margin:10px 0;
         text-align:center;
-        color:white;
         text-decoration:none;
         font-size:16px;
         font-weight:bold;
-        transition: all 0.2s ease; /* 顺滑过渡 */
-        user-select: none; /* 防止选中文字 */
-    }
-    /* 黑色X按钮：立体渐变+阴影+高光 */
-    .x{
-        background: linear-gradient(180deg, #333333 0%, #000000 100%);
+        transition: all 0.2s ease;
+        user-select: none;
+        /* 核心修改：中间空白底色+黄色边框+黄色文字，和左侧黄线同色 */
+        background: #ffffff;
+        border: 2px solid #ffc107;
+        color: #ffc107;
+        /* 核心修改：和左侧黄线匹配的黄色系立体阴影，模拟凸起厚度 */
         box-shadow: 
-            0 4px 0 #000000, /* 底部实阴影，模拟按钮厚度 */
-            0 6px 12px rgba(0, 0, 0, 0.3), /* 外层模糊投影，增加空间感 */
-            inset 0 1px 0 rgba(255, 255, 255, 0.2); /* 顶部内高光，模拟凸起反光 */
+            0 4px 0 #d48f00,
+            0 6px 12px rgba(255, 193, 7, 0.25),
+            inset 0 1px 0 rgba(255, 255, 255, 0.9);
     }
-    /* X按钮hover悬浮效果：更亮+上浮+阴影加深 */
-    .x:hover{
-        background: linear-gradient(180deg, #444444 0%, #111111 100%);
+    /* 按钮hover悬浮效果：上浮+提亮+阴影加深，增强立体交互 */
+    .btn:hover{
+        border-color: #ffd24d;
+        color: #ffd24d;
         transform: translateY(-2px);
         box-shadow: 
-            0 6px 0 #000000,
-            0 8px 16px rgba(0, 0, 0, 0.35),
-            inset 0 1px 0 rgba(255, 255, 255, 0.25);
+            0 6px 0 #d48f00,
+            0 8px 16px rgba(255, 193, 7, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 1);
     }
-    /* X按钮点击按压效果：下沉+阴影缩小，模拟真实按压手感 */
-    .x:active{
-        background: linear-gradient(180deg, #222222 0%, #000000 100%);
+    /* 按钮点击按压效果：下沉+阴影缩小，模拟真实按压手感 */
+    .btn:active{
+        border-color: #e6ac00;
+        color: #e6ac00;
         transform: translateY(2px);
         box-shadow: 
-            0 2px 0 #000000,
-            0 3px 6px rgba(0, 0, 0, 0.3),
-            inset 0 1px 0 rgba(255, 255, 255, 0.15);
-    }
-    /* 蓝色Telegram按钮：立体渐变+阴影+高光，保留品牌色 */
-    .tg{
-        background: linear-gradient(180deg, #00a0e9 0%, #0077b3 100%);
-        box-shadow: 
-            0 4px 0 #005f8f, /* 底部实阴影，模拟按钮厚度 */
-            0 6px 12px rgba(0, 136, 204, 0.3), /* 外层模糊投影 */
-            inset 0 1px 0 rgba(255, 255, 255, 0.3); /* 顶部内高光 */
-    }
-    /* Telegram按钮hover悬浮效果 */
-    .tg:hover{
-        background: linear-gradient(180deg, #00b0f0 0%, #0080bb 100%);
-        transform: translateY(-2px);
-        box-shadow: 
-            0 6px 0 #005f8f,
-            0 8px 16px rgba(0, 136, 204, 0.35),
-            inset 0 1px 0 rgba(255, 255, 255, 0.35);
-    }
-    /* Telegram按钮点击按压效果 */
-    .tg:active{
-        background: linear-gradient(180deg, #0090d0 0%, #0066a0 100%);
-        transform: translateY(2px);
-        box-shadow: 
-            0 2px 0 #005f8f,
-            0 3px 6px rgba(0, 136, 204, 0.3),
-            inset 0 1px 0 rgba(255, 255, 255, 0.25);
+            0 2px 0 #d48f00,
+            0 3px 6px rgba(255, 193, 7, 0.25),
+            inset 0 1px 0 rgba(255, 255, 255, 0.7);
     }
     /* 页脚完全保留 */
     footer{
@@ -246,8 +222,8 @@
 
     <div class="card">
         <h2>Community</h2>
-        <a href="https://x.com/taichicoin" class="btn x">Twitter / X</a>
-        <a href="https://t.me/taichicoin" class="btn tg">Telegram / 电报</a>
+        <a href="https://x.com/taichicoin" class="btn">Twitter / X</a>
+        <a href="https://t.me/taichicoin" class="btn">Telegram / 电报</a>
     </div>
 </div>
 
@@ -266,3 +242,4 @@
 
 </body>
 </html>
+
