@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>太極</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:sans-serif;
+}
+
+body{
+background:#ffffff;
+color:#111;
+}
+
+/* HEADER */
+
+header{
+background: radial-gradient(circle at center,#ffd54f 0%,#ffb300 40%,#ff9800 100%);
+color:#111;
+padding:3rem 2rem;
+text-align:center;
+position:relative;
+overflow:hidden;
+min-height:300px;
+}
+
+/* 太极logo */
+
+.taiji-logo{
+
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+
+width:260px;
+max-width:60vw;
+
+opacity:0.25;
+
+filter:
+drop-shadow(0 0 15px rgba(255,255,255,0.6))
+drop-shadow(0 0 30px rgba(255,200,0,0.4));
+
+animation: floatTaiji 6s ease-in-out infinite;
+
+pointer-events:none;
+
+}
+
+/* 漂浮动画 */
+
+@keyframes floatTaiji{
+
+0%{transform:translate(-50%,-50%) scale(1);}
+50%{transform:translate(-50%,-55%) scale(1.05);}
+100%{transform:translate(-50%,-50%) scale(1);}
+
+}
+
+.header-text{
+position:relative;
+z-index:2;
+}
+
+h1{
+font-size:42px;
+margin-bottom:10px;
+}
+
+p{
+font-size:16px;
+}
+
+/* 内容 */
+
+.container{
+max-width:800px;
+margin:2rem auto;
+padding:0 1rem;
+}
+
+.card{
+
+background:#f9f9f9;
+border-radius:14px;
+padding:2rem;
+margin-bottom:1.2rem;
+border-left:4px solid #ffc107;
+
+box-shadow:0 4px 12px rgba(0,0,0,0.08);
+
+}
+
+.card h2{
+
+margin-bottom:1rem;
+color:#e69500;
+font-size:18px;
+
+}
+
+.card p{
+line-height:1.6;
+color:#333;
+}
+
+/* CA */
+
+.ca-box{
+
+background:#f1f1f1;
+border:1px solid #ddd;
+border-radius:10px;
+padding:12px 14px;
+display:flex;
+align-items:center;
+margin:12px 0;
+
+}
+
+.ca-address{
+
+flex:1;
+font-family:monospace;
+font-size:14px;
+color:#d68900;
+
+white-space:nowrap;
+overflow-x:auto;
+
+}
+
+.copy-btn{
+
+background:#ffc107;
+color:#111;
+
+border:none;
+padding:8px 12px;
+
+border-radius:8px;
+font-weight:bold;
+
+cursor:pointer;
+
+}
+
+/* 按钮 */
+
+.btn{
+
+display:block;
+padding:16px;
+border-radius:12px;
+margin:10px 0;
+
+text-align:center;
+
+color:white;
+text-decoration:none;
+
+font-size:16px;
+font-weight:bold;
+
+}
+
+.x{
+background:#000;
+}
+
+.tg{
+background:#0088cc;
+}
+
+/* footer */
+
+footer{
+text-align:center;
+padding:2rem;
+color:#666;
+}
+
+/* 手机适配 */
+
+@media (max-width:768px){
+
+header{
+min-height:220px;
+padding:2rem 1rem;
+}
+
+.taiji-logo{
+width:160px;
+opacity:0.2;
+}
+
+h1{
+font-size:28px;
+}
+
+p{
+font-size:14px;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+
+<img src="images/taiji.png" class="taiji-logo">
+
+<div class="header-text">
+
+<h1>太極</h1>
+
+<p>万物负阴而抱阳，冲气以为和。</p>
+
+</div>
+
+</header>
+
+
+<div class="container">
+
+<div class="card">
+
+<h2>about 太極</h2>
+
+<p>
+Chi is TaiChi - a Classic symbol from ancient China.
+$CHI the Yin Yang, balance Your bags. hold the DAO.
+</p>
+
+</div>
+
+
+<div class="card">
+
+<h2>Token allocations</h2>
+
+<h3 style="margin:10px 0;color:#e69500;">CA</h3>
+
+<div class="ca-box">
+
+<div class="ca-address" id="caText">
+
+0x5342022fb61cbbcc31e147c7080df71aba70da8d
+
+</div>
+
+<button class="copy-btn" onclick="copyCA()">Copy</button>
+
+</div>
+
+<p>
+
+50% Private Sale<br>
+20% Liquidity pool<br>
+10% AI creators<br>
+10% dev<br>
+10% marketing, listing airdrop
+
+</p>
+
+</div>
+
+
+<div class="card">
+
+<h2>Community</h2>
+
+<a href="https://x.com/taichicoin" class="btn x">Twitter / X</a>
+
+<a href="https://t.me/taichicooin" class="btn tg">Telegram / 电报</a>
+
+</div>
+
+</div>
+
+A
+A<footer>
+
+© 2026 太極圖
+
+</footer>
+
+
+<script>
+
+function copyCA(){
+
+const text=document.getElementById("caText").innerText;
+
+navigator.clipboard.writeText(text).then(()=>{
+
+alert("CA Copied:\n"+text);
+
+});
+
+}
+
+</script>
+
+
+</body>
+</html>
