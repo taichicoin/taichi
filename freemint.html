@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>太極 • MINT</title>
+<title>太極 FREE MINT</title>
 <style>
     *{
         margin:0;
@@ -12,7 +12,7 @@
         font-family:sans-serif;
     }
     body{
-        background:#ffffff;
+        background:#fff;
         color:#111;
         min-height:100vh;
         display:flex;
@@ -20,124 +20,82 @@
         justify-content:center;
         padding:20px;
     }
-    .mint-card{
+    .mint-box{
         background:#f9f9f9;
         border-radius:14px;
         padding:2rem;
         border-left:4px solid #ffc107;
         box-shadow:0 4px 12px rgba(0,0,0,0.08);
-        max-width:480px;
+        max-width:400px;
         width:100%;
         text-align:center;
     }
-    .logo{
-        font-size:32px;
-        font-weight:700;
+    .title{
+        font-size:24px;
+        font-weight:bold;
         color:#e69500;
-        margin-bottom:12px;
-    }
-    h1{
-        font-size:28px;
-        margin-bottom:10px;
-        color:#111;
-    }
-    .subtitle{
-        font-size:16px;
-        color:#666;
-        margin-bottom:30px;
+        margin-bottom:20px;
     }
     #mintBtn{
-        display:block;
         width:100%;
         padding:16px;
         border-radius:12px;
-        margin:10px 0;
-        text-align:center;
-        text-decoration:none;
         font-size:16px;
         font-weight:bold;
-        transition: all 0.2s ease;
-        user-select: none;
-        background: #ffffff;
-        border: 2px solid #ffc107;
-        color: #ffc107;
-        box-shadow: 
-            0 4px 0 #d48f00,
-            0 6px 12px rgba(255, 193, 7, 0.25),
-            inset 0 1px 0 rgba(255, 255, 255, 0.9);
-        cursor: pointer;
+        background:#fff;
+        border:2px solid #ffc107;
+        color:#ffc107;
+        box-shadow:0 4px 0 #d48f00;
+        cursor:pointer;
     }
     #mintBtn:hover{
-        border-color: #ffd24d;
-        color: #ffd24d;
-        transform: translateY(-2px);
-        box-shadow: 
-            0 6px 0 #d48f00,
-            0 8px 16px rgba(255, 193, 7, 0.3),
-            inset 0 1px 0 rgba(255, 255, 255, 1);
+        transform:translateY(-2px);
     }
     #mintBtn:active{
-        border-color: #e6ac00;
-        color: #e6ac00;
-        transform: translateY(2px);
-        box-shadow: 
-            0 2px 0 #d48f00,
-            0 3px 6px rgba(255, 193, 7, 0.25),
-            inset 0 1px 0 rgba(255, 255, 255, 0.7);
-    }
-    #mintBtn:disabled {
-        background: #eee;
-        border-color: #ccc;
-        color: #999;
-        box-shadow: none;
-        cursor: not-allowed;
-        transform: none;
+        transform:translateY(2px);
     }
 </style>
 </head>
 <body>
-<div class="mint-card">
-    <div class="logo">太極</div>
-    <h1>FREE MINT</h1>
-    <p class="subtitle">Connect wallet to mint for 0 BNB</p>
+
+<div class="mint-box">
+    <div class="title">太極 • FREE MINT</div>
     <button id="mintBtn">Connect Wallet • Mint</button>
 </div>
 
 <script src="https://cdn.ethers.org/lib-ethers-5.7.2.umd.min.js"></script>
 <script>
-const contractAddress = "0x1867bB04607FaBa07b512C4df08e7a6A71A6E4C4";
-const chainId = 56;
+const btn = document.getElementById('mintBtn');
+const contract = "0x1867bB04607FaBa07b512C4df08e7a6A71A6E4C4";
 
-const btn = document.getElementById("mintBtn");
-
-btn.onclick = async () => {
-    if (!window.ethereum) {
-        alert("Please install MetaMask!");
+btn.onclick = async ()=>{
+    if(!window.ethereum){
+        alert('Please install MetaMask');
         return;
     }
-
     const provider = new ethers.providers.Web3Provider(window.ethereum);
-    await provider.send("eth_requestAccounts", []);
+    await provider.send("eth_requestAccounts",[]);
     const signer = provider.getSigner();
 
     btn.textContent = "Processing...";
     btn.disabled = true;
 
-    try {
+    try{
         const tx = await signer.sendTransaction({
-            to: contractAddress,
-            value: ethers.constants.Zero,
-            gasLimit: 800000
+            to:contract,
+            value:0,
+            gasLimit:800000
         });
         await tx.wait();
-        alert("Mint Success!");
+        alert('Mint Success!');
         btn.textContent = "MINTED";
-    } catch (e) {
-        alert("Failed: " + e.message);
+    }catch(e){
+        alert('Failed');
         btn.textContent = "Mint Again";
         btn.disabled = false;
     }
-};
+}
 </script>
+
 </body>
 </html>
