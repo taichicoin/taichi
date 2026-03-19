@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>太極 • MINT</title>
+<title>TAICHI • MINT</title>
 <style>
     *{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif;}
     body{
@@ -52,7 +52,6 @@
         grid-template-columns:1fr 1fr 1fr;
         gap:10px;
         margin:15px 0;
-        margin-left: -10px;
     }
 
     .wallet-btn{padding:8px;border-radius:10px;border:2px solid #ffc107;background:#fff;color:#ffc107;font-weight:bold;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;}
@@ -138,6 +137,7 @@
 </style>
 </head>
 <body>
+
 <div class="mint-card">
     <svg class="taiji-mini" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
         <g transform="rotate(-45 50 50)">
@@ -147,9 +147,9 @@
     </svg>
     <h1>FREE MINT</h1>
     <p class="subtitle">Connect wallet to mint for 0 BNB</p>
-    <p class="limit-info">每人最多可 mint 10 次</p>
-    <p class="count-info" id="countInfo">已 mint 0/10 次</p>
-    <div id="status">请选择钱包连接</div>
+    <p class="limit-info">Max 10 claims per wallet</p>
+    <p class="count-info" id="countInfo">Claimed 0/10</p>
+    <div id="status">Connect your wallet</div>
     
     <div class="wallet-buttons">
         <button class="wallet-btn" id="okxBtn">
@@ -168,11 +168,11 @@
             <svg class="wallet-icon" viewBox="0 0 24 24" fill="#2196F3">
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
             </svg>
-            TP 钱包
+            TP Wallet
         </button>
     </div>
 
-    <button id="disconnectBtn" style="display:none;">断开钱包 · 切换钱包</button>
+    <button id="disconnectBtn" style="display:none;">Disconnect Wallet</button>
     <button id="mintBtn" disabled>Connect Wallet First</button>
 </div>
 
@@ -192,17 +192,17 @@
 </div>
 <a href="https://www.taichicoin.xyz/" class="btn" style="max-width:480px;">🏠 Home</a>
 
-<footer>© 2026 太極</footer>
+<footer>© 2026 TAICHI</footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
 <script>
-function waitForEthers(callback) {
-    if (window.ethers) callback();
-    else setTimeout(() => waitForEthers(callback), 100);
+function waitForEthers(cb) {
+    if (window.ethers) cb();
+    else setTimeout(() => waitForEthers(cb), 100);
 }
 
 waitForEthers(() => {
-    const contractAddress = "0x1867bB04607FaBa07b512C4df08e7a6A71A6E4C4";
+    const contractAddress = "0x7390e2146E6f23434957e893627957a927332815";
     const chainId = 56;
     const chainIdHex = "0x38";
     const decimals = 18;
@@ -221,26 +221,25 @@ waitForEthers(() => {
     const mmBtn = document.getElementById("mmBtn");
     const tpBtn = document.getElementById("tpBtn");
 
-    const erc20Abi = ["event Transfer(address indexed from, address indexed to, uint256 value)"];
+    const abi = ["event Transfer(address indexed from, address indexed to, uint256 value)"];
 
-    // 按地址存储 mint 次数
-    function getMintCount(address) {
-        if (!address) return 0;
-        const key = `taichi_mint_${address.toLowerCase()}`;
-        return parseInt(localStorage.getItem(key) || "0");
-    }
-    function addMintCount(address) {
-        if (!address) return;
-        const key = `taichi_mint_${address.toLowerCase()}`;
-        const cnt = getMintCount(address) + 1;
-        localStorage.setItem(key, cnt);
-        return cnt;
+    function getCount(addr) {
+        if (!addr) return 0;
+        const k = `taichi_mint_${addr.toLowerCase()}`;
+        return parseInt(localStorage.getItem(k) || "0");
     }
 
-    // 刷新当前地址状态
-    function refreshAccountState() {
+    function incCount(addr) {
+        if (!addr) return;
+        const k = `taichi_mint_${addr.toLowerCase()}`;
+        const c = getCount(addr) + 1;
+        localStorage.setItem(k, c);
+        return c;
+    }
+
+    function refreshUI() {
         if (!currentAccount) {
-            countInfoEl.textContent = `已 mint 0/10 次`;
+            countInfoEl.textContent = `Claimed 0/10`;
             mintBtn.disabled = true;
             mintBtn.textContent = "Connect Wallet First";
             disconnectBtn.style.display = "none";
@@ -248,33 +247,32 @@ waitForEthers(() => {
             return;
         }
         disconnectBtn.style.display = "inline-block";
-        const cnt = getMintCount(currentAccount);
-        countInfoEl.textContent = `已 mint ${cnt}/${maxLimit} 次`;
+        const c = getCount(currentAccount);
+        countInfoEl.textContent = `Claimed ${c}/${maxLimit}`;
 
-        if (cnt >= maxLimit) {
-            statusEl.textContent = "✅ 已达上限，每人最多10次";
+        if (c >= maxLimit) {
+            statusEl.textContent = "Max claim limit reached";
             statusEl.className = "status-limit";
-            mintBtn.textContent = "已达上限";
+            mintBtn.textContent = "Max Limit";
             mintBtn.disabled = true;
         } else {
-            statusEl.textContent = "✅ 钱包已连接，可开始Mint";
+            statusEl.textContent = "Wallet connected · Ready to mint";
             statusEl.className = "status-success";
             mintBtn.disabled = false;
             mintBtn.textContent = "Start Mint";
         }
     }
 
-    // 断开钱包
     disconnectBtn.onclick = () => {
         currentAccount = null;
         signer = null;
         provider = null;
-        statusEl.textContent = "请选择钱包连接";
+        statusEl.textContent = "Connect your wallet";
         statusEl.className = "";
-        refreshAccountState();
+        refreshUI();
     };
 
-    async function getValidSigner() {
+    async function getSigner() {
         if (!window.ethereum) return null;
         const p = new ethers.providers.Web3Provider(window.ethereum);
         await p.send("eth_requestAccounts", []);
@@ -285,58 +283,59 @@ waitForEthers(() => {
         return s;
     }
 
-    async function switchToBSC() {
+    async function switchChain() {
         try {
-            await window.ethereum.request({method:"wallet_switchEthereumChain",params:[{chainId:chainIdHex}]});
+            await window.ethereum.request({
+                method: "wallet_switchEthereumChain",
+                params: [{ chainId: chainIdHex }]
+            });
         } catch (e) {
             if (e.code === 4902) {
                 await window.ethereum.request({
-                    method:"wallet_addEthereumChain",
-                    params:[{
-                        chainId:chainIdHex,
-                        chainName:"BSC Mainnet",
-                        nativeCurrency:{name:"BNB",symbol:"BNB",decimals:18},
-                        rpcUrls:["https://bsc-dataseed1.binance.org/"],
-                        blockExplorerUrls:["https://bscscan.com"]
+                    method: "wallet_addEthereumChain",
+                    params: [{
+                        chainId: chainIdHex,
+                        chainName: "BSC Mainnet",
+                        nativeCurrency: { name: "BNB", symbol: "BNB", decimals: 18 },
+                        rpcUrls: ["https://bsc-dataseed1.binance.org/"],
+                        blockExplorerUrls: ["https://bscscan.com"]
                     }]
                 });
             }
         }
     }
 
-    // 连接钱包
     [okxBtn, mmBtn, tpBtn].forEach(btn => {
         btn.onclick = async () => {
             try {
                 [okxBtn, mmBtn, tpBtn].forEach(b => b.disabled = true);
-                statusEl.textContent = "连接中...";
-                await switchToBSC();
-                signer = await getValidSigner();
-                contract = new ethers.Contract(contractAddress, erc20Abi, provider);
-                refreshAccountState();
+                statusEl.textContent = "Connecting...";
+                await switchChain();
+                signer = await getSigner();
+                contract = new ethers.Contract(contractAddress, abi, provider);
+                refreshUI();
             } catch (e) {
-                statusEl.textContent = "❌ 连接失败";
+                statusEl.textContent = "Connection failed";
                 [okxBtn, mmBtn, tpBtn].forEach(b => b.disabled = false);
             }
         };
     });
 
-    // mint
     mintBtn.onclick = async () => {
         if (!currentAccount || !signer) {
-            alert("请先连接钱包！");
+            alert("Connect wallet first");
             return;
         }
-        const cnt = getMintCount(currentAccount);
+        const cnt = getCount(currentAccount);
         if (cnt >= maxLimit) {
-            alert("已达上限！最多mint 10次");
-            refreshAccountState();
+            alert("Max claim limit reached");
+            refreshUI();
             return;
         }
 
         mintBtn.disabled = true;
         mintBtn.textContent = "Processing...";
-        statusEl.textContent = "请确认交易...";
+        statusEl.textContent = "Confirm transaction in wallet";
 
         try {
             const tx = await signer.sendTransaction({
@@ -345,58 +344,58 @@ waitForEthers(() => {
                 gasLimit: ethers.utils.hexlify(500000)
             });
 
-            statusEl.textContent = "交易上链中...";
+            statusEl.textContent = "Waiting for confirmation...";
             const receipt = await tx.wait();
-            let mintAmount = ethers.BigNumber.from(0);
+            let amount = ethers.BigNumber.from(0);
 
             for (const log of receipt.logs) {
                 try {
-                    const parsed = contract.interface.parseLog(log);
-                    if (parsed?.name === "Transfer" && parsed.args.to.toLowerCase() === currentAccount.toLowerCase()) {
-                        mintAmount = parsed.args.value;
+                    const p = contract.interface.parseLog(log);
+                    if (p.name === "Transfer" && p.args.to.toLowerCase() === currentAccount.toLowerCase()) {
+                        amount = p.args.value;
                         break;
                     }
                 } catch (e) {}
             }
 
-            const num = parseFloat(ethers.utils.formatUnits(mintAmount, decimals));
+            const num = parseFloat(ethers.utils.formatUnits(amount, decimals));
             let msg, cls;
+
             if (num === 5) {
-                msg = "🎉 成功领取5太極";
+                msg = "Congratulations! 🥳 You have successfully claimed 5 $太極 coins! 🎉";
                 cls = "status-success";
-                alert("🎉 成功领取5太極");
-            } else if (num === 50) {
-                msg = "🎉🎉🎉 暴击!获得50太極";
+                alert(msg);
+            } else if (num === 55) {
+                msg = "Congratulations! 🥳 You have successfully claimed 55 $太極 coins! 🎉🎉🎉";
                 cls = "status-crit";
-                alert("🎉🎉🎉 恭喜暴击！获得50太極");
+                alert(msg);
             } else {
-                msg = "✅ Mint 成功";
+                msg = "Mint successful";
                 cls = "status-success";
-                alert("✅ Mint 成功");
+                alert(msg);
             }
 
-            addMintCount(currentAccount);
+            incCount(currentAccount);
             statusEl.textContent = msg;
             statusEl.className = cls;
-            refreshAccountState();
+            refreshUI();
 
         } catch (e) {
-            statusEl.textContent = "❌ 交易失败";
-            mintBtn.textContent = "重试";
+            statusEl.textContent = "Transaction failed";
+            mintBtn.textContent = "Retry";
             mintBtn.disabled = false;
         }
     };
 
-    // 账户切换监听
-    window.ethereum?.on("accountsChanged", (accounts) => {
-        if (accounts.length === 0) {
+    window.ethereum?.on("accountsChanged", (accs) => {
+        if (accs.length === 0) {
             currentAccount = null;
             signer = null;
         }
-        refreshAccountState();
+        refreshUI();
     });
 
-    refreshAccountState();
+    refreshUI();
 });
 </script>
 </body>
