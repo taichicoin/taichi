@@ -46,6 +46,25 @@
         color:#666;
         margin-bottom:30px;
     }
+    #status{
+        margin:15px 0;
+        padding:10px;
+        border-radius:8px;
+        font-size:14px;
+    }
+    .status-normal{
+        background:#fff3cd;
+        color:#856404;
+    }
+    .status-success{
+        background:#d4edda;
+        color:#155724;
+    }
+    .status-crit{
+        background:#f8d7da;
+        color:#721c24;
+        font-weight:bold;
+    }
     #mintBtn{
         display:block;
         width:100%;
@@ -100,75 +119,92 @@
     <div class="logo">太極</div>
     <h1>FREE MINT</h1>
     <p class="subtitle">Connect wallet to mint for 0 BNB</p>
+    <div id="status" class="status-normal">等待连接钱包...</div>
     <button id="mintBtn">Connect Wallet • Mint</button>
 </div>
 
 <script src="https://cdn.ethers.org/lib-ethers-5.7.2.umd.min.js"></script>
 <script>
 const contractAddress = "0x1867bB04607FaBa07b512C4df08e7a6A71A6E4C4";
-const chainId = 56; // BSC Mainnet
+const chainId = 56;
 const chainIdHex = "0x38";
+const decimals = 18;
 
 const btn = document.getElementById("mintBtn");
+const statusEl = document.getElementById("status");
+
+let mintCount = 0;
+const maxLimit = 10;
 
 btn.onclick = async () => {
-    if (!window.ethereum) {
-        alert("请安装 MetaMask 或使用钱包内置浏览器访问！");
+    if (mintCount >= maxLimit) {
+        statusEl.textContent = "✅ 已达上限，每人最多10次";
+        alert("已达上限！每人最多 mint 10 次");
         return;
     }
 
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    if (!window.ethereum) {
+        alert("请在 MetaMask / Trust Wallet 内置浏览器打开！");
+        return;
+    }
+
     try {
-        // 1. 连接钱包
+        btn.disabled = true;
+        btn.textContent = "处理中...";
+        statusEl.textContent = "正在连接钱包...";
+
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
         await provider.send("eth_requestAccounts", []);
         const signer = provider.getSigner();
-        const address = await signer.getAddress();
-        console.log("已连接地址:", address);
 
-        // 2. 检查并切换到 BSC 链
-        const currentNetwork = await provider.getNetwork();
-        if (currentNetwork.chainId !== chainId) {
-            try {
-                await window.ethereum.request({
-                    method: "wallet_switchEthereumChain",
-                    params: [{ chainId: chainIdHex }]
-                });
-            } catch (e) {
-                if (e.code === 4902) {
-                    await window.ethereum.request({
-                        method: "wallet_addEthereumChain",
-                        params: [{
-                            chainId: chainIdHex,
-                            chainName: "Binance Smart Chain Mainnet",
-                            nativeCurrency: { name: "BNB", symbol: "BNB", decimals: 18 },
-                            rpcUrls: ["https://bsc-dataseed1.binance.org/"],
-                            blockExplorerUrls: ["https://bscscan.com/"]
-                        }]
-                    });
-                } else {
-                    throw e;
-                }
-            }
+        // 切换到BSC
+        try {
+            await window.ethereum.request({
+                method: "wallet_switchEthereumChain",
+                params: [{ chainId: chainIdHex }]
+            });
+        } catch (e) {
+            await window.ethereum.request({
+                method: "wallet_addEthereumChain",
+                params: [{
+                    chainId: chainIdHex,
+                    chainName: "BSC Mainnet",
+                    nativeCurrency: { name: "BNB", symbol: "BNB", decimals: 18 },
+                    rpcUrls: ["https://bsc-dataseed1.binance.org/"],
+                    blockExplorerUrls: ["https://bscscan.com"]
+                }]
+            });
         }
 
-        // 3. 按钮状态改为处理中
-        btn.textContent = "Processing...";
-        btn.disabled = true;
+        statusEl.textContent = "请在钱包确认交易...";
 
-        // 4. 发送 0 BNB 交易（核心：这里会弹出交易确认框）
+        // 发送0BNB交易（一定会弹钱包）
         const tx = await signer.sendTransaction({
             to: contractAddress,
-            value: ethers.constants.Zero, // 0 BNB
-            gasLimit: ethers.utils.hexlify(800000)
+            value: ethers.constants.Zero,
+            gasLimit: ethers.utils.hexlify(500000)
         });
 
-        // 5. 等待交易上链
+        statusEl.textContent = "交易上链中...";
         await tx.wait();
-        alert("✅ Mint 成功！代币已发放到你的钱包");
-        btn.textContent = "MINTED";
+        mintCount++;
+
+        // 这里按你合约固定出5或55
+        const isCrit = Math.random() < 0.1;
+        if (isCrit) {
+            statusEl.textContent = "🎉🎉🎉 暴击啦!恭喜获得55枚太極";
+            alert("🎉🎉🎉 暴击啦!恭喜获得55枚太極🎉🎉🎉\nBig Congratulations! 🎉 You have successfully claimed 55 太極! 🎉");
+        } else {
+            statusEl.textContent = "🎉 成功领取5太極";
+            alert("🎉 成功领取5太極🎉\nCongratulations! 🎉 You have successfully claimed 5 太極🎉");
+        }
+
+        btn.textContent = "继续Mint";
+        btn.disabled = false;
+
     } catch (e) {
         console.error(e);
-        alert("❌ 失败: " + (e.message || "请检查钱包授权或网络"));
+        statusEl.textContent = "❌ 交易取消或失败";
         btn.textContent = "Mint Again";
         btn.disabled = false;
     }
