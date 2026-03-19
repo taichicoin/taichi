@@ -37,7 +37,7 @@
     }
     @keyframes rotateTaiji{
         0%{ transform:translate(-50%,-50%) rotate(0deg); }
-        100%{ transform:translate(-50%,-50%) rotate(360deg); }
+        100%{ transform:translate(-50%,-50%) rotate(-360deg); }
     }
     .header-text{
         position:relative;
@@ -70,49 +70,6 @@
         margin-bottom:1rem;
         text-align:center;
     }
-
-    /* 钱包状态面板 */
-    .wallet-box{
-        background:#fff8e6;
-        border:1px solid #ffc107;
-        border-radius:12px;
-        padding:14px;
-        margin-bottom:16px;
-        text-align:center;
-    }
-    .wallet-status{
-        font-size:14px;
-        font-weight:bold;
-        color:#d48f00;
-        margin-bottom:6px;
-    }
-    .wallet-address{
-        font-size:13px;
-        color:#333;
-        word-break:break-all;
-        margin-bottom:10px;
-    }
-    .wallet-btn-group{
-        display:flex;
-        gap:8px;
-        justify-content:center;
-        flex-wrap:wrap;
-    }
-    .wallet-btn{
-        padding:8px 12px;
-        border-radius:8px;
-        border:none;
-        background:#ffc107;
-        color:#fff;
-        font-weight:bold;
-        font-size:13px;
-        cursor:pointer;
-    }
-    .wallet-btn:disabled{
-        background:#ccc;
-        cursor:not-allowed;
-    }
-
     .amount-box{
         text-align:center;
         margin:1rem 0;
@@ -156,59 +113,111 @@
         color:#666;
         margin-top:6px;
     }
-    .donate-btn{
+    .btn{
         display:block;
         width:100%;
         padding:16px;
         border-radius:12px;
-        margin:16px 0;
+        margin:14px 0;
         text-align:center;
+        text-decoration:none;
         font-size:16px;
         font-weight:bold;
-        background:#ffc107;
-        color:#fff;
-        border:none;
+        transition: all 0.2s ease;
+        user-select:none;
+        background:#fff;
+        border:2px solid #ffc107;
+        color:#ffc107;
+        box-shadow:
+            0 4px 0 #d48f00,
+            0 6px 12px rgba(255,193,7,0.25),
+            inset 0 1px 0 rgba(255,255,250,0.9);
         cursor:pointer;
-        box-shadow:0 4px 0 #d48f00;
     }
-    .donate-btn:disabled{
-        background:#ccc;
+    .btn:hover{
+        border-color:#ffd24d;
+        color:#ffd24d;
+        transform:translateY(-2px);
+        box-shadow:
+            0 6px 0 #d48f00,
+            0 8px 16px rgba(255,193,7,0.3),
+            inset 0 1px 0 rgba(255,255,255,1);
+    }
+    .btn:active{
+        transform:translateY(2px);
+        box-shadow:
+            0 2px 0 #d48f00,
+            0 3px 6px rgba(255,193,7,0.25),
+            inset 0 1px 0 rgba(255,255,255,0.7);
+    }
+    .btn:disabled {
+        border-color:#ccc;
+        color:#999;
         box-shadow:none;
         cursor:not-allowed;
+    }
+    .btn-row{
+        display:flex;
+        gap:12px;
+        margin:14px 0;
+    }
+    .btn-half{
+        flex:1;
+        padding:14px;
+        font-size:15px;
+        margin:0;
     }
     .note{
         font-size:13px;
         color:#666;
         text-align:center;
         line-height:1.5;
-        margin-top:8px;
+        margin-top:12px;
     }
     .disclaimer{
         font-size:12px;
         color:#888;
         text-align:center;
-        margin:8px 0;
+        margin-top:8px;
+        line-height:1.4;
     }
-    .btn-row{
-        display:flex;
-        gap:10px;
-        margin:14px 0;
+
+    /* 钱包面板 居中一行 */
+    .wallet-section {
+        margin: 20px 0;
+        text-align: center;
+        font-size: 14px;
     }
-    .btn-half{
-        flex:1;
-        padding:14px;
-        border-radius:12px;
-        text-align:center;
-        background:#fff;
-        border:2px solid #ffc107;
-        color:#ffc107;
-        font-weight:bold;
-        text-decoration:none;
+    .wallet-status {
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #d48f00;
     }
+    .wallet-row {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    .wallet-btn {
+        padding: 8px 10px;
+        border-radius: 8px;
+        background: #ffc107;
+        color: #fff;
+        border: none;
+        font-weight: bold;
+        font-size:13px;
+        cursor:pointer;
+    }
+    .wallet-btn:disabled {
+        background:#ccc;
+        cursor:not-allowed;
+    }
+
     footer{
         text-align:center;
-        padding:20px;
-        color:#999;
+        padding:2rem 1rem;
+        color:#666;
         font-size:14px;
     }
 </style>
@@ -218,7 +227,7 @@
 <header>
     <svg class="taiji-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
         <g transform="rotate(-45 50 50)">
-            <path d="M50 0 A50 50 0 0 1 50 100 A25 25 0 0 0 50 50 A25 25 0 0 1 50 0 Z M50 25 m -8 0 a 8 0 1 1 16 0 a 8 0 1 1 -16 0" fill="white"/>
+            <path d="M50 0 A50 50 0 0 1 50 100 A25 25 0 0 0 50 50 A25 25 0 0 1 50 0 Z M50 25 m -8 0 a 8 8 0 1 0 16 0 a 8 8 0 1 0 -16 0" fill="white" fill-rule="evenodd"/>
             <circle cx="50" cy="75" r="8" fill="white"/>
         </g>
     </svg>
@@ -231,18 +240,7 @@
 <div class="container">
     <div class="card">
         <div class="section-title">Donate to support 太極 Coin</div>
-
-        <!-- 钱包状态 -->
-        <div class="wallet-box">
-            <div class="wallet-status" id="walletStatus">Not Connected</div>
-            <div class="wallet-address" id="walletAddress">-</div>
-            <div class="wallet-btn-group">
-                <button class="wallet-btn" id="connectBtn" onclick="connectWallet()">Connect</button>
-                <button class="wallet-btn" id="switchBtn" disabled onclick="switchWallet()">Switch</button>
-                <button class="wallet-btn" id="disconnectBtn" disabled onclick="disconnectWallet()">Disconnect</button>
-            </div>
-        </div>
-
+        
         <div class="disclaimer">
             Disclaimer: You are donating voluntarily to receive the airdrop.
         </div>
@@ -259,127 +257,179 @@
             <span>0.1</span>
         </div>
 
-        <div class="note">Min 0.001 · Max 0.1 BNB per wallet</div>
+        <div class="note">
+            Min 0.001 BNB, Max 0.1 BNB per wallet
+        </div>
 
-        <!-- 确认捐款按钮 -->
-        <button class="donate-btn" id="donateBtn" disabled onclick="startDonate()">
-            ✅ Confirm Donation
-        </button>
+        <button class="btn" id="confirmBtn" disabled onclick="confirmDonate()">✅ Confirm Donation</button>
+    </div>
+
+    <!-- 钱包区域：放在中间位置 -->
+    <div class="wallet-section">
+        <div class="wallet-status" id="walletStatus">Wallet not connected</div>
+        <div class="wallet-row">
+            <button class="wallet-btn" id="connectBtn" onclick="connectWallet()">Connect</button>
+            <button class="wallet-btn" id="switchBtn" disabled onclick="switchWallet()">Switch</button>
+            <button class="wallet-btn" id="disconnectBtn" disabled onclick="disconnectWallet()">Disconnect</button>
+        </div>
     </div>
 
     <div class="btn-row">
-        <a href="https://t.me/CHiiiiiiiiiiiiiiiiii" class="btn-half">Telegram</a>
-        <a href="https://x.com/taichicoin" class="btn-half">Twitter</a>
+        <a href="https://t.me/CHiiiiiiiiiiiiiiiiii" class="btn btn-half">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-right:6px;">
+                <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+            </svg>
+            Telegram
+        </a>
+        <a href="https://x.com/taichicoin" class="btn btn-half">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle; margin-right:6px;">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+            X / Twitter
+        </a>
     </div>
+
+    <a href="https://www.taichicoin.xyz/" class="btn">🏠 Home</a>
 </div>
 
 <footer>© 2026 太極</footer>
 
-<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
 <script>
     const slider = document.getElementById('donateSlider');
     const bnbDisplay = document.getElementById('bnbAmount');
     const usdtDisplay = document.getElementById('usdtAmount');
     const chiDisplay = document.getElementById('chiAmount');
     const walletStatus = document.getElementById('walletStatus');
-    const walletAddress = document.getElementById('walletAddress');
     const connectBtn = document.getElementById('connectBtn');
     const switchBtn = document.getElementById('switchBtn');
     const disconnectBtn = document.getElementById('disconnectBtn');
-    const donateBtn = document.getElementById('donateBtn');
+    const confirmBtn = document.getElementById('confirmBtn');
 
-    const TO_ADDRESS = "0x1867bB04607FaBa07b51C4df08e7a6A71A6E4C4";
-    const CHI_RATE = 1600000000;
-    const BSC_CHAIN_ID = "0x38";
+    const receiveAddress   = "0x1867bB04607FaBa07b512C4df08e7a6A71A6E4C4";
+    const chiContract      = "0x1867bB04607FaBa07b512C4df08e7a6A71A6E4C4";
+    const chiDecimals      = 18;
+    const chiRate          = 1600000000;
+    const BSC_CHAIN_ID     = "0x38";
 
-    let provider, signer, account;
+    let provider = null;
+    let signer = null;
+    let account = null;
 
-    // 滑动更新金额
-    function updateDisplay() {
-        const v = parseFloat(slider.value);
-        bnbDisplay.textContent = v.toFixed(4) + " BNB";
-        usdtDisplay.textContent = "≈ " + (v * 640).toFixed(2) + " USDT";
-        chiDisplay.textContent = "≈ " + (v * CHI_RATE).toLocaleString() + " $CHI";
+    function updateAmount(){
+        let val = parseFloat(slider.value);
+        bnbDisplay.textContent = val.toFixed(4) + ' BNB';
+        usdtDisplay.textContent = '≈ ' + (val * 640).toFixed(2) + ' USDT';
+        chiDisplay.textContent = '≈ ' + (val * chiRate).toLocaleString() + ' $CHI';
     }
 
-    // 更新钱包UI
-    function updateWalletState() {
+    function updateWalletUI() {
         if (account) {
-            walletStatus.textContent = "Connected";
-            walletAddress.textContent = account;
+            walletStatus.textContent = "Wallet connected";
             connectBtn.disabled = true;
             switchBtn.disabled = false;
             disconnectBtn.disabled = false;
-            donateBtn.disabled = false;
+            confirmBtn.disabled = false;
         } else {
-            walletStatus.textContent = "Not Connected";
-            walletAddress.textContent = "-";
+            walletStatus.textContent = "Wallet not connected";
             connectBtn.disabled = false;
             switchBtn.disabled = true;
             disconnectBtn.disabled = true;
-            donateBtn.disabled = true;
+            confirmBtn.disabled = true;
         }
     }
 
-    // 连接钱包
     async function connectWallet() {
-        if (!window.ethereum) return alert("Please install MetaMask");
+        if (!window.ethereum) return alert("Please install wallet");
         try {
             provider = new ethers.providers.Web3Provider(window.ethereum);
             await provider.send("eth_requestAccounts", []);
             signer = provider.getSigner();
             account = await signer.getAddress();
-            updateWalletState();
+            updateWalletUI();
         } catch (e) {
             alert("Connection cancelled");
         }
     }
 
-    // 切换钱包
     async function switchWallet() {
         try {
-            await window.ethereum.request({ method: "wallet_requestPermissions", params: [{ eth_accounts: {} }] });
+            await window.ethereum.request({ method: 'wallet_requestPermissions', params: [{ eth_accounts: {} }] });
             provider = new ethers.providers.Web3Provider(window.ethereum);
             signer = provider.getSigner();
             account = await signer.getAddress();
-            updateWalletState();
+            updateWalletUI();
         } catch (e) {
             alert("Switch cancelled");
         }
     }
 
-    // 断开钱包
     function disconnectWallet() {
         account = null;
         signer = null;
         provider = null;
-        updateWalletState();
+        updateWalletUI();
     }
 
-    // 发起捐款：不查余额，直接弹钱包
-    async function startDonate() {
-        if (!account || !signer) return alert("Connect wallet first");
-        const amount = parseFloat(slider.value).toFixed(4);
+    async function switchToBSC() {
+        if (!window.ethereum) return false;
         try {
-            alert("Please confirm transaction in your wallet");
-            const tx = await signer.sendTransaction({
-                to: TO_ADDRESS,
-                value: ethers.utils.parseEther(amount)
+            await window.ethereum.request({
+                method: "wallet_switchEthereumChain",
+                params: [{ chainId: BSC_CHAIN_ID }]
             });
-            alert("Transaction sent!\n" + tx.hash);
+            return true;
+        } catch (e) {
+            if (e.code === 4902) {
+                await window.ethereum.request({
+                    method: "wallet_addEthereumChain",
+                    params:[{
+                        chainId: BSC_CHAIN_ID,
+                        chainName: "BSC Mainnet",
+                        nativeCurrency: { name: "BNB", symbol: "BNB", decimals: 18 },
+                        rpcUrls: ["https://bsc-dataseed1.binance.org/"],
+                        blockExplorerUrls: ["https://bscscan.com"]
+                    }]
+                });
+            }
+            alert("Please switch to BSC Mainnet");
+            return false;
+        }
+    }
+
+    async function confirmDonate(){
+        if (!account || !signer) return alert("Please connect wallet");
+        if (!await switchToBSC()) return;
+
+        const val = parseFloat(slider.value).toFixed(4);
+        try {
+            const tokenContract = new ethers.Contract(chiContract, ["function balanceOf(address) view returns (uint256)"], provider);
+            const beforeBal = await tokenContract.balanceOf(account);
+
+            alert("Please confirm transaction in your wallet");
+
+            const tx = await signer.sendTransaction({
+                to: receiveAddress,
+                value: ethers.utils.parseEther(val),
+                gasLimit: 210000
+            });
+
             await tx.wait();
-            // 成功提示
+            const afterBal = await tokenContract.balanceOf(account);
+            const received = ethers.utils.formatUnits(afterBal.sub(beforeBal), chiDecimals);
+
             alert(`Thank you! 🥳
 You have successfully received: 🎉
-${(parseFloat(amount) * CHI_RATE).toLocaleString()} $CHI`);
+${parseFloat(received).toLocaleString()} $CHI`);
+
         } catch (e) {
             alert("Transaction cancelled or failed");
         }
     }
 
-    slider.addEventListener('input', updateDisplay);
-    updateDisplay();
-    updateWalletState();
+    slider.addEventListener('input', updateAmount);
+    updateAmount();
+    updateWalletUI();
 </script>
 
 </body>
