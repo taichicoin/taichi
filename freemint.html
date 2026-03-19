@@ -12,15 +12,15 @@
     h1{font-size:28px;margin-bottom:10px;color:#111;}
     .subtitle{font-size:16px;color:#666;margin-bottom:20px;}
     .limit-info{font-size:14px;color:#999;margin-bottom:20px;}
-    #status{margin:15px 0;padding:10px;border-radius:8px;font-size:14px;background:#fff3cd;color:#856404;}
+    #status{margin:15px 0;padding:10px;border-radius:8px;font-size:14px;background:#fff3cd;color:#856404;line-height:1.4;}
     .status-success{background:#d4edda;color:#155724;}
     .status-crit{background:#f8d7da;color:#721c24;font-weight:bold;}
     .status-limit{background:#e2e3e5;color:#383d41;font-weight:bold;}
-    .wallet-buttons{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:15px 0;}
+    .wallet-buttons{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:15px 0;}
     .wallet-btn{padding:12px;border-radius:10px;border:2px solid #ffc107;background:#fff;color:#ffc107;font-weight:bold;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;}
     .wallet-btn:hover{background:#fff9e6;border-color:#ffd24d;color:#ffd24d;}
-    .wallet-icon{width:20px;height:20px;}
-    #mintBtn{display:block;width:100%;padding:16px;border-radius:12px;margin:10px 0;text-align:center;text-decoration:none;font-size:16px;font-weight:bold;transition:all 0.2s ease;user-select:none;background:#fff;border:2px solid #ffc107;color:#ffc107;box-shadow:0 4px 0 #d48f00,0 6px 12px rgba(255,193,7,0.25),inset 0 1px 0 rgba(255,255,255,0.9);cursor:pointer;}
+    .wallet-icon{width:20px;height:20px;border-radius:4px;}
+    #mintBtn{display:block;width:100%;padding:16px;border-radius:12px;margin:10px 0;text-align:center;text-decoration:none;font-size:16px;font-weight:bold;transition:all 0.2s ease;user-select:none;background:#ffffff;border:2px solid #ffc107;color:#ffc107;box-shadow:0 4px 0 #d48f00,0 6px 12px rgba(255,193,7,0.25),inset 0 1px 0 rgba(255,255,255,0.9);cursor:pointer;}
     #mintBtn:hover{border-color:#ffd24d;color:#ffd24d;transform:translateY(-2px);box-shadow:0 6px 0 #d48f00,0 8px 16px rgba(255,193,7,0.3),inset 0 1px 0 rgba(255,255,255,1);}
     #mintBtn:active{border-color:#e6ac00;color:#e6ac00;transform:translateY(2px);box-shadow:0 2px 0 #d48f00,0 3px 6px rgba(255,193,7,0.25),inset 0 1px 0 rgba(255,255,255,0.7);}
     #mintBtn:disabled{background:#eee;border-color:#ccc;color:#999;cursor:not-allowed;transform:none;}
@@ -33,22 +33,33 @@
     <p class="subtitle">Connect wallet to mint for 0 BNB</p>
     <p class="limit-info">每人最多可 mint 10 次</p>
     <div id="status">请选择钱包连接</div>
+    
     <div class="wallet-buttons">
-        <button class="wallet-btn" id="injectedBtn">
-            <svg class="wallet-icon" viewBox="0 0 24 24" fill="#111"><path d="M12 2L2 7l10 5l10-5l-10-5zM2 17l10 5l10-5M2 12l10 5l10-5"/></svg>
-            浏览器钱包
+        <button class="wallet-btn" id="okxBtn">
+            <svg class="wallet-icon" viewBox="0 0 24 24" fill="#0052FF">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+            </svg>
+            OKX
         </button>
-        <button class="wallet-btn" id="wcBtn">
-            <svg class="wallet-icon" viewBox="0 0 24 24" fill="#111"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93c0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41c0 2.08-.8 3.97-2.1 5.39z"/></svg>
-            WalletConnect
+        <button class="wallet-btn" id="mmBtn">
+            <svg class="wallet-icon" viewBox="0 0 24 24" fill="#E2761B">
+                <path d="M12 2L2 7l10 5l10-5l-10-5zM2 17l10 5l10-5M2 12l10 5l10-5"/>
+            </svg>
+            MetaMask
+        </button>
+        <button class="wallet-btn" id="tpBtn">
+            <svg class="wallet-icon" viewBox="0 0 24 24" fill="#2196F3">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+            </svg>
+            TP 钱包
         </button>
     </div>
+
     <button id="mintBtn" disabled>Connect Wallet First</button>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
 <script>
-// 等待ethers完全加载后执行
 function waitForEthers(callback) {
     if (window.ethers) callback();
     else setTimeout(() => waitForEthers(callback), 100);
@@ -56,51 +67,74 @@ function waitForEthers(callback) {
 
 waitForEthers(() => {
     const contractAddress = "0x1867bB04607FaBa07b512C4df08e7a6A71A6E4C4";
+    const chainId = 56;
     const chainIdHex = "0x38";
     const maxLimit = 10;
     let mintCount = 0;
+    let provider = null;
     let signer = null;
 
     const statusEl = document.getElementById("status");
     const mintBtn = document.getElementById("mintBtn");
-    const injectedBtn = document.getElementById("injectedBtn");
-    const wcBtn = document.getElementById("wcBtn");
+    const okxBtn = document.getElementById("okxBtn");
+    const mmBtn = document.getElementById("mmBtn");
+    const tpBtn = document.getElementById("tpBtn");
 
-    // 浏览器钱包直连（OKX/TP/Metamask）
-    injectedBtn.onclick = async () => {
-        if (!window.ethereum) {
-            alert("请使用OKX/TP/Metamask钱包内置浏览器访问！");
-            return;
-        }
+    // 链切换后重新获取provider和signer，彻底解决网络变更报错
+    async function getValidSigner() {
+        if (!window.ethereum) return null;
+        const newProvider = new ethers.providers.Web3Provider(window.ethereum);
+        await newProvider.send("eth_requestAccounts", []);
+        return newProvider.getSigner();
+    }
+
+    // 切换到BSC链
+    async function switchToBSC() {
+        if (!window.ethereum) return;
         try {
-            injectedBtn.disabled = true;
-            wcBtn.disabled = true;
-            statusEl.textContent = "连接中...";
-            const provider = new ethers.providers.Web3Provider(window.ethereum);
-            await provider.send("eth_requestAccounts", []);
-            signer = provider.getSigner();
-
-            // 切换BSC链
-            try {
-                await window.ethereum.request({method:"wallet_switchEthereumChain",params:[{chainId:chainIdHex}]});
-            } catch (e) {
-                if (e.code === 4902) {
-                    await window.ethereum.request({method:"wallet_addEthereumChain",params:[{chainId:chainIdHex,chainName:"BSC Mainnet",nativeCurrency:{name:"BNB",symbol:"BNB",decimals:18},rpcUrls:["https://bsc-dataseed1.binance.org/"],blockExplorerUrls:["https://bscscan.com"]}]});
-                } else throw e;
-            }
-
-            statusEl.textContent = "✅ 钱包已连接，可开始Mint";
-            statusEl.className = "status-success";
-            mintBtn.disabled = false;
-            mintBtn.textContent = "Start Mint";
+            await window.ethereum.request({
+                method: "wallet_switchEthereumChain",
+                params: [{ chainId: chainIdHex }]
+            });
         } catch (e) {
-            statusEl.textContent = "❌ 连接失败：" + (e.message || "未知错误");
-            injectedBtn.disabled = false;
-            wcBtn.disabled = false;
+            if (e.code === 4902) {
+                await window.ethereum.request({
+                    method: "wallet_addEthereumChain",
+                    params: [{
+                        chainId: chainIdHex,
+                        chainName: "BSC Mainnet",
+                        nativeCurrency: { name: "BNB", symbol: "BNB", decimals: 18 },
+                        rpcUrls: ["https://bsc-dataseed1.binance.org/"],
+                        blockExplorerUrls: ["https://bscscan.com"]
+                    }]
+                });
+            } else throw e;
         }
-    };
+    }
 
-    // Mint逻辑（10次上限+5/55提示）
+    // 绑定所有钱包按钮
+    [okxBtn, mmBtn, tpBtn].forEach(btn => {
+        btn.onclick = async () => {
+            try {
+                [okxBtn, mmBtn, tpBtn].forEach(b => b.disabled = true);
+                statusEl.textContent = "连接中...";
+
+                await switchToBSC();
+                signer = await getValidSigner();
+                if (!signer) throw new Error("连接失败");
+
+                statusEl.textContent = "✅ 钱包已连接，可开始Mint";
+                statusEl.className = "status-success";
+                mintBtn.disabled = false;
+                mintBtn.textContent = "Start Mint";
+            } catch (e) {
+                statusEl.textContent = "❌ 连接失败：" + (e.message || "未知错误");
+                [okxBtn, mmBtn, tpBtn].forEach(b => b.disabled = false);
+            }
+        };
+    });
+
+    // Mint逻辑
     mintBtn.onclick = async () => {
         if (!signer) {alert("请先连接钱包！");return;}
         if (mintCount >= maxLimit) {
@@ -115,15 +149,17 @@ waitForEthers(() => {
         statusEl.textContent = "请确认交易...";
 
         try {
-            const tx = await signer.sendTransaction({
+            // 每次mint前重新获取signer，彻底解决网络变更报错
+            const currentSigner = await getValidSigner();
+            const tx = await currentSigner.sendTransaction({
                 to: contractAddress,
                 value: ethers.constants.Zero,
                 gasLimit: ethers.utils.hexlify(500000)
             });
+
             await tx.wait();
             mintCount++;
 
-            // 10%概率暴击
             const isCrit = Math.random() < 0.1;
             if (isCrit) {
                 statusEl.textContent = "🎉🎉🎉 暴击啦!获得55枚太極";
@@ -138,6 +174,7 @@ waitForEthers(() => {
             mintBtn.textContent = "继续Mint";
             mintBtn.disabled = false;
         } catch (e) {
+            console.error(e);
             statusEl.textContent = `❌ 失败: ${e.message.slice(0,30)}`;
             mintBtn.textContent = "Mint Again";
             mintBtn.disabled = false;
