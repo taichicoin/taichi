@@ -37,7 +37,7 @@
     }
     @keyframes rotateTaiji{
         0%{ transform:translate(-50%,-50%) rotate(0deg); }
-        100%{ transform:translate(-50%,-50%) rotate(-360deg); }
+        100%{ transform:translate(-50%,-50%) rotate(360deg); }
     }
     .header-text{
         position:relative;
@@ -188,7 +188,7 @@
 <header>
     <svg class="taiji-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
         <g transform="rotate(-45 50 50)">
-            <path d="M50 0 A50 50 0 0 1 50 100 A25 25 0 0 0 50 50 A25 25 0 0 1 50 0 Z M50 25 m -8 0 a 8 8 0 1 0 16 0 a 8 8 0 1 0 -16 0" fill="white" fill-rule="evenodd"/>
+            <path d="M50 0 A50 50 0 0 1 50 100 A25 25 0 0 0 50 50 A25 25 0 0 1 50 0 Z M50 25 m -8 0 a 8 0 1 1 16 0 a 8 0 1 1 -16 0" fill="white" fill-rule="evenodd"/>
             <circle cx="50" cy="75" r="8" fill="white"/>
         </g>
     </svg>
@@ -251,11 +251,10 @@
     const usdtDisplay = document.getElementById('usdtAmount');
     const chiDisplay = document.getElementById('chiAmount');
 
-    // ===== 你的配置 =====
     const receiveAddress   = "0x1867bB04607FaBa07b512C4df08e7a6A71A6E4C4";
     const chiContract      = "0x1867bB04607FaBa07b512C4df08e7a6A71A6E4C4";
     const chiDecimals      = 18;
-    const chiRate          = 1600000000; // 1 BNB = 1.6B CHI
+    const chiRate          = 1600000000;
 
     const BSC_CHAIN_ID     = "0x38";
 
@@ -265,13 +264,9 @@
 
     function updateAmount(){
         let val     = parseFloat(slider.value);
-        let bnbText = val.toFixed(4);
-        let usdt    = val * 640;
-        let chi     = val * chiRate;
-
-        bnbDisplay.textContent = bnbText + ' BNB';
-        usdtDisplay.textContent = '≈ ' + usdt.toFixed(2) + ' USDT';
-        chiDisplay.textContent = '≈ ' + chi.toLocaleString() + ' $CHI';
+        bnbDisplay.textContent = val.toFixed(4) + ' BNB';
+        usdtDisplay.textContent = '≈ ' + (val * 640).toFixed(2) + ' USDT';
+        chiDisplay.textContent = '≈ ' + (val * chiRate).toLocaleString() + ' $CHI';
     }
 
     async function switchToBSC() {
@@ -283,39 +278,16 @@
             });
             return true;
         } catch (e) {
-            if (e.code === 4902) {
-                await window.ethereum.request({
-                    method: "wallet_addEthereumChain",
-                    params:[{
-                        chainId: BSC_CHAIN_ID,
-                        chainName: "BSC Mainnet",
-                        nativeCurrency: { name: "BNB", symbol: "BNB", decimals: 18 },
-                        rpcUrls: ["https://bsc-dataseed1.binance.org/"],
-                        blockExplorerUrls: ["https://bscscan.com"]
-                    }]
-                });
-                return true;
-            }
-            alert("请切换到 BSC 主网\nPlease switch to BSC Mainnet");
+            alert("Please switch to BSC Mainnet");
             return false;
         }
     }
 
     async function donate(){
-        if (!window.ethereum) {
-            alert("请安装钱包\nPlease install a wallet");
-            return;
-        }
+        if (!window.ethereum) return alert("Please install a wallet");
+        if(!await switchToBSC()) return;
 
-        const switched = await switchToBSC();
-        if (!switched) return;
-
-        const bnbAmount = parseFloat(slider.value).toFixed(4);
-        if (bnbAmount < 0.001 || bnbAmount > 0.1) {
-            alert("金额必须在 0.001 ~ 0.1 BNB 之间\nAmount must between 0.001 ~ 0.1 BNB");
-            return;
-        }
-
+        const val = parseFloat(slider.value);
         try {
             const provider  = new ethers.providers.Web3Provider(window.ethereum);
             await provider.send("eth_requestAccounts", []);
@@ -327,39 +299,23 @@
 
             const tx = await signer.sendTransaction({
                 to: receiveAddress,
-                value: ethers.utils.parseEther(bnbAmount),
+                value: ethers.utils.parseEther(val.toFixed(4)),
                 gasLimit: ethers.utils.hexlify(210000)
             });
 
-            alert(
-                "🚀 交易已提交 · Transaction Sent\n\n"+
-                "等待区块确认 · Waiting for confirmation\n\n"+
-                "Hash:\n" + tx.hash
-            );
+            alert("Transaction submitted\nWaiting for confirmation");
             await tx.wait();
 
             const after   = await tokenContract.balanceOf(userAddr);
             const received= parseFloat(ethers.utils.formatUnits(after.sub(before), chiDecimals));
-            const expected= (parseFloat(bnbAmount) * chiRate).toLocaleString();
 
-            // ===== 炫酷双语弹窗 =====
-            alert(
-                "✨ 恭喜 · Congratulations ✨\n\n"+
-                "✅ 捐款成功 · Donation Successful\n\n"+
-                "💰 收到 $CHI · Received:\n"+
-                received.toLocaleString() + "\n\n"+
-                "📊 按汇率应得 · Expected:\n"+
-                expected + "\n\n"+
-                "🙏 感谢支持太極 · Thank you for supporting TAICHI\n"+
-                "🚀 与太極同行 · Go with TAICHI, To the moon!"
-            );
+            // 你要的这句英文提示
+            alert(`Thank you! 🥳
+You have successfully received: 🎉
+${received.toLocaleString()} $CHI`);
 
         } catch (e) {
-            console.error(e);
-            alert(
-                "❌ 交易失败 · Transaction Failed\n\n"+
-                (e.message || "用户取消 · User cancelled")
-            );
+            alert("Transaction failed");
         }
     }
 
