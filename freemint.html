@@ -73,7 +73,7 @@ waitForEthers(() => {
     const chainIdHex = "0x38";
     const decimals = 18;
     const maxLimit = 10;
-    let mintCount = 0;
+    let mintCount = parseInt(localStorage.getItem("taichi_mint_count") || "0");
     let provider = null;
     let signer = null;
 
@@ -84,10 +84,19 @@ waitForEthers(() => {
     const mmBtn = document.getElementById("mmBtn");
     const tpBtn = document.getElementById("tpBtn");
 
-    // ERC20 Transfer 事件ABI（真实读链上mint数量）
+    // ERC20 Transfer 事件ABI（真实读链上数量）
     const transferAbi = ["event Transfer(address indexed from, address indexed to, uint256 value)"];
 
-    // 每次mint前重新获取signer，解决网络变更报错
+    // 初始化计数
+    countInfoEl.textContent = `已 mint ${mintCount}/${maxLimit} 次`;
+    if (mintCount >= maxLimit) {
+        statusEl.textContent = "✅ 已达上限，每人最多10次";
+        statusEl.className = "status-limit";
+        mintBtn.textContent = "已达上限";
+        mintBtn.disabled = true;
+        [okxBtn, mmBtn, tpBtn].forEach(b => b.disabled = true);
+    }
+
     async function getValidSigner() {
         if (!window.ethereum) return null;
         const newProvider = new ethers.providers.Web3Provider(window.ethereum);
@@ -95,33 +104,23 @@ waitForEthers(() => {
         return newProvider.getSigner();
     }
 
-    // 切换到BSC链
     async function switchToBSC() {
         if (!window.ethereum) return;
         try {
-            await window.ethereum.request({
-                method: "wallet_switchEthereumChain",
-                params: [{ chainId: chainIdHex }]
-            });
+            await window.ethereum.request({method:"wallet_switchEthereumChain",params:[{chainId:chainIdHex}]});
         } catch (e) {
             if (e.code === 4902) {
-                await window.ethereum.request({
-                    method: "wallet_addEthereumChain",
-                    params: [{
-                        chainId: chainIdHex,
-                        chainName: "BSC Mainnet",
-                        nativeCurrency: { name: "BNB", symbol: "BNB", decimals: 18 },
-                        rpcUrls: ["https://bsc-dataseed1.binance.org/"],
-                        blockExplorerUrls: ["https://bscscan.com"]
-                    }]
-                });
+                await window.ethereum.request({method:"wallet_addEthereumChain",params:[{chainId:chainIdHex,chainName:"BSC Mainnet",nativeCurrency:{name:"BNB",symbol:"BNB",decimals:18},rpcUrls:["https://bsc-dataseed1.binance.org/"],blockExplorerUrls:["https://bscscan.com"]}]});
             } else throw e;
         }
     }
 
-    // 绑定所有钱包按钮
     [okxBtn, mmBtn, tpBtn].forEach(btn => {
         btn.onclick = async () => {
+            if (mintCount >= maxLimit) {
+                alert("已达上限！最多mint 10次");
+                return;
+            }
             try {
                 [okxBtn, mmBtn, tpBtn].forEach(b => b.disabled = true);
                 statusEl.textContent = "连接中...";
@@ -142,7 +141,6 @@ waitForEthers(() => {
         };
     });
 
-    // Mint逻辑（真实读链上数量+次数统计）
     mintBtn.onclick = async () => {
         if (!signer) {alert("请先连接钱包！");return;}
         if (mintCount >= maxLimit) {
@@ -157,7 +155,6 @@ waitForEthers(() => {
         statusEl.textContent = "请确认交易...";
 
         try {
-            // 每次mint前重新获取signer
             const currentSigner = await getValidSigner();
             const userAddress = await currentSigner.getAddress();
             const contract = new ethers.Contract(contractAddress, transferAbi, provider);
@@ -171,7 +168,7 @@ waitForEthers(() => {
             statusEl.textContent = "交易上链中...";
             const receipt = await tx.wait();
 
-            // 真实解析链上Transfer事件，读mint数量
+            // 真实读链上Transfer事件，获取实际收到的数量
             let mintAmount = ethers.BigNumber.from(0);
             for (const log of receipt.logs) {
                 try {
@@ -183,11 +180,11 @@ waitForEthers(() => {
                 } catch (e) {}
             }
 
-            // 按链上真实数量显示提示
             const amount = ethers.utils.formatUnits(mintAmount, decimals);
             const numAmount = parseFloat(amount);
             let alertMsg, statusMsg, statusClass;
 
+            // 100%按链上真实数量显示，彻底解决假暴击
             if (numAmount === 55) {
                 statusMsg = "🎉🎉🎉 暴击啦!恭喜获得55枚太極";
                 statusClass = "status-crit";
@@ -210,15 +207,16 @@ waitForEthers(() => {
             statusEl.className = statusClass;
             alert(alertMsg);
             mintCount++;
-
-            // 更新次数统计
+            localStorage.setItem("taichi_mint_count", mintCount.toString());
             countInfoEl.textContent = `已 mint ${mintCount}/${maxLimit} 次`;
+
             if (mintCount >= maxLimit) {
                 statusEl.textContent = "✅ 已达上限，每人最多10次";
                 statusEl.className = "status-limit";
                 alert("已达上限！最多mint 10次");
                 mintBtn.textContent = "已达上限";
                 mintBtn.disabled = true;
+                [okxBtn, mmBtn, tpBtn].forEach(b => b.disabled = true);
             } else {
                 mintBtn.textContent = "继续Mint";
                 mintBtn.disabled = false;
