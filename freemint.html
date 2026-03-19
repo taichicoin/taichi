@@ -50,11 +50,13 @@
     .wallet-buttons{
         display:grid;
         grid-template-columns:1fr 1fr 1fr;
-        gap:10px;
-        margin:15px 0;
+        gap:4px;
+        margin:15px 0 0 0;
+        width:fit-content;
+        margin-left:-10px;
     }
 
-    .wallet-btn{padding:8px;border-radius:10px;border:2px solid #ffc107;background:#fff;color:#ffc107;font-weight:bold;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;}
+    .wallet-btn{padding:8px 6px;border-radius:10px;border:2px solid #ffc107;background:#fff;color:#ffc107;font-weight:bold;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:4px;}
     .wallet-btn:hover{background:#fff9e6;border-color:#ffd24d;color:#ffd24d;}
     .wallet-icon{width:20px;height:20px;border-radius:4px;}
 
@@ -116,14 +118,14 @@
     }
     .btn-row{
         display:flex;
-        gap:12px;
-        margin:14px 0;
+        gap:6px;
+        margin:10px 0;
         max-width:480px;
         width:100%;
     }
     .btn-half{
         flex:1;
-        padding:14px;
+        padding:14px 10px;
         font-size:15px;
         margin:0;
     }
@@ -178,19 +180,20 @@
 
 <div class="btn-row">
     <a href="https://t.me/CHiiiiiiiiiiiiiiiiii" class="btn btn-half">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-right:6px;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-right:4px;">
             <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
         </svg>
         Telegram
     </a>
     <a href="https://x.com/taichicoin" class="btn btn-half">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle; margin-right:6px;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle; margin-right:4px;">
             <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
         </svg>
-        X / Twitter
+        X
     </a>
 </div>
-<a href="https://www.taichicoin.xyz/" class="btn" style="max-width:480px;">🏠 Home</a>
+
+<a href="https://www.taichicoin.xyz/" class="btn" style="max-width:480px;margin-top:10px;">🏠 Home</a>
 
 <footer>© 2026 TAICHI</footer>
 
