@@ -208,13 +208,11 @@ waitForEthers(() => {
     const contractAddress = "0x7390e2146E6f23434957e893627957a927332815";
     const chainId = 56;
     const chainIdHex = "0x38";
-    const decimals = 18;
     const maxLimit = 10;
 
     let currentAccount = null;
     let provider = null;
     let signer = null;
-    let contract = null;
 
     const statusEl = document.getElementById("status");
     const countInfoEl = document.getElementById("countInfo");
@@ -223,8 +221,6 @@ waitForEthers(() => {
     const okxBtn = document.getElementById("okxBtn");
     const mmBtn = document.getElementById("mmBtn");
     const tpBtn = document.getElementById("tpBtn");
-
-    const abi = ["event Transfer(address indexed from, address indexed to, uint256 value)"];
 
     function getCount(addr) {
         if (!addr) return 0;
@@ -315,7 +311,6 @@ waitForEthers(() => {
                 statusEl.textContent = "Connecting...";
                 await switchChain();
                 signer = await getSigner();
-                contract = new ethers.Contract(contractAddress, abi, provider);
                 refreshUI();
             } catch (e) {
                 statusEl.textContent = "Connection failed";
@@ -348,39 +343,11 @@ waitForEthers(() => {
             });
 
             statusEl.textContent = "Waiting for confirmation...";
-            const receipt = await tx.wait();
-            let amount = ethers.BigNumber.from(0);
-
-            for (const log of receipt.logs) {
-                try {
-                    const p = contract.interface.parseLog(log);
-                    if (p.name === "Transfer" && p.args.to.toLowerCase() === currentAccount.toLowerCase()) {
-                        amount = p.args.value;
-                        break;
-                    }
-                } catch (e) {}
-            }
-
-            const num = parseFloat(ethers.utils.formatUnits(amount, decimals));
-            let msg, cls;
-
-            if (num === 5) {
-                msg = "Congratulations! 🥳 You have successfully claimed 5 $太極 coins! 🎉";
-                cls = "status-success";
-                alert(msg);
-            } else if (num === 55) {
-                msg = "Congratulations! 🥳 You have successfully claimed 55 $太極 coins! 🎉🎉🎉";
-                cls = "status-crit";
-                alert(msg);
-            } else {
-                msg = "Mint successful";
-                cls = "status-success";
-                alert(msg);
-            }
+            await tx.wait();
 
             incCount(currentAccount);
-            statusEl.textContent = msg;
-            statusEl.className = cls;
+            statusEl.textContent = "Congratulations! 🥳 Claim successful!";
+            statusEl.className = "status-success";
             refreshUI();
 
         } catch (e) {
