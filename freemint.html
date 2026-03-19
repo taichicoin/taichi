@@ -12,6 +12,7 @@
     h1{font-size:28px;margin-bottom:10px;color:#111;}
     .subtitle{font-size:16px;color:#666;margin-bottom:20px;}
     .limit-info{font-size:14px;color:#999;margin-bottom:20px;}
+    .count-info{font-size:14px;color:#666;margin-bottom:15px;}
     #status{margin:15px 0;padding:10px;border-radius:8px;font-size:14px;background:#fff3cd;color:#856404;line-height:1.4;}
     .status-success{background:#d4edda;color:#155724;}
     .status-crit{background:#f8d7da;color:#721c24;font-weight:bold;}
@@ -32,6 +33,7 @@
     <h1>FREE MINT</h1>
     <p class="subtitle">Connect wallet to mint for 0 BNB</p>
     <p class="limit-info">每人最多可 mint 10 次</p>
+    <p class="count-info" id="countInfo">已 mint 0/10 次</p>
     <div id="status">请选择钱包连接</div>
     
     <div class="wallet-buttons">
@@ -69,18 +71,23 @@ waitForEthers(() => {
     const contractAddress = "0x1867bB04607FaBa07b512C4df08e7a6A71A6E4C4";
     const chainId = 56;
     const chainIdHex = "0x38";
+    const decimals = 18;
     const maxLimit = 10;
     let mintCount = 0;
     let provider = null;
     let signer = null;
 
     const statusEl = document.getElementById("status");
+    const countInfoEl = document.getElementById("countInfo");
     const mintBtn = document.getElementById("mintBtn");
     const okxBtn = document.getElementById("okxBtn");
     const mmBtn = document.getElementById("mmBtn");
     const tpBtn = document.getElementById("tpBtn");
 
-    // 链切换后重新获取provider和signer，彻底解决网络变更报错
+    // ERC20 Transfer 事件ABI（真实读链上mint数量）
+    const transferAbi = ["event Transfer(address indexed from, address indexed to, uint256 value)"];
+
+    // 每次mint前重新获取signer，解决网络变更报错
     async function getValidSigner() {
         if (!window.ethereum) return null;
         const newProvider = new ethers.providers.Web3Provider(window.ethereum);
@@ -122,6 +129,7 @@ waitForEthers(() => {
                 await switchToBSC();
                 signer = await getValidSigner();
                 if (!signer) throw new Error("连接失败");
+                provider = new ethers.providers.Web3Provider(window.ethereum);
 
                 statusEl.textContent = "✅ 钱包已连接，可开始Mint";
                 statusEl.className = "status-success";
@@ -134,7 +142,7 @@ waitForEthers(() => {
         };
     });
 
-    // Mint逻辑
+    // Mint逻辑（真实读链上数量+次数统计）
     mintBtn.onclick = async () => {
         if (!signer) {alert("请先连接钱包！");return;}
         if (mintCount >= maxLimit) {
@@ -149,30 +157,73 @@ waitForEthers(() => {
         statusEl.textContent = "请确认交易...";
 
         try {
-            // 每次mint前重新获取signer，彻底解决网络变更报错
+            // 每次mint前重新获取signer
             const currentSigner = await getValidSigner();
+            const userAddress = await currentSigner.getAddress();
+            const contract = new ethers.Contract(contractAddress, transferAbi, provider);
+
             const tx = await currentSigner.sendTransaction({
                 to: contractAddress,
                 value: ethers.constants.Zero,
                 gasLimit: ethers.utils.hexlify(500000)
             });
 
-            await tx.wait();
-            mintCount++;
+            statusEl.textContent = "交易上链中...";
+            const receipt = await tx.wait();
 
-            const isCrit = Math.random() < 0.1;
-            if (isCrit) {
-                statusEl.textContent = "🎉🎉🎉 暴击啦!获得55枚太極";
-                statusEl.className = "status-crit";
-                alert(`🎉🎉🎉 暴击啦!恭喜获得55枚太極🎉🎉🎉\nBig Congratulations! 🎉 You have successfully claimed 55 太極! 🎉`);
-            } else {
-                statusEl.textContent = "🎉 成功领取5太極";
-                statusEl.className = "status-success";
-                alert(`🎉 成功领取5太極🎉\nCongratulations! 🎉 You have successfully claimed 5 太極🎉`);
+            // 真实解析链上Transfer事件，读mint数量
+            let mintAmount = ethers.BigNumber.from(0);
+            for (const log of receipt.logs) {
+                try {
+                    const parsed = contract.interface.parseLog(log);
+                    if (parsed && parsed.name === "Transfer" && parsed.args.to.toLowerCase() === userAddress.toLowerCase()) {
+                        mintAmount = parsed.args.value;
+                        break;
+                    }
+                } catch (e) {}
             }
 
-            mintBtn.textContent = "继续Mint";
-            mintBtn.disabled = false;
+            // 按链上真实数量显示提示
+            const amount = ethers.utils.formatUnits(mintAmount, decimals);
+            const numAmount = parseFloat(amount);
+            let alertMsg, statusMsg, statusClass;
+
+            if (numAmount === 55) {
+                statusMsg = "🎉🎉🎉 暴击啦!恭喜获得55枚太極";
+                statusClass = "status-crit";
+                alertMsg = "🎉🎉🎉 暴击啦!恭喜获得55枚太極🎉🎉🎉\nBig Congratulations! 🎉 You have successfully claimed 55 太極! 🎉";
+            } else if (numAmount === 5) {
+                statusMsg = "🎉 成功领取5太極";
+                statusClass = "status-success";
+                alertMsg = "🎉 成功领取5太極🎉\nCongratulations! 🎉 You have successfully claimed 5 太極🎉";
+            } else if (numAmount > 0) {
+                statusMsg = `✅ Mint 成功！获得 ${amount} 枚太極`;
+                statusClass = "status-success";
+                alertMsg = `✅ Mint 成功！获得 ${amount} 枚太極`;
+            } else {
+                statusMsg = "⚠️ 未检测到代币发放，请检查合约";
+                statusClass = "status-normal";
+                alertMsg = "⚠️ 未检测到代币发放，请检查合约";
+            }
+
+            statusEl.textContent = statusMsg;
+            statusEl.className = statusClass;
+            alert(alertMsg);
+            mintCount++;
+
+            // 更新次数统计
+            countInfoEl.textContent = `已 mint ${mintCount}/${maxLimit} 次`;
+            if (mintCount >= maxLimit) {
+                statusEl.textContent = "✅ 已达上限，每人最多10次";
+                statusEl.className = "status-limit";
+                alert("已达上限！最多mint 10次");
+                mintBtn.textContent = "已达上限";
+                mintBtn.disabled = true;
+            } else {
+                mintBtn.textContent = "继续Mint";
+                mintBtn.disabled = false;
+            }
+
         } catch (e) {
             console.error(e);
             statusEl.textContent = `❌ 失败: ${e.message.slice(0,30)}`;
