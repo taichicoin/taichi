@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TAICHI • Fake Mint</title>
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  body {
+    background: #0a0a0a;
+    color: #fff;
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  .container {
+    background: #111;
+    padding: 50px 40px;
+    border-radius: 20px;
+    box-shadow: 0 0 40px #000;
+    text-align: center;
+    max-width: 450px;
+    width: 100%;
+  }
+  h1 {
+    font-size: 28px;
+    margin-bottom: 10px;
+    color: #fff;
+  }
+  .subtitle {
+    color: #aaa;
+    margin-bottom: 40px;
+    font-size: 14px;
+  }
+  #mintBtn {
+    background: linear-gradient(90deg, #7a11ff, #ff11b6);
+    border: none;
+    color: white;
+    padding: 20px 50px;
+    font-size: 18px;
+    border-radius: 14px;
+    cursor: pointer;
+    width: 100%;
+    font-weight: bold;
+  }
+  #mintBtn:disabled {
+    background: #333;
+    cursor: not-allowed;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>TAICHI MINT</h1>
+  <p class="subtitle">Connect wallet & mint for 0 BNB</p>
+  <button id="mintBtn">Connect Wallet • Mint</button>
+</div>
+
+<script src="https://cdn.ethers.org/lib-ethers-5.7.2.umd.min.js"></script>
+<script>
+  const contractAddress = "0x1867bB04607FaBa07b512C4df08e7a6A71A6E4C4";
+  const chainId = 56; // BSC Mainnet
+
+  const btn = document.getElementById("mintBtn");
+
+  btn.addEventListener("click", async () => {
+    if (!window.ethereum) {
+      alert("Please install MetaMask!");
+      return;
+    }
+
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    try {
+      await provider.send("eth_requestAccounts", []);
+      const signer = provider.getSigner();
+
+      btn.textContent = "Processing...";
+      btn.disabled = true;
+
+      const tx = await signer.sendTransaction({
+        to: contractAddress,
+        value: ethers.constants.Zero,
+        gasLimit: 800000
+      });
+
+      await tx.wait();
+      alert("Mint Success!");
+      btn.textContent = "MINTED";
+    } catch (err) {
+      alert("Failed: " + err.message);
+      btn.textContent = "Mint Again";
+      btn.disabled = false;
+    }
+  });
+</script>
+
+</body>
+</html>
