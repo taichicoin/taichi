@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Donate - 太極 MINT</title>
+<style>
+    *{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif;}
+    body{background:#fff;color:#111;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+    .mint-card{background:#f9f9f9;border-radius:14px;padding:2rem;border-left:4px solid #ffc107;box-shadow:0 4px 12px rgba(0,0,0,0.08);max-width:480px;width:100%;text-align:center;}
+    .logo{font-size:32px;font-weight:700;color:#e69500;margin-bottom:12px;}
+    h1{font-size:28px;margin-bottom:10px;color:#111;}
+    .subtitle{font-size:16px;color:#666;margin-bottom:20px;}
+
+    .rate-info{background:#fff3cd;border-radius:8px;padding:12px;font-size:14px;line-height:1.6;color:#856404;margin-bottom:20px;text-align:left;}
+    .range-row{margin:20px 0;}
+    .range-label{display:flex;justify-content:space-between;font-size:14px;color:#666;margin-bottom:8px;}
+
+    input[type="range"]{
+        width:100%;height:8px;border-radius:99px;
+        background:#ffd24d;outline:none;appearance:none;
+    }
+    input[type="range"]::-webkit-slider-thumb{
+        appearance:none;width:20px;height:20px;
+        border-radius:50%;background:#ffc107;cursor:pointer;
+    }
+
+    .amount-show{font-size:18px;font-weight:bold;color:#111;margin-bottom:20px;}
+
+    #status{margin:15px 0;padding:10px;border-radius:8px;font-size:14px;background:#fff3cd;color:#856404;line-height:1.4;}
+    .status-success{background:#d4edda;color:#155724;}
+    .status-error{background:#f8d7da;color:#721c24;}
+
+    #connectBtn,#donateBtn{
+        display:block;width:100%;padding:16px;border-radius:12px;margin:10px 0;
+        text-align:center;text-decoration:none;font-size:16px;font-weight:bold;
+        transition:all 0.2s ease;user-select:none;
+        background:#ffffff;border:2px solid #ffc107;color:#ffc107;
+        box-shadow:0 4px 0 #d48f00,0 6px 12px rgba(255,193,7,0.25),inset 0 1px 0 rgba(255,255,255,0.9);
+        cursor:pointer;
+    }
+    #connectBtn:hover,#donateBtn:hover{
+        border-color:#ffd24d;color:#ffd24d;transform:translateY(-2px);
+        box-shadow:0 6px 0 #d48f00,0 8px 16px rgba(255,193,7,0.3),inset 0 1px 0 rgba(255,255,255,1);
+    }
+    #connectBtn:active,#donateBtn:active{
+        border-color:#e6ac00;color:#e6ac00;transform:translateY(2px);
+        box-shadow:0 2px 0 #d48f00,0 3px 6px rgba(255,193,7,0.25),inset 0 1px 0 rgba(255,255,255,0.7);
+    }
+    #connectBtn:disabled,#donateBtn:disabled{
+        background:#eee;border-color:#ccc;color:#999;cursor:not-allowed;transform:none;box-shadow:none;
+    }
+</style>
+</head>
+
+<body>
+<div class="mint-card">
+    <div class="logo">太極</div>
+    <h1>Donate Support</h1>
+    <p class="subtitle">Support the TaiChi project</p>
+
+    <div class="rate-info">
+        1 BNB = 162400 太極<br>
+        1 USDT ≈ 2500 太極<br>
+        Only BNB supported<br>
+        Min: 0.001 BNB | Max: 0.1 BNB
+    </div>
+
+    <div class="range-row">
+        <div class="range-label">
+            <span>0.001 BNB</span>
+            <span>0.1 BNB</span>
+        </div>
+        <input type="range" id="slider" min="1" max="100" value="10">
+        <div class="amount-show">
+            Amount: <span id="showAmount">0.010</span> BNB
+        </div>
+    </div>
+
+    <div id="status">Please connect wallet first</div>
+
+    <button id="connectBtn">Connect Wallet</button>
+    <button id="donateBtn" disabled>Confirm Donation</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+<script>
+function waitForEthers(cb) {
+    if (window.ethers) cb();
+    else setTimeout(() => waitForEthers(cb), 100);
+}
+
+waitForEthers(() => {
+    const TO_ADDR = "0x3eB7Dae812478bD4d9111fe9eF32BB7d3e88b1b2";
+    const MIN = 0.001;
+    const MAX = 0.1;
+
+    let signer = null;
+    let provider = null;
+
+    const slider = document.getElementById("slider");
+    const showAmount = document.getElementById("showAmount");
+    const status = document.getElementById("status");
+    const connectBtn = document.getElementById("connectBtn");
+    const donateBtn = document.getElementById("donateBtn");
+
+    function calcAmount() {
+        let v = slider.value / 100;
+        let amt = MIN + v * (MAX - MIN);
+        return Math.round(amt * 10000) / 10000;
+    }
+
+    slider.oninput = () => {
+        showAmount.innerText = calcAmount().toFixed(4);
+    };
+
+    connectBtn.onclick = async () => {
+        if (!window.ethereum) {
+            status.innerText = "Please use OKX / MetaMask / TP Wallet";
+            status.className = "status-error";
+            return;
+        }
+        try {
+            connectBtn.disabled = true;
+            status.innerText = "Connecting...";
+            status.className = "";
+
+            provider = new ethers.providers.Web3Provider(window.ethereum);
+            await provider.send("eth_requestAccounts", []);
+            signer = provider.getSigner();
+
+            status.innerText = "✅ Wallet connected";
+            status.className = "status-success";
+            donateBtn.disabled = false;
+            connectBtn.innerText = "Connected";
+        } catch (e) {
+            status.innerText = "❌ Connection failed";
+            status.className = "status-error";
+            connectBtn.disabled = false;
+        }
+    };
+
+    donateBtn.onclick = async () => {
+        if (!signer) return;
+        const val = calcAmount();
+        if (val < MIN || val > MAX) {
+            status.innerText = "Amount out of limit";
+            status.className = "status-error";
+            return;
+        }
+        try {
+            donateBtn.disabled = true;
+            status.innerText = "Please confirm in wallet...";
+            status.className = "";
+
+            const tx = await signer.sendTransaction({
+                to: TO_ADDR,
+                value: ethers.utils.parseEther(val.toString())
+            });
+
+            status.innerText = "Transaction on chain...";
+            await tx.wait();
+
+            status.innerText = "🎉 Donation successful, thank you!";
+            status.className = "status-success";
+        } catch (e) {
+            status.innerText = "❌ Transaction cancelled or failed";
+            status.className = "status-error";
+        } finally {
+            donateBtn.disabled = false;
+        }
+    };
+});
+</script>
+</body>
+</html>
