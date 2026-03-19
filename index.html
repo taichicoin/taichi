@@ -178,9 +178,9 @@
     </div>
 </header>
 
-<!-- 🔥 新增：跳转 Mint 页按钮（和官网风格完全一致） -->
 <div class="container">
     <a href="freemin.html" class="btn">🚀 FREE MINT (0 BNB)</a>
+    <a href="https://www.taichicoin.xyz/donate.html" class="btn">🎁 Donor Airdrop</a>
 </div>
 
 <div class="container">
@@ -226,7 +226,11 @@
     function copyCA(){
         const text = document.getElementById("caText").innerText;
         navigator.clipboard.writeText(text).then(()=>{
-            alert("CA Copied:\n"+text);
+            alert(
+                "CA Copied:\n" + text + "\n\n" +
+                "⚠️ 请勿向该合约地址转账！\n" +
+                "⚠️ Do NOT send funds to this contract address!"
+            );
         });
     }
 </script>
