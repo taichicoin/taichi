@@ -15,7 +15,6 @@
         background:#ffffff;
         color:#111;
     }
-    /* 完全保留你原来的黄色渐变背景 */
     header{
         background: radial-gradient(circle at center,#ffd54f 0%,#ffb300 40%,#ff9800 100%);
         color:#111;
@@ -25,7 +24,6 @@
         overflow:hidden;
         min-height:300px;
     }
-    /* 太极样式：逆时针旋转、居中、亮度全部保留 */
     .taiji-logo{
         position:absolute;
         top:50%;
@@ -37,7 +35,6 @@
         animation: rotateTaiji 20s linear infinite;
         pointer-events:none;
     }
-    /* 逆时针旋转动画完全保留 */
     @keyframes rotateTaiji{
         0%{
             transform:translate(-50%,-50%) rotate(0deg);
@@ -57,7 +54,6 @@
     p{
         font-size:16px;
     }
-    /* 内容区域完全保留 */
     .container{
         max-width:800px;
         margin:2rem auto;
@@ -80,7 +76,6 @@
         line-height:1.6;
         color:#333;
     }
-    /* CA地址区域完全保留 */
     .ca-box{
         background:#f1f1f1;
         border:1px solid #ddd;
@@ -107,7 +102,6 @@
         font-weight:bold;
         cursor:pointer;
     }
-    /* 核心修改：按钮基础样式，统一黄边空白风格，保留顺滑过渡 */
     .btn{
         display:block;
         padding:16px;
@@ -119,17 +113,15 @@
         font-weight:bold;
         transition: all 0.2s ease;
         user-select: none;
-        /* 核心修改：中间空白底色+黄色边框+黄色文字，和左侧黄线同色 */
         background: #ffffff;
         border: 2px solid #ffc107;
         color: #ffc107;
-        /* 核心修改：和左侧黄线匹配的黄色系立体阴影，模拟凸起厚度 */
         box-shadow: 
             0 4px 0 #d48f00,
             0 6px 12px rgba(255, 193, 7, 0.25),
             inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        cursor: pointer;
     }
-    /* 按钮hover悬浮效果：上浮+提亮+阴影加深，增强立体交互 */
     .btn:hover{
         border-color: #ffd24d;
         color: #ffd24d;
@@ -139,7 +131,6 @@
             0 8px 16px rgba(255, 193, 7, 0.3),
             inset 0 1px 0 rgba(255, 255, 255, 1);
     }
-    /* 按钮点击按压效果：下沉+阴影缩小，模拟真实按压手感 */
     .btn:active{
         border-color: #e6ac00;
         color: #e6ac00;
@@ -149,13 +140,11 @@
             0 3px 6px rgba(255, 193, 7, 0.25),
             inset 0 1px 0 rgba(255, 255, 255, 0.7);
     }
-    /* 页脚完全保留 */
     footer{
         text-align:center;
         padding:2rem;
         color:#666;
     }
-    /* 手机端适配完全保留 */
     @media (max-width:768px){
         header{
             min-height:220px;
@@ -177,12 +166,9 @@
 <body>
 
 <header>
-    <!-- 太极形状、鱼眼位置、旋转动画完全保留 -->
     <svg class="taiji-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
         <g transform="rotate(-45 50 50)">
-            <!-- 白色阳鱼主体，镂空鱼眼透出黄色背景 -->
             <path d="M50 0 A50 50 0 0 1 50 100 A25 25 0 0 0 50 50 A25 25 0 0 1 50 0 Z M50 25 m -8 0 a 8 8 0 1 0 16 0 a 8 8 0 1 0 -16 0" fill="white" fill-rule="evenodd"/>
-            <!-- 标准位置的白色小圆（阴鱼鱼眼） -->
             <circle cx="50" cy="75" r="8" fill="white"/>
         </g>
     </svg>
@@ -191,6 +177,11 @@
         <p>万物负阴而抱阳，冲气以为和。</p>
     </div>
 </header>
+
+<!-- 🔥 新增：跳转 Mint 页按钮（和官网风格完全一致） -->
+<div class="container">
+    <a href="Freemint.html" class="btn">🚀 FREE MINT (0 BNB)</a>
+</div>
 
 <div class="container">
     <div class="card">
@@ -242,4 +233,3 @@
 
 </body>
 </html>
-
