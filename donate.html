@@ -71,9 +71,9 @@
             <span>0.001 BNB</span>
             <span>0.1 BNB</span>
         </div>
-        <input type="range" id="slider" min="1" max="100" value="10">
+        <input type="range" id="slider" min="0" max="1000" value="10">
         <div class="amount-show">
-            Amount: <span id="showAmount">0.010</span> BNB
+            Amount: <span id="showAmount">0.0010</span> BNB
         </div>
     </div>
 
@@ -105,7 +105,7 @@ waitForEthers(() => {
     const donateBtn = document.getElementById("donateBtn");
 
     function calcAmount() {
-        let v = slider.value / 100;
+        let v = slider.value / 1000;
         let amt = MIN + v * (MAX - MIN);
         return Math.round(amt * 10000) / 10000;
     }
