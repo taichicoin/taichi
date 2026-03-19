@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -366,11 +366,4 @@ window.addEventListener('load', async function() {
             console.error(e);
             statusEl.textContent = `❌ 失败：${e.message.slice(0, 30)}`;
             statusEl.className = "status-normal";
-            mintBtn.textContent = "Mint Again";
-            mintBtn.disabled = false;
-        }
-    };
-});
-</script>
-</body>
-</html>
+            mintBtn
