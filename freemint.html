@@ -28,7 +28,17 @@
         width:100%;
         text-align:center;
     }
-    .logo{font-size:32px;font-weight:700;color:#e69500;margin-bottom:12px;}
+    /* 太极LOGO样式 */
+    .taiji-mini {
+        width: 60px;
+        height: 60px;
+        margin: 0 auto 12px;
+        animation: rotateTaiji 12s linear infinite;
+    }
+    @keyframes rotateTaiji{
+        0%{ transform: rotate(0deg); }
+        100%{ transform: rotate(-360deg); }
+    }
     h1{font-size:28px;margin-bottom:10px;color:#111;}
     .subtitle{font-size:16px;color:#666;margin-bottom:20px;}
     .limit-info{font-size:14px;color:#999;margin-bottom:20px;}
@@ -38,17 +48,17 @@
     .status-crit{background:#f8d7da;color:#721c24;font-weight:bold;}
     .status-limit{background:#e2e3e5;color:#383d41;font-weight:bold;}
 
-    /* 三个钱包按钮整体往左移一点 */
+    /* 钱包按钮再往左偏移一点点 */
     .wallet-buttons{
         display:grid;
         grid-template-columns:1fr 1fr 1fr;
         gap:10px;
         margin:15px 0;
-        position:relative;
-        left:-8px;
+        margin-left: -10px;
     }
 
-    .wallet-btn{padding:12px;border-radius:10px;border:2px solid #ffc107;background:#fff;color:#ffc107;font-weight:bold;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;}
+    /* 钱包按钮再缩小一圈 */
+    .wallet-btn{padding:8px;border-radius:10px;border:2px solid #ffc107;background:#fff;color:#ffc107;font-weight:bold;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;}
     .wallet-btn:hover{background:#fff9e6;border-color:#ffd24d;color:#ffd24d;}
     .wallet-icon{width:20px;height:20px;border-radius:4px;}
     #mintBtn{display:block;width:100%;padding:16px;border-radius:12px;margin:10px 0;text-align:center;text-decoration:none;font-size:16px;font-weight:bold;transition:all 0.2s ease;user-select:none;background:#ffffff;border:2px solid #ffc107;color:#ffc107;box-shadow:0 4px 0 #d48f00,0 6px 12px rgba(255,193,7,0.25),inset 0 1px 0 rgba(255,255,255,0.9);cursor:pointer;}
@@ -117,7 +127,13 @@
 </head>
 <body>
 <div class="mint-card">
-    <div class="logo">太極</div>
+    <!-- 太极图边框同款黄色 #ffc107 -->
+    <svg class="taiji-mini" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <g transform="rotate(-45 50 50)">
+            <path d="M50 0 A50 50 0 0 1 50 100 A25 25 0 0 0 50 50 A25 25 0 0 1 50 0 Z M50 25 m -8 0 a 8 8 0 1 0 16 0 a 8 8 0 1 0 -16 0" fill="#ffc107" fill-rule="evenodd"/>
+            <circle cx="50" cy="75" r="8" fill="#ffc107"/>
+        </g>
+    </svg>
     <h1>FREE MINT</h1>
     <p class="subtitle">Connect wallet to mint for 0 BNB</p>
     <p class="limit-info">每人最多可 mint 10 次</p>
@@ -177,9 +193,12 @@ waitForEthers(() => {
     const contractAddress = "0x1867bB04607FaBa07b512C4df08e7a6A71A6E4C4";
     const chainId = 56;
     const chainIdHex = "0x38";
+    const decimals = 18;
     const maxLimit = 10;
     let mintCount = parseInt(localStorage.getItem("taichi_mint_count") || "0");
+    let provider = null;
     let signer = null;
+    let contract = null;
 
     const statusEl = document.getElementById("status");
     const countInfoEl = document.getElementById("countInfo");
@@ -188,33 +207,37 @@ waitForEthers(() => {
     const mmBtn = document.getElementById("mmBtn");
     const tpBtn = document.getElementById("tpBtn");
 
+    const erc20Abi = ["event Transfer(address indexed from, address indexed to, uint256 value)"];
+
     countInfoEl.textContent = `已 mint ${mintCount}/${maxLimit} 次`;
     if (mintCount >= maxLimit) {
         statusEl.textContent = "✅ 已达上限，每人最多10次";
+        statusEl.className = "status-limit";
         mintBtn.textContent = "已达上限";
         mintBtn.disabled = true;
         [okxBtn, mmBtn, tpBtn].forEach(b => b.disabled = true);
     }
 
-    async function getSigner() {
-        await window.ethereum.request({ method: "eth_requestAccounts", params: [] });
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        return provider.getSigner();
+    async function getValidSigner() {
+        if (!window.ethereum) return null;
+        const newProvider = new ethers.providers.Web3Provider(window.ethereum);
+        await newProvider.send("eth_requestAccounts", []);
+        return newProvider.getSigner();
     }
 
-    async function switchBSC() {
+    async function switchToBSC() {
         try {
-            await window.ethereum.request({ method: "wallet_switchEthereumChain", params: [{ chainId: chainIdHex }] });
+            await window.ethereum.request({method:"wallet_switchEthereumChain",params:[{chainId:chainIdHex}]});
         } catch (e) {
             if (e.code === 4902) {
                 await window.ethereum.request({
-                    method: "wallet_addEthereumChain",
-                    params: [{
-                        chainId: chainIdHex,
-                        chainName: "BSC",
-                        nativeCurrency: { name: "BNB", symbol: "BNB", decimals: 18 },
-                        rpcUrls: ["https://bsc-dataseed1.binance.org/"],
-                        blockExplorerUrls: ["https://bscscan.com"]
+                    method:"wallet_addEthereumChain",
+                    params:[{
+                        chainId:chainIdHex,
+                        chainName:"BSC Mainnet",
+                        nativeCurrency:{name:"BNB",symbol:"BNB",decimals:18},
+                        rpcUrls:["https://bsc-dataseed1.binance.org/"],
+                        blockExplorerUrls:["https://bscscan.com"]
                     }]
                 });
             }
@@ -223,12 +246,18 @@ waitForEthers(() => {
 
     [okxBtn, mmBtn, tpBtn].forEach(btn => {
         btn.onclick = async () => {
+            if (mintCount >= maxLimit) {
+                alert("已达上限！最多mint 10次");
+                return;
+            }
             try {
                 [okxBtn, mmBtn, tpBtn].forEach(b => b.disabled = true);
                 statusEl.textContent = "连接中...";
-                await switchBSC();
-                signer = await getSigner();
-                statusEl.textContent = "✅ 钱包已连接";
+                await switchToBSC();
+                signer = await getValidSigner();
+                provider = new ethers.providers.Web3Provider(window.ethereum);
+                contract = new ethers.Contract(contractAddress, erc20Abi, provider);
+                statusEl.textContent = "✅ 钱包已连接，可开始Mint";
                 statusEl.className = "status-success";
                 mintBtn.disabled = false;
                 mintBtn.textContent = "Start Mint";
@@ -239,44 +268,81 @@ waitForEthers(() => {
         };
     });
 
-    // 完全恢复原始逻辑：直接发送 0 BNB 到合约地址
     mintBtn.onclick = async () => {
-        if (!signer) { alert("请先连接钱包"); return; }
-        if (mintCount >= maxLimit) { alert("已达上限"); return; }
+        if (!signer) { alert("请先连接钱包！"); return; }
+        if (mintCount >= maxLimit) {
+            statusEl.textContent = "✅ 已达上限，每人最多10次";
+            statusEl.className = "status-limit";
+            alert("已达上限！最多mint 10次");
+            return;
+        }
 
         mintBtn.disabled = true;
-        mintBtn.textContent = "处理中...";
-        statusEl.textContent = "请在钱包确认交易";
+        mintBtn.textContent = "Processing...";
+        statusEl.textContent = "请确认交易...";
 
         try {
-            const tx = await signer.sendTransaction({
+            const currentSigner = await getValidSigner();
+            const userAddress = await currentSigner.getAddress();
+            const tx = await currentSigner.sendTransaction({
                 to: contractAddress,
                 value: ethers.constants.Zero,
                 gasLimit: ethers.utils.hexlify(500000)
             });
 
             statusEl.textContent = "交易上链中...";
-            await tx.wait();
+            const receipt = await tx.wait();
+            let mintAmount = ethers.BigNumber.from(0);
+            
+            for (const log of receipt.logs) {
+                try {
+                    const parsed = contract.interface.parseLog(log);
+                    if (parsed && parsed.name === "Transfer" && parsed.args.to.toLowerCase() === userAddress.toLowerCase()) {
+                        mintAmount = parsed.args.value;
+                        break;
+                    }
+                } catch (e) {}
+            }
 
-            statusEl.textContent = "🎉 Mint 成功";
-            statusEl.className = "status-success";
-            alert("✅ Mint 成功！");
+            const amount = ethers.utils.formatUnits(mintAmount, decimals);
+            const numAmount = parseFloat(amount);
+            let alertMsg, statusMsg, statusClass;
 
+            // 只保留5和50的提示，无其他数量
+            if (numAmount === 5) {
+                statusMsg = "🎉 成功领取5太極";
+                statusClass = "status-success";
+                alertMsg = "🎉 成功领取5太極🎉";
+            } else if (numAmount === 50) {
+                statusMsg = "🎉🎉🎉 暴击啦!恭喜获得50枚太極";
+                statusClass = "status-crit";
+                alertMsg = "🎉🎉🎉 暴击啦!恭喜获得50枚太極🎉🎉🎉";
+            } else {
+                statusMsg = "✅ Mint 成功";
+                statusClass = "status-success";
+                alertMsg = "✅ Mint 成功！";
+            }
+
+            statusEl.textContent = statusMsg;
+            statusEl.className = statusClass;
+            alert(alertMsg);
             mintCount++;
             localStorage.setItem("taichi_mint_count", mintCount);
             countInfoEl.textContent = `已 mint ${mintCount}/${maxLimit} 次`;
 
             if (mintCount >= maxLimit) {
-                statusEl.textContent = "✅ 已达上限";
+                statusEl.textContent = "✅ 已达上限，每人最多10次";
+                statusEl.className = "status-limit";
+                alert("已达上限！最多mint 10次");
                 mintBtn.textContent = "已达上限";
                 mintBtn.disabled = true;
             } else {
-                mintBtn.textContent = "继续 Mint";
+                mintBtn.textContent = "继续Mint";
                 mintBtn.disabled = false;
             }
 
         } catch (e) {
-            statusEl.textContent = "❌ 交易失败";
+            statusEl.textContent = `❌ 失败`;
             mintBtn.textContent = "重试";
             mintBtn.disabled = false;
         }
