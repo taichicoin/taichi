@@ -6,8 +6,27 @@
 <title>太極 • MINT</title>
 <style>
     *{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif;}
-    body{background:#fff;color:#111;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
-    .mint-card{background:#f9f9f9;border-radius:14px;padding:2rem;border-left:4px solid #ffc107;box-shadow:0 4px 12px rgba(0,0,0,0.08);max-width:480px;width:100%;text-align:center;}
+    body{
+        background:#fff;
+        color:#111;
+        min-height:100vh;
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        justify-content:center;
+        padding:20px;
+        gap:20px;
+    }
+    .mint-card{
+        background:#f9f9f9;
+        border-radius:14px;
+        padding:2rem;
+        border-left:4px solid #ffc107;
+        box-shadow:0 4px 12px rgba(0,0,0,0.08);
+        max-width:480px;
+        width:100%;
+        text-align:center;
+    }
     .logo{font-size:32px;font-weight:700;color:#e69500;margin-bottom:12px;}
     h1{font-size:28px;margin-bottom:10px;color:#111;}
     .subtitle{font-size:16px;color:#666;margin-bottom:20px;}
@@ -25,6 +44,65 @@
     #mintBtn:hover{border-color:#ffd24d;color:#ffd24d;transform:translateY(-2px);box-shadow:0 6px 0 #d48f00,0 8px 16px rgba(255,193,7,0.3),inset 0 1px 0 rgba(255,255,255,1);}
     #mintBtn:active{border-color:#e6ac00;color:#e6ac00;transform:translateY(2px);box-shadow:0 2px 0 #d48f00,0 3px 6px rgba(255,193,7,0.25),inset 0 1px 0 rgba(255,255,255,0.7);}
     #mintBtn:disabled{background:#eee;border-color:#ccc;color:#999;cursor:not-allowed;transform:none;}
+
+    /* 新增：和donate页面完全一致的按钮样式 */
+    .btn{
+        display:block;
+        width:100%;
+        padding:16px;
+        border-radius:12px;
+        margin:14px 0;
+        text-align:center;
+        text-decoration:none;
+        font-size:16px;
+        font-weight:bold;
+        transition: all 0.2s ease;
+        user-select:none;
+        background:#fff;
+        border:2px solid #ffc107;
+        color:#ffc107;
+        box-shadow:
+            0 4px 0 #d48f00,
+            0 6px 12px rgba(255,193,7,0.25),
+            inset 0 1px 0 rgba(255,255,255,0.9);
+        cursor:pointer;
+    }
+    .btn:hover{
+        border-color:#ffd24d;
+        color:#ffd24d;
+        transform:translateY(-2px);
+        box-shadow:
+            0 6px 0 #d48f00,
+            0 8px 16px rgba(255,193,7,0.3),
+            inset 0 1px 0 rgba(255,255,255,1);
+    }
+    .btn:active{
+        transform:translateY(2px);
+        box-shadow:
+            0 2px 0 #d48f00,
+            0 3px 6px rgba(255,193,7,0.25),
+            inset 0 1px 0 rgba(255,255,255,0.7);
+    }
+    .btn-row{
+        display:flex;
+        gap:12px;
+        margin:14px 0;
+        max-width:480px;
+        width:100%;
+    }
+    .btn-half{
+        flex:1;
+        padding:14px;
+        font-size:15px;
+        margin:0;
+    }
+    footer{
+        text-align:center;
+        padding:2rem 1rem;
+        color:#666;
+        font-size:14px;
+        width:100%;
+    }
 </style>
 </head>
 <body>
@@ -59,6 +137,25 @@
 
     <button id="mintBtn" disabled>Connect Wallet First</button>
 </div>
+
+<!-- 新增：和donate页面完全一致的底部按钮区域 -->
+<div class="btn-row">
+    <a href="https://t.me/CHiiiiiiiiiiiiiiiiii" class="btn btn-half">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-right:6px;">
+            <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+        </svg>
+        Telegram
+    </a>
+    <a href="https://x.com/taichicoin" class="btn btn-half">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle; margin-right:6px;">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+        </svg>
+        X / Twitter
+    </a>
+</div>
+<a href="https://www.taichicoin.xyz/" class="btn" style="max-width:480px;">🏠 Home</a>
+
+<footer>© 2026 太極</footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
 <script>
