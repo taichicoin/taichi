@@ -209,7 +209,7 @@
         <div class="amount-box">
             <div class="amount-display" id="bnbAmount">0.0010 BNB</div>
             <div class="usdt-display" id="usdtAmount">≈ 0.64 USDT</div>
-            <div class="chi-display" id="chiAmount">≈ 1,600,000 $CHI</div>
+            <div class="chi-display" id="chiAmount">≈ 1,600,000,000 $CHI</div>
         </div>
 
         <input type="range" id="donateSlider" min="0.001" max="0.1" step="0.001" value="0.001">
@@ -253,18 +253,16 @@
 
     // ===== 你的配置 =====
     const receiveAddress   = "0x1867bB04607FaBa07b512C4df08e7a6A71A6E4C4";
-    const chiContract      = "0x1867bB04607FaBa07b512C4df08e7a6A71A6E4C4"; // 你的代币合约
+    const chiContract      = "0x1867bB04607FaBa07b512C4df08e7a6A71A6E4C4";
     const chiDecimals      = 18;
-    const chiRate          = 1600000000; // 1 BNB = 1,600,000,000 $CHI
+    const chiRate          = 1600000000; // 1 BNB = 1.6B CHI
 
     const BSC_CHAIN_ID     = "0x38";
 
-    // ERC20 ABI
     const erc20Abi = [
         "function balanceOf(address owner) view returns (uint256)"
     ];
 
-    // 刷新金额显示
     function updateAmount(){
         let val     = parseFloat(slider.value);
         let bnbText = val.toFixed(4);
@@ -276,7 +274,6 @@
         chiDisplay.textContent = '≈ ' + chi.toLocaleString() + ' $CHI';
     }
 
-    // 切换BSC
     async function switchToBSC() {
         if (!window.ethereum) return false;
         try {
@@ -299,15 +296,14 @@
                 });
                 return true;
             }
-            alert("请切换到 BSC 主网");
+            alert("请切换到 BSC 主网\nPlease switch to BSC Mainnet");
             return false;
         }
     }
 
-    // 捐款主逻辑
     async function donate(){
         if (!window.ethereum) {
-            alert("请安装 MetaMask / OKX / TP 钱包");
+            alert("请安装钱包\nPlease install a wallet");
             return;
         }
 
@@ -316,7 +312,7 @@
 
         const bnbAmount = parseFloat(slider.value).toFixed(4);
         if (bnbAmount < 0.001 || bnbAmount > 0.1) {
-            alert("金额必须在 0.001 ~ 0.1 BNB 之间");
+            alert("金额必须在 0.001 ~ 0.1 BNB 之间\nAmount must between 0.001 ~ 0.1 BNB");
             return;
         }
 
@@ -326,36 +322,44 @@
             const signer    = provider.getSigner();
             const userAddr  = await signer.getAddress();
 
-            // 捐款前余额
             const tokenContract = new ethers.Contract(chiContract, erc20Abi, provider);
-            const beforeBalance = await tokenContract.balanceOf(userAddr);
+            const before = await tokenContract.balanceOf(userAddr);
 
-            // 发起转账
             const tx = await signer.sendTransaction({
                 to: receiveAddress,
                 value: ethers.utils.parseEther(bnbAmount),
                 gasLimit: ethers.utils.hexlify(210000)
             });
 
-            alert("交易已提交，等待上链确认\nHash: " + tx.hash);
+            alert(
+                "🚀 交易已提交 · Transaction Sent\n\n"+
+                "等待区块确认 · Waiting for confirmation\n\n"+
+                "Hash:\n" + tx.hash
+            );
             await tx.wait();
 
-            // 捐款后余额
-            const afterBalance  = await tokenContract.balanceOf(userAddr);
-            const received      = afterBalance.sub(beforeBalance);
-            const receivedNum   = parseFloat(ethers.utils.formatUnits(received, chiDecimals));
-            const expectedChi   = (parseFloat(bnbAmount) * chiRate).toLocaleString();
+            const after   = await tokenContract.balanceOf(userAddr);
+            const received= parseFloat(ethers.utils.formatUnits(after.sub(before), chiDecimals));
+            const expected= (parseFloat(bnbAmount) * chiRate).toLocaleString();
 
+            // ===== 炫酷双语弹窗 =====
             alert(
-                "✅ 捐款成功！\n\n"+
-                "收到 $CHI: " + receivedNum.toLocaleString() + "\n"+
-                "按汇率应得: " + expectedChi + "\n\n"+
-                "感谢支持太極 Coin！"
+                "✨ 恭喜 · Congratulations ✨\n\n"+
+                "✅ 捐款成功 · Donation Successful\n\n"+
+                "💰 收到 $CHI · Received:\n"+
+                received.toLocaleString() + "\n\n"+
+                "📊 按汇率应得 · Expected:\n"+
+                expected + "\n\n"+
+                "🙏 感谢支持太極 · Thank you for supporting TAICHI\n"+
+                "🚀 与太極同行 · Go with TAICHI, To the moon!"
             );
 
         } catch (e) {
             console.error(e);
-            alert("❌ 交易失败：" + (e.message || "用户取消交易"));
+            alert(
+                "❌ 交易失败 · Transaction Failed\n\n"+
+                (e.message || "用户取消 · User cancelled")
+            );
         }
     }
 
