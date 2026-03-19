@@ -82,6 +82,12 @@
     .usdt-display{
         font-size:16px;
         color:#666;
+        margin-bottom:4px;
+    }
+    .chi-display{
+        font-size:16px;
+        color:#e69500;
+        font-weight:bold;
     }
     input[type="range"]{
         width:100%;
@@ -131,12 +137,28 @@
         border-color:#ffd24d;
         color:#ffd24d;
         transform:translateY(-2px);
+        box-shadow:
+            0 6px 0 #d48f00,
+            0 8px 16px rgba(255,193,7,0.3),
+            inset 0 1px 0 rgba(255,255,255,1);
     }
     .btn:active{
         transform:translateY(2px);
         box-shadow:
             0 2px 0 #d48f00,
-            0 3px 6px rgba(255,193,7,0.25);
+            0 3px 6px rgba(255,193,7,0.25),
+            inset 0 1px 0 rgba(255,255,255,0.7);
+    }
+    .btn-row{
+        display:flex;
+        gap:12px;
+        margin:14px 0;
+    }
+    .btn-half{
+        flex:1;
+        padding:14px;
+        font-size:15px;
+        margin:0;
     }
     .note{
         font-size:13px;
@@ -184,8 +206,9 @@
         </div>
 
         <div class="amount-box">
-            <div class="amount-display" id="bnbAmount">0.001 BNB</div>
-            <div class="usdt-display" id="usdtAmount">≈ 0.25 USDT</div>
+            <div class="amount-display" id="bnbAmount">0.0010 BNB</div>
+            <div class="usdt-display" id="usdtAmount">≈ 0.64 USDT</div>
+            <div class="chi-display" id="chiAmount">≈ 1,624 $CHI</div>
         </div>
 
         <input type="range" id="donateSlider" min="0.001" max="0.1" step="0.001" value="0.001">
@@ -200,6 +223,23 @@
 
         <button class="btn" onclick="donate()">💳 Donate with Wallet</button>
     </div>
+
+    <!-- 社交按钮 + 缩短的返回主页（Telegram图标已改为纸飞机轮廓） -->
+    <div class="btn-row">
+        <a href="https://t.me/CHiiiiiiiiiiiiiiiiii" class="btn btn-half">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-right:6px;">
+                <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+            </svg>
+            Telegram
+        </a>
+        <a href="https://x.com/taichicoin" class="btn btn-half">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle; margin-right:6px;">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+            X / Twitter
+        </a>
+    </div>
+    <a href="https://www.taichicoin.xyz/" class="btn">🏠 Home</a>
 </div>
 
 <footer>© 2026 太極</footer>
@@ -208,19 +248,25 @@
     const slider = document.getElementById('donateSlider');
     const bnbDisplay = document.getElementById('bnbAmount');
     const usdtDisplay = document.getElementById('usdtAmount');
+    const chiDisplay = document.getElementById('chiAmount');
 
     function updateAmount(){
-        let val = parseFloat(slider.value).toFixed(3);
-        bnbDisplay.textContent = val + ' BNB';
-        let usdt = (val * 250).toFixed(2);
-        usdtDisplay.textContent = '≈ ' + usdt + ' USDT';
+        let val = parseFloat(slider.value);
+        let bnbText = val.toFixed(4);
+        
+        let usdt = val * 640;
+        let chi = val * 1624000;
+
+        bnbDisplay.textContent = bnbText + ' BNB';
+        usdtDisplay.textContent = '≈ ' + usdt.toFixed(2) + ' USDT';
+        chiDisplay.textContent = '≈ ' + chi.toLocaleString() + ' $CHI';
     }
 
     slider.addEventListener('input', updateAmount);
     updateAmount();
 
     function donate(){
-        alert('Connect wallet to donate ' + slider.value + ' BNB');
+        alert('Connect wallet to donate ' + parseFloat(slider.value).toFixed(4) + ' BNB');
     }
 </script>
 
