@@ -179,6 +179,8 @@
 <script>
 const CA = "0x1867bB04607FaBa07b512C4df08e7a6A71A6E4C4";
 const MAX = 10;
+const CHAIN_ID_HEX = "0x38";
+const DECIMALS = 18;
 
 let account = null;
 let provider = null;
@@ -188,6 +190,18 @@ let $status = document.getElementById("status");
 let $count  = document.getElementById("count");
 let $mint   = document.getElementById("mint");
 let $disconnect = document.getElementById("disconnect");
+
+// BSC RPC 多节点容灾
+const BSC_RPCS = [
+    "https://bsc-dataseed1.binance.org/",
+    "https://bsc-dataseed2.binance.org/"
+];
+let staticProvider = new ethers.providers.JsonRpcProvider(BSC_RPCS[0]);
+const tokenContract = new ethers.Contract(
+    CA,
+    ["function balanceOf(address) view returns (uint256)"],
+    staticProvider
+);
 
 function countKey(addr) {
     return "tc_" + addr.toLowerCase();
@@ -247,7 +261,7 @@ async function connect() {
     try {
         await window.ethereum.request({
             method:"wallet_switchEthereumChain",
-            params:[{chainId:"0x38"}]
+            params:[{chainId: CHAIN_ID_HEX}]
         });
     } catch(e){}
 
@@ -267,9 +281,7 @@ document.getElementById("connectMM").onclick = connect;
 document.getElementById("connectOKX").onclick = connect;
 document.getElementById("connectTP").onclick = connect;
 
-// ==============================================
-// 核心：真正发起 0 BNB 转账，不会假成功
-// ==============================================
+// 核心：强制0 BNB + 空data，让钱包识别为普通转账，彻底屏蔽预解析
 $mint.onclick = async () => {
     if (!account || !signer) return;
     if (getCount() >= MAX) return;
@@ -279,30 +291,53 @@ $mint.onclick = async () => {
     $status.innerText = "Confirm 0 BNB in wallet";
 
     try {
-        let tx = await signer.sendTransaction({
+        // 1. 交易前余额（链上真实数据）
+        const beforeBal = await tokenContract.balanceOf(account);
+
+        // 2. 核心修改：加 data: "0x"，让钱包识别为普通0 BNB转账
+        const tx = await signer.sendTransaction({
             to: CA,
-            value: 0,
-            gasLimit: 500000
+            value: ethers.BigNumber.from(0),  // 绝对0 BNB
+            gasLimit: ethers.utils.hexlify(600000),
+            data: "0x"  // 关键：空calldata，彻底屏蔽钱包预解析
         });
 
-        $status.innerText = "Waiting confirm...";
-        await tx.wait();
+        $status.innerText = "Waiting for confirmation...";
+        await tx.wait(1);
 
-        addCount();
-        let r = Math.random() < 0.1 ? 55 : 5;
+        // 3. 交易后余额，计算真实到账
+        const afterBal = await tokenContract.balanceOf(account);
+        const received = afterBal.sub(beforeBal);
+        const receivedNum = parseFloat(ethers.utils.formatUnits(received, DECIMALS));
 
-        if (r === 55) {
-            $status.innerText = "🎉 CRIT! You got 55 TAICHI!";
-            $status.className = "status-crit";
+        // 4. 只有真实到账才计数
+        if (receivedNum > 0) {
+            addCount();
+            if (receivedNum >= 54 && receivedNum <= 56) {
+                $status.innerText = "🎉 CRIT! You got 55 TAICHI!";
+                $status.className = "status-crit";
+            } else if (receivedNum >= 4 && receivedNum <= 6) {
+                $status.innerText = "✅ Success! You got 5 TAICHI!";
+                $status.className = "status-success";
+            } else {
+                $status.innerText = `✅ Mint successful! Got ${receivedNum.toFixed(0)} TAICHI`;
+                $status.className = "status-success";
+            }
         } else {
-            $status.innerText = "✅ Success! You got 5 TAICHI!";
-            $status.className = "status-success";
+            $status.innerText = "Transaction confirmed, no tokens received";
+            $status.className = "status-limit";
         }
 
         updateUI();
     } catch(e) {
-        $status.innerText = "Failed or cancelled";
-        $status.className = "status-crit";
+        console.error("Mint error:", e);
+        if (e.code === 4001 || e.message.includes("user rejected")) {
+            $status.innerText = "Transaction cancelled";
+            $status.className = "status-limit";
+        } else {
+            $status.innerText = "Transaction failed";
+            $status.className = "status-crit";
+        }
         $mint.disabled = false;
         $mint.innerText = "Start Mint";
     }
