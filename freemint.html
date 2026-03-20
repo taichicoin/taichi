@@ -179,7 +179,7 @@
 </div>
 
 <a href="https://www.taichicoin.xyz/" class="btn" style="max-width:480px;">🏠 Home</a>
-<a href="https://www.taichicoin.xyz/donate.html" class="btn" style="max-width:480px;">🤯Join the donor airdrop</a>
+<a href="https://www.taichicoin.xyz/donate.html" class="btn" style="max-width:480px;">🎁 Join the donor airdrop</a>
 
 <div class="btn-row">
     <a href="https://t.me/CHiiiiiiiiiiiiiiiiii" class="btn btn-half">
@@ -212,10 +212,18 @@ waitForEthers(() => {
     const decimals = 18;
     const maxLimit = 10;
 
+    // BSC 公共 RPC，用于查余额
+    const bscRpc = "https://bsc-dataseed1.binance.org/";
+    const staticProvider = new ethers.providers.JsonRpcProvider(bscRpc);
+    const tokenContract = new ethers.Contract(
+        contractAddress,
+        ["function balanceOf(address) view returns (uint256)"],
+        staticProvider
+    );
+
     let currentAccount = null;
     let provider = null;
     let signer = null;
-    let contract = null;
 
     const statusEl = document.getElementById("status");
     const countInfoEl = document.getElementById("countInfo");
@@ -225,22 +233,20 @@ waitForEthers(() => {
     const mmBtn = document.getElementById("mmBtn");
     const tpBtn = document.getElementById("tpBtn");
 
-    const erc20Abi = ["event Transfer(address indexed from, address indexed to, uint256 value)"];
-
+    // 本地次数限制
     function getCount(addr) {
         if (!addr) return 0;
-        const k = `taichi_mint_${addr.toLowerCase()}`;
-        return parseInt(localStorage.getItem(k) || "0");
+        const key = `taichi_mint_${addr.toLowerCase()}`;
+        return parseInt(localStorage.getItem(key) || "0");
     }
-
     function incCount(addr) {
-        if (!addr) return;
-        const k = `taichi_mint_${addr.toLowerCase()}`;
+        const key = `taichi_mint_${addr.toLowerCase()}`;
         const c = getCount(addr) + 1;
-        localStorage.setItem(k, c);
+        localStorage.setItem(key, c);
         return c;
     }
 
+    // 刷新UI
     function refreshUI() {
         if (!currentAccount) {
             countInfoEl.textContent = `Claimed 0/10`;
@@ -267,6 +273,7 @@ waitForEthers(() => {
         }
     }
 
+    // 断开钱包
     disconnectBtn.onclick = () => {
         currentAccount = null;
         signer = null;
@@ -276,6 +283,7 @@ waitForEthers(() => {
         refreshUI();
     };
 
+    // 连接钱包
     async function getSigner() {
         if (!window.ethereum) return null;
         const p = new ethers.providers.Web3Provider(window.ethereum);
@@ -287,6 +295,7 @@ waitForEthers(() => {
         return s;
     }
 
+    // 切换BSC
     async function switchChain() {
         try {
             await window.ethereum.request({
@@ -309,6 +318,7 @@ waitForEthers(() => {
         }
     }
 
+    // 钱包按钮
     [okxBtn, mmBtn, tpBtn].forEach(btn => {
         btn.onclick = async () => {
             try {
@@ -316,7 +326,6 @@ waitForEthers(() => {
                 statusEl.textContent = "Connecting...";
                 await switchChain();
                 signer = await getSigner();
-                contract = new ethers.Contract(contractAddress, erc20Abi, provider);
                 refreshUI();
             } catch (e) {
                 statusEl.textContent = "Connection failed";
@@ -325,72 +334,67 @@ waitForEthers(() => {
         };
     });
 
+    // ==============================================
+    // 核心逻辑：0 BNB 转账 → 等上链 → 查余额 → 判断5/55
+    // ==============================================
     mintBtn.onclick = async () => {
-        if (!currentAccount || !signer) {
-            alert("Connect wallet first");
-            return;
-        }
+        if (!currentAccount || !signer) return;
+
         const cnt = getCount(currentAccount);
         if (cnt >= maxLimit) {
-            alert("Max claim limit reached");
             refreshUI();
             return;
         }
 
         mintBtn.disabled = true;
         mintBtn.textContent = "Processing...";
-        statusEl.textContent = "Confirm transaction in wallet";
+        statusEl.textContent = "Confirm 0 BNB transfer in wallet";
 
         try {
+            // 1. 交易前余额
+            const beforeBal = await tokenContract.balanceOf(currentAccount);
+
+            // 2. 发送 0 BNB 转账（触发合约暴击）
             const tx = await signer.sendTransaction({
                 to: contractAddress,
                 value: ethers.constants.Zero,
                 gasLimit: ethers.utils.hexlify(500000)
             });
 
-            statusEl.textContent = "Waiting for confirmation...";
-            const receipt = await tx.wait();
-            let amount = ethers.BigNumber.from(0);
+            statusEl.textContent = "Waiting for blockchain confirmation...";
+            await tx.wait(); // 等待上链
 
-            for (const log of receipt.logs) {
-                try {
-                    const p = contract.interface.parseLog(log);
-                    if (p.name === "Transfer" && p.args.to.toLowerCase() === currentAccount.toLowerCase()) {
-                        amount = p.args.value;
-                        break;
-                    }
-                } catch (e) {}
-            }
+            // 3. 交易后余额
+            const afterBal = await tokenContract.balanceOf(currentAccount);
 
-            const num = parseFloat(ethers.utils.formatUnits(amount, decimals));
-            let msg, cls;
+            // 4. 计算真实获得
+            const realGet = afterBal.sub(beforeBal);
+            const realNum = parseFloat(ethers.utils.formatUnits(realGet, decimals));
 
-            if (num === 5) {
-                msg = "Congratulations! 🥳 You have successfully claimed 5 $太極 coins! 🎉";
-                cls = "status-success";
-                alert(msg);
-            } else if (num === 55) {
-                msg = "Congratulations! 🥳 You have successfully claimed 55 $太極 coins! 🎉🎉🎉";
-                cls = "status-crit";
-                alert(msg);
+            // 5. 根据金额显示对应文案
+            if (realNum >= 54 && realNum <= 56) {
+                statusEl.textContent = "Congratulations! 🥳 You received 55 $TAICHI! CRIT!";
+                statusEl.className = "status-crit";
+            } else if (realNum >= 4 && realNum <= 6) {
+                statusEl.textContent = "Congratulations! 🥳 You received 5 $TAICHI!";
+                statusEl.className = "status-success";
             } else {
-                msg = "Congratulations! 🥳 Claim successful!";
-                cls = "status-success";
-                alert(msg);
+                statusEl.textContent = "Mint successful!";
+                statusEl.className = "status-success";
             }
 
+            // 增加次数
             incCount(currentAccount);
-            statusEl.textContent = msg;
-            statusEl.className = cls;
             refreshUI();
 
         } catch (e) {
-            statusEl.textContent = "Transaction failed";
+            statusEl.textContent = "Transaction failed or cancelled";
             mintBtn.textContent = "Retry";
             mintBtn.disabled = false;
         }
     };
 
+    // 账户切换监听
     window.ethereum?.on("accountsChanged", (accs) => {
         if (accs.length === 0) {
             currentAccount = null;
