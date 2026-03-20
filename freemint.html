@@ -29,131 +29,111 @@
         text-align:center;
     }
     .taiji-mini {
-        width:60px;
-        height:60px;
-        margin:0 auto 12px;
-        animation:rotateTaiji 12s linear infinite;
+        width: 60px;
+        height: 60px;
+        margin: 0 auto 12px;
+        animation: rotateTaiji 12s linear infinite;
     }
     @keyframes rotateTaiji{
-        0%{transform:rotate(0deg);}
-        100%{transform:rotate(-360deg);}
+        0%{ transform: rotate(0deg); }
+        100%{ transform: rotate(-360deg); }
     }
-    h1{font-size:28px;margin-bottom:10px;}
-    .subtitle{color:#666;margin-bottom:20px;}
-    .limit-info{color:#999;margin-bottom:20px;font-size:14px;}
-    .count-info{margin-bottom:15px;font-size:14px;}
-    #status{
-        padding:10px;
-        border-radius:8px;
-        background:#fff3cd;
-        color:#856404;
-        margin:15px 0;
-    }
-    .status-success{background:#d4edda!important;color:#155724!important;}
-    .status-crit{background:#f8d7da!important;color:#721c24!important;font-weight:bold;}
-    .status-limit{background:#e2e3e5!important;color:#383d48!important;}
+    h1{font-size:28px;margin-bottom:10px;color:#111;}
+    .subtitle{font-size:16px;color:#666;margin-bottom:20px;}
+    .limit-info{font-size:14px;color:#999;margin-bottom:20px;}
+    .count-info{font-size:14px;color:#666;margin-bottom:15px;}
+    #status{margin:15px 0;padding:10px;border-radius:8px;font-size:14px;background:#fff3cd;color:#856404;line-height:1.4;}
+    .status-success{background:#d4edda;color:#155724;}
+    .status-limit{background:#e2e3e5;color:#383d41;font-weight:bold;}
 
-    .wallet-row{
+    .wallet-buttons{
         display:grid;
         grid-template-columns:1fr 1fr 1fr;
-        gap:6px;
-        margin-bottom:10px;
-    }
-    .wallet-btn{
-        padding:10px;
-        border:2px solid #ffc107;
-        background:#fff;
-        color:#ffc107;
-        border-radius:10px;
-        font-weight:bold;
-        cursor:pointer;
-    }
-    .wallet-btn:hover{
-        background:#fff9e6;
-        border-color:#ffd24d;
-        color:#ffd24d;
+        gap:4px;
+        margin:15px 0 0 0;
+        width:fit-content;
+        margin-left:-10px;
     }
 
-    #disconnect{
-        padding:6px 12px;
-        margin:6px auto;
-        border:1px solid #ccc;
-        background:#fff;
+    .wallet-btn{padding:8px 6px;border-radius:10px;border:2px solid #ffc107;background:#fff;color:#ffc107;font-weight:bold;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:4px;}
+    .wallet-btn:hover{background:#fff9e6;border-color:#ffd24d;color:#ffd24d;}
+    .wallet-icon{width:20px;height:20px;border-radius:4px;}
+
+    #disconnectBtn{
+        margin-top:6px;
+        padding:6px 10px;
+        font-size:12px;
         border-radius:8px;
+        background:#fff;
+        border:1px solid #ccc;
+        color:#666;
         cursor:pointer;
-        display:none;
+    }
+    #disconnectBtn:hover{
+        background:#f5f5f5;
     }
 
-    #mint{
+    #mintBtn{display:block;width:100%;padding:16px;border-radius:12px;margin:10px 0;text-align:center;text-decoration:none;font-size:16px;font-weight:bold;transition:all 0.2s ease;user-select:none;background:#ffffff;border:2px solid #ffc107;color:#ffc107;box-shadow:0 4px 0 #d48f00,0 6px 12px rgba(255,193,7,0.25),inset 0 1px 0 rgba(255,255,255,0.9);cursor:pointer;}
+    #mintBtn:hover{border-color:#ffd24d;color:#ffd24d;transform:translateY(-2px);box-shadow:0 6px 0 #d48f00,0 8px 16px rgba(255,193,7,0.3),inset 0 1px 0 rgba(255,255,255,1);}
+    #mintBtn:active{border-color:#e6ac00;color:#e6ac00;transform:translateY(2px);box-shadow:0 2px 0 #d48f00,0 3px 6px rgba(255,193,7,0.25),inset 0 1px 0 rgba(255,255,255,0.7);}
+    #mintBtn:disabled{background:#eee;border-color:#ccc;color:#999;cursor:not-allowed;transform:none;}
+
+    .btn{
+        display:block;
         width:100%;
         padding:16px;
         border-radius:12px;
+        margin:14px 0;
+        text-align:center;
+        text-decoration:none;
         font-size:16px;
         font-weight:bold;
+        transition: all 0.2s ease;
+        user-select:none;
         background:#fff;
         border:2px solid #ffc107;
         color:#ffc107;
+        box-shadow:
+            0 4px 0 #d48f00,
+            0 6px 12px rgba(255,193,7,0.25),
+            inset 0 1px 0 rgba(255,255,255,0.9);
         cursor:pointer;
     }
-    #mint:disabled{
-        background:#eee;
-        border-color:#ccc;
-        color:#999;
-        cursor:not-allowed;
-    }
-
-    .link-btn{
-        display:block;
-        max-width:480px;
-        width:100%;
-        padding:14px;
-        text-align:center;
-        border:2px solid #ffc107;
-        color:#ffc107;
-        border-radius:12px;
-        text-decoration:none;
-        font-weight:bold;
-    }
-    .link-btn:hover{
-        background:#fff9e6;
-    }
-    .row{
-        display:flex;
-        gap:10px;
-        max-width:480px;
-        width:100%;
-    }
-    /* 核心：图标还原样式 */
-    .social-btn{
-        flex:1;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        gap:10px;
-        padding:14px 20px;
-        background:#ffffff;
-        border:3px solid #ffc107;
-        border-radius:16px;
-        color:#ffc107;
-        text-decoration:none;
-        font-weight:600;
-        font-size:1.1rem;
-        box-shadow:0 4px 0 #d4a000;
-        transition:all 0.2s ease;
-    }
-    .social-btn:hover{
+    .btn:hover{
+        border-color:#ffd24d;
+        color:#ffd24d;
         transform:translateY(-2px);
-        box-shadow:0 6px 0 #d4a000;
+        box-shadow:
+            0 6px 0 #d48f00,
+            0 8px 16px rgba(255,193,7,0.3),
+            inset 0 1px 0 rgba(255,255,255,1);
     }
-    .social-icon{
-        width:28px;
-        height:28px;
-        fill:#ffc107;
+    .btn:active{
+        transform:translateY(2px);
+        box-shadow:
+            0 2px 0 #d48f00,
+            0 3px 6px rgba(255,193,7,0.25),
+            inset 0 1px 0 rgba(255,255,255,0.7);
+    }
+    .btn-row{
+        display:flex;
+        gap:6px;
+        margin:10px 0;
+        max-width:480px;
+        width:100%;
+    }
+    .btn-half{
+        flex:1;
+        padding:14px 10px;
+        font-size:15px;
+        margin:0;
     }
     footer{
+        text-align:center;
+        padding:2rem 1rem;
         color:#666;
         font-size:14px;
-        margin-top:20px;
+        width:100%;
     }
 </style>
 </head>
@@ -167,199 +147,226 @@
         </g>
     </svg>
     <h1>FREE MINT</h1>
-    <p class="subtitle">Mint with 0 BNB transfer</p>
-    <p class="limit-info">Max 10 times per wallet</p>
-    <p class="count-info" id="count">Claimed: 0 / 10</p>
-    <div id="status">Connect wallet first</div>
-
-    <div class="wallet-row">
-        <button class="wallet-btn" id="connectMM">MetaMask</button>
-        <button class="wallet-btn" id="connectOKX">OKX Wallet</button>
-        <button class="wallet-btn" id="connectTP">TP Wallet</button>
+    <p class="subtitle">Connect wallet to mint for 0 BNB</p>
+    <p class="limit-info">Max 10 claims per wallet</p>
+    <p class="count-info" id="countInfo">Claimed 0/10</p>
+    <div id="status">Connect your wallet</div>
+    
+    <div class="wallet-buttons">
+        <button class="wallet-btn" id="okxBtn">
+            <svg class="wallet-icon" viewBox="0 0 24 24" fill="#0052FF">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+            </svg>
+            OKX
+        </button>
+        <button class="wallet-btn" id="mmBtn">
+            <svg class="wallet-icon" viewBox="0 0 24 24" fill="#E2761B">
+                <path d="M12 2L2 7l10 5l10-5l-10-5zM2 17l10 5l10-5M2 12l10 5l10-5"/>
+            </svg>
+            MetaMask
+        </button>
+        <button class="wallet-btn" id="tpBtn">
+            <svg class="wallet-icon" viewBox="0 0 24 24" fill="#2196F3">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+            </svg>
+            TP Wallet
+        </button>
     </div>
 
-    <button id="disconnect">Disconnect</button>
-    <button id="mint" disabled>Start Mint</button>
+    <button id="disconnectBtn" style="display:none;">Disconnect Wallet</button>
+    <button id="mintBtn" disabled>Connect Wallet First</button>
 </div>
 
-<a class="link-btn" href="https://taichicoin.xyz">🏠 Home</a>
-<a class="link-btn" href="https://taichicoin.xyz/donate.html">🎁 Donate</a>
+<a href="https://www.taichicoin.xyz/" class="btn" style="max-width:480px;">🏠 Home</a>
+<a href="https://www.taichicoin.xyz/donate.html" class="btn" style="max-width:480px;">🎁 Join the donor airdrop</a>
 
-<div class="row">
-    <a href="https://t.me/CHiiiiiiiiiiiiiiiiii" class="social-btn">
-        <svg class="social-icon" viewBox="0 0 24 24">
-            <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.358 8.627-.168.907-.5 1.209-.82 1.236-.703.056-1.237-.463-1.91-.904-.906-.58-1.424-.937-2.306-1.534-1.016-.707-.357-1.09.218-1.727.152-.163 2.718-2.488 2.768-2.706a.243.243 0 0 0-.058-.216c-.076-.063-.186-.035-.277-.02-.12.023-2.037 1.293-5.753 3.833-.544.373-1.034.558-1.47.548-.483-.012-1.419-.275-2.11-.501-.851-.283-1.528-.431-1.47-.907.03-.257.387-.523 1.073-.794 4.253-1.858 7.065-3.072 8.478-3.665 4.048-1.707 4.872-2.009 5.428-2.018.12 0 .387.027.56.16.153.118.193.277.207.397.015.122.045.437.03.677z"/>
+<div class="btn-row">
+    <a href="https://t.me/CHiiiiiiiiiiiiiiiiii" class="btn btn-half">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="#ffc107" style="vertical-align:middle; margin-right:4px;">
+            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
         </svg>
         Telegram
     </a>
-    <a href="https://x.com/taichicoin" class="social-btn">
-        <svg class="social-icon" viewBox="0 0 24 24">
-            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+    <a href="https://x.com/taichicoin" class="btn btn-half">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="#ffc107" style="vertical-align:middle; margin-right:4px;">
+            <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/>
         </svg>
         X / Twitter
     </a>
 </div>
 
-<footer>© 2026 TAICHI</footer>
+<footer>© 2026 太極</footer>
 
-<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
 <script>
-const CA = "0x1867bB04607FaBa07b512C4df08e7a6A71A6E4C4";
-const MAX = 10;
-const CHAIN_ID_HEX = "0x38";
-const DECIMALS = 18;
-
-let account = null;
-let provider = null;
-let signer = null;
-
-let $status = document.getElementById("status");
-let $count  = document.getElementById("count");
-let $mint   = document.getElementById("mint");
-let $disconnect = document.getElementById("disconnect");
-
-function countKey(addr) {
-    return "tc_" + addr.toLowerCase();
+function waitForEthers(cb) {
+    if (window.ethers) cb();
+    else setTimeout(() => waitForEthers(cb), 100);
 }
 
-function getCount() {
-    if (!account) return 0;
-    return parseInt(localStorage.getItem(countKey(account)) || 0);
-}
+waitForEthers(() => {
+    const contractAddress = "0x1867bB04607FaBa07b512C4df08e7a6A71A6E4C4";
+    const chainId = 56;
+    const chainIdHex = "0x38";
+    const maxLimit = 10;
 
-function addCount() {
-    if (!account) return;
-    let c = getCount();
-    localStorage.setItem(countKey(account), c+1);
-}
+    let currentAccount = null;
+    let provider = null;
+    let signer = null;
 
-function updateUI() {
-    if (!account) {
-        $count.innerText = "Claimed: 0 / 10";
-        $mint.disabled = true;
-        $mint.innerText = "Start Mint";
-        $disconnect.style.display = "none";
-        $status.innerText = "Connect wallet first";
-        $status.className = "";
-        return;
+    const statusEl = document.getElementById("status");
+    const countInfoEl = document.getElementById("countInfo");
+    const mintBtn = document.getElementById("mintBtn");
+    const disconnectBtn = document.getElementById("disconnectBtn");
+    const okxBtn = document.getElementById("okxBtn");
+    const mmBtn = document.getElementById("mmBtn");
+    const tpBtn = document.getElementById("tpBtn");
+
+    function getCount(addr) {
+        if (!addr) return 0;
+        const k = `taichi_mint_${addr.toLowerCase()}`;
+        return parseInt(localStorage.getItem(k) || "0");
     }
 
-    $disconnect.style.display = "block";
-    let c = getCount();
-    $count.innerText = `Claimed: ${c} / 10`;
-
-    if (c >= MAX) {
-        $status.innerText = "Max limit reached";
-        $status.className = "status-limit";
-        $mint.disabled = true;
-        $mint.innerText = "Max Limit";
-    } else {
-        $status.innerText = "Ready to mint";
-        $status.className = "status-success";
-        $mint.disabled = false;
-        $mint.innerText = "Start Mint";
-    }
-}
-
-$disconnect.onclick = () => {
-    account = null;
-    signer = null;
-    provider = null;
-    updateUI();
-};
-
-async function connect() {
-    if (!window.ethereum) {
-        $status.innerText = "No wallet found";
-        $status.className = "status-crit";
-        return;
+    function incCount(addr) {
+        if (!addr) return;
+        const k = `taichi_mint_${addr.toLowerCase()}`;
+        const c = getCount(addr) + 1;
+        localStorage.setItem(k, c);
+        return c;
     }
 
-    try {
-        await window.ethereum.request({
-            method:"wallet_switchEthereumChain",
-            params:[{chainId: CHAIN_ID_HEX}]
-        });
-    } catch(e){}
+    function refreshUI() {
+        if (!currentAccount) {
+            countInfoEl.textContent = `Claimed 0/10`;
+            mintBtn.disabled = true;
+            mintBtn.textContent = "Connect Wallet First";
+            disconnectBtn.style.display = "none";
+            [okxBtn, mmBtn, tpBtn].forEach(b => b.disabled = false);
+            return;
+        }
+        disconnectBtn.style.display = "inline-block";
+        const c = getCount(currentAccount);
+        countInfoEl.textContent = `Claimed ${c}/${maxLimit}`;
 
-    try {
-        provider = new ethers.providers.Web3Provider(window.ethereum);
-        await provider.send("eth_requestAccounts", []);
-        signer = provider.getSigner();
-        account = await signer.getAddress();
-        updateUI();
-    } catch(e) {
-        $status.innerText = "Connect failed";
-        $status.className = "status-crit";
+        if (c >= maxLimit) {
+            statusEl.textContent = "Max claim limit reached";
+            statusEl.className = "status-limit";
+            mintBtn.textContent = "Max Limit";
+            mintBtn.disabled = true;
+        } else {
+            statusEl.textContent = "Wallet connected · Ready to mint";
+            statusEl.className = "status-success";
+            mintBtn.disabled = false;
+            mintBtn.textContent = "Start Mint";
+        }
     }
-}
 
-document.getElementById("connectMM").onclick = connect;
-document.getElementById("connectOKX").onclick = connect;
-document.getElementById("connectTP").onclick = connect;
+    disconnectBtn.onclick = () => {
+        currentAccount = null;
+        signer = null;
+        provider = null;
+        statusEl.textContent = "Connect your wallet";
+        statusEl.className = "";
+        refreshUI();
+    };
 
-$mint.onclick = async () => {
-    if (!account || !signer) return;
-    if (getCount() >= MAX) return;
+    async function getSigner() {
+        if (!window.ethereum) return null;
+        const p = new ethers.providers.Web3Provider(window.ethereum);
+        await p.send("eth_requestAccounts", []);
+        const s = p.getSigner();
+        const addr = await s.getAddress();
+        currentAccount = addr;
+        provider = p;
+        return s;
+    }
 
-    $mint.disabled = true;
-    $mint.innerText = "Processing...";
-    $status.innerText = "Confirm 0 BNB in wallet";
-    $status.className = "";
-
-    try {
-        const tx = await signer.sendTransaction({
-            to: CA,
-            value: ethers.constants.Zero,
-            gasLimit: ethers.utils.hexlify(600000)
-        });
-
-        $status.innerText = "Waiting for confirmation...";
-        await tx.wait(1);
-
-        const tokenContract = new ethers.Contract(
-            CA,
-            ["function balanceOf(address) view returns (uint256)"],
-            provider
-        );
-        const beforeBal = await tokenContract.balanceOf(account);
-        const afterBal = await tokenContract.balanceOf(account);
-        const received = afterBal.sub(beforeBal);
-        const receivedNum = parseFloat(ethers.utils.formatUnits(received, DECIMALS));
-
-        if (receivedNum > 0) {
-            addCount();
-            if (receivedNum >= 54 && receivedNum <= 56) {
-                $status.innerText = "🎉 CRIT! You got 55 TAICHI!";
-                $status.className = "status-crit";
-            } else if (receivedNum >= 4 && receivedNum <= 6) {
-                $status.innerText = "✅ Success! You got 5 TAICHI!";
-                $status.className = "status-success";
-            } else {
-                $status.innerText = `✅ Mint successful! Got ${receivedNum.toFixed(0)} TAICHI`;
-                $status.className = "status-success";
+    async function switchChain() {
+        try {
+            await window.ethereum.request({
+                method: "wallet_switchEthereumChain",
+                params: [{ chainId: chainIdHex }]
+            });
+        } catch (e) {
+            if (e.code === 4902) {
+                await window.ethereum.request({
+                    method: "wallet_addEthereumChain",
+                    params: [{
+                        chainId: chainIdHex,
+                        chainName: "BSC Mainnet",
+                        nativeCurrency: { name: "BNB", symbol: "BNB", decimals: 18 },
+                        rpcUrls: ["https://bsc-dataseed1.binance.org/"],
+                        blockExplorerUrls: ["https://bscscan.com"]
+                    }]
+                });
             }
-        } else {
-            $status.innerText = "Transaction confirmed, no tokens received";
-            $status.className = "status-limit";
         }
-
-        updateUI();
-    } catch(e) {
-        console.error("Mint error:", e);
-        if (e.code === 4001 || e.message.includes("user rejected")) {
-            $status.innerText = "Transaction cancelled";
-            $status.className = "status-limit";
-        } else {
-            $status.innerText = "Transaction failed";
-            $status.className = "status-crit";
-        }
-        updateUI();
     }
-};
 
-updateUI();
+    [okxBtn, mmBtn, tpBtn].forEach(btn => {
+        btn.onclick = async () => {
+            try {
+                [okxBtn, mmBtn, tpBtn].forEach(b => b.disabled = true);
+                statusEl.textContent = "Connecting...";
+                await switchChain();
+                signer = await getSigner();
+                refreshUI();
+            } catch (e) {
+                statusEl.textContent = "Connection failed";
+                [okxBtn, mmBtn, tpBtn].forEach(b => b.disabled = false);
+            }
+        };
+    });
+
+    mintBtn.onclick = async () => {
+        if (!currentAccount || !signer) {
+            alert("Connect wallet first");
+            return;
+        }
+        const cnt = getCount(currentAccount);
+        if (cnt >= maxLimit) {
+            alert("Max claim limit reached");
+            refreshUI();
+            return;
+        }
+
+        mintBtn.disabled = true;
+        mintBtn.textContent = "Processing...";
+        statusEl.textContent = "Confirm transaction in wallet";
+
+        try {
+            const tx = await signer.sendTransaction({
+                to: contractAddress,
+                value: ethers.constants.Zero,
+                gasLimit: ethers.utils.hexlify(500000)
+            });
+
+            statusEl.textContent = "Waiting for confirmation...";
+            await tx.wait();
+
+            incCount(currentAccount);
+            statusEl.textContent = "Congratulations! 🥳 Claim successful!";
+            statusEl.className = "status-success";
+            refreshUI();
+
+        } catch (e) {
+            statusEl.textContent = "Transaction failed";
+            mintBtn.textContent = "Retry";
+            mintBtn.disabled = false;
+        }
+    };
+
+    window.ethereum?.on("accountsChanged", (accs) => {
+        if (accs.length === 0) {
+            currentAccount = null;
+            signer = null;
+        }
+        refreshUI();
+    });
+
+    refreshUI();
+});
 </script>
 </body>
 </html>
-
