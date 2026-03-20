@@ -90,6 +90,8 @@
         color:#e69500;
         font-weight:bold;
     }
+
+    /* 可拖动滑块 */
     input[type="range"]{
         width:100%;
         height:8px;
@@ -113,6 +115,7 @@
         color:#666;
         margin-top:6px;
     }
+
     .btn{
         display:block;
         width:100%;
@@ -182,30 +185,30 @@
         line-height:1.4;
     }
 
-    /* 钱包面板 居中一行 */
+    /* 钱包区域 */
     .wallet-section {
         margin: 20px 0;
         text-align: center;
-        font-size: 14px;
+        font-size:14px;
     }
     .wallet-status {
-        margin-bottom: 8px;
-        font-weight: bold;
-        color: #d48f00;
+        margin-bottom:8px;
+        font-weight:bold;
+        color:#d48f00;
     }
     .wallet-row {
-        display: flex;
-        justify-content: center;
-        gap: 8px;
-        flex-wrap: wrap;
+        display:flex;
+        justify-content:center;
+        gap:8px;
+        flex-wrap:wrap;
     }
     .wallet-btn {
-        padding: 8px 10px;
-        border-radius: 8px;
-        background: #ffc107;
-        color: #fff;
-        border: none;
-        font-weight: bold;
+        padding:8px 10px;
+        border-radius:8px;
+        background:#ffc107;
+        color:#fff;
+        border:none;
+        font-weight:bold;
         font-size:13px;
         cursor:pointer;
     }
@@ -251,6 +254,7 @@
             <div class="chi-display" id="chiAmount">≈ 1,600,000,000 $CHI</div>
         </div>
 
+        <!-- 可拖动滑块 -->
         <input type="range" id="donateSlider" min="0.001" max="0.1" step="0.001" value="0.001">
         <div class="range-labels">
             <span>0.001</span>
@@ -264,7 +268,7 @@
         <button class="btn" id="confirmBtn" disabled onclick="confirmDonate()">✅ Confirm Donation</button>
     </div>
 
-    <!-- 钱包区域：放在中间位置 -->
+    <!-- 钱包区域：一行按钮，居中 -->
     <div class="wallet-section">
         <div class="wallet-status" id="walletStatus">Wallet not connected</div>
         <div class="wallet-row">
@@ -278,14 +282,12 @@
         <a href="https://t.me/CHiiiiiiiiiiiiiiiiii" class="btn btn-half">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-right:6px;">
                 <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
-            </svg>
-            Telegram
+            </svg>Telegram
         </a>
         <a href="https://x.com/taichicoin" class="btn btn-half">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle; margin-right:6px;">
                 <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-            </svg>
-            X / Twitter
+            </svg>X / Twitter
         </a>
     </div>
 
@@ -316,6 +318,7 @@
     let signer = null;
     let account = null;
 
+    // 滑块拖动更新金额
     function updateAmount(){
         let val = parseFloat(slider.value);
         bnbDisplay.textContent = val.toFixed(4) + ' BNB';
@@ -323,6 +326,7 @@
         chiDisplay.textContent = '≈ ' + (val * chiRate).toLocaleString() + ' $CHI';
     }
 
+    // 更新钱包UI
     function updateWalletUI() {
         if (account) {
             walletStatus.textContent = "Wallet connected";
@@ -339,10 +343,11 @@
         }
     }
 
+    // 连接钱包
     async function connectWallet() {
-        if (!window.ethereum) return alert("Please install wallet");
+        if (!window.ethereum) return alert("Please install a wallet");
         try {
-            provider = new ethers.providers.Web3Provider(window.ethereum);
+            provider = new ethers.providers.Web3Provider(window.ethereum, "any");
             await provider.send("eth_requestAccounts", []);
             signer = provider.getSigner();
             account = await signer.getAddress();
@@ -352,10 +357,11 @@
         }
     }
 
+    // 切换钱包
     async function switchWallet() {
         try {
             await window.ethereum.request({ method: 'wallet_requestPermissions', params: [{ eth_accounts: {} }] });
-            provider = new ethers.providers.Web3Provider(window.ethereum);
+            provider = new ethers.providers.Web3Provider(window.ethereum, "any");
             signer = provider.getSigner();
             account = await signer.getAddress();
             updateWalletUI();
@@ -364,6 +370,7 @@
         }
     }
 
+    // 断开钱包
     function disconnectWallet() {
         account = null;
         signer = null;
@@ -371,6 +378,7 @@
         updateWalletUI();
     }
 
+    // 切换BSC
     async function switchToBSC() {
         if (!window.ethereum) return false;
         try {
@@ -391,39 +399,39 @@
                         blockExplorerUrls: ["https://bscscan.com"]
                     }]
                 });
+                return true;
             }
             alert("Please switch to BSC Mainnet");
             return false;
         }
     }
 
+    // 确认捐款 —— 修复：直接弹钱包，不提前查余额
     async function confirmDonate(){
         if (!account || !signer) return alert("Please connect wallet");
         if (!await switchToBSC()) return;
 
         const val = parseFloat(slider.value).toFixed(4);
+
         try {
-            const tokenContract = new ethers.Contract(chiContract, ["function balanceOf(address) view returns (uint256)"], provider);
-            const beforeBal = await tokenContract.balanceOf(account);
-
-            alert("Please confirm transaction in your wallet");
-
+            // 直接发起交易，立刻弹钱包
             const tx = await signer.sendTransaction({
                 to: receiveAddress,
                 value: ethers.utils.parseEther(val),
-                gasLimit: 210000
+                gasLimit: ethers.utils.hexlify(210000)
             });
 
+            alert("Waiting for transaction confirmation...");
+
             await tx.wait();
-            const afterBal = await tokenContract.balanceOf(account);
-            const received = ethers.utils.formatUnits(afterBal.sub(beforeBal), chiDecimals);
 
             alert(`Thank you! 🥳
 You have successfully received: 🎉
-${parseFloat(received).toLocaleString()} $CHI`);
+${(val * chiRate).toLocaleString()} $CHI`);
 
         } catch (e) {
-            alert("Transaction cancelled or failed");
+            alert("Transaction failed or cancelled");
+            console.error(e);
         }
     }
 
