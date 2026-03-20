@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TAICHI • MINT</title>
+<style>
+    *{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif;}
+    body{
+        background:#fff;
+        color:#111;
+        min-height:100vh;
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        justify-content:center;
+        padding:20px;
+        gap:20px;
+    }
+    .mint-card{
+        background:#f9f9f9;
+        border-radius:14px;
+        padding:2rem;
+        border-left:4px solid #ffc107;
+        border-right:4px solid #ffc107;
+        box-shadow:0 4px 12px rgba(0,0,0,0.08);
+        max-width:480px;
+        width:100%;
+        text-align:center;
+    }
+    .taiji-mini {
+        width: 60px;
+        height: 60px;
+        margin: 0 auto 12px;
+        animation: rotateTaiji 12s linear infinite;
+    }
+    @keyframes rotateTaiji{
+        0%{ transform: rotate(0deg); }
+        100%{ transform: rotate(-360deg); }
+    }
+    h1{font-size:28px;margin-bottom:10px;color:#111;}
+    .subtitle{font-size:16px;color:#666;margin-bottom:20px;}
+    .limit-info{font-size:14px;color:#999;margin-bottom:20px;}
+    .count-info{font-size:14px;color:#666;margin-bottom:15px;}
+    #status{margin:15px 0;padding:10px;border-radius:8px;font-size:14px;background:#fff3cd;color:#856404;line-height:1.4;}
+    .status-success{background:#d4edda;color:#155724;}
+    .status-crit{background:#f8d7da;color:#721c24;font-weight:bold;}
+    .status-limit{background:#e2e3e5;color:#383d41;font-weight:bold;}
+
+    .wallet-buttons{
+        display:grid;
+        grid-template-columns:1fr 1fr 1fr;
+        gap:4px;
+        margin:15px 0 0 0;
+        width:fit-content;
+        margin-left:-10px;
+    }
+
+    .wallet-btn{padding:8px 6px;border-radius:10px;border:2px solid #ffc107;background:#fff;color:#ffc107;font-weight:bold;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:4px;}
+    .wallet-btn:hover{background:#fff9e6;border-color:#ffd24d;color:#ffd24d;}
+    .wallet-icon{width:20px;height:20px;border-radius:4px;}
+
+    #disconnectBtn{
+        margin-top:6px;
+        padding:6px 10px;
+        font-size:12px;
+        border-radius:8px;
+        background:#fff;
+        border:1px solid #ccc;
+        color:#666;
+        cursor:pointer;
+    }
+    #disconnectBtn:hover{
+        background:#f5f5f5;
+    }
+
+    #mintBtn{display:block;width:100%;padding:16px;border-radius:12px;margin:10px 0;text-align:center;text-decoration:none;font-size:16px;font-weight:bold;transition:all 0.2s ease;user-select:none;background:#ffffff;border:2px solid #ffc107;color:#ffc107;box-shadow:0 4px 0 #d48f00,0 6px 12px rgba(255,193,7,0.25),inset 0 1px 0 rgba(255,255,255,0.9);cursor:pointer;}
+    #mintBtn:hover{border-color:#ffd24d;color:#ffd24d;transform:translateY(-2px);box-shadow:0 6px 0 #d48f00,0 8px 16px rgba(255,193,7,0.3),inset 0 1px 0 rgba(255,255,255,1);}
+    #mintBtn:active{border-color:#e6ac00;color:#e6ac00;transform:translateY(2px);box-shadow:0 2px 0 #d48f00,0 3px 6px rgba(255,193,7,0.25),inset 0 1px 0 rgba(255,255,255,0.7);}
+    #mintBtn:disabled{background:#eee;border-color:#ccc;color:#999;cursor:not-allowed;transform:none;}
+
+    .btn{
+        display:block;
+        width:100%;
+        padding:16px;
+        border-radius:12px;
+        margin:14px 0;
+        text-align:center;
+        text-decoration:none;
+        font-size:16px;
+        font-weight:bold;
+        transition: all 0.2s ease;
+        user-select:none;
+        background:#fff;
+        border:2px solid #ffc107;
+        color:#ffc107;
+        box-shadow:
+            0 4px 0 #d48f00,
+            0 6px 12px rgba(255,193,7,0.25),
+            inset 0 1px 0 rgba(255,255,255,0.9);
+        cursor:pointer;
+    }
+    .btn:hover{
+        border-color:#ffd24d;
+        color:#ffd24d;
+        transform:translateY(-2px);
+        box-shadow:
+            0 6px 0 #d48f00,
+            0 8px 16px rgba(255,193,7,0.3),
+            inset 0 1px 0 rgba(255,255,255,1);
+    }
+    .btn:active{
+        transform:translateY(2px);
+        box-shadow:
+            0 2px 0 #d48f00,
+            0 3px 6px rgba(255,193,7,0.25),
+            inset 0 1px 0 rgba(255,255,255,0.7);
+    }
+    .btn-row{
+        display:flex;
+        gap:6px;
+        margin:10px 0;
+        max-width:480px;
+        width:100%;
+    }
+    .btn-half{
+        flex:1;
+        padding:14px 10px;
+        font-size:15px;
+        margin:0;
+    }
+    footer{
+        text-align:center;
+        padding:2rem 1rem;
+        color:#666;
+        font-size:14px;
+        width:100%;
+    }
+</style>
+</head>
+<body>
+
+<div class="mint-card">
+    <svg class="taiji-mini" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <g transform="rotate(-45 50 50)">
+            <path d="M50 0 A50 50 0 0 1 50 100 A25 25 0 0 0 50 50 A25 25 0 0 1 50 0 Z M50 25 m -8 0 a 8 8 0 1 0 16 0 a 8 8 0 1 0 -16 0" fill="#ffc107" fill-rule="evenodd"/>
+            <circle cx="50" cy="75" r="8" fill="#ffc107"/>
+        </g>
+    </svg>
+    <h1>FREE MINT</h1>
+    <p class="subtitle">Connect wallet to mint for 0 BNB</p>
+    <p class="limit-info">Max 10 claims per wallet</p>
+    <p class="count-info" id="countInfo">Claimed 0/10</p>
+    <div id="status">Connect your wallet</div>
+    
+    <div class="wallet-buttons">
+        <button class="wallet-btn" id="okxBtn">
+            <svg class="wallet-icon" viewBox="0 0 24 24" fill="#0052FF">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+            </svg>
+            OKX
+        </button>
+        <button class="wallet-btn" id="mmBtn">
+            <svg class="wallet-icon" viewBox="0 0 24 24" fill="#E2761B">
+                <path d="M12 2L2 7l10 5l10-5l-10-5zM2 17l10 5l10-5M2 12l10 5l10-5"/>
+            </svg>
+            MetaMask
+        </button>
+        <button class="wallet-btn" id="tpBtn">
+            <svg class="wallet-icon" viewBox="0 0 24 24" fill="#2196F3">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+            </svg>
+            TP Wallet
+        </button>
+    </div>
+
+    <button id="disconnectBtn" style="display:none;">Disconnect Wallet</button>
+    <button id="mintBtn" disabled>Connect Wallet First</button>
+</div>
+
+<a href="https://www.taichicoin.xyz/" class="btn" style="max-width:480px;">🏠 Home</a>
+<a href="https://www.taichicoin.xyz/donate" class="btn" style="max-width:480px;">🎁 Join the donor airdrop</a>
+
+<div class="btn-row">
+    <a href="https://t.me/CHiiiiiiiiiiiiiiiiii" class="btn btn-half">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-right:4px;">
+            <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+        </svg>
+        Telegram
+    </a>
+    <a href="https://x.com/taichicoin" class="btn btn-half">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="#ffc107" style="vertical-align:middle; margin-right:4px;">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+        </svg>
+        X / Twitter
+    </a>
+</div>
+
+<footer>© 2026 太極</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+<script>
+let contractAddress = "0x1867bB04607FaBa07b512C4df08e7a6A71A6E4C4";
+let maxLimit = 10;
+
+let currentAccount = null;
+let signer = null;
+
+let statusEl = document.getElementById("status");
+let countInfoEl = document.getElementById("countInfo");
+let mintBtn = document.getElementById("mintBtn");
+let disconnectBtn = document.getElementById("disconnectBtn");
+
+// 本地计数
+function getCount(addr) {
+    let k = `taichi_${addr.toLowerCase()}`;
+    return parseInt(localStorage.getItem(k) || 0);
+}
+function addCount(addr) {
+    let k = `taichi_${addr.toLowerCase()}`;
+    localStorage.setItem(k, getCount(addr)+1);
+}
+
+// UI刷新
+function updateUI() {
+    if (!currentAccount) {
+        countInfoEl.innerText = `Claimed 0/10`;
+        mintBtn.disabled = true;
+        mintBtn.innerText = "Connect Wallet First";
+        disconnectBtn.style.display = "none";
+        statusEl.innerText = "Connect your wallet";
+        statusEl.className = "";
+        return;
+    }
+
+    disconnectBtn.style.display = "inline-block";
+    let c = getCount(currentAccount);
+    countInfoEl.innerText = `Claimed ${c}/10`;
+
+    if (c >= maxLimit) {
+        statusEl.innerText = "Max claim limit reached";
+        statusEl.className = "status-limit";
+        mintBtn.disabled = true;
+        mintBtn.innerText = "Max Limit";
+    } else {
+        statusEl.innerText = "Wallet connected · Ready to mint";
+        statusEl.className = "status-success";
+        mintBtn.disabled = false;
+        mintBtn.innerText = "Start Mint";
+    }
+}
+
+// 断开钱包
+disconnectBtn.onclick = () => {
+    currentAccount = null;
+    signer = null;
+    updateUI();
+};
+
+// 统一连接钱包函数
+async function connect() {
+    if (!window.ethereum) {
+        statusEl.innerText = "No wallet found";
+        statusEl.className = "status-crit";
+        return false;
+    }
+
+    try {
+        // 切换到 BSC
+        await window.ethereum.request({
+            method: "wallet_switchEthereumChain",
+            params: [{ chainId: "0x38" }]
+        });
+    } catch (e) {}
+
+    try {
+        let p = new ethers.providers.Web3Provider(window.ethereum);
+        await p.send("eth_requestAccounts", []);
+        signer = p.getSigner();
+        currentAccount = await signer.getAddress();
+        updateUI();
+        return true;
+    } catch (e) {
+        statusEl.innerText = "Connection failed";
+        statusEl.className = "status-crit";
+        return false;
+    }
+}
+
+// 钱包按钮
+document.getElementById("okxBtn").onclick = connect;
+document.getElementById("mmBtn").onclick = connect;
+document.getElementById("tpBtn").onclick = connect;
+
+// ==============================================
+// 核心修复：只有连接成功，才真正发起交易
+// ==============================================
+mintBtn.onclick = async () => {
+    if (!currentAccount) {
+        statusEl.innerText = "Please connect wallet first";
+        statusEl.className = "status-crit";
+        return;
+    }
+
+    if (getCount(currentAccount) >= maxLimit) {
+        updateUI();
+        return;
+    }
+
+    mintBtn.disabled = true;
+    mintBtn.innerText = "Processing...";
+    statusEl.innerText = "Confirm transaction in wallet";
+
+    try {
+        // 发送 0 BNB
+        let tx = await signer.sendTransaction({
+            to: contractAddress,
+            value: 0,
+            gasLimit: "0x7A120"
+        });
+
+        statusEl.innerText = "Waiting for confirmation...";
+        await tx.wait();
+
+        // 成功
+        addCount(currentAccount);
+        statusEl.innerText = "Mint successful!";
+        statusEl.className = "status-success";
+        updateUI();
+    } catch (e) {
+        statusEl.innerText = "Transaction cancelled or failed";
+        statusEl.className = "status-crit";
+        mintBtn.innerText = "Start Mint";
+        mintBtn.disabled = false;
+    }
+};
+
+// 账户切换
+window.ethereum?.on("accountsChanged", () => {
+    currentAccount = null;
+    signer = null;
+    updateUI();
+});
+
+updateUI();
+</script>
+</body>
+</html>
