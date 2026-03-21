@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Twitter任务 - 太极币</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+        body{
+            background-image:url('./bg.jpg');
+            background-size:cover;
+            background-position:center center;
+            background-repeat:no-repeat;
+            background-attachment:fixed;
+            min-height:100vh;
+            padding:80px 20px 20px;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            position:relative;
+        }
+        body::before{
+            content:'';
+            position:fixed;
+            top:0;
+            left:0;
+            width:100%;
+            height:100%;
+            background-color:rgba(0,0,0,0.35);
+            z-index:0;
+        }
+        .top-bar{
+            position:fixed;
+            top:20px;
+            left:20px;
+            right:20px;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:12px;
+            z-index:10;
+        }
+        .btn-small{
+            height:44px;
+            padding:0 20px;
+            font-size:18px;
+            font-weight:600;
+            border-radius:12px;
+            border:none;
+            cursor:pointer;
+            transition:all 0.2s ease;
+            white-space:nowrap;
+            -webkit-tap-highlight-color:transparent;
+        }
+        .btn-primary{
+            background-color:#2563eb;
+            color:#ffffff;
+        }
+        .btn-primary:hover{
+            background-color:#1d4ed8;
+        }
+        .btn-success{
+            background-color:#5eead4;
+            color:#0f172a;
+        }
+        .btn-success:hover{
+            background-color:#2dd4bf;
+        }
+        .address-top{
+            height:44px;
+            padding:0 16px;
+            background-color:rgba(255,255,255,0.95);
+            border-radius:12px;
+            font-size:14px;
+            color:#1e293b;
+            display:none;
+            align-items:center;
+            gap:8px;
+            flex:1;
+            overflow:hidden;
+            text-overflow:ellipsis;
+            white-space:nowrap;
+        }
+        .container{
+            width:100%;
+            max-width:480px;
+            background:rgba(255,255,255,0.95);
+            border-radius:24px;
+            box-shadow:0 4px 20px rgba(0,0,0,0.15);
+            padding:40px 24px;
+            position:relative;
+            z-index:1;
+        }
+        h1{
+            font-size:28px;
+            font-weight:700;
+            color:#1e293b;
+            text-align:center;
+            margin-bottom:12px;
+        }
+        .desc{
+            font-size:16px;
+            color:#64748b;
+            text-align:center;
+            margin-bottom:24px;
+            line-height:1.5;
+        }
+        .btn-main{
+            width:100%;
+            height:56px;
+            border:none;
+            border-radius:16px;
+            font-size:18px;
+            font-weight:600;
+            cursor:pointer;
+            transition:all 0.2s ease;
+            -webkit-tap-highlight-color:transparent;
+            margin-bottom:12px;
+        }
+        .btn-success-main{
+            background-color:#5eead4;
+            color:#0f172a;
+        }
+        .btn-success-main:hover{
+            background-color:#2dd4bf;
+        }
+        .btn-main:disabled{
+            opacity:0.5;
+            cursor:not-allowed;
+        }
+        .tips{
+            font-size:13px;
+            color:#f1f5f9;
+            text-align:center;
+            margin-top:24px;
+            line-height:1.4;
+            position:relative;
+            z-index:1;
+        }
+
+        .form-input {
+            width: 100%;
+            height: 56px;
+            padding: 0 16px;
+            border-radius: 16px;
+            border: 1px solid #cbd5e1;
+            font-size:16px;
+            margin-bottom:12px;
+            outline:none;
+        }
+        .form-input:disabled {
+            background:#f1f5f9;
+        }
+        .status-text {
+            font-size:14px;
+            text-align:center;
+            margin:8px 0;
+            min-height:20px;
+        }
+        .status-error {
+            color:#ef4444;
+        }
+        .status-success {
+            color:#10b981;
+        }
+
+        /* Tally 弹窗遮罩 */
+        .tally-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .tally-iframe {
+            width: 100%;
+            max-width: 500px;
+            height: 80vh;
+            border-radius: 20px;
+            border: none;
+            background: #fff;
+        }
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #fff;
+            color: #333;
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-bar">
+    <div class="address-top" id="addressTop">
+        已连接：<span id="walletAddress"></span>
+    </div>
+    <button class="btn-small btn-primary" id="connectBtn">连接钱包</button>
+</div>
+
+<div class="container">
+    <h1>Twitter任务活动</h1>
+    <p class="desc">绑定后永久不可修改，提交后无法重复提交</p>
+
+    <input
+        type="text"
+        class="form-input"
+        id="twitterInput"
+        placeholder="输入Twitter用户名（不带@）"
+        disabled>
+    <button class="btn-main btn-success-main" id="bindBtn" disabled>
+        确认绑定（永久绑定）
+    </button>
+
+    <button class="btn-main btn-success-main" id="openTallyBtn" disabled>
+        提交任务数据
+    </button>
+
+    <div class="status-text" id="statusText"></div>
+
+    <p class="tips">
+        电脑端请安装MetaMask/OKX钱包插件<br>
+        手机端请在钱包APP的DApp浏览器打开
+    </p>
+</div>
+
+<!-- Tally 表单弹窗 -->
+<div class="tally-overlay" id="tallyOverlay">
+    <button class="close-btn" id="closeTally">×</button>
+    <iframe class="tally-iframe" id="tallyFrame"></iframe>
+</div>
+
+<script>
+    const TALLY_FORM_URL = "https://tally.so/r/rjEXEN";
+    const STORAGE_KEY = "TAICHI_BIND_TWITTER";
+    const SUBMITTED_KEY = "TAICHI_SUBMITTED_WALLETS";
+
+    let currentAccount = null;
+    let boundTwitter = null;
+
+    const connectBtn     = document.getElementById('connectBtn');
+    const addressTop     = document.getElementById('addressTop');
+    const walletAddress  = document.getElementById('walletAddress');
+    const twitterInput   = document.getElementById('twitterInput');
+    const bindBtn        = document.getElementById('bindBtn');
+    const openTallyBtn   = document.getElementById('openTallyBtn');
+    const statusText     = document.getElementById('statusText');
+    const tallyOverlay   = document.getElementById('tallyOverlay');
+    const tallyFrame     = document.getElementById('tallyFrame');
+    const closeTally     = document.getElementById('closeTally');
+
+    // 本地绑定逻辑
+    function getBindMap() {
+        try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {} } catch(e) { return {} }
+    }
+    function saveBind(wallet, twitter) {
+        const map = getBindMap();
+        map[wallet.toLowerCase()] = twitter.trim();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(map));
+    }
+    function getBoundTwitter(wallet) {
+        return getBindMap()[wallet.toLowerCase()] || null;
+    }
+
+    // 已提交钱包记录（防重复）
+    function getSubmittedWallets() {
+        try { return JSON.parse(localStorage.getItem(SUBMITTED_KEY)) || [] } catch(e) { return [] }
+    }
+    function markWalletAsSubmitted(wallet) {
+        const list = getSubmittedWallets();
+        const walletLower = wallet.toLowerCase();
+        if (!list.includes(walletLower)) {
+            list.push(walletLower);
+            localStorage.setItem(SUBMITTED_KEY, JSON.stringify(list));
+        }
+    }
+    function isWalletSubmitted(wallet) {
+        return getSubmittedWallets().includes(wallet.toLowerCase());
+    }
+
+    function shortenAddress(address) {
+        return address ? `${address.slice(0,6)}...${address.slice(-4)}` : '';
+    }
+
+    function getProvider() {
+        return window.okxwallet || window.ethereum || window.tpwallet || window.trustwallet;
+    }
+
+    function setStatus(msg, type) {
+        statusText.textContent = msg;
+        statusText.className = 'status-text';
+        if(type === 'error') statusText.classList.add('status-error');
+        else if(type === 'success') statusText.classList.add('status-success');
+    }
+
+    function updateState() {
+        const isBound = !!boundTwitter;
+        const isSubmitted = isWalletSubmitted(currentAccount);
+        
+        twitterInput.disabled = !currentAccount || isBound || isSubmitted;
+        bindBtn.disabled      = !currentAccount || isBound || isSubmitted || !twitterInput.value.trim();
+        openTallyBtn.disabled = !isBound || isSubmitted;
+
+        if (isSubmitted) {
+            setStatus('此钱包已提交过任务，无法重复提交', 'success');
+            openTallyBtn.textContent = '已提交';
+        }
+    }
+
+    // 连接钱包
+    connectBtn.onclick = async () => {
+        if (currentAccount) {
+            currentAccount = null;
+            boundTwitter = null;
+            addressTop.style.display = 'none';
+            connectBtn.textContent = '连接钱包';
+            connectBtn.classList.replace('btn-success','btn-primary');
+            setStatus('已断开', 'error');
+            updateState();
+            return;
+        }
+
+        const p = getProvider();
+        if (!p) {
+            alert('请在钱包DApp浏览器或安装插件打开');
+            return;
+        }
+
+        try {
+            const accounts = await p.request({ method: 'eth_requestAccounts' });
+            currentAccount = accounts[0];
+            boundTwitter = getBoundTwitter(currentAccount);
+
+            const isSubmitted = isWalletSubmitted(currentAccount);
+            walletAddress.textContent = shortenAddress(currentAccount);
+            addressTop.style.display = 'flex';
+            connectBtn.textContent = '已连接';
+            connectBtn.classList.replace('btn-primary','btn-success');
+
+            if (isSubmitted) {
+                setStatus('此钱包已提交过任务，无法重复提交', 'success');
+                openTallyBtn.textContent = '已提交';
+                openTallyBtn.disabled = true;
+                twitterInput.disabled = true;
+                bindBtn.disabled = true;
+                return;
+            }
+
+            if (boundTwitter) {
+                twitterInput.value = boundTwitter;
+                setStatus(`已绑定 @${boundTwitter}，不可修改`, 'success');
+            } else {
+                setStatus('请输入Twitter用户名并绑定', '');
+            }
+            updateState();
+        } catch(e) {
+            alert('连接失败');
+        }
+    };
+
+    // 绑定Twitter（绑死）
+    bindBtn.onclick = () => {
+        if (!currentAccount || boundTwitter || isWalletSubmitted(currentAccount)) return;
+        const name = twitterInput.value.trim();
+        if (!name) {
+            setStatus('请输入有效用户名', 'error');
+            return;
+        }
+        if (!confirm('绑定后永久不能修改，确定？')) return;
+
+        boundTwitter = name;
+        saveBind(currentAccount, boundTwitter);
+        setStatus(`绑定成功 @${boundTwitter}`, 'success');
+        updateState();
+    };
+
+    // 打开Tally表单（自动预填隐藏字段，仅显示URL）
+    openTallyBtn.onclick = () => {
+        if (isWalletSubmitted(currentAccount)) {
+            alert('此钱包已提交过任务，无法重复提交');
+            return;
+        }
+
+        let url = TALLY_FORM_URL;
+        url += `?wallet=${encodeURIComponent(currentAccount)}`;
+        url += `&username=${encodeURIComponent(boundTwitter)}`;
+
+        tallyFrame.src = url;
+        tallyOverlay.style.display = 'flex';
+
+        // 监听提交成功，自动锁死
+        tallyFrame.onload = () => {
+            setTimeout(() => {
+                if (tallyFrame.contentDocument?.querySelector('.tally-success')) {
+                    markWalletAsSubmitted(currentAccount);
+                    tallyOverlay.style.display = 'none';
+                    tallyFrame.src = '';
+                    setStatus('提交成功！此钱包无法重复提交', 'success');
+                    openTallyBtn.disabled = true;
+                    openTallyBtn.textContent = '已提交';
+                }
+            }, 1000);
+        };
+    };
+
+    closeTally.onclick = () => {
+        tallyOverlay.style.display = 'none';
+        tallyFrame.src = '';
+        updateState();
+    };
+</script>
+
+</body>
+</html>
