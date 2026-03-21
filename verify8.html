@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Twitter任务 - 太极币</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+        body{
+            background-image:url('./bg.jpg');
+            background-size:cover;
+            background-position:center center;
+            background-repeat:no-repeat;
+            background-attachment:fixed;
+            min-height:100vh;
+            padding:80px 20px 20px;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            position:relative;
+        }
+        /* 背景半透明遮罩 */
+        body::before{
+            content:'';
+            position:fixed;
+            top:0;
+            left:0;
+            width:100%;
+            height:100%;
+            background-color:rgba(0,0,0,0.35);
+            z-index:0;
+        }
+        /* 顶部栏：地址+连接按钮 */
+        .top-bar{
+            position:fixed;
+            top:20px;
+            left:20px;
+            right:20px;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:12px;
+            z-index:10;
+        }
+        .btn-small{
+            height:44px;
+            padding:0 20px;
+            font-size:18px;
+            font-weight:600;
+            border-radius:12px;
+            border:none;
+            cursor:pointer;
+            transition:all 0.2s ease;
+            white-space:nowrap;
+            -webkit-tap-highlight-color:transparent;
+        }
+        .btn-primary{
+            background-color:#2563eb;
+            color:#ffffff;
+        }
+        .btn-primary:hover{
+            background-color:#1d4ed8;
+        }
+        .btn-success{
+            background-color:#5eead4;
+            color:#0f172a;
+        }
+        .btn-success:hover{
+            background-color:#2dd4bf;
+        }
+        /* 顶部地址显示 */
+        .address-top{
+            height:44px;
+            padding:0 16px;
+            background-color:rgba(255,255,255,0.95);
+            border-radius:12px;
+            font-size:14px;
+            color:#1e293b;
+            display:none;
+            align-items:center;
+            gap:8px;
+            flex:1;
+            overflow:hidden;
+            text-overflow:ellipsis;
+            white-space:nowrap;
+        }
+        /* 中间卡片 */
+        .container{
+            width:100%;
+            max-width:480px;
+            background:rgba(255,255,255,0.95);
+            border-radius:24px;
+            box-shadow:0 4px 20px rgba(0,0,0,0.15);
+            padding:40px 24px;
+            position:relative;
+            z-index:1;
+        }
+        h1{
+            font-size:28px;
+            font-weight:700;
+            color:#1e293b;
+            text-align:center;
+            margin-bottom:12px;
+        }
+        .desc{
+            font-size:16px;
+            color:#64748b;
+            text-align:center;
+            margin-bottom:32px;
+            line-height:1.5;
+        }
+        /* 主按钮 */
+        .btn-main{
+            width:100%;
+            height:56px;
+            border:none;
+            border-radius:16px;
+            font-size:18px;
+            font-weight:600;
+            cursor:pointer;
+            transition:all 0.2s ease;
+            -webkit-tap-highlight-color:transparent;
+        }
+        .btn-success-main{
+            background-color:#5eead4;
+            color:#0f172a;
+        }
+        .btn-success-main:hover{
+            background-color:#2dd4bf;
+        }
+        .btn-main:disabled{
+            opacity:0.5;
+            cursor:not-allowed;
+        }
+        /* 底部提示 */
+        .tips{
+            font-size:13px;
+            color:#f1f5f9;
+            text-align:center;
+            margin-top:24px;
+            line-height:1.4;
+            position:relative;
+            z-index:1;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部栏 -->
+    <div class="top-bar">
+        <div class="address-top" id="addressTop">
+            已连接：<span id="walletAddress"></span>
+        </div>
+        <button class="btn-small btn-primary" id="connectBtn">
+            连接钱包
+        </button>
+    </div>
+
+    <!-- 中间内容卡片 -->
+    <div class="container">
+        <h1>Twitter任务活动</h1>
+        <p class="desc">关注+点赞+转推指定推文，即可获得专属奖励</p>
+        <button class="btn-main btn-success-main" id="twitterBtn" disabled>
+            前往点赞转推完成任务
+        </button>
+        <p class="tips">
+            电脑端请安装MetaMask/OKX钱包插件使用<br>
+            手机端请在钱包APP的DApp浏览器打开本页面
+        </p>
+    </div>
+
+    <script>
+        // 配置区，仅需修改此处
+        const CONFIG = {
+            twitterLink: "https://x.com/i/status/2035345304766361607"
+        };
+
+        // 全局变量
+        let currentAccount = null;
+        let currentProvider = null;
+
+        // DOM元素
+        const connectBtn = document.getElementById('connectBtn');
+        const twitterBtn = document.getElementById('twitterBtn');
+        const addressTop = document.getElementById('addressTop');
+        const walletAddress = document.getElementById('walletAddress');
+
+        // 钱包地址缩短显示
+        function shortenAddress(address) {
+            return address ? `${address.slice(0, 6)}...${address.slice(-4)}` : '';
+        }
+
+        // 【核心兼容】检测钱包环境，同时兼容电脑插件+手机DApp浏览器
+        function getProvider() {
+            // 优先匹配电脑/手机端的主流钱包注入
+            return window.okxwallet || window.ethereum || window.tpwallet || window.trustwallet || window.web3?.currentProvider;
+        }
+
+        // 【核心】连接/断开钱包逻辑
+        async function toggleWallet() {
+            // 已连接状态：点击断开
+            if (currentAccount) {
+                currentAccount = null;
+                currentProvider = null;
+                addressTop.style.display = 'none';
+                connectBtn.textContent = '连接钱包';
+                connectBtn.classList.remove('btn-success');
+                connectBtn.classList.add('btn-primary');
+                twitterBtn.disabled = true;
+                alert('已断开钱包连接');
+                return;
+            }
+
+            // 未连接状态：检测环境+发起连接
+            const provider = getProvider();
+            if (!provider) {
+                alert('未检测到钱包！\n电脑端请安装MetaMask/OKX钱包插件\n手机端请在钱包APP的DApp浏览器打开本页面');
+                return;
+            }
+
+            try {
+                currentProvider = provider;
+                // 发起钱包授权，兼容电脑插件+手机DApp浏览器
+                const accounts = await provider.request({
+                    method: 'eth_requestAccounts'
+                });
+
+                // 连接成功，更新页面状态
+                if (accounts?.length > 0) {
+                    currentAccount = accounts[0];
+                    walletAddress.textContent = shortenAddress(currentAccount);
+                    addressTop.style.display = 'flex';
+                    connectBtn.textContent = '已连接';
+                    connectBtn.classList.remove('btn-primary');
+                    connectBtn.classList.add('btn-success');
+                    twitterBtn.disabled = false;
+                    alert('钱包连接成功！');
+
+                    // 监听钱包账号切换/断开，自动同步页面状态
+                    provider.on('accountsChanged', (accounts) => {
+                        if (accounts.length === 0) {
+                            toggleWallet(); // 断开连接
+                        } else {
+                            currentAccount = accounts[0];
+                            walletAddress.textContent = shortenAddress(accounts[0]);
+                        }
+                    });
+                }
+            } catch (err) {
+                console.error('连接失败：', err);
+                // 全场景错误提示，不会静默失败
+                if (err.code === 4001) {
+                    alert('您拒绝了钱包授权，请重试');
+                } else if (err.code === -32002) {
+                    alert('授权请求已在钱包中处理，请查看钱包弹窗');
+                } else {
+                    alert(`连接失败：${err.message || '未知错误，请重试'}`);
+                }
+            }
+        }
+
+        // 页面加载完成后绑定事件，确保按钮100%可点击
+        window.onload = function() {
+            // 绑定连接钱包按钮点击事件
+            connectBtn.onclick = toggleWallet;
+            // 绑定Twitter任务按钮跳转
+            twitterBtn.onclick = function() {
+                if (confirm('即将跳转到Twitter，请确保网络可正常访问')) {
+                    window.location.href = CONFIG.twitterLink;
+                }
+            };
+        };
+    </script>
+</body>
+</html>
