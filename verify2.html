@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Twitter任务 - 太极币</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+        body{background-image:url('./bg.jpg');background-size:cover;background-position:center center;background-repeat:no-repeat;background-attachment:fixed;min-height:100vh;padding:80px 20px 20px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative}
+        body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background-color:rgba(0,0,0,0.35);z-index:0}
+        .top-bar{position:fixed;top:20px;left:20px;right:20px;display:flex;align-items:center;justify-content:space-between;gap:12px;z-index:10}
+        .btn-small{height:44px;padding:0 20px;font-size:18px;font-weight:600;border-radius:12px;border:none;cursor:pointer;transition:all 0.2s ease;white-space:nowrap;-webkit-tap-highlight-color:transparent;pointer-events:auto !important;touch-action:manipulation !important;z-index:999}
+        .btn-primary{background-color:#2563eb;color:#fff}
+        .btn-primary:hover,.btn-primary:active{background-color:#1d4ed8}
+        .btn-success{background-color:#5eead4;color:#0f172a}
+        .btn-success:hover,.btn-success:active{background-color:#2dd4bf}
+        .address-top{height:44px;padding:0 16px;background-color:rgba(255,255,255,0.95);border-radius:12px;font-size:14px;color:#1e293b;display:none;align-items:center;gap:8px;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;z-index:999}
+        .container{width:100%;max-width:480px;background:rgba(255,255,255,0.95);border-radius:24px;box-shadow:0 4px 20px rgba(0,0,0,0.15);padding:40px 24px;position:relative;z-index:1}
+        h1{font-size:28px;font-weight:700;color:#1e293b;text-align:center;margin-bottom:12px}
+        .desc{font-size:16px;color:#64748b;text-align:center;margin-bottom:32px;line-height:1.5}
+        .btn{width:100%;height:56px;border:none;border-radius:16px;font-size:18px;font-weight:600;cursor:pointer;transition:all 0.2s ease;margin-bottom:16px;pointer-events:auto !important;touch-action:manipulation !important;-webkit-tap-highlight-color:transparent;z-index:999}
+        .btn-success{background-color:#5eead4;color:#0f172a}
+        .btn-success:hover,.btn-success:active{background-color:#2dd4bf}
+        .btn:disabled{opacity:0.5;cursor:not-allowed}
+        .tips{font-size:13px;color:#f1f5f9;text-align:center;margin-top:24px;line-height:1.4;position:relative;z-index:1}
+        .wc-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);display:none;align-items:center;justify-content:center;z-index:1000;padding:20px}
+        .wc-modal.active{display:flex}
+        .wc-box{background:#fff;border-radius:20px;padding:24px;max-width:400px;width:100%;text-align:center;position:relative}
+        .wc-close{position:absolute;top:16px;right:16px;border:none;background:none;font-size:24px;color:#666;cursor:pointer}
+        .wc-qr{width:280px;height:280px;margin:20px auto;border-radius:12px}
+        .wc-tips{font-size:14px;color:#666;line-height:1.5}
+    </style>
+    <!-- 异步加载WalletConnect SDK，不阻塞页面 -->
+    <script src="https://cdn.jsdelivr.net/npm/@walletconnect/sign-client@2.13.3/dist/index.umd.min.js" async></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js" async></script>
+</head>
+<body>
+    <div class="top-bar">
+        <div class="address-top" id="addressTop">
+            已连接：<span id="walletAddress"></span>
+        </div>
+        <button class="btn-small btn-primary" id="connectBtn">
+            连接钱包
+        </button>
+    </div>
+
+    <div class="container">
+        <h1>Twitter任务活动</h1>
+        <p class="desc">关注+点赞+转推指定推文，即可获得专属奖励</p>
+        <button class="btn btn-success" id="twitterBtn" disabled>
+            前往点赞转推完成任务
+        </button>
+        <p class="tips">
+            钱包DApp浏览器点击直接连接，普通浏览器扫码连接<br>
+            完成任务后请返回页面确认
+        </p>
+    </div>
+
+    <!-- WalletConnect二维码弹窗 -->
+    <div class="wc-modal" id="wcModal">
+        <div class="wc-box">
+            <button class="wc-close" id="wcClose">×</button>
+            <h3>扫码连接钱包</h3>
+            <div id="wcQr" class="wc-qr"></div>
+            <p class="wc-tips">用OKX/TP/Trust/MetaMask钱包扫码连接<br>手机端将自动唤起钱包APP</p>
+        </div>
+    </div>
+
+    <script>
+        const CONFIG={
+            officialSite:"https://taichicoin.xyz",
+            twitterLink:"https://x.com/i/status/2035345304766361607",
+            wcProjectId:"a8510af6bab8956f8401418d64c759d3"
+        };
+
+        let currentAccount=null,currentProvider=null,wcClient=null;
+        const connectBtn=document.getElementById('connectBtn');
+        const twitterBtn=document.getElementById('twitterBtn');
+        const addressTop=document.getElementById('addressTop');
+        const walletAddress=document.getElementById('walletAddress');
+        const wcModal=document.getElementById('wcModal');
+        const wcClose=document.getElementById('wcClose');
+        const wcQr=document.getElementById('wcQr');
+
+        function shortenAddress(addr){
+            return addr ? addr.slice(0,6)+'...'+addr.slice(-4) : '';
+        }
+
+        // 更新连接状态
+        function updateState(addr){
+            currentAccount=addr;
+            walletAddress.textContent=shortenAddress(addr);
+            addressTop.style.display='flex';
+            connectBtn.textContent='已连接';
+            connectBtn.classList.remove('btn-primary');
+            connectBtn.classList.add('btn-success');
+            twitterBtn.disabled=false;
+            wcModal.classList.remove('active');
+        }
+
+        // 断开连接
+        function disconnect(){
+            currentAccount=null;
+            currentProvider=null;
+            addressTop.style.display='none';
+            connectBtn.textContent='连接钱包';
+            connectBtn.classList.remove('btn-success');
+            connectBtn.classList.add('btn-primary');
+            twitterBtn.disabled=true;
+            alert('已断开连接');
+        }
+
+        // 1. 钱包直连逻辑（DApp浏览器用）
+        async function connectDirect(){
+            const provider=window.ethereum || window.okxwallet || window.tpwallet || window.trustwallet;
+            if(!provider) return false;
+            try{
+                const accounts=await provider.request({method:'eth_requestAccounts'});
+                if(accounts?.length>0){
+                    currentProvider=provider;
+                    updateState(accounts[0]);
+                    alert('钱包连接成功！');
+                    provider.on('accountsChanged',(accs)=>{
+                        accs.length===0 ? disconnect() : updateState(accs[0]);
+                    });
+                }
+                return true;
+            }catch(err){
+                console.error('直连失败:',err);
+                alert(`连接失败: ${err.message || '未知错误'}`);
+                return true;
+            }
+        }
+
+        // 2. WalletConnect连接逻辑（普通浏览器用）
+        async function connectWC(){
+            if(!window.SignClient || !window.QRCode){
+                alert('连接组件加载中，请稍等1秒后重试');
+                return;
+            }
+            try{
+                // 初始化WC客户端
+                if(!wcClient){
+                    wcClient=await window.SignClient.init({
+                        projectId:CONFIG.wcProjectId,
+                        metadata:{
+                            name:"太极币Twitter任务",
+                            description:"关注+点赞+转推获取奖励",
+                            url:CONFIG.officialSite,
+                            icons:["https://taichicoin.xyz/favicon.ico"]
+                        }
+                    });
+                    // 监听断开
+                    wcClient.on('session_delete',disconnect);
+                }
+                // 生成连接
+                const {uri,approval}=await wcClient.connect({
+                    requiredNamespaces:{
+                        eip155:{
+                            chains:["eip155:1","eip155:56"],
+                            methods:["eth_requestAccounts"],
+                            events:["accountsChanged"]
+                        }
+                    }
+                });
+                // 生成二维码
+                wcModal.classList.add('active');
+                wcQr.innerHTML='';
+                await window.QRCode.toCanvas(wcQr,uri,{width:280,margin:1});
+                // 手机端自动唤起钱包
+                const isMobile=/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                if(isMobile){
+                    window.location.href=`okx://wc?uri=${encodeURIComponent(uri)}`;
+                }
+                // 等待授权
+                const session=await approval();
+                const account=session.namespaces.eip155.accounts[0].split(':')[2];
+                updateState(account);
+                alert('钱包连接成功！');
+            }catch(err){
+                console.error('WC连接失败:',err);
+                wcModal.classList.remove('active');
+                alert('连接失败，请重试');
+            }
+        }
+
+        // 按钮点击核心逻辑，自动适配环境
+        connectBtn.onclick=async function(){
+            if(currentAccount){
+                disconnect();
+                return;
+            }
+            // 先尝试直连（DApp浏览器）
+            const directOk=await connectDirect();
+            if(directOk) return;
+            // 直连失败，走WalletConnect（普通浏览器）
+            await connectWC();
+        };
+
+        // 关闭二维码弹窗
+        wcClose.onclick=()=>wcModal.classList.remove('active');
+        wcModal.onclick=(e)=>e.target===wcModal && wcModal.classList.remove('active');
+
+        // Twitter按钮跳转
+        twitterBtn.onclick=()=>{
+            if(confirm('即将跳转到Twitter，请确保网络可访问')){
+                location.href=CONFIG.twitterLink;
+            }
+        };
+    </script>
+</body>
+</html>
