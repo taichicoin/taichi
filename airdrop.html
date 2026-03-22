@@ -7,10 +7,11 @@ permalink: /airdrop
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>OG Airdrop</title>
-    <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+    <!-- Google reCAPTCHA -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <style>
         *{margin:0;padding:0;box-sizing:border-box;font-family:'Orbitron',-apple-system,BlinkMacSystemFont,Roboto,sans-serif}
-        @import url('https://fonts.lug.ustc.edu.cn/css2?family=Orbitron:wght@400;500;600;700;800&display=swap');
+        @import url('https://fonts.lug.ustc.edu.cn/css2?family=Orbitron:wght@400,500,600,700,800&display=swap');
         
         body{
             background-image:url('/bg.jpg');
@@ -126,16 +127,15 @@ permalink: /airdrop
             text-shadow:0 0 12px rgba(0,255,255,0.7);
         }
         
-        .h-captcha{
+        .g-recaptcha{
             display:flex;
             justify-content:center;
             margin:24px auto;
             display:none;
-            filter:drop-shadow(0 0 8px rgba(0,255,255,0.3));
         }
         
         @media (max-width:480px){
-            .h-captcha{
+            .g-recaptcha{
                 transform:scale(0.9);
                 transform-origin:center;
             }
@@ -302,10 +302,11 @@ permalink: /airdrop
 
     <button class="btn-twitter" id="twitterBtn">Like / RT / Tag 3 friends</button>
 
-    <div class="h-captcha" 
-         data-sitekey="cf246c60-cb9c-44a6-9cf6-1fe6e60e01b8" 
-         data-callback="onCaptchaSuccess"
-         data-expired-callback="onCaptchaExpired">
+    <!-- Google 图片验证 -->
+    <div class="g-recaptcha" 
+         data-sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+         data-callback="onRecaptchaSuccess"
+         data-expired-callback="onRecaptchaExpired">
     </div>
 
     <button class="btn-verify" id="verifyBtn">Verify and submit to tally</button>
@@ -325,7 +326,6 @@ permalink: /airdrop
 
 <script>
 const TALLY_URL = "https://tally.so/r/rjEXEN";
-// 已替换为你指定的最新推文链接
 const TWITTER_URL = "https://x.com/i/status/2035812941736649002";
 
 function initLocalStorage() {
@@ -358,7 +358,7 @@ const $connect = document.getElementById('connectBtn');
 const $addrBox = document.getElementById('addressTop');
 const $display = document.getElementById('walletDisplay');
 const $twitterBtn = document.getElementById('twitterBtn');
-const $captcha = document.querySelector('.h-captcha');
+const $captcha = document.querySelector('.g-recaptcha');
 const $verifyBtn = document.getElementById('verifyBtn');
 const $tallyOverlay = document.getElementById('tallyOverlay');
 const $tallyFrame = document.getElementById('tallyFrame');
@@ -421,7 +421,6 @@ async function autoConnectWallet() {
             currentAccount = accounts[0];
             $display.textContent = shortAddress(currentAccount);
             $addrBox.style.display = "flex";
-            // 自动连接成功后，按钮显示Disconnect
             $connect.textContent = "Disconnect";
             $connect.classList.replace("btn-primary", "btn-success");
             initWalletListeners(provider);
@@ -448,12 +447,11 @@ function handleAccountsChanged(accounts) {
     } else {
         currentAccount = accounts[0];
         $display.textContent = shortAddress(currentAccount);
-        // 切换账户后，按钮保持Disconnect
         $connect.textContent = "Disconnect";
         $connect.classList.replace("btn-primary", "btn-success");
         twitterTaskDone = false;
         isCaptchaPassed = false;
-        if (window.hcaptcha) window.hcaptcha.reset();
+        if (window.grecaptcha) window.grecaptcha.reset();
         refreshUI();
     }
 }
@@ -466,20 +464,19 @@ function handleDisconnect() {
     currentAccount = null;
     twitterTaskDone = false;
     isCaptchaPassed = false;
-    if (window.hcaptcha) window.hcaptcha.reset();
+    if (window.grecaptcha) window.grecaptcha.reset();
     $addrBox.style.display = "none";
-    // 断开后，按钮恢复初始状态
     $connect.textContent = "Connect wallet";
     $connect.classList.replace("btn-success", "btn-primary");
     refreshUI();
 }
 
-window.onCaptchaSuccess = function() {
+// Google 验证回调
+window.onRecaptchaSuccess = function() {
     isCaptchaPassed = true;
     refreshUI();
 }
-
-window.onCaptchaExpired = function() {
+window.onRecaptchaExpired = function() {
     isCaptchaPassed = false;
     refreshUI();
 }
@@ -513,18 +510,15 @@ $connect.onclick = async () => {
         alert("No wallet detected. Please install MetaMask/OKX wallet extension, or open this page in your wallet's DApp browser");
         return;
     }
-    // 已连接状态下，点击按钮直接断开
     if (currentAccount) {
         handleDisconnect();
         return;
     }
-    // 未连接状态，请求授权连接
     try {
         const accounts = await provider.request({ method: "eth_requestAccounts" });
         currentAccount = accounts[0];
         $display.textContent = shortAddress(currentAccount);
         $addrBox.style.display = "flex";
-        // 连接成功后，按钮改成Disconnect
         $connect.textContent = "Disconnect";
         $connect.classList.replace("btn-primary", "btn-success");
         initWalletListeners(provider);
