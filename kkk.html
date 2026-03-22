@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Twitter Task - Taichi Coin</title>
+    <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Orbitron',-apple-system,BlinkMacSystemFont,Roboto,sans-serif}
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400,500,600,700,800&display=swap');
+        body{
+            background-image:url('/bg.jpg');
+            background-size:cover;
+            background-position:center center;
+            background-repeat:no-repeat;
+            background-attachment:fixed;
+            min-height:100vh;
+            padding:80px 20px 20px;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            position:relative;
+            overflow-x:hidden;
+        }
+        body::before{
+            content:'';
+            position:fixed;top:0;left:0;right:0;bottom:0;
+            background:linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(10,0,30,0.8) 100%);
+            z-index:0;
+        }
+        body::after{
+            content:'';
+            position:fixed;top:0;left:0;right:0;bottom:0;
+            background:linear-gradient(to bottom, transparent 50%, rgba(0,255,255,0.03) 50%);
+            background-size:100% 4px;
+            z-index:1;
+            pointer-events:none;
+            animation:scanline 8s linear infinite;
+        }
+        @keyframes scanline{
+            0%{transform:translateY(0)}
+            100%{transform:translateY(100vh)}
+        }
+        .top-bar{
+            position:fixed;top:20px;left:20px;right:20px;
+            display:flex;justify-content:space-between;gap:12px;z-index:10;
+        }
+        .btn-small{
+            height:44px;padding:0 20px;border-radius:8px;border:1px solid #00ffff;
+            font-size:16px;font-weight:600;cursor:pointer;
+            background:rgba(0,0,0,0.6);
+            color:#00ffff;
+            text-transform:uppercase;
+            letter-spacing:1px;
+            transition:all 0.3s ease;
+            box-shadow:0 0 10px rgba(0,255,255,0.3);
+        }
+        .btn-small:hover{
+            background:rgba(0,255,255,0.1);
+            box-shadow:0 0 20px rgba(0,255,255,0.6);
+            transform:translateY(-2px);
+        }
+        .btn-success{
+            border-color:#ff00ff;
+            color:#ff00ff;
+            box-shadow:0 0 10px rgba(255,0,255,0.3);
+        }
+        .btn-success:hover{
+            background:rgba(255,0,255,0.1);
+            box-shadow:0 0 20px rgba(255,0,255,0.6);
+        }
+        .address-top{
+            height:44px;padding:0 16px;background:rgba(0,0,0,0.6);
+            border:1px solid #00ffff;border-radius:8px;
+            font-size:14px;display:none;align-items:center;gap:8px;
+            color:#00ffff;
+            box-shadow:0 0 10px rgba(0,255,255,0.3);
+            backdrop-filter:blur(4px);
+        }
+        .container{
+            width:100%;max-width:480px;
+            background:rgba(0,0,0,0.7);
+            border:1px solid #00ffff;
+            border-radius:16px;
+            padding:40px 24px;
+            position:relative;z-index:2;
+            box-shadow:0 0 30px rgba(0,255,255,0.2), inset 0 0 20px rgba(0,255,255,0.05);
+            backdrop-filter:blur(8px);
+            overflow:hidden;
+        }
+        .container::before{
+            content:'';
+            position:absolute;top:0;left:-100%;width:100%;height:100%;
+            background:linear-gradient(90deg, transparent, rgba(0,255,255,0.1), transparent);
+            animation:glow 4s linear infinite;
+            z-index:-1;
+        }
+        @keyframes glow{
+            0%{left:-100%}
+            100%{left:100%}
+        }
+        h1{
+            font-size:32px;text-align:center;margin-bottom:12px;
+            color:#00ffff;text-transform:uppercase;
+            letter-spacing:2px;
+            text-shadow:0 0 10px rgba(0,255,255,0.8), 0 0 20px rgba(0,255,255,0.4);
+        }
+        .reward-info {
+            color: #00ffff;
+            text-align: center;
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 24px;
+            text-shadow: 0 0 8px rgba(0,255,255,0.4);
+        }
+        .h-captcha{
+            display:flex;
+            justify-content:center;
+            margin:24px auto;
+            display:none;
+            filter:drop-shadow(0 0 8px rgba(0,255,255,0.3));
+        }
+        @media (max-width:480px){
+            .h-captcha{
+                transform:scale(0.9);
+                transform-origin:center;
+            }
+        }
+        .btn-twitter{
+            background:linear-gradient(135deg, #1d9bf0 0%, #00ffff 100%);
+            color:#000;width:100%;height:56px;border:none;border-radius:8px;
+            font-size:20px;font-weight:700;cursor:pointer;
+            text-transform:uppercase;letter-spacing:1px;
+            transition:all 0.3s ease;
+            margin-bottom:16px;
+            display:none;
+            box-shadow:0 0 15px rgba(29,155,240,0.5);
+            position:relative;
+            overflow:hidden;
+        }
+        .btn-twitter::before{
+            content:'';
+            position:absolute;top:0;left:-100%;width:100%;height:100%;
+            background:linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition:left 0.5s ease;
+        }
+        .btn-twitter:hover::before{
+            left:100%;
+        }
+        .btn-twitter:hover{
+            transform:translateY(-3px);
+            box-shadow:0 0 25px rgba(29,155,240,0.8);
+        }
+        .btn-verify{
+            width:100%;height:56px;border:none;border-radius:8px;
+            font-size:20px;font-weight:700;cursor:pointer;
+            background:linear-gradient(135deg, #ff00ff 0%, #00ffff 100%);
+            color:#000;
+            text-transform:uppercase;letter-spacing:1px;
+            transition:all 0.3s ease;
+            display:none;
+            box-shadow:0 0 15px rgba(255,0,255,0.5);
+            position:relative;
+            overflow:hidden;
+        }
+        .btn-verify::before{
+            content:'';
+            position:absolute;top:0;left:-100%;width:100%;height:100%;
+            background:linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition:left 0.5s ease;
+        }
+        .btn-verify:hover::before{
+            left:100%;
+        }
+        .btn-verify:hover{
+            transform:translateY(-3px);
+            box-shadow:0 0 25px rgba(255,0,255,0.8);
+        }
+        .btn-verify:disabled{opacity:0.5;cursor:not-allowed;transform:none;box-shadow:none;}
+        .tips{
+            font-size:13px;color:#a0f0ff;text-align:center;margin-top:28px;
+            line-height:1.6;position:relative;z-index:2;
+            text-shadow:0 0 5px rgba(0,255,255,0.3);
+            letter-spacing:1px;
+        }
+
+.tally-overlay{
+    position:fixed;
+    top:0;left:0;right:0;bottom:0;
+    background:rgba(0,0,0,0.7);
+    z-index:9999;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:0;
+    margin:0;
+    backdrop-filter:blur(4px);
+}
+.tally-modal{
+    width:100vw;
+    height:100vh;
+    background:rgba(255,255,255,0.9);
+    border-radius:0;
+    border:none;
+    position:relative;
+    overflow:hidden;
+}
+.tally-iframe{
+    width:100%;
+    height:100%;
+    border:none;
+    display:block;
+}
+.close-btn{
+    position:fixed;
+    top:20px;right:20px;
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.9);
+    color:#ff00ff;
+    font-size:22px;
+    font-weight:bold;
+    border:2px solid #ff00ff;
+    cursor:pointer;
+    z-index:10000;
+    box-shadow:0 0 12px rgba(255,0,255,0.4);
+}
+
+        .neon-flicker{
+            animation:flicker 3s infinite alternate;
+        }
+        @keyframes flicker{
+            0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100%{opacity:1}
+            20%, 21.999%, 63%, 63.999%, 65%, 69.999%{opacity:0.4}
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-bar">
+    <div class="address-top" id="addressTop">
+        Connected: <span id="walletDisplay" class="neon-flicker"></span>
+    </div>
+    <button class="btn-small btn-primary" id="connectBtn">Connect Wallet</button>
+</div>
+
+<div class="container">
+    <h1 class="neon-flicker">Twitter Task Verification</h1>
+    
+    <div class="reward-info">
+        Prize pool:<br>
+        • 2 500 000 $CHI AIRDROP<br>
+        • 5000 WHITELIST<br>
+        • Each address eligible 500 $CHI
+    </div>
+
+    <button class="btn-twitter" id="twitterBtn">Like, Retweet, Tag 3 friends</button>
+
+    <div class="h-captcha" 
+         data-sitekey="cf246c60-cb9c-44a6-9cf6-250e60e01b8" 
+         data-callback="onCaptchaSuccess"
+         data-expired-callback="onCaptchaExpired">
+    </div>
+
+    <button class="btn-verify" id="verifyBtn">Verify and submit to tally</button>
+</div>
+
+<p class="tips">
+    Desktop: Install MetaMask/OKX Wallet Extension<br>
+    Mobile: Open in Wallet App DApp Browser
+</p>
+
+<div class="tally-overlay" id="tallyOverlay">
+    <div class="tally-modal">
+        <button class="close-btn" id="closeBtn">×</button>
+        <iframe class="tally-iframe" id="tallyFrame"></iframe>
+    </div>
+</div>
+
+<script>
+const TALLY_URL = "https://tally.so/r/rjEXEN";
+const TWITTER_URL = "https://x.com/i/status/203534530476636160";
+
+let currentAccount = null;
+let isCaptchaPassed = false;
+let twitterTaskDone = false;
+
+const $connect = document.getElementById('connectBtn');
+const $addrBox = document.getElementById('addressTop');
+const $display = document.getElementById('walletDisplay');
+const $twitterBtn = document.getElementById('twitterBtn');
+const $captcha = document.querySelector('.h-captcha');
+const $verifyBtn = document.getElementById('verifyBtn');
+const $tallyOverlay = document.getElementById('tallyOverlay');
+const $tallyFrame = document.getElementById('tallyFrame');
+const $closeBtn = document.getElementById('closeBtn');
+
+function shortAddress(addr) {
+    return addr ? `${addr.slice(0,6)}...${addr.slice(-4)}` : '';
+}
+
+function getProvider() {
+    return window.ethereum || window.okxwallet || window.tpwallet || window.trustwallet;
+}
+
+function refreshUI() {
+    $twitterBtn.style.display = currentAccount ? "block" : "none";
+    $captcha.style.display = (currentAccount && twitterTaskDone) ? "flex" : "none";
+    $verifyBtn.style.display = (currentAccount && twitterTaskDone && isCaptchaPassed) ? "block" : "none";
+}
+
+window.onCaptchaSuccess = function() {
+    isCaptchaPassed = true;
+    refreshUI();
+}
+
+window.onCaptchaExpired = function() {
+    isCaptchaPassed = false;
+    refreshUI();
+}
+
+function openTallyModal() {
+    if (!currentAccount || !isCaptchaPassed) return;
+    const formUrl = `${TALLY_URL}?wallet=${encodeURIComponent(currentAccount)}`;
+    $tallyFrame.src = formUrl;
+    $tallyOverlay.style.display = 'flex';
+}
+
+function closeTallyModal() {
+    $tallyOverlay.style.display = 'none';
+    $tallyFrame.src = '';
+}
+
+$twitterBtn.onclick = () => {
+    if (!currentAccount) return;
+    window.open(TWITTER_URL, '_blank');
+    setTimeout(() => {
+        twitterTaskDone = true;
+        refreshUI();
+    }, 800);
+};
+
+$connect.onclick = async () => {
+    const p = getProvider();
+    if (!p) {
+        alert("Please open in wallet DApp browser or install wallet extension");
+        return;
+    }
+    if (currentAccount) {
+        currentAccount = null;
+        twitterTaskDone = false;
+        isCaptchaPassed = false;
+        $addrBox.style.display = "none";
+        $connect.textContent = "Connect Wallet";
+        $connect.classList.replace("btn-success", "btn-primary");
+        refreshUI();
+        return;
+    }
+    try {
+        const accounts = await p.request({ method: "eth_requestAccounts" });
+        currentAccount = accounts[0];
+        $display.textContent = shortAddress(currentAccount);
+        $addrBox.style.display = "flex";
+        $connect.textContent = "Connected";
+        $connect.classList.replace("btn-primary", "btn-success");
+
+        p.on("accountsChanged", (accounts) => {
+            if (accounts.length === 0) {
+                currentAccount = null;
+                twitterTaskDone = false;
+                isCaptchaPassed = false;
+                $addrBox.style.display = "none";
+                $connect.textContent = "Connect Wallet";
+                $connect.classList.replace("btn-success", "btn-primary");
+            } else {
+                currentAccount = accounts[0];
+                $display.textContent = shortAddress(currentAccount);
+            }
+            refreshUI();
+        });
+        refreshUI();
+    } catch (err) {
+        alert("Connection failed: " + (err.message || "Please retry"));
+    }
+};
+
+$verifyBtn.onclick = openTallyModal;
+$closeBtn.onclick = closeTallyModal;
+$tallyOverlay.onclick = (e) => {
+    if (e.target === $tallyOverlay) closeTallyModal();
+};
+
+refreshUI();
+</script>
+</body>
+</html>
