@@ -1,0 +1,545 @@
+---
+permalink: /airdrop
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>OG Airdrop</title>
+    <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Orbitron',-apple-system,BlinkMacSystemFont,Roboto,sans-serif}
+        @import url('https://fonts.lug.ustc.edu.cn/css2?family=Orbitron:wght@400;500;600;700;800&display=swap');
+        
+        body{
+            background-image:url('/bg.jpg');
+            background-size:cover;
+            background-position:center center;
+            background-repeat:no-repeat;
+            background-attachment:fixed;
+            min-height:100vh;
+            padding:80px 20px 20px;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            position:relative;
+            overflow-x:hidden;
+        }
+        
+        body::after{
+            content:'';
+            position:fixed;top:0;left:0;right:0;bottom:0;
+            background:linear-gradient(to bottom, transparent 50%, rgba(0,255,255,0.015) 50%);
+            background-size:100% 3px;
+            z-index:1;
+            pointer-events:none;
+            animation:scanline 8s linear infinite;
+        }
+        
+        @keyframes scanline{
+            0%{transform:translateY(0)}
+            100%{transform:translateY(100vh)}
+        }
+        
+        .top-bar{
+            position:fixed;top:20px;left:20px;right:20px;
+            display:flex;justify-content:space-between;gap:12px;z-index:10;
+            flex-wrap:wrap;
+        }
+        
+        .btn-small{
+            height:44px;padding:0 20px;border-radius:12px;
+            border:1px solid rgba(0,255,255,0.4);
+            font-size:16px;font-weight:600;cursor:pointer;
+            background:transparent;
+            color:#00ffff;
+            text-transform:uppercase;
+            letter-spacing:1px;
+            transition:all 0.3s ease;
+            box-shadow:0 0 10px rgba(0,255,255,0.2);
+            backdrop-filter:blur(2px);
+            flex-shrink:0;
+        }
+        
+        .btn-small:hover{
+            border-color:rgba(0,255,255,0.7);
+            box-shadow:0 0 20px rgba(0,255,255,0.5);
+            transform:translateY(-2px);
+        }
+        
+        .btn-success{
+            border-color:rgba(255,0,255,0.4);
+            color:#ff00ff;
+            box-shadow:0 0 10px rgba(255,0,255,0.2);
+        }
+        
+        .btn-success:hover{
+            border-color:rgba(255,0,255,0.7);
+            box-shadow:0 0 20px rgba(255,0,255,0.5);
+        }
+        
+        .address-top{
+            height:44px;padding:0 16px;
+            background:transparent;
+            border:1px solid rgba(0,255,255,0.4);
+            border-radius:12px;
+            font-size:14px;display:none;align-items:center;gap:8px;
+            color:#00ffff;
+            box-shadow:0 0 10px rgba(0,255,255,0.2);
+            backdrop-filter:blur(2px);
+            word-break:keep-all;
+            flex-shrink:1;
+            overflow:hidden;
+        }
+        
+        .container{
+            width:100%;max-width:480px;
+            background:transparent;
+            border:1px solid rgba(0,255,255,0.25);
+            border-radius:24px;
+            padding:40px 24px;
+            position:relative;z-index:2;
+            box-shadow:0 0 30px rgba(0,255,255,0.08);
+            backdrop-filter:blur(0px);
+            overflow:hidden;
+        }
+        
+        .task-completed-tip{
+            font-size:24px;
+            text-align:center;
+            color:#00ff88;
+            text-transform:uppercase;
+            letter-spacing:2px;
+            text-shadow:0 0 15px rgba(0,255,136,0.9);
+            margin:20px 0;
+            display:none;
+        }
+        
+        .reward-info {
+            color: #a0f0ff;
+            text-align: center;
+            font-size: 24px;
+            line-height:1.8;
+            margin-bottom:28px;
+            text-shadow:0 0 12px rgba(0,255,255,0.7);
+        }
+        
+        .h-captcha{
+            display:flex;
+            justify-content:center;
+            margin:24px auto;
+            display:none;
+            filter:drop-shadow(0 0 8px rgba(0,255,255,0.3));
+        }
+        
+        @media (max-width:480px){
+            .h-captcha{
+                transform:scale(0.9);
+                transform-origin:center;
+            }
+            .top-bar{
+                top:10px;left:10px;right:10px;
+            }
+            body{
+                padding:70px 15px 15px;
+            }
+            .container{
+                padding:30px 20px;
+            }
+            .reward-info{
+                font-size:22px;
+            }
+        }
+        
+        .btn-twitter{
+            background:rgba(29,155,240,0.2);
+            border:1px solid rgba(29,155,240,0.4);
+            color:#1d9bf0;
+            width:100%;
+            height:56px;
+            border-radius:12px;
+            font-size:20px;
+            font-weight:700;
+            cursor:pointer;
+            text-transform:uppercase;
+            letter-spacing:1px;
+            transition:all 0.3s ease;
+            margin-bottom:16px;
+            display:none;
+            box-shadow:0 0 15px rgba(29,155,240,0.2);
+            backdrop-filter:blur(2px);
+            touch-action:manipulation;
+        }
+        
+        .btn-twitter:hover{
+            background:rgba(29,155,240,0.3);
+            border-color:rgba(29,155,240,0.7);
+            box-shadow:0 0 25px rgba(29,155,240,0.5);
+            transform:translateY(-3px);
+        }
+        
+        .btn-verify{
+            width:100%;
+            height:56px;
+            border-radius:12px;
+            border:1px solid rgba(255,0,255,0.4);
+            font-size:19px;
+            font-weight:700;
+            cursor:pointer;
+            background:rgba(255,0,255,0.2);
+            color:#ff00ff;
+            text-transform:uppercase;
+            letter-spacing:1px;
+            transition:all 0.3s ease;
+            display:none;
+            box-shadow:0 0 15px rgba(255,0,255,0.2);
+            backdrop-filter:blur(2px);
+            touch-action:manipulation;
+        }
+        
+        .btn-verify:hover{
+            background:rgba(255,0,255,0.3);
+            border-color:rgba(255,0,255,0.7);
+            box-shadow:0 0 25px rgba(255,0,255,0.5);
+            transform:translateY(-3px);
+        }
+        
+        .btn-verify:disabled{
+            opacity:0.5;
+            cursor:not-allowed;
+            transform:none;
+            box-shadow:none;
+        }
+
+        .btn-completed{
+            background:rgba(0,255,136,0.1);
+            border-color:rgba(0,255,136,0.4);
+            color:#00ff88;
+            cursor:not-allowed;
+        }
+        
+        .tips{
+            font-size:13px;color:#a0f0ff;text-align:center;margin-top:28px;
+            line-height:1.6;position:relative;z-index:2;
+            text-shadow:0 0 8px rgba(0,255,255,0.3);
+            letter-spacing:1px;
+        }
+
+        .tally-overlay{
+            position:fixed;
+            top:0;left:0;right:0;bottom:0;
+            background:rgba(0,0,0,0.3);
+            z-index:9999;
+            display:none;
+            align-items:center;
+            justify-content:center;
+            padding:0;
+            margin:0;
+            backdrop-filter:blur(6px);
+        }
+        .tally-modal{
+            width:100vw;
+            height:100vh;
+            background:rgba(255,255,255,0.75);
+            border-radius:0;
+            border:none;
+            position:relative;
+            overflow:hidden;
+        }
+        .tally-iframe{
+            width:100%;
+            height:100%;
+            border:none;
+            display:block;
+        }
+        .close-btn{
+            position:fixed;
+            top:20px;right:20px;
+            width:44px;
+            height:44px;
+            border-radius:50%;
+            background:rgba(255,255,255,0.7);
+            color:#ff00ff;
+            font-size:22px;
+            font-weight:bold;
+            border:2px solid rgba(255,0,255,0.6);
+            cursor:pointer;
+            z-index:10000;
+            box-shadow:0 0 15px rgba(255,0,255,0.3);
+            touch-action:manipulation;
+        }
+
+        .neon-flicker{
+            animation:flicker 3s infinite alternate;
+        }
+        @keyframes flicker{
+            0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100%{opacity:1}
+            20%, 21.999%, 63%, 63.999%, 65%, 69.999%{opacity:0.4}
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-bar">
+    <div class="address-top" id="addressTop">
+        Connected: <span id="walletDisplay" class="neon-flicker"></span>
+    </div>
+    <button class="btn-small btn-primary" id="connectBtn">Connect wallet</button>
+</div>
+
+<div class="container">
+    <div class="task-completed-tip" id="completedTip">✅ Task completed</div>
+
+    <div class="reward-info" id="rewardInfo">
+        Unlock your OG Airdrop<br>
+        Prize pool:<br>
+        • 2 500 000 $CHI airdrop<br>
+        • 5000 whitelist<br>
+        • Each address eligible 500 $CHI
+    </div>
+
+    <button class="btn-twitter" id="twitterBtn">Like / RT / Tag 3 friends</button>
+
+    <div class="h-captcha" 
+         data-sitekey="cf246c60-cb9c-44a6-9cf6-1fe6e60e01b8" 
+         data-callback="onCaptchaSuccess"
+         data-expired-callback="onCaptchaExpired">
+    </div>
+
+    <button class="btn-verify" id="verifyBtn">Verify and submit to tally</button>
+</div>
+
+<p class="tips">
+    Desktop: Install MetaMask/OKX wallet extension<br>
+    Mobile: Open in wallet app DApp browser
+</p>
+
+<div class="tally-overlay" id="tallyOverlay">
+    <div class="tally-modal">
+        <button class="close-btn" id="closeBtn">×</button>
+        <iframe class="tally-iframe" id="tallyFrame"></iframe>
+    </div>
+</div>
+
+<script>
+const TALLY_URL = "https://tally.so/r/rjEXEN";
+const TWITTER_URL = "https://x.com/i/status/2035345304766361600";
+
+function initLocalStorage() {
+    if (!localStorage.getItem('completed_wallets')) {
+        localStorage.setItem('completed_wallets', JSON.stringify({}));
+    }
+}
+
+function saveTaskCompleted(address) {
+    if (!address) return;
+    const completedWallets = JSON.parse(localStorage.getItem('completed_wallets'));
+    completedWallets[address.toLowerCase()] = {
+        completed: true,
+        completeTime: new Date().toISOString()
+    };
+    localStorage.setItem('completed_wallets', JSON.stringify(completedWallets));
+}
+
+function isTaskCompleted(address) {
+    if (!address) return false;
+    const completedWallets = JSON.parse(localStorage.getItem('completed_wallets'));
+    return completedWallets[address.toLowerCase()]?.completed || false;
+}
+
+let currentAccount = null;
+let isCaptchaPassed = false;
+let twitterTaskDone = false;
+
+const $connect = document.getElementById('connectBtn');
+const $addrBox = document.getElementById('addressTop');
+const $display = document.getElementById('walletDisplay');
+const $twitterBtn = document.getElementById('twitterBtn');
+const $captcha = document.querySelector('.h-captcha');
+const $verifyBtn = document.getElementById('verifyBtn');
+const $tallyOverlay = document.getElementById('tallyOverlay');
+const $tallyFrame = document.getElementById('tallyFrame');
+const $closeBtn = document.getElementById('closeBtn');
+const $completedTip = document.getElementById('completedTip');
+const $rewardInfo = document.getElementById('rewardInfo');
+
+function shortAddress(addr) {
+    return addr ? `${addr.slice(0,6)}...${addr.slice(-4)}` : '';
+}
+
+function getProvider() {
+    if (window.okxwallet) return window.okxwallet;
+    if (window.ethereum) {
+        if (window.ethereum.providers) {
+            return window.ethereum.providers.find(p => p.isMetaMask || p.isOKXWallet) || window.ethereum;
+        }
+        return window.ethereum;
+    }
+    if (window.tpwallet) return window.tpwallet;
+    if (window.trustwallet) return window.trustwallet;
+    if (window.bitkeep) return window.bitkeep;
+    if (window.imToken) return window.imToken;
+    if (window.coinbaseWalletExtension) return window.coinbaseWalletExtension;
+    return null;
+}
+
+function refreshUI() {
+    const isCompleted = isTaskCompleted(currentAccount);
+
+    if (isCompleted) {
+        $completedTip.style.display = 'block';
+        $rewardInfo.style.display = 'none';
+        $twitterBtn.style.display = 'none';
+        $captcha.style.display = 'none';
+        $verifyBtn.style.display = 'block';
+        $verifyBtn.textContent = 'Task completed';
+        $verifyBtn.classList.add('btn-completed');
+        $verifyBtn.disabled = true;
+        return;
+    }
+
+    $completedTip.style.display = 'none';
+    $rewardInfo.style.display = 'block';
+    $verifyBtn.classList.remove('btn-completed');
+    $verifyBtn.disabled = false;
+    $verifyBtn.textContent = 'Verify and submit to tally';
+    
+    $twitterBtn.style.display = currentAccount ? "block" : "none";
+    $captcha.style.display = (currentAccount && twitterTaskDone) ? "flex" : "none";
+    $verifyBtn.style.display = (currentAccount && twitterTaskDone && isCaptchaPassed) ? "block" : "none";
+}
+
+async function autoConnectWallet() {
+    const provider = getProvider();
+    if (!provider) return;
+    try {
+        const accounts = await provider.request({ method: "eth_accounts" });
+        if (accounts.length > 0) {
+            currentAccount = accounts[0];
+            $display.textContent = shortAddress(currentAccount);
+            $addrBox.style.display = "flex";
+            $connect.textContent = "Connected";
+            $connect.classList.replace("btn-primary", "btn-success");
+            initWalletListeners(provider);
+            refreshUI();
+        }
+    } catch (err) {
+        console.log("Auto connect failed", err);
+    }
+}
+
+function initWalletListeners(provider) {
+    provider.removeListener("accountsChanged", handleAccountsChanged);
+    provider.removeListener("chainChanged", handleChainChanged);
+    provider.removeListener("disconnect", handleDisconnect);
+    
+    provider.on("accountsChanged", handleAccountsChanged);
+    provider.on("chainChanged", handleChainChanged);
+    provider.on("disconnect", handleDisconnect);
+}
+
+function handleAccountsChanged(accounts) {
+    if (accounts.length === 0) {
+        handleDisconnect();
+    } else {
+        currentAccount = accounts[0];
+        $display.textContent = shortAddress(currentAccount);
+        twitterTaskDone = false;
+        isCaptchaPassed = false;
+        if (window.hcaptcha) window.hcaptcha.reset();
+        refreshUI();
+    }
+}
+
+function handleChainChanged() {
+    window.location.reload();
+}
+
+function handleDisconnect() {
+    currentAccount = null;
+    twitterTaskDone = false;
+    isCaptchaPassed = false;
+    if (window.hcaptcha) window.hcaptcha.reset();
+    $addrBox.style.display = "none";
+    $connect.textContent = "Connect wallet";
+    $connect.classList.replace("btn-success", "btn-primary");
+    refreshUI();
+}
+
+window.onCaptchaSuccess = function() {
+    isCaptchaPassed = true;
+    refreshUI();
+}
+
+window.onCaptchaExpired = function() {
+    isCaptchaPassed = false;
+    refreshUI();
+}
+
+function openTallyModal() {
+    if (!currentAccount || !isCaptchaPassed) return;
+    saveTaskCompleted(currentAccount);
+    const formUrl = `${TALLY_URL}?wallet=${encodeURIComponent(currentAccount)}`;
+    $tallyFrame.src = formUrl;
+    $tallyOverlay.style.display = 'flex';
+    refreshUI();
+}
+
+function closeTallyModal() {
+    $tallyOverlay.style.display = 'none';
+    $tallyFrame.src = '';
+}
+
+$twitterBtn.onclick = () => {
+    if (!currentAccount) return;
+    window.open(TWITTER_URL, '_blank');
+    setTimeout(() => {
+        twitterTaskDone = true;
+        refreshUI();
+    }, 800);
+};
+
+$connect.onclick = async () => {
+    const provider = getProvider();
+    if (!provider) {
+        alert("No wallet detected. Please install MetaMask/OKX wallet extension, or open this page in your wallet's DApp browser");
+        return;
+    }
+    if (currentAccount) {
+        handleDisconnect();
+        return;
+    }
+    try {
+        const accounts = await provider.request({ method: "eth_requestAccounts" });
+        currentAccount = accounts[0];
+        $display.textContent = shortAddress(currentAccount);
+        $addrBox.style.display = "flex";
+        $connect.textContent = "Connected";
+        $connect.classList.replace("btn-primary", "btn-success");
+        initWalletListeners(provider);
+        refreshUI();
+    } catch (err) {
+        if (err.code === 4001) {
+            alert("Connection rejected. Please authorize the wallet connection to continue");
+        } else {
+            alert("Connection failed: " + (err.message || "Please retry"));
+        }
+    }
+};
+
+$verifyBtn.onclick = openTallyModal;
+$closeBtn.onclick = closeTallyModal;
+$tallyOverlay.onclick = (e) => {
+    if (e.target === $tallyOverlay) closeTallyModal();
+};
+
+window.addEventListener('DOMContentLoaded', () => {
+    initLocalStorage();
+    autoConnectWallet();
+    refreshUI();
+});
+</script>
+</body>
+</html>
