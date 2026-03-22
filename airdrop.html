@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Twitter任务 - 太极币</title>
+    <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,Roboto,sans-serif}
+        body{
+            background-image:url('./bg.jpg');
+            background-size:cover;
+            background-position:center center;
+            background-repeat:no-repeat;
+            background-attachment:fixed;
+            min-height:100vh;
+            padding:80px 20px 20px;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            position:relative;
+        }
+        body::before{
+            content:'';
+            position:fixed;top:0;left:0;right:0;bottom:0;
+            background:rgba(0,0,0,0.4);
+            z-index:0;
+        }
+        .top-bar{
+            position:fixed;top:20px;left:20px;right:20px;
+            display:flex;justify-content:space-between;gap:12px;z-index:10;
+        }
+        .btn-small{height:44px;padding:0 20px;border-radius:12px;border:none;font-size:18px;cursor:pointer;}
+        .btn-primary{background:#2563eb;color:white;}
+        .btn-success{background:#5eead4;color:#0f172a;}
+        .btn-twitter{
+            background:#1d9bf0;color:white;
+            width:100%;height:56px;border:none;border-radius:16px;
+            font-size:20px;font-weight:700;cursor:pointer;
+            transition:all 0.2s ease;
+            margin-bottom:12px;
+            display:none;
+        }
+        .address-top{
+            height:44px;padding:0 16px;background:white;border-radius:12px;
+            font-size:14px;display:none;align-items:center;gap:8px;
+        }
+        .container{
+            width:100%;max-width:480px;background:white;border-radius:24px;
+            padding:40px 24px;position:relative;z-index:1;
+        }
+        h1{font-size:28px;text-align:center;margin-bottom:12px;color:#1e293b;}
+        .desc{color:#64748b;text-align:center;margin-bottom:24px;line-height:1.5;}
+        .h-captcha{
+            display:flex;
+            justify-content:center;
+            margin:20px auto;
+            display:none;
+        }
+        @media (max-width:480px){
+            .h-captcha{
+                transform:scale(0.9);
+                transform-origin:center;
+            }
+        }
+        .btn-verify{
+            width:100%;height:56px;border:none;border-radius:16px;
+            font-size:20px;font-weight:700;cursor:pointer;
+            background:#2563eb;color:white;
+            transition:all 0.2s ease;
+            display:none;
+        }
+        .btn-verify:disabled{opacity:0.5;cursor:not-allowed;}
+        .tips{
+            font-size:13px;color:#f1f5f9;text-align:center;margin-top:24px;
+            line-height:1.4;position:relative;z-index:1;
+        }
+        .tally-overlay{
+            position:fixed;top:0;left:0;right:0;bottom:0;
+            background:rgba(0,0,0,0.7);
+            z-index:999;
+            display:none;
+            align-items:center;
+            justify-content:center;
+            padding:20px;
+        }
+        .tally-modal{
+            width:90%;max-width:900px;height:85vh;
+            background:white;border-radius:20px;
+            position:relative;overflow:hidden;
+        }
+        .tally-iframe{width:100%;height:100%;border:none;}
+        .close-btn{
+            position:absolute;top:12px;right:12px;
+            width:40px;height:40px;border-radius:50%;
+            border:none;background:white;color:#333;
+            font-size:20px;font-weight:700;cursor:pointer;
+            box-shadow:0 2px 8px rgba(0,0,0,0.15);
+            z-index:1000;
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-bar">
+    <div class="address-top" id="addressTop">
+        已连接：<span id="walletDisplay"></span>
+    </div>
+    <button class="btn-small btn-primary" id="connectBtn">连接钱包</button>
+</div>
+
+<div class="container">
+    <h1>Twitter 任务验证</h1>
+    <p class="desc">请先连接钱包 → 完成推特任务 → 验证并提交</p>
+
+    <button class="btn-twitter" id="twitterBtn">Like / RT / Tag 3 friends</button>
+
+    <div class="h-captcha" 
+         data-sitekey="cf246c60-cb9c-44a6-9cf6-1fe6e60e01b8" 
+         data-callback="onCaptchaSuccess"
+         data-expired-callback="onCaptchaExpired">
+    </div>
+
+    <button class="btn-verify" id="verifyBtn">Submit Verify</button>
+</div>
+
+<p class="tips">
+    电脑端请安装MetaMask/OKX钱包插件使用<br>
+    手机端请在钱包APP的DApp浏览器打开本页面
+</p>
+
+<div class="tally-overlay" id="tallyOverlay">
+    <div class="tally-modal">
+        <button class="close-btn" id="closeBtn">×</button>
+        <iframe class="tally-iframe" id="tallyFrame"></iframe>
+    </div>
+</div>
+
+<script>
+const TALLY_URL = "https://tally.so/r/rjEXEN";
+const TWITTER_URL = "https://x.com/i/status/203534530476636160";
+
+let currentAccount = null;
+let isCaptchaPassed = false;
+let twitterTaskDone = false;
+
+const $connect = document.getElementById('connectBtn');
+const $addrBox = document.getElementById('addressTop');
+const $display = document.getElementById('walletDisplay');
+const $twitterBtn = document.getElementById('twitterBtn');
+const $captcha = document.querySelector('.h-captcha');
+const $verifyBtn = document.getElementById('verifyBtn');
+const $tallyOverlay = document.getElementById('tallyOverlay');
+const $tallyFrame = document.getElementById('tallyFrame');
+const $closeBtn = document.getElementById('closeBtn');
+
+function shortAddress(addr) {
+    return addr ? `${addr.slice(0,6)}...${addr.slice(-4)}` : '';
+}
+
+function getProvider() {
+    return window.ethereum || window.okxwallet || window.tpwallet || window.trustwallet;
+}
+
+function refreshUI() {
+    $twitterBtn.style.display = currentAccount ? "block" : "none";
+    $captcha.style.display = (currentAccount && twitterTaskDone) ? "flex" : "none";
+    $verifyBtn.style.display = (currentAccount && twitterTaskDone && isCaptchaPassed) ? "block" : "none";
+}
+
+window.onCaptchaSuccess = function() {
+    isCaptchaPassed = true;
+    refreshUI();
+}
+
+window.onCaptchaExpired = function() {
+    isCaptchaPassed = false;
+    refreshUI();
+}
+
+function openTallyModal() {
+    if (!currentAccount || !isCaptchaPassed) return;
+    const formUrl = `${TALLY_URL}?wallet=${encodeURIComponent(currentAccount)}`;
+    $tallyFrame.src = formUrl;
+    $tallyOverlay.style.display = 'flex';
+}
+
+function closeTallyModal() {
+    $tallyOverlay.style.display = 'none';
+    $tallyFrame.src = '';
+}
+
+$twitterBtn.onclick = () => {
+    if (!currentAccount) return;
+    window.open(TWITTER_URL, '_blank');
+    setTimeout(() => {
+        twitterTaskDone = true;
+        refreshUI();
+    }, 800);
+};
+
+$connect.onclick = async () => {
+    const p = getProvider();
+    if (!p) {
+        alert("请在钱包DApp浏览器或安装插件打开");
+        return;
+    }
+    if (currentAccount) {
+        currentAccount = null;
+        twitterTaskDone = false;
+        isCaptchaPassed = false;
+        $addrBox.style.display = "none";
+        $connect.textContent = "连接钱包";
+        $connect.classList.replace("btn-success", "btn-primary");
+        refreshUI();
+        return;
+    }
+    try {
+        const accounts = await p.request({ method: "eth_requestAccounts" });
+        currentAccount = accounts[0];
+        $display.textContent = shortAddress(currentAccount);
+        $addrBox.style.display = "flex";
+        $connect.textContent = "已连接";
+        $connect.classList.replace("btn-primary", "btn-success");
+
+        p.on("accountsChanged", (accounts) => {
+            if (accounts.length === 0) {
+                currentAccount = null;
+                twitterTaskDone = false;
+                isCaptchaPassed = false;
+                $addrBox.style.display = "none";
+                $connect.textContent = "连接钱包";
+                $connect.classList.replace("btn-success", "btn-primary");
+            } else {
+                currentAccount = accounts[0];
+                $display.textContent = shortAddress(currentAccount);
+            }
+            refreshUI();
+        });
+        refreshUI();
+    } catch (err) {
+        alert("连接钱包失败：" + (err.message || "请重试"));
+    }
+};
+
+$verifyBtn.onclick = openTallyModal;
+$closeBtn.onclick = closeTallyModal;
+$tallyOverlay.onclick = (e) => {
+    if (e.target === $tallyOverlay) closeTallyModal();
+};
+
+refreshUI();
+</script>
+</body>
+</html>
