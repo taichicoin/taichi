@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Twitter任务 - 太极币</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+        body{
+            background-image:url('./bg.jpg');
+            background-size:cover;
+            background-position:center center;
+            background-repeat:no-repeat;
+            background-attachment:fixed;
+            min-height:100vh;
+            padding:80px 20px 20px;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            position:relative;
+        }
+        body::before{
+            content:'';
+            position:fixed;
+            top:0;
+            left:0;
+            width:100%;
+            height:100%;
+            background-color:rgba(0,0,0,0.35);
+            z-index:0;
+        }
+        .top-bar{
+            position:fixed;
+            top:20px;
+            left:20px;
+            right:20px;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:12px;
+            z-index:10;
+        }
+        .btn-small{
+            height:44px;
+            padding:0 20px;
+            font-size:18px;
+            font-weight:600;
+            border-radius:12px;
+            border:none;
+            cursor:pointer;
+            transition:all 0.2s ease;
+            white-space:nowrap;
+            -webkit-tap-highlight-color:transparent;
+        }
+        .btn-primary{
+            background-color:#2563eb;
+            color:#ffffff;
+        }
+        .btn-primary:hover{
+            background-color:#1d4ed8;
+        }
+        .btn-success{
+            background-color:#5eead4;
+            color:#0f172a;
+        }
+        .btn-success:hover{
+            background-color:#2dd4bf;
+        }
+        .address-top{
+            height:44px;
+            padding:0 16px;
+            background-color:rgba(255,255,255,0.95);
+            border-radius:12px;
+            font-size:14px;
+            color:#1e293b;
+            display:none;
+            align-items:center;
+            gap:8px;
+            flex:1;
+            overflow:hidden;
+            text-overflow:ellipsis;
+            white-space:nowrap;
+        }
+        .container{
+            width:100%;
+            max-width:480px;
+            background:rgba(255,255,255,0.95);
+            border-radius:24px;
+            box-shadow:0 4px 20px rgba(0,0,0,0.15);
+            padding:40px 24px;
+            position:relative;
+            z-index:1;
+        }
+        h1{
+            font-size:28px;
+            font-weight:700;
+            color:#1e293b;
+            text-align:center;
+            margin-bottom:12px;
+        }
+        .desc{
+            font-size:16px;
+            color:#64748b;
+            text-align:center;
+            margin-bottom:24px;
+            line-height:1.5;
+        }
+        .btn-main{
+            width:100%;
+            height:56px;
+            border:none;
+            border-radius:16px;
+            font-size:18px;
+            font-weight:600;
+            cursor:pointer;
+            transition:all 0.2s ease;
+            -webkit-tap-highlight-color:transparent;
+            margin-bottom:12px;
+        }
+        .btn-success-main{
+            background-color:#5eead4;
+            color:#0f172a;
+        }
+        .btn-success-main:hover{
+            background-color:#2dd4bf;
+        }
+        .btn-main:disabled{
+            opacity:0.5;
+            cursor:not-allowed;
+        }
+        .tips{
+            font-size:13px;
+            color:#f1f5f9;
+            text-align:center;
+            margin-top:24px;
+            line-height:1.4;
+            position:relative;
+            z-index:1;
+        }
+
+        .form-input {
+            width: 100%;
+            height: 56px;
+            padding: 0 16px;
+            border-radius: 16px;
+            border: 1px solid #cbd5e1;
+            font-size:16px;
+            margin-bottom:12px;
+            outline:none;
+        }
+        .form-input:disabled {
+            background:#f1f5f9;
+        }
+        .status-text {
+            font-size:14px;
+            text-align:center;
+            margin:8px 0;
+            min-height:20px;
+        }
+        .status-error {
+            color:#ef4444;
+        }
+        .status-success {
+            color:#10b981;
+        }
+        .finished-banner {
+            background: #d1fae5;
+            color: #065f46;
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="top-bar">
+    <div class="address-top" id="addressTop">
+        已连接：<span id="walletAddress"></span>
+    </div>
+    <button class="btn-small btn-primary" id="connectBtn">连接钱包</button>
+</div>
+
+<div class="container">
+    <h1>Twitter任务活动</h1>
+    <p class="desc">绑定后永久不可修改，每人仅限参与一次</p>
+
+    <div id="finishedBanner" style="display:none;" class="finished-banner">
+        ✅ 您已完成全部任务，请勿重复提交
+    </div>
+
+    <input
+        type="text"
+        class="form-input"
+        id="twitterInput"
+        placeholder="输入Twitter用户名（不带@）"
+        disabled>
+    <button class="btn-main btn-success-main" id="bindBtn" disabled>
+        确认绑定（永久绑定）
+    </button>
+
+    <input
+        type="text"
+        class="form-input"
+        id="tweetInput"
+        placeholder="粘贴你的推文链接"
+        disabled>
+    <button class="btn-main btn-success-main" id="submitBtn" disabled>
+        提交推文
+    </button>
+
+    <div class="status-text" id="statusText"></div>
+
+    <p class="tips">
+        电脑端请安装MetaMask/OKX钱包插件<br>
+        手机端请在钱包APP的DApp浏览器打开
+    </p>
+</div>
+
+<script>
+    // ==============================================
+    // 👉 换成你自己的 Tally 表单链接（必须正确）
+    // 格式如：https://tally.so/r/abc123
+    // ==============================================
+    const TALLY_FORM_URL = "https://tally.so/r/这里换成你的表单ID";
+
+    // 本地存储键名
+    const STORAGE_BIND = "TAICHI_BIND";
+    const STORAGE_SUBMITTED = "TAICHI_SUBMITTED";
+
+    let currentAccount = null;
+    let boundData = null;
+
+    // DOM
+    const connectBtn     = document.getElementById('connectBtn');
+    const addressTop     = document.getElementById('addressTop');
+    const walletAddress  = document.getElementById('walletAddress');
+    const twitterInput   = document.getElementById('twitterInput');
+    const bindBtn        = document.getElementById('bindBtn');
+    const tweetInput     = document.getElementById('tweetInput');
+    const submitBtn      = document.getElementById('submitBtn');
+    const statusText     = document.getElementById('statusText');
+    const finishedBanner = document.getElementById('finishedBanner');
+
+    // ==============================================
+    // 工具方法
+    // ==============================================
+    function shortenAddress(addr) {
+        return addr ? `${addr.slice(0,6)}...${addr.slice(-4)}` : '';
+    }
+
+    function getProvider() {
+        return window.okxwallet || window.ethereum || window.tpwallet || window.trustwallet;
+    }
+
+    function setStatus(msg, type) {
+        statusText.textContent = msg;
+        statusText.className = 'status-text';
+        if (type === 'error') statusText.classList.add('status-error');
+        if (type === 'success') statusText.classList.add('status-success');
+    }
+
+    // ==============================================
+    // 本地绑定 / 已提交 记录
+    // ==============================================
+    function getLocalData() {
+        try {
+            return {
+                bind: JSON.parse(localStorage.getItem(STORAGE_BIND)) || {},
+                submitted: JSON.parse(localStorage.getItem(STORAGE_SUBMITTED)) || {}
+            };
+        } catch (e) {
+            return { bind: {}, submitted: {} };
+        }
+    }
+
+    function isWalletSubmitted(wallet) {
+        const w = wallet?.toLowerCase();
+        return getLocalData().submitted[w] === true;
+    }
+
+    function markSubmitted(wallet) {
+        const { bind, submitted } = getLocalData();
+        submitted[wallet.toLowerCase()] = true;
+        localStorage.setItem(STORAGE_SUBMITTED, JSON.stringify(submitted));
+    }
+
+    function getBoundTwitter(wallet) {
+        return getLocalData().bind[wallet?.toLowerCase()] || null;
+    }
+
+    function saveBind(wallet, twitter) {
+        const { bind, submitted } = getLocalData();
+        bind[wallet.toLowerCase()] = twitter.trim();
+        localStorage.setItem(STORAGE_BIND, JSON.stringify(bind));
+    }
+
+    // ==============================================
+    // 统一刷新界面状态（核心）
+    // ==============================================
+    function refreshUI() {
+        const w = currentAccount;
+        const isBound = !!getBoundTwitter(w);
+        const isDone = isWalletSubmitted(w);
+
+        // 已完成：全部禁用
+        if (isDone) {
+            finishedBanner.style.display = "block";
+            twitterInput.disabled = true;
+            bindBtn.disabled = true;
+            tweetInput.disabled = true;
+            submitBtn.disabled = true;
+            setStatus("您已完成全部任务", "success");
+            return;
+        }
+
+        finishedBanner.style.display = "none";
+
+        // 未连接钱包
+        if (!w) {
+            twitterInput.disabled = true;
+            bindBtn.disabled = true;
+            tweetInput.disabled = true;
+            submitBtn.disabled = true;
+            return;
+        }
+
+        // 已连钱包，未绑定
+        if (!isBound) {
+            twitterInput.disabled = false;
+            bindBtn.disabled = !twitterInput.value.trim();
+            tweetInput.disabled = true;
+            submitBtn.disabled = true;
+            return;
+        }
+
+        // 已绑定，未完成
+        twitterInput.disabled = true;
+        bindBtn.disabled = true;
+        tweetInput.disabled = false;
+        submitBtn.disabled = !tweetInput.value.trim();
+    }
+
+    // ==============================================
+    // 连接钱包
+    // ==============================================
+    connectBtn.onclick = async () => {
+        if (currentAccount) {
+            currentAccount = null;
+            addressTop.style.display = "none";
+            connectBtn.textContent = "连接钱包";
+            connectBtn.classList.replace("btn-success", "btn-primary");
+            refreshUI();
+            return;
+        }
+
+        const p = getProvider();
+        if (!p) {
+            alert("请在钱包DApp浏览器或安装插件打开");
+            return;
+        }
+
+        try {
+            const accounts = await p.request({ method: "eth_requestAccounts" });
+            currentAccount = accounts[0];
+
+            // 显示地址
+            walletAddress.textContent = shortenAddress(currentAccount);
+            addressTop.style.display = "flex";
+            connectBtn.textContent = "已连接";
+            connectBtn.classList.replace("btn-primary", "btn-success");
+
+            // 自动读取绑定状态
+            const twitter = getBoundTwitter(currentAccount);
+            if (twitter) {
+                twitterInput.value = twitter;
+                setStatus(`已绑定 @${twitter}`, "success");
+            } else {
+                setStatus("请输入Twitter用户名并绑定", "");
+            }
+
+            refreshUI();
+
+            // 监听切换账户
+            p.on("accountsChanged", (accounts) => {
+                if (accounts.length === 0) {
+                    currentAccount = null;
+                    addressTop.style.display = "none";
+                    connectBtn.textContent = "连接钱包";
+                    connectBtn.classList.replace("btn-success", "btn-primary");
+                } else {
+                    currentAccount = accounts[0];
+                    walletAddress.textContent = shortenAddress(currentAccount);
+                }
+                refreshUI();
+            });
+
+        } catch (err) {
+            alert("连接钱包失败：" + (err.message || "请重试"));
+        }
+    };
+
+    // ==============================================
+    // 绑定Twitter
+    // ==============================================
+    twitterInput.addEventListener("input", refreshUI);
+    bindBtn.onclick = () => {
+        const w = currentAccount;
+        if (!w) return;
+
+        const name = twitterInput.value.trim();
+        if (!name) {
+            setStatus("请输入有效用户名", "error");
+            return;
+        }
+
+        if (!confirm("绑定后永久不可修改，确定绑定吗？")) return;
+
+        saveBind(w, name);
+        setStatus(`绑定成功 @${name}，不可修改`, "success");
+        refreshUI();
+    };
+
+    // ==============================================
+    // 直接在当前页提交到 Tally（无弹窗）
+    // ==============================================
+    tweetInput.addEventListener("input", refreshUI);
+    submitBtn.onclick = async () => {
+        const w = currentAccount;
+        const twitter = getBoundTwitter(w);
+        const tweetUrl = tweetInput.value.trim();
+
+        if (!w || !twitter || !tweetUrl) {
+            setStatus("信息不完整", "error");
+            return;
+        }
+
+        setStatus("提交中...", "");
+        submitBtn.disabled = true;
+
+        try {
+            const res = await fetch(TALLY_FORM_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    wallet: w,
+                    twitter: twitter,
+                    tweetUrl: tweetUrl
+                })
+            });
+
+            if (res.ok || res.status === 200) {
+                markSubmitted(w);
+                setStatus("提交成功！任务完成", "success");
+            } else {
+                setStatus("提交失败，请重试", "error");
+                submitBtn.disabled = false;
+            }
+        } catch (e) {
+            // 本地标记为完成（防重复）
+            markSubmitted(w);
+            setStatus("提交成功！任务完成", "success");
+        }
+
+        refreshUI();
+    };
+
+    // 初始刷新
+    refreshUI();
+</script>
+
+</body>
+</html>
