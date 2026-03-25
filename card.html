@@ -14,7 +14,6 @@ permalink: /card
     box-sizing: border-box;
     font-family: 'Arial', sans-serif;
   }
-  /* --- 背景色修改为和截图一致的蓝灰色 --- */
   body {
     background: linear-gradient(180deg, #4a5a72 0%, #6b7a92 50%, #8a9ab2 100%);
     color: #fff;
@@ -26,23 +25,45 @@ permalink: /card
     margin: 0 auto;
   }
 
-  /* --- 商店区域 --- */
   .shop-section {
     margin-bottom: 20px;
-    position: relative;
+  }
+  .shop-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
   }
   .shop-title {
     font-size: 24px;
     font-weight: bold;
     color: #feca57;
-    margin-bottom: 15px;
   }
+
+  /* 总金币显示，和 Card Shop 同高 */
+  .gold-display {
+    font-size: 20px;
+    font-weight: bold;
+    color: #ffcc00;
+    background: rgba(22, 22, 36, 0.8);
+    padding: 8px 15px;
+    border-radius: 8px;
+    border: 2px solid #d4af37;
+  }
+
   .shop-cards {
     display: flex;
     gap: 15px;
-    position: relative;
     min-height: 250px;
   }
+
+  /* 卡牌外层容器，用来放底部价格 */
+  .card-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
   .card {
     width: 180px;
     height: 250px;
@@ -72,48 +93,34 @@ permalink: /card
   }
   .card .atk { color: #ff4757; }
   .card .hp { color: #2ed573; }
-  .card .cost {
-    position: absolute;
-    top: 10px;
-    right: 10px;
+
+  /* 单张卡牌价格在卡牌下方外部居中 */
+  .card-cost-external {
+    margin-top: 8px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #fff;
     background: #ff6b6b;
-    color: white;
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: bold;
     border: 2px solid white;
   }
+
   .card.insufficient-funds {
     cursor: not-allowed;
     opacity: 0.6;
   }
 
-  /* --- 金币显示（商店第3张卡牌右上角） --- */
-  .gold-display {
-    position: absolute;
-    top: -10px;
-    right: 0px;
-    font-size: 20px;
-    font-weight: bold;
-    color: #ffcc00;
-    background: rgba(22, 22, 36, 0.8);
-    padding: 8px 15px;
-    border-radius: 8px;
-    border: 2px solid #d4af37;
-    z-index: 10;
-  }
-
-  /* --- 中间控制栏 --- */
   .control-bar {
     display: flex;
     align-items: center;
     gap: 15px;
     margin: 20px 0;
-    justify-content: flex-start; /* 左对齐 */
+    justify-content: flex-start;
   }
   .turn-display {
     font-size: 18px;
@@ -145,7 +152,6 @@ permalink: /card
     transform: scale(1.05);
   }
 
-  /* --- 卡组区域 --- */
   .grid-section {
     margin-top: 20px;
   }
@@ -160,9 +166,10 @@ permalink: /card
     grid-template-columns: repeat(3, 1fr);
     gap: 8px;
   }
+  /* 卡组高度略微缩短 */
   .grid-slot {
     width: 180px;
-    height: 250px;
+    height: 220px;
     border: 2px dashed #666;
     border-radius: 12px;
     background: rgba(255,255,255,0.1);
@@ -180,10 +187,11 @@ permalink: /card
 <body>
 <div class="container">
   <div class="shop-section">
-    <div class="shop-title">Card Shop</div>
-    <div class="shop-cards" id="shop-cards">
+    <div class="shop-header">
+      <div class="shop-title">Card Shop</div>
       <div class="gold-display">Gold: <span id="current-gold">2</span></div>
     </div>
+    <div class="shop-cards" id="shop-cards"></div>
   </div>
 
   <div class="control-bar">
@@ -211,7 +219,7 @@ permalink: /card
     { id: 2, name: "Nine-Tailed Fox", image: "jwf.jpg", atk: 8, hp: 10, cost: 3 },
     { id: 3, name: "Bai Ze", image: "bz.jpg", atk: 5, hp: 10, cost: 2 },
     { id: 4, name: "Qiong Qi", image: "qq.jpg", atk: 10, hp: 15, cost: 4 },
-    { id: 5, name: "Zhu Jiuyin", image: "zjy.jpg", atk: 12, hp: 18, cost: 5 }
+    { id: 5, name: "Jingwei", image: "jw.jpg", atk: 12, hp: 18, cost: 5 }
   ];
 
   let currentGold = 2;
@@ -222,17 +230,17 @@ permalink: /card
 
   const turnGoldIncrement = [0, 2, 3, 5, 7, 10, 15, 20];
 
-  // 渲染商店
   function renderShop() {
     const shopContainer = document.getElementById("shop-cards");
-    const goldEl = document.querySelector(".gold-display");
     shopContainer.innerHTML = "";
-    shopContainer.appendChild(goldEl);
 
     const shuffled = [...allCardsData].sort(() => Math.random() - 0.5);
     const selected = shuffled.slice(0, 3);
 
     selected.forEach(card => {
+      const wrapper = document.createElement("div");
+      wrapper.className = "card-wrapper";
+
       const el = document.createElement("div");
       el.className = "card";
       el.draggable = true;
@@ -242,20 +250,26 @@ permalink: /card
       }
       el.innerHTML = `
         <img src="${card.image}" alt="${card.name}">
-        <div class="cost">${card.cost}</div>
         <div class="stats">
           <span class="atk">${card.atk}</span>
           <span class="hp">${card.hp}</span>
         </div>
       `;
+
+      const costEl = document.createElement("div");
+      costEl.className = "card-cost-external";
+      costEl.innerText = card.cost;
+
+      wrapper.appendChild(el);
+      wrapper.appendChild(costEl);
+      shopContainer.appendChild(wrapper);
+
       el.addEventListener("dragstart", (e) => {
         if (el.classList.contains('insufficient-funds')) return;
         draggedCard = { ...card };
       });
-      shopContainer.appendChild(el);
     });
 
-    // 商店允许拖入卖卡
     shopContainer.addEventListener("dragover", (e) => e.preventDefault());
     shopContainer.addEventListener("drop", () => {
       if (sellingCard) {
@@ -269,7 +283,6 @@ permalink: /card
     updateButtonStates();
   }
 
-  // 初始化卡组格子
   function initGridSlots() {
     const slots = document.querySelectorAll(".grid-slot");
     slots.forEach(slot => {
@@ -296,7 +309,6 @@ permalink: /card
             <span class="hp">${draggedCard.hp}</span>
           </div>
         `;
-        // 从卡组拖出=卖卡
         deckCard.addEventListener("dragstart", () => {
           sellingCard = draggedCard;
           slot.innerHTML = "";
@@ -309,7 +321,6 @@ permalink: /card
     });
   }
 
-  // 下一回合
   function startNextTurn() {
     if (isNextTurnDisabled) return;
     currentTurn++;
@@ -323,7 +334,6 @@ permalink: /card
     renderShop();
   }
 
-  // 刷新（1金币）
   document.getElementById("refresh-btn").onclick = () => {
     if (currentGold >= 1) {
       currentGold -= 1;
@@ -332,7 +342,6 @@ permalink: /card
     }
   };
 
-  // 更新显示
   function updateGameStatus() {
     document.getElementById("current-gold").innerText = currentGold;
     document.getElementById("current-turn").innerText = currentTurn;
@@ -351,3 +360,4 @@ permalink: /card
 </script>
 </body>
 </html>
+
