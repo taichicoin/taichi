@@ -14,10 +14,12 @@ permalink: /card
     box-sizing: border-box;
     font-family: 'Arial', sans-serif;
   }
+  /* --- 背景色修改为和截图一致的蓝灰色 --- */
   body {
-    background: #1a1a2e;
+    background: linear-gradient(180deg, #4a5a72 0%, #6b7a92 50%, #8a9ab2 100%);
     color: #fff;
     padding: 20px;
+    min-height: 100vh;
   }
   .container {
     max-width: 900px;
@@ -98,7 +100,7 @@ permalink: /card
     font-size: 20px;
     font-weight: bold;
     color: #ffcc00;
-    background: #161624;
+    background: rgba(22, 22, 36, 0.8);
     padding: 8px 15px;
     border-radius: 8px;
     border: 2px solid #d4af37;
@@ -115,7 +117,7 @@ permalink: /card
   }
   .turn-display {
     font-size: 18px;
-    background: #3742fa;
+    background: rgba(55, 66, 250, 0.8);
     padding: 5px 15px;
     border-radius: 20px;
   }
@@ -163,7 +165,7 @@ permalink: /card
     height: 250px;
     border: 2px dashed #666;
     border-radius: 12px;
-    background: rgba(255,255,255,0.05);
+    background: rgba(255,255,255,0.1);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -171,7 +173,7 @@ permalink: /card
   }
   .grid-slot.drag-over {
     border-color: #feca57;
-    background: rgba(254, 202, 87, 0.1);
+    background: rgba(254, 202, 87, 0.2);
   }
 </style>
 </head>
