@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Card Demo</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+  }
+  body {
+    background: #1a1a2e;
+    color: #fff;
+    padding: 20px;
+  }
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .shop-section {
+    margin-bottom: 30px;
+  }
+  .shop-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #feca57;
+    margin-bottom: 15px;
+  }
+  .shop-cards {
+    display: flex;
+    gap: 15px;
+  }
+  .card {
+    width: 180px;
+    height: 250px;
+    border: 3px solid #d4af37;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: grab;
+    background: #000;
+  }
+  .card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+  }
+
+  .grid-section {
+    margin-top: 40px;
+  }
+  .grid-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  .grid-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #feca57;
+  }
+  #refresh-btn {
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+  }
+  .grid-slot {
+    width: 180px;
+    height: 250px;
+    border: 2px dashed #666;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .grid-slot.drag-over {
+    border-color: #feca57;
+    background: rgba(254, 202, 87, 0.1);
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="shop-section">
+    <div class="shop-title">Card Shop</div>
+    <div class="shop-cards" id="shop-cards"></div>
+  </div>
+
+  <div class="grid-section">
+    <div class="grid-header">
+      <div class="grid-title">Your Deck (Max 6)</div>
+      <button id="refresh-btn">Refresh Cards</button>
+    </div>
+    <div class="card-grid">
+      <div class="grid-slot"></div>
+      <div class="grid-slot"></div>
+      <div class="grid-slot"></div>
+      <div class="grid-slot"></div>
+      <div class="grid-slot"></div>
+      <div class="grid-slot"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const allCards = [
+    { id: 1, image: "yl.jpg" },
+    { id: 2, image: "jwh.jpg" },
+    { id: 3, image: "bz.jpg" },
+    { id: 4, image: "qq.jpg" },
+    { id: 5, image: "zjy.jpg" }
+  ];
+
+  let draggedCard = null;
+
+  function shuffleCards() {
+    const shuffled = [...allCards].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, 3);
+  }
+
+  function renderShop() {
+    const shop = document.getElementById("shop-cards");
+    shop.innerHTML = "";
+    const selected = shuffleCards();
+    selected.forEach(card => {
+      const el = document.createElement("div");
+      el.className = "card";
+      el.draggable = true;
+      el.innerHTML = `<img src="${card.image}">`;
+
+      el.addEventListener("dragstart", (e) => {
+        draggedCard = card;
+        e.dataTransfer.setData("text/plain", card.id);
+      });
+
+      shop.appendChild(el);
+    });
+  }
+
+  document.querySelectorAll(".grid-slot").forEach(slot => {
+    slot.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      slot.classList.add("drag-over");
+    });
+
+    slot.addEventListener("dragleave", () => {
+      slot.classList.remove("drag-over");
+    });
+
+    slot.addEventListener("drop", (e) => {
+      e.preventDefault();
+      slot.classList.remove("drag-over");
+      if (!slot.children.length && draggedCard) {
+        slot.innerHTML = `<div class="card"><img src="${draggedCard.image}"></div>`;
+        draggedCard = null;
+      }
+    });
+  });
+
+  document.getElementById("refresh-btn").addEventListener("click", renderShop);
+  window.onload = renderShop;
+</script>
+</body>
+</html>
