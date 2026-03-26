@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TAICHI 空投查询</title>
+<style>
+  body{background:#0a0a0f;color:#fff;font-family:Arial;padding:20px;}
+  .box{max-width:500px;margin:40px auto;background:#161620;padding:24px;border-radius:16px;}
+  h2{text-align:center;margin-bottom:20px;}
+  input{width:100%;padding:14px;background:#1f1f2b;border:1px solid #374151;border-radius:12px;color:#fff;margin-bottom:12px;}
+  button{width:100%;padding:14px;background:#2563eb;border:none;border-radius:12px;color:#fff;font-weight:bold;cursor:pointer;}
+  .result{margin-top:20px;padding:16px;border-radius:12px;}
+  .ok{background:#064e3b;border:1px solid #10b981;}
+  .no{background:#7f1d1d;border:1px solid #ef4444;}
+  .loading{text-align:center;margin:10px 0;}
+</style>
+</head>
+<body>
+<div class="box">
+  <h2>TAICHI 空投资格查询</h2>
+  <input id="addr" placeholder="输入BSC钱包地址（0x...）">
+  <button onclick="check()">一键查询</button>
+  <div id="loading" class="loading" style="display:none">正在从 OKX 读取数据...</div>
+  <div id="result"></div>
+</div>
+
+<script>
+const RULES = [
+  {min:0.01, max:0.02, amount:500},
+  {min:0.02, max:0.03, amount:800},
+  {min:0.03, max:0.04, amount:1000},
+  {min:0.04, max:0.05, amount:1500},
+  {min:0.05, max:0.1, amount:1600},
+  {min:0.1, max:0.5, amount:2000},
+  {min:0.5, max:999, amount:5000}
+];
+
+// 免费代理，用来跨域抓 OKX 页面
+const PROXY = 'https://api.allorigins.win/get?url=';
+
+async function check() {
+  const addr = document.getElementById('addr').value.trim().toLowerCase();
+  const res = document.getElementById('result');
+  const load = document.getElementById('loading');
+  res.innerHTML = '';
+  load.style.display = 'block';
+
+  if (!addr.startsWith('0x') || addr.length !== 42) {
+    res.innerHTML = '<div class="result no">地址格式不正确</div>';
+    load.style.display = 'none';
+    return;
+  }
+
+  try {
+    // 拼接 OKX BSC 浏览器地址
+    const url = `https://web3.okx.com/explorer/bsc/address/${addr}`;
+    const resp = await fetch(PROXY + encodeURIComponent(url));
+    const data = await resp.json();
+    const html = data.contents;
+
+    // 匹配 Gas Used / BNB 数值
+    const gasMatch = html.match(/Total Gas Used.*?([\d,]+\.\d+)\s*BNB/is);
+    if (!gasMatch) throw new Error("未找到 Gas 数据");
+
+    const gas = parseFloat(gasMatch[1].replace(/,/g, ''));
+    let amount = 0;
+    for (const r of RULES) {
+      if (gas >= r.min && gas < r.max) {
+        amount = r.amount;
+        break;
+      }
+    }
+
+    if (amount > 0) {
+      res.innerHTML = `
+        <div class="result ok">
+          <strong>✅ 符合空投资格</strong><br>
+          地址：${addr}<br>
+          总Gas：${gas.toFixed(4)} BNB<br>
+          可领：${amount} TAICHI
+        </div>
+      `;
+    } else {
+      res.innerHTML = `
+        <div class="result no">
+          <strong>❌ 不符合</strong><br>
+          Gas消耗：${gas.toFixed(4)} BNB<br>
+          需 ≥ 0.01 BNB
+        </div>
+      `;
+    }
+  } catch (e) {
+    res.innerHTML = `<div class="result no">查询失败：${e.message}</div>`;
+  } finally {
+    load.style.display = 'none';
+  }
+}
+</script>
+</body>
+</html>
