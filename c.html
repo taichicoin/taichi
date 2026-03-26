@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TAICHI 空投资格查询</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;font-family:Arial, sans-serif;}
+  body{background:#0a0a0f;color:#fff;min-height:100vh;padding:40px 20px;}
+  .container{max-width:500px;margin:0 auto;}
+  .card{background:#161620;border-radius:16px;padding:24px;margin-bottom:20px;box-shadow:0 4px 20px rgba(0,0,0,0.3);}
+  h2{font-size:22px;margin-bottom:16px;text-align:center;color:#f0f0ff;}
+  h3{font-size:18px;margin-bottom:12px;}
+  button{width:100%;background:#2563eb;border:none;border-radius:12px;padding:14px;font-size:16px;font-weight:bold;color:#fff;cursor:pointer;transition:all 0.3s;}
+  button:disabled{background:#374151;cursor:not-allowed;opacity:0.7;}
+  button:hover:not(:disabled){background:#3b82f6;}
+  .address-text{word-break:break-all;color:#9ca3af;font-size:14px;margin-top:12px;}
+  .result-box{border-radius:12px;padding:16px;margin-top:16px;}
+  .ok-box{background:#064e3b;border:1px solid #10b981;}
+  .fail-box{background:#7f1d1d;border:1px solid #ef4444;}
+  .warn-box{background:#7c2d12;border:1px solid #f97316;}
+  .result-title{font-weight:bold;font-size:16px;margin-bottom:8px;}
+  .result-detail{font-size:14px;line-height:1.8;color:#e5e7eb;}
+  input{width:100%;background:#1f1f2b;border:1px solid #374151;border-radius:12px;padding:12px 14px;font-size:14px;color:#fff;margin-bottom:12px;}
+  input:focus{outline:none;border-color:#2563eb;}
+  .form-card{display:none;}
+</style>
+</head>
+<body>
+<div class="container">
+  <!-- 手动输入地址卡片 -->
+  <div class="card">
+    <h2>TAICHI 空投资格查询</h2>
+    <input type="text" id="walletAddress" placeholder="请输入 BSC 链钱包地址（0x...）" required>
+    <button id="checkBtn" style="margin-top:12px;">立即查询资格</button>
+  </div>
+
+  <!-- 查询结果卡片 -->
+  <div class="card">
+    <h3>BSC 链 Gas 消耗校验</h3>
+    <div id="resultBox"></div>
+  </div>
+
+  <!-- 登记表单卡片 -->
+  <div class="card form-card" id="formCard">
+    <h3>空投信息登记</h3>
+    <input type="text" id="twitter" placeholder="Twitter 账号（必填）" required>
+    <input type="text" id="telegram" placeholder="Telegram 账号（必填）" required>
+    <input type="email" id="email" placeholder="邮箱地址（必填）" required>
+    <button id="submitBtn">提交登记</button>
+  </div>
+</div>
+
+<script>
+// 已替换为你的Tally表单链接
+const YOUR_FORM_URL = "https://tally.so/r/MeLXNl";
+
+// 【稳定方案】用 CORS 代理访问 BscScan CSV 导出接口
+const CORS_PROXY = "https://corsproxy.io/?";
+const BSCSCAN_CSV_BASE = "https://bscscan.com/exportCSV?a=";
+// 精准匹配：北京时间2026-02-10 00:00 对应的时间戳（UTC 时间）
+const END_TIMESTAMP = 1770662400;
+// 你的空投阶梯规则
+const AIRDROP_RULES = [
+  { min: 0.01, max: 0.02, amount: 500 },
+  { min: 0.02, max: 0.03, amount: 800 },
+  { min: 0.03, max: 0.04, amount: 1000 },
+  { min: 0.04, max: 0.05, amount: 1500 },
+  { min: 0.05, max: 0.1, amount: 1600 },
+  { min: 0.1, max: 0.5, amount: 2000 },
+  { min: 0.5, max: Infinity, amount: 5000 }
+];
+
+let currentAddress = "";
+let finalAirdropAmount = 0;
+let totalGasSpent = 0;
+
+// 核心Gas统计函数：解析 CSV 数据，精确筛选 2026-02-10 之前的交易
+async function calculateTotalGas(address) {
+  const resultBox = document.getElementById("resultBox");
+  resultBox.innerHTML = `<div class="result-box warn-box"><div class="result-title">正在查询中...</div><div class="result-detail">正在下载交易记录并统计Gas<br>请耐心等待，几秒钟就好</div></div>`;
+
+  try {
+    // 地址格式校验
+    if (!address.startsWith("0x") || address.length !== 42) {
+      throw new Error("钱包地址格式不正确，请输入以 0x 开头的 42 位地址");
+    }
+
+    // 访问 CSV 导出接口
+    const url = CORS_PROXY + BSCSCAN_CSV_BASE + address;
+    const response = await fetch(url);
+    const csvText = await response.text();
+
+    // 解析 CSV
+    const lines = csvText.split("\n");
+    const headers = lines[0].split(",").map(h => h.trim());
+    let totalGas = 0;
+
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (!line) continue;
+      const values = line.split(",").map(v => v.trim().replace(/"/g, ""));
+      const row = {};
+      headers.forEach((h, idx) => row[h] = values[idx]);
+
+      // 只统计用户发起的、成功的、且在 2026-02-10 之前的交易
+      const isOut = row["Type"] === "OUT";
+      const isSuccess = row["Status"] === "Success";
+      const txTimestamp = parseInt(row["UnixTimestamp"]);
+      const isBeforeDeadline = txTimestamp < END_TIMESTAMP;
+
+      if (isOut && isSuccess && isBeforeDeadline) {
+        const gasUsed = parseFloat(row["Gas Used"]);
+        const gasPrice = parseFloat(row["Gas Price (Gwei)"]) * 1e9; // 转换为 wei
+        const txGasBNB = (gasUsed * gasPrice) / 1e18;
+        totalGas += txGasBNB;
+      }
+    }
+
+    return totalGas;
+  } catch (err) {
+    console.error("查询出错：", err);
+    throw err;
+  }
+}
+
+// 资格查询+空投匹配逻辑
+document.getElementById("checkBtn").onclick = async () => {
+  const addressInput = document.getElementById("walletAddress");
+  currentAddress = addressInput.value.trim().toLowerCase();
+  const resultBox = document.getElementById("resultBox");
+  const formCard = document.getElementById("formCard");
+
+  if (!currentAddress) {
+    alert("请输入钱包地址");
+    return;
+  }
+
+  resultBox.innerHTML = "";
+  formCard.style.display = "none";
+  finalAirdropAmount = 0;
+  totalGasSpent = 0;
+
+  try {
+    totalGasSpent = await calculateTotalGas(currentAddress);
+    let airdropAmount = 0;
+
+    // 匹配空投规则
+    for (const rule of AIRDROP_RULES) {
+      if (totalGasSpent >= rule.min && totalGasSpent < rule.max) {
+        airdropAmount = rule.amount;
+        break;
+      }
+    }
+
+    finalAirdropAmount = airdropAmount;
+
+    // 显示结果
+    if (airdropAmount > 0) {
+      resultBox.innerHTML = `
+        <div class="result-box ok-box">
+          <div class="result-title">✅ 恭喜你符合空投资格！</div>
+          <div class="result-detail">
+            钱包地址：${currentAddress}<br>
+            2026-02-10 前 BSC 链总Gas消耗：${totalGasSpent.toFixed(4)} BNB<br>
+            可获得空投数量：${airdropAmount} TAICHI
+          </div>
+        </div>
+      `;
+      formCard.style.display = "block";
+    } else {
+      resultBox.innerHTML = `
+        <div class="result-box fail-box">
+          <div class="result-title">❌ 不符合空投资格</div>
+          <div class="result-detail">
+            钱包地址：${currentAddress}<br>
+            2026-02-10 前 BSC 链总Gas消耗：${totalGasSpent.toFixed(4)} BNB<br>
+            最低要求：Gas消耗 ≥ 0.01 BNB
+          </div>
+        </div>
+      `;
+    }
+  } catch (err) {
+    resultBox.innerHTML = `
+      <div class="result-box fail-box">
+        <div class="result-title">查询失败</div>
+        <div class="result-detail">错误原因：${err.message}<br>请刷新页面稍后重试</div>
+      </div>
+    `;
+    console.error("查询出错：", err);
+  }
+};
+
+// 表单提交逻辑
+document.getElementById("submitBtn").onclick = () => {
+  const twitter = document.getElementById("twitter").value.trim();
+  const telegram = document.getElementById("telegram").value.trim();
+  const email = document.getElementById("email").value.trim();
+
+  if (!twitter || !telegram || !email) {
+    alert("请填写完整的必填信息");
+    return;
+  }
+
+  const submitUrl = `${YOUR_FORM_URL}?` + new URLSearchParams({
+    wallet_address: currentAddress,
+    total_gas_bnb: totalGasSpent.toFixed(4),
+    airdrop_amount: finalAirdropAmount,
+    twitter: twitter,
+    telegram: telegram,
+    email: email
+  });
+
+  window.open(submitUrl, "_blank");
+  alert("信息已自动填充，即将跳转到表单提交页面");
+};
+</script>
+</body>
+</html>
