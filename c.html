@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TAICHI 空投资格查询（MegaNode 修复版）</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;font-family:Arial, sans-serif;}
+  body{background:#0a0a0f;color:#fff;min-height:100vh;padding:20px;}
+  .container{max-width:500px;margin:40px auto;background:#161620;padding:24px;border-radius:16px;box-shadow:0 4px 20px rgba(0,0,0,0.3);}
+  h2{text-align:center;margin-bottom:20px;color:#f0f0ff;}
+  input{width:100%;padding:14px;background:#1f1f2b;border:1px solid #374151;border-radius:12px;color:#fff;margin-bottom:12px;}
+  button{width:100%;padding:14px;background:#2563eb;border:none;border-radius:12px;color:#fff;font-weight:bold;cursor:pointer;transition:0.3s;}
+  button:hover{background:#3b82f6;}
+  .result{margin-top:20px;padding:16px;border-radius:12px;}
+  .ok{background:#064e3b;border:1px solid #10b981;}
+  .fail{background:#7f1d1d;border:1px solid #ef4444;}
+  .loading{text-align:center;margin:10px 0;color:#9ca3af;}
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>TAICHI 空投资格查询</h2>
+  <input id="walletAddr" placeholder="请输入 BSC 钱包地址（0x...）" value="0xF3A037Fc1935A3aF9c9B6a0DD6d3c6Ad73f49d46">
+  <button onclick="checkGas()">一键查询 Gas 消耗</button>
+  <div id="loading" class="loading" style="display:none;">正在查询 BSC 链真实Gas数据...</div>
+  <div id="result" class="result" style="display:none;"></div>
+</div>
+
+<script>
+const MEGANODE_API_KEY = "ec926ecfa63045eaaa5ced21e846c420";
+const MEGANODE_BSC_RPC = `https://bsc-mainnet.nodereal.io/v1/${MEGANODE_API_KEY}`;
+const END_BLOCK = 80240000;
+const AIRDROP_RULES = [
+  { min: 0.01, max: 0.02, amount: 500 },
+  { min: 0.02, max: 0.03, amount: 800 },
+  { min: 0.03, max: 0.04, amount: 1000 },
+  { min: 0.04, max: 0.05, amount: 1500 },
+  { min: 0.05, max: 0.1, amount: 1600 },
+  { min: 0.1, max: 0.5, amount: 2000 },
+  { min: 0.5, max: Infinity, amount: 5000 }
+];
+
+async function rpcCall(method, params = []) {
+  const response = await fetch(MEGANODE_BSC_RPC, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ jsonrpc: "2.0", id: Date.now(), method, params })
+  });
+  const data = await response.json();
+  if (data.error) throw new Error(data.error.message);
+  return data.result;
+}
+
+async function checkGas() {
+  const addr = document.getElementById('walletAddr').value.trim().toLowerCase();
+  const loading = document.getElementById('loading');
+  const result = document.getElementById('result');
+  
+  if (!addr.startsWith('0x') || addr.length !== 42) {
+    result.innerHTML = '<strong>❌ 地址格式错误</strong><br>请输入0x开头的42位BSC地址';
+    result.className = 'result fail';
+    result.style.display = 'block';
+    return;
+  }
+
+  loading.style.display = 'block';
+  result.style.display = 'none';
+  let totalGasBNB = 0;
+
+  try {
+    // 1. 获取地址交易总数
+    const txCountHex = await rpcCall("eth_getTransactionCount", [addr, "latest"]);
+    const txCount = parseInt(txCountHex, 16);
+    if (txCount === 0) throw new Error("该地址无任何BSC链交易记录");
+
+    // 2. 遍历所有交易（从最新到最老）
+    let page = 0;
+    const pageSize = 20; // 每次查20笔，避免超时
+    while (true) {
+      // 用 eth_getBlockByNumber 遍历区块，找到该地址的所有交易
+      let currentBlock = END_BLOCK - page * 500;
+      if (currentBlock < 0) break;
+
+      const blockHex = "0x" + currentBlock.toString(16);
+      const block = await rpcCall("eth_getBlockByNumber", [blockHex, true]);
+      if (!block || !block.transactions) { page++; continue; }
+
+      // 3. 只统计该地址发起、且在截止区块前的成功交易
+      for (const tx of block.transactions) {
+        if (tx.from.toLowerCase() !== addr) continue;
+        const txBlock = parseInt(tx.blockNumber, 16);
+        if (txBlock > END_BLOCK) continue;
+
+        const receipt = await rpcCall("eth_getTransactionReceipt", [tx.hash]);
+        if (receipt && receipt.status === "0x1") {
+          const gasUsed = BigInt(receipt.gasUsed);
+          const gasPrice = BigInt(tx.gasPrice);
+          totalGasBNB += Number(gasUsed * gasPrice) / 1e18;
+        }
+      }
+      page++;
+    }
+
+    // 4. 匹配空投规则
+    let airdropAmount = 0;
+    for (const rule of AIRDROP_RULES) {
+      if (totalGasBNB >= rule.min && totalGasBNB < rule.max) {
+        airdropAmount = rule.amount;
+        break;
+      }
+    }
+
+    // 5. 显示结果
+    if (airdropAmount > 0) {
+      result.innerHTML = `
+        <strong>✅ 符合空投资格！</strong><br>
+        钱包地址：${addr}<br>
+        BSC 链真实Gas消耗：${totalGasBNB.toFixed(4)} BNB<br>
+        可获得空投：${airdropAmount} TAICHI
+      `;
+      result.className = 'result ok';
+    } else {
+      result.innerHTML = `
+        <strong>❌ 不符合资格</strong><br>
+        BSC 链真实Gas消耗：${totalGasBNB.toFixed(4)} BNB<br>
+        最低要求：≥ 0.01 BNB
+      `;
+      result.className = 'result fail';
+    }
+  } catch (err) {
+    result.innerHTML = `<strong>❌ 查询失败</strong><br>${err.message}`;
+    result.className = 'result fail';
+  } finally {
+    loading.style.display = 'none';
+    result.style.display = 'block';
+  }
+}
+</script>
+</body>
+</html>
