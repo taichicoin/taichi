@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TAICHI 空投资格查询</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;font-family:Arial, sans-serif;}
+  body{background:#0a0a0f;color:#fff;min-height:100vh;padding:40px 20px;}
+  .container{max-width:500px;margin:0 auto;}
+  .card{background:#161620;border-radius:16px;padding:24px;margin-bottom:20px;box-shadow:0 4px 20px rgba(0,0,0,0.3);}
+  h2{font-size:22px;margin-bottom:16px;text-align:center;color:#f0f0ff;}
+  h3{font-size:18px;margin-bottom:12px;}
+  button{width:100%;background:#2563eb;border:none;border-radius:12px;padding:14px;font-size:16px;font-weight:bold;color:#fff;cursor:pointer;transition:all 0.3s;}
+  button:disabled{background:#374151;cursor:not-allowed;opacity:0.7;}
+  button:hover:not(:disabled){background:#3b82f6;}
+  .address-text{word-break:break-all;color:#9ca3af;font-size:14px;margin-top:12px;}
+  .result-box{border-radius:12px;padding:16px;margin-top:16px;}
+  .ok-box{background:#064e3b;border:1px solid #10b981;}
+  .fail-box{background:#7f1d1d;border:1px solid #ef4444;}
+  .warn-box{background:#7c2d12;border:1px solid #f97316;}
+  .chain-result{margin:8px 0;padding:8px 0;border-bottom:1px solid #374151;}
+  .chain-result:last-child{border-bottom:none;}
+  .result-title{font-weight:bold;font-size:16px;margin-bottom:8px;}
+  .result-detail{font-size:14px;line-height:1.8;color:#e5e7eb;}
+  input{width:100%;background:#1f1f2b;border:1px solid #374151;border-radius:12px;padding:12px 14px;font-size:14px;color:#fff;margin-bottom:12px;}
+  input:focus{outline:none;border-color:#2563eb;}
+  .form-card{display:none;}
+</style>
+</head>
+<body>
+<div class="container">
+  <!-- 连接钱包卡片 -->
+  <div class="card">
+    <h2>TAICHI 空投资格查询</h2>
+    <button id="connectBtn">连接钱包</button>
+    <div id="addressBox" class="address-text"></div>
+  </div>
+
+  <!-- 查询资格卡片 -->
+  <div class="card">
+    <h3>双链 Gas 消耗校验（BSC + ETH）</h3>
+    <button id="checkBtn" disabled>立即查询资格</button>
+    <div id="resultBox"></div>
+  </div>
+
+  <!-- 登记表单卡片 -->
+  <div class="card form-card" id="formCard">
+    <h3>空投信息登记</h3>
+    <input type="text" id="twitter" placeholder="Twitter 账号（必填）" required>
+    <input type="text" id="telegram" placeholder="Telegram 账号（必填）" required>
+    <input type="email" id="email" placeholder="邮箱地址（必填）" required>
+    <button id="submitBtn">提交登记</button>
+  </div>
+</div>
+
+<script>
+// 已替换为你的Tally表单链接
+const YOUR_FORM_URL = "https://tally.so/r/MeLXNl";
+
+// ===================== 双链配置（固定不变）=====================
+// BSC链配置
+const BSC_CONFIG = {
+  chainId: 56,
+  apiBase: "https://api.bscscan.com/api",
+  startBlock: 0,
+  endBlock: 80240000, // 对应北京时间2026-02-10 00:00
+  symbol: "BNB"
+};
+// 以太坊ETH链配置
+const ETH_CONFIG = {
+  chainId: 1,
+  apiBase: "https://api.etherscan.io/api",
+  startBlock: 0,
+  endBlock: 24700000, // 对应北京时间2026-02-10 00:00
+  symbol: "ETH"
+};
+// 你的Etherscan API V2 Key，官方支持双链通用
+const API_KEY = "BVI7MUXSXWAC8U1J539GQED913R54E7YDH";
+// 空投阶梯规则（BSC和ETH通用，数值对应对应链的原生币）
+const AIRDROP_RULES = [
+  { min: 0.01, max: 0.02, amount: 500 },
+  { min: 0.02, max: 0.03, amount: 800 },
+  { min: 0.03, max: 0.04, amount: 1000 },
+  { min: 0.04, max: 0.05, amount: 1500 },
+  { min: 0.05, max: 0.1, amount: 1600 },
+  { min: 0.1, max: 0.5, amount: 2000 },
+  { min: 0.5, max: Infinity, amount: 5000 }
+];
+// =====================================================================
+
+let userAddress = "";
+let finalAirdropAmount = 0;
