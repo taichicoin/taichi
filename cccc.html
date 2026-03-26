@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TAICHI Airdrop Check</title>
+<style>
+  *{box-sizing:border-box;font-family:system-ui}
+  body{max-width:500px;margin:40px auto;padding:0 20px;background:#0a0a12;color:#fff}
+  .card{background:#161625;padding:24px;border-radius:16px;margin-bottom:20px}
+  button{padding:12px 24px;background:#0089ff;color:#fff;border:none;border-radius:10px;cursor:pointer;font-weight:bold;margin:4px}
+  .status{padding:12px;border-radius:8px;margin:10px 0}
+  .ok{background:#1b3b2b;color:#9eff9e}
+  .no{background:#3b1b1b;color:#ff9e9e}
+  input{width:100%;padding:12px;margin:8px 0;background:#10101e;border:1px solid #333;border-radius:10px;color:#fff}
+</style>
+</head>
+
+<body>
+<div class="card">
+  <h2>TAICHI Airdrop Check</h2>
+  <button id="connect">Connect Wallet</button>
+  <div id="address"></div>
+  <div id="chainHint" class="status no" style="display:none">⚠️ 请切换到 BNB Smart Chain (BSC) 主网</div>
+</div>
+
+<div class="card">
+  <h3>Check Eligibility</h3>
+  <button id="check">Check Now</button>
+  <div id="result"></div>
+</div>
+
+<div class="card" id="form" style="display:none">
+  <h3>Register for Airdrop</h3>
+  <input id="twitter" placeholder="Twitter / X 账号">
+  <input id="tg" placeholder="Telegram 账号">
+  <input id="email" placeholder="邮箱">
+  <input type="hidden" id="airdropAmount" value="">
+  <button id="submit">Submit Registration</button>
+</div>
+
+<script>
+const API_KEY = "BVI7MUXSXWAC6NXRIXPD4GQQVRT3CH7J86";
+// 2026-02-20 23:59:59 北京时间（UTC+8）
+const CUTOFF_TIME = 1771571199;
+const BSC_CHAIN_ID = "0x38";
+let addr = "";
+let currentChainId = "";
+let currentAirdrop = 0;
+
+// 监听链变化
+if (window.ethereum) {
+  window.ethereum.on('chainChanged', (chainId) => {
+    currentChainId = chainId;
+    checkChain();
+  });
+}
+
+// 检查是否在 BSC 链
+function checkChain() {
+  const hint = document.getElementById("chainHint");
+  if (currentChainId !== BSC_CHAIN_ID) {
+    hint.style.display = "block";
+    document.getElementById("check").disabled = true;
+  } else {
+    hint.style.display = "none";
+    document.getElementById("check").disabled = false;
+  }
+}
+
+// 连接钱包
+document.getElementById("connect").onclick = async () => {
+  if(!window.ethereum) {
+    alert("请在钱包 DApp 浏览器中打开此页面，或安装 MetaMask/OKX 钱包扩展");
+    return;
+  }
+  try {
+    await window.ethereum.request({
+      method: "wallet_addEthereumChain",
+      params: [{
+        chainId: BSC_CHAIN_ID,
+        chainName: "BNB Smart Chain",
+        nativeCurrency: { name: "BNB", symbol: "BNB", decimals: 18 },
+        rpcUrls: ["https://bsc-dataseed.binance.org/"],
+        blockExplorerUrls: ["https://bscscan.com/"]
+      }]
+    });
+    
+    const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+    addr = accounts[0];
+    currentChainId = await window.ethereum.request({ method: "eth_chainId" });
+    document.getElementById("address").innerText = "地址：" + addr;
+    checkChain();
+  } catch(e) {
+    alert("连接取消或失败：" + e.message);
+    console.error(e);
+  }
+};
+
+// 方案 A：单次请求统计全部 Gas 消耗（无需翻页）
+async function fetchTotalGas(address) {
+  const resultDiv = document.getElementById("result");
+  resultDiv.innerText = "Calculating total gas...";
+  
+  const res = await fetch(
+    `https://api.bscscan.com/api`
+    + `?module=account&action=txlist`
+    + `&address=${address}`
+    + `&starttimestamp=0`
+    + `&endtimestamp=${CUTOFF_TIME}`
+    + `&sort=asc`
+    + `&apikey=${API_KEY}`
+  );
+  
+  const data = await res.json();
+  let gasTotal = 0;
+  
+  if (data.result && Array.isArray(data.result)) {
+    for (const tx of data.result) {
+      if (tx.from && tx.from.toLowerCase() === address.toLowerCase() && tx.txreceipt_status === "1") {
+        const gasUsed = Number(tx.gasUsed);
+        const gasPrice = Number(tx.gasPrice);
+        gasTotal += (gasUsed * gasPrice) / 1e18;
+      }
+    }
+  }
+  
+  return gasTotal;
+}
+
+// 检查 Gas + 阶梯空投判定
+document.getElementById("check").onclick = async () => {
+  if(!addr || currentChainId !== BSC_CHAIN_ID) return alert("请先连接到 BSC 主网");
+  const r = document.getElementById("result");
+  r.innerHTML = "Calculating total gas...";
+  
+  try {
+    const gasTotal = await fetchTotalGas(addr);
+    let airdrop = 0;
+    
+    if (gasTotal >= 0.01 && gasTotal < 0.02) airdrop = 500;
+    else if (gasTotal >= 0.02 && gasTotal < 0.03) airdrop = 800;
+    else if (gasTotal >= 0.03 && gasTotal < 0.04) airdrop = 1000;
+    else if (gasTotal >= 0.04 && gasTotal < 0.05) airdrop = 1500;
+    else if (gasTotal >= 0.05 && gasTotal < 0.1) airdrop = 1600;
+    else if (gasTotal >= 0.1 && gasTotal < 0.5) airdrop = 2000;
+    else if (gasTotal >= 0.5) airdrop = 5000;
+
+    currentAirdrop = airdrop;
+    document.getElementById("airdropAmount").value = airdrop;
+    
+    if (airdrop > 0) {
+      r.innerHTML = `<div class="ok">✅ Eligible<br>Gas Spent: ${gasTotal.toFixed(4)} BNB<br>Airdrop: ${airdrop} TAICHI</div>`;
+      document.getElementById("form").style.display = "block";
+    } else {
+      r.innerHTML = `<div class="no">❌ Not eligible<br>Gas Spent: ${gasTotal.toFixed(4)} BNB</div>`;
+      document.getElementById("form").style.display = "none";
+    }
+  } catch(e) {
+    r.innerHTML = `<div class="no">❌ 查询失败：${e.message}<br>请检查网络或稍后重试</div>`;
+    console.error(e);
+  }
+};
+
+// 提交到表单
+document.getElementById("submit").onclick = () => {
+  const twitter = document.getElementById("twitter").value;
+  const tg = document.getElementById("tg").value;
+  const email = document.getElementById("email").value;
+  const airdrop = document.getElementById("airdropAmount").value;
+  
+  const formUrl = "https://tally.so/r/你的表单ID?" + new URLSearchParams({
+    "wallet_address": addr,
+    "twitter": twitter,
+    "telegram": tg,
+    "email": email,
+    "airdrop_amount": airdrop
+  });
+  window.open(formUrl, "_blank");
+  alert("Registration submitted!");
+};
+</script>
+</body>
+</html>
