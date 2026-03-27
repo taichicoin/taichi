@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TAICHI AIRDROP</title>
+  <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'JetBrains Mono', monospace, system-ui;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #0B0E16;
+      background-image: 
+        linear-gradient(rgba(0, 179, 207, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 179, 207, 0.03) 1px, transparent 1px);
+      background-size: 30px 30px;
+      color: #E1E7F5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 500px;
+      background: #111827;
+      border: 1px solid #1F2937;
+      border-radius: 8px;
+      padding: 44px 36px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, #00B3CF, transparent);
+      animation: scan 3s linear infinite;
+    }
+
+    @keyframes scan {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: #F0F4FF;
+      text-align: center;
+      margin-bottom: 20px;
+      letter-spacing: 2px;
+    }
+
+    h1::after {
+      content: 'TAICHI';
+      display: block;
+      font-size: 12px;
+      color: #00B3CF;
+      letter-spacing: 6px;
+      margin-top: 6px;
+      opacity: 0.8;
+    }
+
+    .hcaptcha-wrapper {
+      margin: 20px 0;
+      display: flex;
+      justify-content: center;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 100%;
+      padding: 16px 18px;
+      background: #0F141F;
+      border: 1px solid #273444;
+      border-radius: 4px;
+      color: #E1E7F5;
+      font-size: 14px;
+      outline: none;
+      transition: 0.2s;
+      pointer-events: none;
+      opacity: 0.6;
+    }
+
+    input.enabled {
+      pointer-events: all;
+      opacity: 1;
+    }
+
+    input:focus {
+      border-color: #00B3CF;
+      background: #0D121C;
+    }
+
+    input::placeholder {
+      color: #4B5563;
+    }
+
+    button {
+      width: 100%;
+      padding: 16px;
+      background: #00B3CF;
+      border: none;
+      border-radius: 4px;
+      color: #0B0E16;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      pointer-events: none;
+      opacity: 0.6;
+    }
+
+    button.enabled {
+      pointer-events: all;
+      opacity: 1;
+    }
+
+    button:hover {
+      background: #009AAD;
+    }
+
+    button:disabled {
+      background: #273444;
+      color: #4B5563;
+      cursor: not-allowed;
+    }
+
+    .result {
+      margin: 24px 0;
+      padding: 18px;
+      background: #0F141F;
+      border-left: 3px solid #273444;
+      border-radius: 0 4px 4px 0;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .result.success {
+      border-left-color: #00B3CF;
+      background: rgba(0, 179, 207, 0.05);
+    }
+
+    .result.error {
+      border-left-color: #E53935;
+      background: rgba(229, 57, 53, 0.05);
+    }
+
+    .register-form {
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid #1F2937;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Check and register</h1>
+
+    <div class="hcaptcha-wrapper">
+      <div 
+        class="h-captcha" 
+        data-sitekey="6950fbbe-54f8-4dcc-98d4-4c68e496545a"
+        data-theme="dark"
+        data-size="normal"
+        data-callback="onHCaptchaSuccess"
+        data-expired-callback="onHCaptchaExpired"
+        data-error-callback="onHCaptchaError"
+      ></div>
+    </div>
+
+    <div class="input-group">
+      <input type="text" id="address" placeholder="BSC ADDRESS (0x...)">
+    </div>
+    <button id="checkBtn">CHECK ELIGIBILITY</button>
+
+    <div id="result" class="result hidden"></div>
+
+    <div id="registerForm" class="register-form hidden">
+      <div class="input-group">
+        <input type="text" id="twitterUser" placeholder="TWITTER USERNAME">
+      </div>
+      <div class="input-group">
+        <input type="text" id="tweetLink" placeholder="TWEET LINK">
+      </div>
+      <button id="submitBtn">SUBMIT</button>
+    </div>
+  </div>
+
+  <script>
+    const EDGE_API = "https://sznjaotjoljaiawbvfro.supabase.co/functions/v1/c-r";
+
+    const checkBtn = document.getElementById('checkBtn');
+    const resultDiv = document.getElementById('result');
+    const registerForm = document.getElementById('registerForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const addressInput = document.getElementById('address');
+    const twitterInput = document.getElementById('twitterUser');
+    const tweetLinkInput = document.getElementById('tweetLink');
+    
+    let currentWallet = '';
+    let isHCaptchaValid = false;
+
+    function onHCaptchaSuccess(token) {
+      isHCaptchaValid = true;
+      addressInput.classList.add('enabled');
+      checkBtn.classList.add('enabled');
+      alert("hCaptcha verified ✅ You can now check eligibility");
+    }
+
+    function onHCaptchaExpired() {
+      isHCaptchaValid = false;
+      resetFormStatus();
+      alert("hCaptcha expired ❌ Please verify again");
+    }
+
+    function onHCaptchaError() {
+      isHCaptchaValid = false;
+      resetFormStatus();
+      alert("hCaptcha failed ❌ Please try again");
+    }
+
+    function resetFormStatus() {
+      addressInput.classList.remove('enabled');
+      twitterInput.classList.remove('enabled');
+      tweetLinkInput.classList.remove('enabled');
+      checkBtn.classList.remove('enabled');
+      submitBtn.classList.remove('enabled');
+    }
+
+    function requireHCaptcha() {
+      if (!isHCaptchaValid) {
+        alert("Please complete hCaptcha verification first");
+        return false;
+      }
+      return true;
+    }
+
+    checkBtn.addEventListener('click', async () => {
+      if (!requireHCaptcha()) return;
+
+      const address = document.getElementById('address').value.trim();
+      if (!address.startsWith('0x') || address.length !== 42) {
+        resultDiv.className = 'result error';
+        resultDiv.textContent = 'Please enter a valid BSC wallet address';
+        resultDiv.classList.remove('hidden');
+        return;
+      }
+
+      checkBtn.disabled = true;
+      checkBtn.textContent = 'CHECKING...';
+      resultDiv.classList.remove('hidden');
+      resultDiv.textContent = 'SCANNING ON-CHAIN DATA...';
+
+      try {
+        const res = await fetch(EDGE_API, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ address })
+        });
+
+        const data = await res.json();
+
+        currentWallet = address;
+
+        if (data.eligible) {
+          resultDiv.className = 'result success';
+          resultDiv.innerHTML = `
+            ✅ ELIGIBLE<br>
+            ADDRESS: ${address}<br>
+            TX COUNT: ${data.tx_count}<br>
+            AIRDROP: ${data.airdrop_amount} TAICHI
+          `;
+          registerForm.classList.remove('hidden');
+          twitterInput.classList.add('enabled');
+          tweetLinkInput.classList.add('enabled');
+          submitBtn.classList.add('enabled');
+        } else {
+          resultDiv.className = 'result error';
+          resultDiv.innerHTML = `
+            ❌ NOT ELIGIBLE<br>
+            ADDRESS: ${address}<br>
+            TX COUNT: ${data.tx_count || 0}<br>
+            MIN REQUIRED: 300 TXS
+          `;
+          registerForm.classList.add('hidden');
+        }
+      } catch (err) {
+        resultDiv.className = 'result error';
+        resultDiv.textContent = 'SCAN FAILED, PLEASE TRY AGAIN';
+        console.error(err);
+      } finally {
+        checkBtn.disabled = false;
+        checkBtn.textContent = 'CHECK ELIGIBILITY';
+      }
+    });
+
+    submitBtn.addEventListener('click', async () => {
+      if (!requireHCaptcha()) return;
+
+      const username = document.getElementById('twitterUser').value.trim();
+      const replylink = document.getElementById('tweetLink').value.trim();
+
+      if (!currentWallet) {
+        alert("PLEASE CHECK ELIGIBILITY FIRST");
+        return;
+      }
+      if (!username || !replylink) {
+        alert("PLEASE FILL IN ALL FIELDS");
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "SUBMITTING...";
+
+      try {
+        const res = await fetch(EDGE_API, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            address: currentWallet,
+            twitterUser: username,
+            tweetLink: replylink
+          })
+        });
+
+        const data = await res.json();
+
+        if (data.eligible) {
+          alert("✅ REGISTERED SUCCESSFULLY!");
+          registerForm.classList.add("hidden");
+          resultDiv.innerHTML += "<br><br>✅ REGISTRATION COMPLETE";
+        } else {
+          alert("❌ " + (data.msg || data.error || "REGISTER FAILED"));
+        }
+      } catch (e) {
+        alert("NETWORK ERROR, PLEASE TRY AGAIN");
+        console.error(e);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "SUBMIT";
+      }
+    });
+  </script>
+</body>
+</html>
