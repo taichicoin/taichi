@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>TAICHI Airdrop</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,sans-serif}
+  body{background:#121212;color:#fff;padding:20px;display:flex;justify-content:center;align-items:center;min-height:100vh}
+  .box{max-width:420px;width:100%;background:#1a1a1a;padding:24px;border-radius:16px}
+  h2{color:#0ef;margin-bottom:20px;text-align:center}
+  input{width:100%;padding:12px 14px;margin:8px 0;border-radius:10px;border:none;background:#2a2a2a;color:#fff;font-size:15px}
+  button{width:100%;padding:12px;background:#0ef;color:#000;border:none;border-radius:10px;font-weight:bold;margin-top:10px;cursor:pointer}
+  button:disabled{opacity:.5}
+  .result{margin:12px 0;padding:12px;border-radius:8px;background:#252525}
+  .hidden{display:none}
+</style>
+</head>
+<body>
+<div class="box">
+  <h2>TAICHI 空投注册</h2>
+
+  <input id="wallet" placeholder="输入BSC钱包地址 (0x...)">
+  <button id="checkBtn">查询空投资格</button>
+
+  <div id="result" class="result hidden"></div>
+
+  <div id="form" class="hidden">
+    <input id="username" placeholder="Twitter 用户名 (@xxx)">
+    <input id="replylink" placeholder="推文回复链接">
+    <button id="submitBtn">提交注册</button>
+  </div>
+</div>
+
+<script>
+// 你的 Supabase 信息（已全部填好）
+const SUPABASE_URL = "https://sznjaotjoljaiawbvfro.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_iN3D88OfHeUre4ddCaDH7g_rlsQ8LGN";
+
+// BSC 公共 RPC 节点
+const RPC_URLS = [
+  "https://bsc-dataseed1.bnbchain.org",
+  "https://bsc-dataseed2.bnbchain.org",
+  "https://bsc.publicnode.com"
+];
+
+let currentWallet = "";
+let currentTxCount = 0;
+let currentAirdropAmount = 0;
+
+const $ = id => document.getElementById(id);
+const checkBtn = $("checkBtn");
+const submitBtn = $("submitBtn");
+const resultDiv = $("result");
+const registerForm = $("form");
+
+// 查询空投资格
+checkBtn.addEventListener("click", async () => {
+  const wallet = $("wallet").value.trim();
+  if (!wallet.startsWith("0x") || wallet.length !== 42) {
+    resultDiv.innerHTML = "❌ 请输入有效的 BSC 钱包地址";
+    resultDiv.classList.remove("hidden");
+    return;
+  }
+
+  checkBtn.disabled = true;
+  checkBtn.textContent = "查询中...";
+  resultDiv.classList.remove("hidden");
+  resultDiv.textContent = "正在读取链上数据...";
+
+  try {
+    let txCount = 0;
+    for (const rpc of RPC_URLS) {
+      try {
+        const res = await fetch(rpc, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            jsonrpc: "2.0", id: 1, method: "eth_getTransactionCount", params: [wallet, "latest"]
+          })
+        });
+        const data = await res.json();
+        if (data.result) {
+          txCount = parseInt(data.result, 16);
+          break;
+        }
+      } catch (e) { continue; }
+    }
+
+    currentWallet = wallet;
+    currentTxCount = txCount;
+
+    let qualified = false;
+    let airdropAmount = 0;
+    if (txCount >= 300) {
+      qualified = true;
+      if (txCount <= 499) airdropAmount = 500;
+      else if (txCount <= 1000) airdropAmount = txCount;
+      else airdropAmount = 2000;
+    }
+
+    currentAirdropAmount = airdropAmount;
+
+    if (qualified) {
+      resultDiv.innerHTML = `
+        ✅ 符合空投资格<br>
+        钱包地址: ${wallet}<br>
+        链上交易数: ${txCount}<br>
+        可领取空投: ${airdropAmount} TAICHI
+      `;
+      registerForm.classList.remove("hidden");
+    } else {
+      resultDiv.innerHTML = `
+        ❌ 暂不符合资格<br>
+        需要至少 300 笔链上交易
+      `;
+      registerForm.classList.add("hidden");
+    }
+  } catch (err) {
+    resultDiv.textContent = "查询失败，请稍后重试";
+  } finally {
+    checkBtn.disabled = false;
+    checkBtn.textContent = "查询空投资格";
+  }
+});
+
+// 提交注册
+submitBtn.addEventListener("click", async () => {
+  const username = $("username").value.trim();
+  const replylink = $("replylink").value.trim();
+
+  if (!currentWallet) {
+    alert("请先查询空投资格");
+    return;
+  }
+  if (!username || !replylink) {
+    alert("请填写完整的 Twitter 用户名和推文回复链接");
+    return;
+  }
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = "提交中...";
+
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/registrations`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": SUPABASE_ANON_KEY,
+        "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+        "Prefer": "return=minimal"
+      },
+      body: JSON.stringify({
+        address: currentWallet,
+        username: username,
+        replylink: replylink,
+        tx_count: currentTxCount,
+        airdrop_amount: currentAirdropAmount
+      })
+    });
+
+    if (res.ok) {
+      alert("✅ 注册成功！每个地址/用户名/链接仅限一次");
+      registerForm.classList.add("hidden");
+      resultDiv.innerHTML += "<br><br>✅ 已完成注册";
+    } else {
+      const err = await res.json().catch(() => ({}));
+      if (err.code === "23505") {
+        alert("❌ 地址/用户名/回复链接 已被使用，均仅限一次");
+      } else {
+        alert("❌ 注册失败，请稍后重试");
+      }
+    }
+  } catch (err) {
+    alert("网络错误，请稍后重试");
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = "提交注册";
+  }
+});
+</script>
+</body>
+</html>
