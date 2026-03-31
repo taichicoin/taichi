@@ -1,0 +1,1401 @@
+---
+permalink: /cc
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claim Test</title>
+  <!-- 固定版本CDN，避免加载失败 -->
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@walletconnect/sign-client@2.16.1/dist/index.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@web3modal/standalone@2.4.1/dist/index.umd.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'JetBrains Mono', monospace;
+      transition: all 0.3s;
+    }
+
+    html { touch-action: manipulation; }
+    button {
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      cursor: pointer !important;
+    }
+
+    :root {
+      --bg: #0B0E16;
+      --card: #111827;
+      --input: #0F141F;
+      --border: #1F2937;
+      --text: #E1E7F5;
+      --muted: #4B5663;
+      --accent: #00B3CF;
+      --success: #00B3CF;
+      --error: #E53935;
+      --w3m-accent: #00B3CF;
+      --w3m-color-mix: #0B0E16;
+      --w3m-border-radius-master: 4px;
+    }
+
+    :root.light {
+      --bg: #f8fafc;
+      --card: #fff;
+      --input: #f1f5f9;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748B;
+      --accent: #009AAD;
+      --success: #009AAD;
+      --error: #E53935;
+      --w3m-accent: #009AAD;
+      --w3m-color-mix: #f8fafc;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+    }
+
+    .toolbar {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      gap: 16px;
+      z-index: 9999;
+      flex-wrap: wrap;
+    }
+    .toolbar a,
+    .toolbar button {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+    }
+    .toolbar a:hover,
+    .toolbar a:active,
+    .toolbar button:hover,
+    .toolbar button:active {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 500px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 40px 30px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+      animation: scan 3s linear infinite;
+    }
+    @keyframes scan {
+      0%   { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 24px;
+      font-size: 24px;
+      line-height: 1.3;
+      transition: all 0.3s;
+    }
+    h1.hidden {
+      opacity: 0;
+      height: 0;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    .steps {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 30px;
+      position: relative;
+    }
+    .steps::before {
+      content: '';
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      height: 2px;
+      background: var(--border);
+      z-index: 0;
+    }
+    .steps .progress-line {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      height: 2px;
+      background: var(--accent);
+      z-index: 1;
+      transition: width 0.3s ease;
+    }
+    .step-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      width: 33.33%;
+      position: relative;
+      z-index: 2;
+      cursor: default;
+    }
+    .step-item.clickable {
+      cursor: pointer;
+    }
+    .step-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--border);
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .step-item.completed .step-circle {
+      background: var(--accent);
+      color: #fff;
+    }
+    .step-item.active .step-circle {
+      background: var(--accent);
+      color: #fff;
+    }
+    .step-text {
+      font-size: 11px;
+      text-align: center;
+      color: var(--muted);
+      line-height: 1.3;
+      word-break: break-word;
+      min-height: 30px;
+    }
+    .step-item.completed .step-text,
+    .step-item.active .step-text {
+      color: var(--text);
+    }
+
+    .input-group {
+      margin-bottom: 16px;
+      position: relative;
+    }
+    .address-wrap {
+      position: relative;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .address-input {
+      width: 100%;
+      padding: 14px 50px 14px 14px;
+      background: var(--input);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      outline: none;
+      cursor: pointer;
+      pointer-events: none;
+    }
+    .address-input::placeholder {
+      color: var(--muted);
+    }
+    .address-wrap:hover .address-input,
+    .address-wrap:active .address-input {
+      border-color: var(--accent);
+    }
+
+    .arrow-btn {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--accent);
+      border: 1.5px solid var(--accent);
+      color: #fff;
+      width: 36px;
+      height: 36px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+    }
+    .arrow-btn:hover {
+      opacity: 0.9;
+    }
+
+    button.main-btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--accent);
+      border: none;
+      border-radius: 4px;
+      color: #fff;
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+    button.main-btn:disabled {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    button.next-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(90deg, #2563eb, var(--accent));
+      border: none;
+      border-radius: 4px;
+      color: #fff;
+      font-weight: bold;
+      margin-top: 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .result {
+      margin: 20px 0;
+      padding: 14px;
+      background: var(--input);
+      border-left: 3px solid var(--border);
+      font-size: 13px;
+      line-height: 1.5;
+      word-break: break-all;
+      overflow-wrap: break-word;
+    }
+    .result.success { border-color: var(--success); }
+    .result.error { border-color: var(--error); }
+    .result.info { border-color: var(--accent); }
+
+    .form-row { margin: 16px 0; }
+    .hidden { display: none !important; }
+
+    .wait-claim-card {
+      margin-top: 20px;
+      background: var(--input);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .wait-claim-header {
+      padding: 20px 16px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .wait-claim-header h2 {
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+    .wait-claim-header p {
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .wait-claim-total {
+      padding: 20px 16px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .wait-claim-total p {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .wait-claim-total .amount {
+      font-size: 32px;
+      font-weight: bold;
+      color: var(--text);
+    }
+    .wait-claim-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    .wait-claim-grid-item {
+      padding: 16px;
+      text-align: center;
+    }
+    .wait-claim-grid-item:first-child {
+      border-right: 1px solid var(--border);
+    }
+    .wait-claim-grid-item p {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .wait-claim-grid-item .amount {
+      font-size: 20px;
+      font-weight: bold;
+      color: var(--text);
+    }
+    .wait-claim-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(90deg, #2563eb, var(--accent));
+      border: none;
+      color: #fff;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .wait-claim-btn:disabled {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+    .wait-claim-tip {
+      margin-top: 16px;
+      padding: 12px;
+      background: var(--input);
+      border-left: 3px solid var(--accent);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .listing-card {
+      margin-top: 20px;
+      text-align: center;
+      padding: 40px 20px;
+      background: var(--input);
+      border-radius: 8px;
+    }
+    .listing-icon {
+      width: 64px;
+      height: 64px;
+      border: 2px solid var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+    .listing-icon svg {
+      width: 32px;
+      height: 32px;
+      stroke: var(--accent);
+      stroke-width: 2;
+      fill: none;
+    }
+    .listing-card h2 {
+      font-size: 24px;
+      margin-bottom: 12px;
+    }
+    .listing-card p {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+    .listing-tag {
+      display: inline-block;
+      padding: 6px 16px;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    @media (max-width: 480px) {
+      .card {
+        padding: 30px 20px;
+      }
+      h1 {
+        font-size: 22px;
+        margin-bottom: 20px;
+      }
+      .steps {
+        margin-bottom: 24px;
+      }
+      .steps::before,
+      .steps .progress-line {
+        top: 14px;
+        left: 12px;
+        right: 12px;
+      }
+      .step-circle {
+        width: 28px;
+        height: 28px;
+        font-size: 12px;
+      }
+      .step-text {
+        font-size: 9px;
+        line-height: 1.2;
+        min-height: 26px;
+        gap: 6px;
+      }
+      button.main-btn,
+      button.next-btn {
+        margin-top: 14px;
+        margin-bottom: 14px;
+      }
+      .input-group {
+        margin-bottom: 14px;
+      }
+      .result {
+        margin: 16px 0;
+      }
+      .toolbar {
+        top: 10px;
+        right: 10px;
+        gap: 10px;
+      }
+      .toolbar a,
+      .toolbar button {
+        padding: 5px 8px;
+        font-size: 11px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="toolbar">
+  <a href="https://t.me/CHiiiiiiiiiiiiiiiiii" target="_blank" rel="noopener noreferrer">Telegram</a>
+  <a href="https://x.com/taichicoin" target="_blank" rel="noopener noreferrer">X / Twitter</a>
+  <button id="langBtn">中</button>
+  <button id="themeBtn">Light</button>
+</div>
+
+<div class="card">
+  <h1 id="title">Allocation Confirm</h1>
+
+  <div class="steps">
+    <div class="progress-line" id="progressLine"></div>
+    <div class="step-item active clickable" id="step1">
+      <div class="step-circle">1</div>
+      <div class="step-text" id="stepText1">Allocation Confirm</div>
+    </div>
+    <div class="step-item" id="step2">
+      <div class="step-circle">2</div>
+      <div class="step-text" id="stepText2">Ready to Claim</div>
+    </div>
+    <div class="step-item" id="step3">
+      <div class="step-circle">3</div>
+      <div class="step-text" id="stepText3">Wait Listing</div>
+    </div>
+  </div>
+
+  <div id="step1Content">
+    <div class="input-group">
+      <div class="address-wrap" id="addressWrap">
+        <input type="text" id="address" class="address-input" placeholder="click to connect wallet" readonly/>
+        <button class="arrow-btn" id="walletArrowBtn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 6L6 18M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <button class="main-btn" id="confirmBtn">CONFIRM ALLOCATION</button>
+    <div id="result" class="result hidden"></div>
+    <button id="step1NextBtn" class="next-btn hidden" onclick="setStep(2)"><span id="nextBtnText">NEXT →</span></button>
+  </div>
+
+  <div id="step2Content" class="hidden">
+    <div class="wait-claim-card">
+      <div class="wait-claim-header">
+        <div style="width:48px;height:48px;border:2px solid var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent)">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+        <h2 id="waitClaimTitle">Ready to Claim</h2>
+        <p id="waitClaimSubtitle">Your allocation has been confirmed, you can claim now</p>
+      </div>
+      <div class="wait-claim-total">
+        <p id="waitClaimTotalText">Total Allocation</p>
+        <div class="amount" id="totalAmount">0</div>
+      </div>
+      <div class="wait-claim-grid">
+        <div class="wait-claim-grid-item">
+          <p id="claimedText">Claimed</p>
+          <div class="amount">0</div>
+        </div>
+        <div class="wait-claim-grid-item">
+          <p id="claimableText">Pending Claim</p>
+          <div class="amount" id="claimableAmount">0</div>
+        </div>
+      </div>
+      <button class="wait-claim-btn" id="claimBtn" disabled>LOADING...</button>
+    </div>
+    <div id="claimResult" class="result hidden"></div>
+  </div>
+
+  <div id="step3Content" class="hidden">
+    <div class="listing-card">
+      <div class="listing-icon">
+        <svg viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10" />
+          <polyline points="12 6 12 12 16 14" />
+        </svg>
+      </div>
+      <h2 id="listingTitle">Coming Soon</h2>
+      <p id="listingDesc">
+        Token listing is pending, please wait for the official announcement.
+      </p>
+      <span class="listing-tag" id="listingTag">Status: Pending</span>
+    </div>
+  </div>
+</div>
+
+<w3m-modal></w3m-modal>
+
+<script>
+// ========== 核心配置（你的信息已预填，无需修改） ==========
+const SUPABASE_URL = "https://sznjaotjoljaiawbvfro.supabase.co";
+const SUPABASE_KEY = "sb_publishable_iN3D88OfHeUre4ddCaDH7g_rlsQ8LGN";
+const CONTRACT_ADDRESS = "0x00Ed331Af01CB23D62e29e8aB17f18F2Cb2e1738";
+const BSC_TESTNET_CHAINID = "0x61";
+const BSC_TESTNET_CHAINID_DEC = 97;
+const TOKEN_DECIMALS = 18;
+// WalletConnect 核心配置
+const WC_PROJECT_ID = "d97254973b9b0137e94a31b72713dd9e";
+const WC_METADATA = {
+  name: "TAICHI Airdrop",
+  description: "TAICHI Token Airdrop Claim",
+  url: window.location.origin,
+  icons: ["https://taichicoin.xyz/favicon.ico"]
+};
+const WC_CHAIN = `eip155:${BSC_TESTNET_CHAINID_DEC}`;
+
+const CONTRACT_ABI = [
+  "function claim(bytes32[] calldata proof, uint256 amount) external",
+  "function alreadyClaimed(address) view returns(bool)",
+  "event ClaimSuccess(address indexed user, uint256 amount)"
+];
+
+const BSC_TESTNET_PARAMS = {
+  chainId: BSC_TESTNET_CHAINID,
+  chainName: "BSC Testnet",
+  nativeCurrency: {
+    name: "tBNB",
+    symbol: "tBNB",
+    decimals: 18
+  },
+  rpcUrls: ["https://data-seed-prebsc-1-sbinance.bnbchain.org/"],
+  blockExplorerUrls: ["https://testnet.bscscan.com/"]
+};
+
+const texts = {
+  en: {
+    stepText1: "Allocation Confirm",
+    stepText2: "Ready to Claim",
+    stepText3: "Wait Listing",
+    title: "Allocation Confirm",
+    addrPlaceholder: "click to connect wallet",
+    confirmBtn: "CONFIRM ALLOCATION",
+    confirming: "CONFIRMING...",
+    invalidAddr: "Please connect wallet first",
+    eligible: "✅ ALLOCATION CONFIRMED",
+    addr: "ADDRESS",
+    drop: "AIRDROP ALLOCATION",
+    notEligible: "❌ NO ALLOCATION FOUND",
+    noRecord: "No allocation record for this address",
+    nextBtn: "NEXT →",
+    waitClaimTitle: "Ready to Claim",
+    waitClaimSubtitle: "Your allocation has been confirmed, you can claim now",
+    waitClaimTotalText: "Total Allocation",
+    claimedText: "Claimed",
+    claimableText: "Pending Claim",
+    claimBtn: "Claim Now",
+    claiming: "CLAIMING...",
+    connected: "CONNECTING...",
+    loading: "LOADING...",
+    checking: "CHECKING STATUS...",
+    listingTitle: "Coming Soon",
+    listingDesc: "Token listing is pending, please wait for the official announcement.",
+    listingTag: "Status: Pending",
+    langBtn: "中",
+    themeBtn: "Light",
+    themeBtnDark: "Dark",
+    err_ethers: "Wallet library loading failed, please refresh the page",
+    err_noWallet: "No wallet detected, please use WalletConnect to scan and connect",
+    err_addrNotMatch: "Wallet address does not match the queried address",
+    err_switchChain: "Please switch to BSC Testnet",
+    err_addChain: "Failed to add BSC Testnet to wallet",
+    err_noRecord: "No valid allocation data found",
+    err_claimFailed: "Claim failed",
+    err_alreadyClaimed: "Already Claimed",
+    err_invalidProof: "Invalid Merkle Proof format",
+    err_invalidAmount: "Invalid allocation amount",
+    err_invalidAddress: "Invalid wallet address format",
+    err_txTimeout: "Transaction submitted, please check chain status",
+    err_wcInit: "WalletConnect initialization failed, please check VPN/network",
+    err_wcConnect: "WalletConnect connection failed, please try again",
+    success_claim: "✅ Claim successful",
+  },
+  zh: {
+    stepText1: "分配确认",
+    stepText2: "准备领取",
+    stepText3: "等待上市",
+    title: "分配确认",
+    addrPlaceholder: "点击连接钱包",
+    confirmBtn: "确认分配",
+    confirming: "确认中...",
+    invalidAddr: "请先连接钱包",
+    eligible: "✅ 分配已确认",
+    addr: "地址",
+    drop: "空投分配数量",
+    notEligible: "❌ 未找到分配记录",
+    noRecord: "该地址没有分配记录",
+    nextBtn: "下一步 →",
+    waitClaimTitle: "准备领取",
+    waitClaimSubtitle: "你的分配已确认，现在可以领取",
+    waitClaimTotalText: "总分配额度",
+    claimedText: "已领取",
+    claimableText: "待领取",
+    claimBtn: "立即领取",
+    claiming: "领取中...",
+    connected: "连接中...",
+    loading: "加载中...",
+    checking: "检查状态中...",
+    listingTitle: "即将公布",
+    listingDesc: "代币上市正在筹备中，请等待官方公告",
+    listingTag: "状态：待定",
+    langBtn: "EN",
+    themeBtn: "浅色",
+    themeBtnDark: "深色",
+    err_ethers: "钱包库加载失败，请刷新页面",
+    err_noWallet: "未检测到钱包，请使用WalletConnect扫码连接",
+    err_addrNotMatch: "钱包地址与查询地址不匹配",
+    err_switchChain: "请切换到 BSC 测试网",
+    err_addChain: "添加BSC测试网到钱包失败",
+    err_noRecord: "未找到有效的分配数据",
+    err_claimFailed: "领取失败",
+    err_alreadyClaimed: "已领取",
+    err_invalidProof: "Merkle Proof 格式无效",
+    err_invalidAmount: "分配数量无效",
+    err_invalidAddress: "钱包地址格式无效",
+    err_txTimeout: "交易已提交，请查看链上状态",
+    err_wcInit: "WalletConnect初始化失败，请检查VPN/网络",
+    err_wcConnect: "WalletConnect连接失败，请重试",
+    success_claim: "✅ 领取成功",
+  }
+};
+
+// ========== 全局状态 ==========
+let lang = "en";
+let light = false;
+let currentData = {
+  address: "",
+  rawAmount: 0,
+  amountFull: "",
+  proof: []
+};
+let currentStep = 1;
+let stepsEnabled = false;
+let ethersLoaded = false;
+// WalletConnect 全局实例
+let wcSignClient = null;
+let wcSession = null;
+let web3Modal = null;
+let wcInitSuccess = false;
+
+const title = document.getElementById("title");
+const addrInput = document.getElementById("address");
+const addressWrap = document.getElementById("addressWrap");
+const confirmBtn = document.getElementById("confirmBtn");
+const result = document.getElementById("result");
+const step1NextBtn = document.getElementById("step1NextBtn");
+const claimBtn = document.getElementById("claimBtn");
+const claimResult = document.getElementById("claimResult");
+const langBtn = document.getElementById("langBtn");
+const themeBtn = document.getElementById("themeBtn");
+const step1Content = document.getElementById("step1Content");
+const step2Content = document.getElementById("step2Content");
+const step3Content = document.getElementById("step3Content");
+const progressLine = document.getElementById("progressLine");
+const step1 = document.getElementById("step1");
+const step2 = document.getElementById("step2");
+const step3 = document.getElementById("step3");
+const totalAmount = document.getElementById("totalAmount");
+const claimableAmount = document.getElementById("claimableAmount");
+const walletArrowBtn = document.getElementById("walletArrowBtn");
+
+// ========== 页面内提示工具 ==========
+function showResult(message, type = "error") {
+  result.className = `result ${type}`;
+  result.textContent = message;
+  result.classList.remove("hidden");
+}
+
+// ========== 初始化WalletConnect（优化手机端兼容性） ==========
+async function initWalletConnect() {
+  const t = texts[lang];
+  try {
+    console.log("开始初始化WalletConnect...");
+    // 初始化SignClient
+    wcSignClient = await SignClient.init({
+      projectId: WC_PROJECT_ID,
+      metadata: WC_METADATA,
+      relayUrl: "wss://relay.walletconnect.com",
+    });
+    console.log("SignClient初始化成功");
+    // 初始化Web3Modal
+    web3Modal = new window.Web3Modal.default({
+      projectId: WC_PROJECT_ID,
+      walletConnectVersion: 2,
+      standaloneChains: [WC_CHAIN],
+      themeMode: light ? "light" : "dark",
+      themeVariables: {
+        "--w3m-accent": "#00B3CF",
+      }
+    });
+    console.log("Web3Modal初始化成功");
+    // 监听会话事件
+    wcSignClient.on("session_update", ({ topic, params }) => {
+      const { namespaces } = params;
+      wcSession = wcSignClient.session.get(topic);
+      wcSession.namespaces = namespaces;
+    });
+    wcSignClient.on("session_delete", () => {
+      disconnectWallet();
+    });
+    // 检查是否已有会话
+    if (wcSignClient.session.length) {
+      const lastKey = wcSignClient.session.keys[wcSignClient.session.length - 1];
+      wcSession = wcSignClient.session.get(lastKey);
+      const userAddr = wcSession.namespaces.eip155.accounts[0].split(":")[2].toLowerCase();
+      addrInput.value = userAddr;
+      currentData.address = userAddr;
+    }
+    wcInitSuccess = true;
+    console.log("WalletConnect初始化完成");
+    return true;
+  } catch (e) {
+    console.error("WalletConnect初始化失败:", e);
+    showResult(t.err_wcInit, "error");
+    wcInitSuccess = false;
+    return false;
+  }
+}
+
+// ========== 核心工具函数 ==========
+// 统一获取provider（兼容插件钱包和WalletConnect）
+function getProvider() {
+  const t = texts[lang];
+  if (window.ethereum) {
+    return new ethers.providers.Web3Provider(window.ethereum);
+  } else if (wcSession && wcSignClient && wcInitSuccess) {
+    // WalletConnect自定义provider
+    return {
+      getSigner: () => {
+        return {
+          getAddress: () => Promise.resolve(currentData.address),
+          sendTransaction: async (tx) => {
+            const txHash = await wcSignClient.request({
+              topic: wcSession.topic,
+              chainId: WC_CHAIN,
+              request: {
+                method: "eth_sendTransaction",
+                params: [{
+                  from: currentData.address,
+                  to: tx.to,
+                  data: tx.data,
+                  gas: tx.gasLimit ? ethers.utils.hexValue(tx.gasLimit) : undefined,
+                  gasPrice: tx.gasPrice ? ethers.utils.hexValue(tx.gasPrice) : undefined,
+                  value: tx.value ? ethers.utils.hexValue(tx.value) : undefined
+                }]
+              }
+            });
+            return { hash: txHash, wait: (confirmations = 1) => pollTxStatus(txHash, currentData.address) };
+          }
+        };
+      },
+      getTransactionReceipt: async (txHash) => {
+        const publicProvider = new ethers.providers.JsonRpcProvider(BSC_TESTNET_PARAMS.rpcUrls[0]);
+        return await publicProvider.getTransactionReceipt(txHash);
+      },
+      call: async (tx) => {
+        const publicProvider = new ethers.providers.JsonRpcProvider(BSC_TESTNET_PARAMS.rpcUrls[0]);
+        return await publicProvider.call(tx);
+      }
+    };
+  } else {
+    throw new Error(t.err_noWallet);
+  }
+}
+
+// 读取合约是否已领取（带重试）
+async function checkContractClaimed(userAddr, retry = 3) {
+  try {
+    const provider = getProvider();
+    const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, provider);
+    return await contract.alreadyClaimed(userAddr.toLowerCase());
+  } catch (e) {
+    console.error("查询领取失败，重试中:", e);
+    if (retry > 0) {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      return checkContractClaimed(userAddr, retry - 1);
+    }
+    return false;
+  }
+}
+
+// UI 一键设为已领完
+function setUIFullyClaimed() {
+  const full = currentData.rawAmount;
+  document.querySelector(".wait-claim-grid .wait-claim-grid-item:first-child .amount").textContent = full;
+  document.getElementById("claimableAmount").textContent = "0";
+  claimBtn.disabled = true;
+  claimBtn.textContent = texts[lang].err_alreadyClaimed;
+}
+
+// 轮询检查交易状态
+async function pollTxStatus(txHash, userAddr) {
+  const t = texts[lang];
+  let retry = 10;
+  const provider = getProvider();
+  
+  while (retry > 0) {
+    try {
+      const tx = await provider.getTransactionReceipt(txHash);
+      if (tx && tx.status === 1) {
+        setUIFullyClaimed();
+        claimResult.className = "result success";
+        claimResult.innerHTML = `${t.success_claim}<br><a href="https://testnet.bscscan.com/tx/${txHash}" target="_blank" style="color:var(--accent);font-weight:bold;">🔗 View Transaction on BscScan</a>`;
+        claimResult.classList.remove("hidden");
+        setTimeout(() => setStep(3), 12000);
+        return true;
+      }
+    } catch (e) {
+      console.error("轮询失败，重试中:", e);
+    }
+    retry--;
+    await new Promise(resolve => setTimeout(resolve, 2000));
+  }
+  
+  // 轮询超时，兜底检查
+  const claimed = await checkContractClaimed(userAddr);
+  if (claimed) {
+    setUIFullyClaimed();
+    claimResult.className = "result success";
+    claimResult.innerHTML = `${t.success_claim}<br><a href="https://testnet.bscscan.com/tx/${txHash}" target="_blank" style="color:var(--accent);font-weight:bold;">🔗 View Transaction on BscScan</a>`;
+    claimResult.classList.remove("hidden");
+    setTimeout(() => setStep(3), 12000);
+    return true;
+  } else {
+    claimResult.className = "result error";
+    claimResult.textContent = t.err_txTimeout;
+    claimResult.classList.remove("hidden");
+    return false;
+  }
+}
+
+// ========== 钱包连接核心逻辑 ==========
+// 切换/添加BSC测试网
+async function switchBscTestnet() {
+  const t = texts[lang];
+  if (!window.ethereum) return true; // WalletConnect已指定链，无需处理
+  try {
+    await window.ethereum.request({
+      method: "wallet_switchEthereumChain",
+      params: [{ chainId: BSC_TESTNET_CHAINID }]
+    });
+    return true;
+  } catch (switchError) {
+    // 钱包没有该链，自动添加
+    if (switchError.code === 4902) {
+      try {
+        await window.ethereum.request({
+          method: "wallet_addEthereumChain",
+          params: [BSC_TESTNET_PARAMS]
+        });
+        return true;
+      } catch (addError) {
+        console.error("添加链失败:", addError);
+        showResult(t.err_addChain, "error");
+        return false;
+      }
+    }
+    console.error("切换链失败:", switchError);
+    showResult(t.err_switchChain, "error");
+    return false;
+  }
+}
+
+// 插件钱包连接
+async function connectInjectedWallet() {
+  const t = texts[lang];
+  if (!window.ethereum) {
+    return false;
+  }
+  try {
+    const chainOk = await switchBscTestnet();
+    if (!chainOk) return false;
+
+    const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+    const userAddr = accounts[0].toLowerCase();
+    addrInput.value = userAddr;
+    currentData.address = userAddr;
+    // 监听账户切换
+    window.ethereum.on("accountsChanged", (accounts) => {
+      if (accounts.length === 0) {
+        disconnectWallet();
+      } else {
+        addrInput.value = accounts[0].toLowerCase();
+        currentData.address = accounts[0].toLowerCase();
+      }
+    });
+    // 监听链切换
+    window.ethereum.on("chainChanged", (chainId) => {
+      if (chainId !== BSC_TESTNET_CHAINID) {
+        showResult(t.err_switchChain, "error");
+      } else {
+        result.classList.add("hidden");
+      }
+    });
+    return true;
+  } catch (e) {
+    console.error("插件钱包连接失败:", e);
+    return false;
+  }
+}
+
+// WalletConnect连接（优化手机端）
+async function connectWalletConnect() {
+  const t = texts[lang];
+  // 先检查初始化状态
+  if (!wcInitSuccess || !wcSignClient || !web3Modal) {
+    showResult(t.err_wcInit, "error");
+    // 重新初始化
+    await initWalletConnect();
+    return;
+  }
+  try {
+    showResult("正在生成连接二维码...", "info");
+    // 生成连接URI
+    const { uri, approval } = await wcSignClient.connect({
+      requiredNamespaces: {
+        eip155: {
+          chains: [WC_CHAIN],
+          methods: ["eth_sendTransaction", "eth_sign", "personal_sign"],
+          events: ["accountsChanged", "chainChanged"]
+        }
+      }
+    });
+    // 打开弹窗显示URI
+    await web3Modal.openModal({ uri });
+    showResult("请用钱包APP扫码连接", "info");
+    // 等待用户扫码确认
+    wcSession = await approval();
+    web3Modal.closeModal();
+    // 获取地址
+    const userAddr = wcSession.namespaces.eip155.accounts[0].split(":")[2].toLowerCase();
+    addrInput.value = userAddr;
+    currentData.address = userAddr;
+    showResult("✅ 钱包连接成功", "success");
+    return true;
+  } catch (e) {
+    console.error("WalletConnect连接失败:", e);
+    web3Modal.closeModal();
+    showResult(t.err_wcConnect, "error");
+    return false;
+  }
+}
+
+// 统一连接入口（点击地址框触发）
+async function connectWallet() {
+  const t = texts[lang];
+  result.classList.add("hidden");
+  // 已连接则直接返回
+  if (currentData.address) return;
+
+  // 优先尝试插件钱包
+  const injectedOk = await connectInjectedWallet();
+  if (injectedOk) return;
+
+  // 插件钱包不可用，用WalletConnect
+  await connectWalletConnect();
+}
+
+// 断开钱包
+function disconnectWallet() {
+  // 断开插件钱包监听
+  if (window.ethereum) {
+    window.ethereum.removeAllListeners("accountsChanged");
+    window.ethereum.removeAllListeners("chainChanged");
+  }
+  // 断开WalletConnect
+  if (wcSession && wcSignClient) {
+    wcSignClient.disconnect({
+      topic: wcSession.topic,
+      reason: { code: 6000, message: "User disconnected" }
+    });
+    wcSession = null;
+  }
+  // 重置状态
+  addrInput.value = "";
+  currentData = { address: "", rawAmount: 0, amountFull: "", proof: [] };
+  result.classList.add("hidden");
+  step1NextBtn.classList.add("hidden");
+  confirmBtn.classList.remove("hidden");
+  stepsEnabled = false;
+  step2.classList.remove("clickable");
+  step3.classList.remove("clickable");
+  setStep(1);
+}
+
+// ========== 页面事件绑定 ==========
+// 修复手机端点击：绑定外层容器
+addressWrap.addEventListener("click", (e) => {
+  if (e.target.closest("#walletArrowBtn")) return;
+  connectWallet();
+});
+addressWrap.addEventListener("touchend", (e) => {
+  e.preventDefault();
+  if (e.target.closest("#walletArrowBtn")) return;
+  connectWallet();
+});
+walletArrowBtn.addEventListener("click", disconnectWallet);
+walletArrowBtn.addEventListener("touchend", (e) => {
+  e.preventDefault();
+  disconnectWallet();
+});
+
+// 页面加载初始化
+window.onload = async function() {
+  setStep(1);
+  bindStepClicks();
+  checkEthersLoaded();
+  // 页面加载就初始化WalletConnect，避免点击时才初始化失败
+  await initWalletConnect();
+  updateUI();
+};
+
+function bindStepClicks() {
+  step1.onclick = () => location.reload();
+  step2.onclick = () => stepsEnabled && setStep(2);
+  step3.onclick = () => stepsEnabled && setStep(3);
+}
+
+function setStep(stepNum) {
+  currentStep = stepNum;
+  [step1, step2, step3].forEach(item => item.classList.remove("active", "completed"));
+  for(let i=1; i<stepNum; i++) {
+    const stepItem = document.getElementById(`step${i}`);
+    stepItem.classList.add("completed");
+    stepItem.querySelector(".step-circle").innerHTML = "✓";
+  }
+  document.getElementById(`step${stepNum}`).classList.add("active");
+  progressLine.style.width = `${((stepNum-1)/2)*100}%`;
+
+  if (stepNum === 1) {
+    title.classList.remove("hidden");
+  } else {
+    title.classList.add("hidden");
+  }
+
+  step1Content.classList.add("hidden");
+  step2Content.classList.add("hidden");
+  step3Content.classList.add("hidden");
+  result.classList.add("hidden");
+  step1NextBtn.classList.add("hidden");
+  claimResult.classList.add("hidden");
+
+  if (stepNum === 1) {
+    step1Content.classList.remove("hidden");
+  } else if (stepNum === 2) {
+    step2Content.classList.remove("hidden");
+    totalAmount.textContent = currentData.rawAmount;
+    claimableAmount.textContent = currentData.rawAmount;
+    // 进第二步自动查合约
+    claimBtn.textContent = texts[lang].checking;
+    checkContractClaimed(currentData.address).then(yes => {
+      if(yes) {
+        setUIFullyClaimed();
+      } else {
+        claimBtn.textContent = texts[lang].claimBtn;
+        claimBtn.disabled = false;
+      }
+    });
+  } else if (stepNum === 3) {
+    step3Content.classList.remove("hidden");
+  }
+}
+
+function enableAllSteps() {
+  stepsEnabled = true;
+  step2.classList.add("clickable");
+  step3.classList.add("clickable");
+}
+
+function updateUI() {
+  const t = texts[lang];
+  document.getElementById("stepText1").textContent = t.stepText1;
+  document.getElementById("stepText2").textContent = t.stepText2;
+  document.getElementById("stepText3").textContent = t.stepText3;
+  title.textContent = t.title;
+  addrInput.placeholder = t.addrPlaceholder;
+  confirmBtn.textContent = confirmBtn.disabled ? t.confirming : t.confirmBtn;
+  document.getElementById("nextBtnText").textContent = t.nextBtn;
+  document.getElementById("waitClaimTitle").textContent = t.waitClaimTitle;
+  document.getElementById("waitClaimSubtitle").textContent = t.waitClaimSubtitle;
+  document.getElementById("waitClaimTotalText").textContent = t.waitClaimTotalText;
+  document.getElementById("claimedText").textContent = t.claimedText;
+  document.getElementById("claimableText").textContent = t.claimableText;
+  claimBtn.textContent = ethersLoaded ? t.claimBtn : t.loading;
+  document.getElementById("listingTitle").textContent = t.listingTitle;
+  document.getElementById("listingDesc").textContent = t.listingDesc;
+  document.getElementById("listingTag").textContent = t.listingTag;
+  langBtn.textContent = t.langBtn;
+  themeBtn.textContent = light ? t.themeBtnDark : t.themeBtn;
+  // 同步Web3Modal主题
+  if (web3Modal) {
+    web3Modal.setThemeMode(light ? "light" : "dark");
+  }
+}
+
+function checkEthersLoaded() {
+  if (typeof ethers !== "undefined") {
+    ethersLoaded = true;
+    claimBtn.textContent = texts[lang].claimBtn;
+    claimBtn.disabled = false;
+  } else {
+    let retryCount = 0;
+    const checkInterval = setInterval(() => {
+      retryCount++;
+      if (typeof ethers !== "undefined") {
+        ethersLoaded = true;
+        claimBtn.textContent = texts[lang].claimBtn;
+        claimBtn.disabled = false;
+        clearInterval(checkInterval);
+      } else if (retryCount >= 10) {
+        claimBtn.textContent = texts[lang].err_ethers;
+        claimBtn.disabled = true;
+        clearInterval(checkInterval);
+      }
+    }, 500);
+  }
+}
+
+const bindClick = (element, callback) => {
+  element.onclick = callback;
+  element.ontouchstart = (e) => {
+    e.preventDefault();
+    callback();
+  };
+};
+
+bindClick(langBtn, () => {
+  lang = lang === "en" ? "zh" : "en";
+  updateUI();
+});
+
+bindClick(themeBtn, () => {
+  light = !light;
+  document.documentElement.classList.toggle("light", light);
+  updateUI();
+});
+
+confirmBtn.onclick = async () => {
+  const t = texts[lang];
+  const inputAddress = addrInput.value.trim();
+
+  if (!inputAddress.startsWith("0x") || inputAddress.length !== 42) {
+    showResult(t.invalidAddr, "error");
+    step1NextBtn.classList.add("hidden");
+    return;
+  }
+
+  confirmBtn.disabled = true;
+  confirmBtn.textContent = t.confirming;
+  showResult(t.confirming, "info");
+  step1NextBtn.classList.add("hidden");
+
+  try {
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/registrations?address=ilike.${encodeURIComponent(inputAddress)}&select=address,airdrop_amount,merkle_proof`, {
+      headers: {
+        apikey: SUPABASE_KEY,
+        Authorization: `Bearer ${SUPABASE_KEY}`,
+        "Content-Type": "application/json"
+      }
+    });
+
+    const data = await res.json();
+
+    if (Array.isArray(data) && data.length > 0) {
+      const userData = data[0];
+      const rawAmount = Number(userData.airdrop_amount);
+
+      if (isNaN(rawAmount) || rawAmount <= 0) {
+        showResult(t.err_invalidAmount, "error");
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = t.confirmBtn;
+        return;
+      }
+
+      let proof = [];
+      try {
+        proof = typeof userData.merkle_proof === "string"
+          ? JSON.parse(userData.merkle_proof)
+          : userData.merkle_proof;
+
+        if (!Array.isArray(proof) || proof.length === 0) throw new Error("empty proof");
+        proof.forEach(p => {
+          if (!p.startsWith("0x") || p.length !== 66) throw new Error("invalid proof format");
+        });
+      } catch (e) {
+        showResult(t.err_invalidProof, "error");
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = t.confirmBtn;
+        return;
+      }
+
+      const amountFull = rawAmount.toString() + "000000000000000000";
+
+      currentData = {
+        address: userData.address,
+        rawAmount: rawAmount,
+        amountFull: amountFull,
+        proof: proof
+      };
+
+      result.className = "result success";
+      result.innerHTML = `
+        ${t.eligible}<br>
+        ${t.addr}: ${userData.address}<br>
+        ${t.drop}: ${rawAmount} CHI
+      `;
+      step1NextBtn.classList.remove("hidden");
+      enableAllSteps();
+      confirmBtn.classList.add("hidden");
+
+    } else {
+      result.className = "result error";
+      result.innerHTML = `
+        ${t.notEligible}<br>
+        ${t.addr}: ${inputAddress}<br>
+        ${t.noRecord}
+      `;
+      step1NextBtn.classList.add("hidden");
+      confirmBtn.classList.remove("hidden");
+    }
+  } catch (e) {
+    console.error(e);
+    showResult(t.err_claimFailed, "error");
+    step1NextBtn.classList.add("hidden");
+  } finally {
+    confirmBtn.disabled = false;
+    confirmBtn.textContent = texts[lang].confirmBtn;
+  }
+};
+
+// ========== 领取逻辑 ==========
+claimBtn.onclick = async function () {
+  const t = texts[lang];
+  const originalText = claimBtn.textContent;
+
+  // 前置校验
+  claimBtn.disabled = true;
+  claimBtn.textContent = t.checking;
+  const preCheck = await checkContractClaimed(currentData.address);
+  if (preCheck) {
+    setUIFullyClaimed();
+    claimResult.className = "result success";
+    claimResult.textContent = t.err_alreadyClaimed;
+    claimResult.classList.remove("hidden");
+    return;
+  }
+
+  if (!currentData.address || !currentData.proof?.length || !currentData.amountFull) {
+    claimResult.className = "result error";
+    claimResult.textContent = t.err_noRecord;
+    claimResult.classList.remove("hidden");
+    claimBtn.disabled = false;
+    claimBtn.textContent = originalText;
+    return;
+  }
+
+  claimBtn.textContent = t.connected;
+  claimResult.classList.add("hidden");
+
+  try {
+    // 校验地址匹配
+    const walletAddr = currentData.address.toLowerCase();
+    const targetAddr = currentData.address.toLowerCase();
+    if (walletAddr !== targetAddr) {
+      claimResult.className = "result error";
+      claimResult.textContent = t.err_addrNotMatch;
+      claimResult.classList.remove("hidden");
+      claimBtn.disabled = false;
+      claimBtn.textContent = originalText;
+      return;
+    }
+
+    const provider = getProvider();
+    const signer = provider.getSigner();
+    const iface = new ethers.utils.Interface(CONTRACT_ABI);
+
+    const data = iface.encodeFunctionData("claim", [
+      currentData.proof,
+      currentData.amountFull
+    ]);
+
+    claimBtn.textContent = t.claiming;
+
+    const tx = await signer.sendTransaction({
+      to: CONTRACT_ADDRESS,
+      data: data,
+      gasLimit: 1000000
+    });
+
+    await pollTxStatus(tx.hash, currentData.address);
+
+  } catch (err) {
+    console.error("Claim error:", err);
+    // 兜底检查
+    const finalCheck = await checkContractClaimed(currentData.address);
+    if (finalCheck) {
+      setUIFullyClaimed();
+      claimResult.className = "result success";
+      claimResult.innerHTML = `${t.success_claim}<br><a href="https://testnet.bscscan.com/tx/${tx?.hash || ""}" target="_blank" style="color:var(--accent);font-weight:bold;">🔗 View Transaction on BscScan</a>`;
+      claimResult.classList.remove("hidden");
+    } else {
+      claimResult.className = "result error";
+      claimResult.textContent = `Claim failed: ${err.reason || err.message || "execution reverted"}`;
+      claimResult.classList.remove("hidden");
+    }
+  } finally {
+    // 只有未领取才恢复按钮
+    const finalCheck = await checkContractClaimed(currentData.address);
+    if (!finalCheck) {
+      claimBtn.disabled = false;
+      claimBtn.textContent = originalText;
+    }
+  }
+};
+</script>
+</body>
+</html>
