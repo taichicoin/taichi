@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>H5钱包连接弹窗示例</title>
+<style>
+body { display:flex; justify-content:center; align-items:center; height:100vh; font-family: Arial; background:#f0f2f5; }
+button { padding:12px 24px; font-size:16px; cursor:pointer; border:none; border-radius:6px; background-color:#4CAF50; color:white; }
+
+#walletModal {
+  display:none;
+  position:fixed; top:0; left:0; width:100%; height:100%;
+  background:rgba(0,0,0,0.5); justify-content:center; align-items:center;
+}
+#walletModal .modal-content {
+  background:white; border-radius:10px; padding:20px; width:80%; max-width:300px; text-align:center;
+}
+.wallet-btn {
+  display:block; width:100%; margin:10px 0; padding:10px; font-size:16px; border:none; border-radius:6px; cursor:pointer;
+}
+.wallet-btn.metamask { background:#f6851b; color:white; }
+.wallet-btn.okx { background:#0072ce; color:white; }
+.wallet-btn.trust { background:#3375bb; color:white; }
+.wallet-btn.cancel { background:#ccc; color:#333; }
+</style>
+</head>
+<body>
+
+<button id="connectWalletBtn">连接钱包</button>
+
+<div id="walletModal">
+  <div class="modal-content">
+    <h3>选择钱包</h3>
+    <button class="wallet-btn metamask" data-url="">MetaMask</button>
+    <button class="wallet-btn okx" data-url="">OKX Wallet</button>
+    <button class="wallet-btn trust" data-url="">Trust Wallet</button>
+    <button class="wallet-btn cancel">取消</button>
+  </div>
+</div>
+
+<script>
+const dappUrl = window.location.origin;
+const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+// 设置移动端钱包 deeplink
+document.querySelector('.wallet-btn.metamask').dataset.url = `https://metamask.app.link/dapp/${dappUrl}`;
+document.querySelector('.wallet-btn.okx').dataset.url = `okex://wallet_connect?url=${dappUrl}`;
+document.querySelector('.wallet-btn.trust').dataset.url = `trust://browser_enable?url=${dappUrl}`;
+
+const modal = document.getElementById('walletModal');
+const btn = document.getElementById('connectWalletBtn');
+
+btn.addEventListener('click', async () => {
+  if (isMobile) {
+    modal.style.display = 'flex';
+  } else {
+    // PC端连接浏览器钱包
+    if (window.ethereum) {
+      try {
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        alert("钱包已连接: " + accounts[0]);
+      } catch(err) {
+        console.error(err);
+        alert("钱包连接失败或已取消");
+      }
+    } else {
+      alert("未检测到浏览器钱包，请安装MetaMask或OKX Wallet扩展");
+    }
+  }
+});
+
+// 移动端选择钱包
+modal.querySelectorAll('.wallet-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (btn.classList.contains('cancel')) {
+      modal.style.display = 'none';
+    } else {
+      const url = btn.dataset.url;
+      window.location.href = url;
+    }
+  });
+});
+</script>
+</body>
+</html>
