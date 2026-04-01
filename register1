@@ -1,0 +1,1375 @@
+---
+permalink: /register1
+---
+<!DOCTYPE html>
+<html lang="en" class="light"> <!-- ✅ 默认添加浅色主题类 -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>register</title>
+  <script src="https://js.hcaptcha.com/1/api.js?hl=en" async defer></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'JetBrains Mono', monospace;
+      transition: all 0.3s;
+    }
+
+    html { touch-action: manipulation; }
+    button {
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      cursor: pointer !important;
+    }
+
+    :root {
+      --bg: #0B0E16;
+      --card: #111827;
+      --input: #0F141F;
+      --border: #1F2937;
+      --text: #E1E7F5;
+      --muted: #4B5563;
+      --accent: #00B3CF;
+      --success: #00B3CF;
+      --error: #E53935;
+    }
+
+    :root.light {
+      --bg: #f8fafc;
+      --card: #fff;
+      --input: #f1f5f9;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748B;
+      --accent: #009AAD;
+      --success: #009AAD;
+      --error: #E53935;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+    }
+
+    .toolbar {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      gap: 16px;
+      z-index: 9999;
+      flex-wrap: wrap;
+    }
+    .toolbar a,
+    .toolbar button {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+    }
+    .toolbar a:hover,
+    .toolbar a:active,
+    .toolbar button:hover,
+    .toolbar button:active {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 500px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 40px 30px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+      animation: scan 3s linear infinite;
+    }
+    @keyframes scan {
+      0%   { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 24px;
+      font-size: 24px;
+      line-height: 1.3;
+    }
+
+    .steps {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 30px;
+      position: relative;
+    }
+    .steps::before {
+      content: '';
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      height: 2px;
+      background: var(--border);
+      z-index: 0;
+    }
+    .steps .progress-line {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      height: 2px;
+      background: var(--accent);
+      z-index: 1;
+      transition: width 0.3s ease;
+    }
+    .step-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      width: 25%;
+      position: relative;
+      z-index: 2;
+      cursor: default;
+    }
+    .step-item.clickable {
+      cursor: pointer;
+    }
+    .step-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--border);
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .step-item.completed .step-circle {
+      background: var(--accent);
+      color: #fff;
+    }
+    .step-item.active .step-circle {
+      background: var(--accent);
+      color: #fff;
+    }
+    .step-text {
+      font-size: 11px;
+      text-align: center;
+      color: var(--muted);
+      line-height: 1.3;
+      word-break: break-word;
+      min-height: 30px;
+    }
+    .step-item.completed .step-text,
+    .step-item.active .step-text {
+      color: var(--text);
+    }
+
+    .input-group {
+      margin-bottom: 16px;
+      position: relative;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      background: var(--input);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      outline: none;
+      opacity: .6;
+      pointer-events: none;
+    }
+    input.enabled {
+      opacity: 1;
+      pointer-events: all;
+    }
+    input::placeholder { color: var(--muted); }
+
+    .clear-btn {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 22px;
+      width: 30px;
+      height: 30px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    #address.enabled + .clear-btn { display: flex; }
+
+    button.main-btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--accent);
+      border: none;
+      border-radius: 4px;
+      color: #fff;
+      font-weight: bold;
+      opacity: .6;
+      pointer-events: none;
+      margin-bottom: 24px; /* ✅ 按钮和下方进度条整块间距从12px→24px */
+    }
+    button.main-btn.enabled {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    button.next-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(90deg, #2563eb, var(--accent));
+      border: none;
+      border-radius: 4px;
+      color: #fff;
+      font-weight: bold;
+      margin-top: 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .result {
+      margin: 20px 0;
+      padding: 14px;
+      background: var(--input);
+      border-left: 3px solid var(--border);
+      font-size: 13px;
+      line-height: 1.5;
+      word-break: break-all;
+      overflow-wrap: break-word;
+    }
+    .result.success { border-color: var(--success); }
+    .result.error { border-color: var(--error); }
+
+    .form-row { margin: 16px 0; }
+    .hidden { display: none !important; }
+
+    .reply-btn {
+      width: 100%;
+      padding: 12px;
+      background: var(--accent);
+      border: none;
+      border-radius: 4px;
+      color: #fff;
+      font-weight: bold;
+      margin: 4px 0 6px 0; /* ✅ 上方和提示文字间距从16px→4px，下方和进度条保持6px */
+      cursor: pointer;
+    }
+    .reply-tip {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 0; /* ✅ 提示文字底部间距清零，完全贴紧按钮 */
+      line-height: 1.4;
+    }
+
+    /* 红色警告样式：移除左侧竖线，仅保留叉号 */
+    .warning-alert {
+      background: rgba(229, 57, 53, 0.1);
+      padding: 12px 16px;
+      margin: 16px 0;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .warning-icon {
+      color: var(--error);
+      font-size: 20px;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+    .warning-text {
+      color: var(--error);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* 空投状态卡片样式 */
+    .airdrop-status-card {
+      background: var(--input);
+      border-left: 3px solid var(--accent);
+      padding: 16px;
+      margin-bottom: 16px;
+      border-radius: 4px;
+    }
+    .airdrop-status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      font-size: 14px;
+    }
+    .airdrop-status-row:last-child {
+      margin-bottom: 0;
+    }
+    .airdrop-status-value {
+      font-weight: bold;
+      color: var(--accent);
+      font-size: 18px;
+    }
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 12px;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #2563eb, var(--accent));
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+    .progress-percent {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+      text-align: right;
+    }
+
+    .wait-claim-card {
+      margin-top: 20px;
+      background: var(--input);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .wait-claim-header {
+      padding: 20px 16px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .wait-claim-header h2 {
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+    .wait-claim-header p {
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .wait-claim-total {
+      padding: 20px 16px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .wait-claim-total p {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .wait-claim-total .amount {
+      font-size: 32px;
+      font-weight: bold;
+      color: var(--text);
+    }
+    .wait-claim-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    .wait-claim-grid-item {
+      padding: 16px;
+      text-align: center;
+    }
+    .wait-claim-grid-item:first-child {
+      border-right: 1px solid var(--border);
+    }
+    .wait-claim-grid-item p {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .wait-claim-grid-item .amount {
+      font-size: 20px;
+      font-weight: bold;
+      color: var(--text);
+    }
+    .wait-claim-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(90deg, #2563eb, var(--accent));
+      border: none;
+      color: #fff;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .wait-claim-tip {
+      margin-top: 16px;
+      padding: 12px;
+      background: var(--input);
+      border-left: 3px solid var(--accent);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .listing-card {
+      margin-top: 20px;
+      text-align: center;
+      padding: 40px 20px;
+      background: var(--input);
+      border-radius: 8px;
+    }
+    .listing-icon {
+      width: 64px;
+      height: 64px;
+      border: 2px solid var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+    .listing-icon svg {
+      width: 32px;
+      height: 32px;
+      stroke: var(--accent);
+      stroke-width: 2;
+      fill: none;
+    }
+    .listing-card h2 {
+      font-size: 24px;
+      margin-bottom: 12px;
+    }
+    .listing-card p {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+    .listing-tag {
+      display: inline-block;
+      padding: 6px 16px;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    /* 注册结束页面样式 */
+    .ended-card {
+      text-align: center;
+      padding: 60px 20px;
+    }
+    .ended-icon {
+      width: 80px;
+      height: 80px;
+      border: 3px solid var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 30px;
+    }
+    .ended-icon svg {
+      width: 40px;
+      height: 40px;
+      stroke: var(--accent);
+      stroke-width: 2;
+      fill: none;
+    }
+    .ended-card h2 {
+      font-size: 28px;
+      margin-bottom: 16px;
+    }
+    .ended-card p {
+      font-size: 16px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+
+    @media (max-width: 480px) {
+      .card {
+        padding: 30px 20px;
+      }
+
+      h1 {
+        font-size: 22px;
+        margin-bottom: 20px;
+      }
+
+      .steps {
+        margin-bottom: 24px;
+      }
+      .steps::before,
+      .steps .progress-line {
+        top: 14px;
+        left: 12px;
+        right: 12px;
+      }
+      .step-circle {
+        width: 28px;
+        height: 28px;
+        font-size: 12px;
+      }
+      .step-text {
+        font-size: 9px;
+        line-height: 1.2;
+        min-height: 26px;
+        gap: 6px;
+      }
+
+      button.main-btn,
+      button.reply-btn,
+      button.next-btn {
+        margin-top: 14px;
+        margin-bottom: 14px;
+      }
+
+      .input-group {
+        margin-bottom: 14px;
+      }
+
+      .result {
+        margin: 16px 0;
+      }
+
+      .toolbar {
+        top: 10px;
+        right: 10px;
+        gap: 10px;
+      }
+      .toolbar a,
+      .toolbar button {
+        padding: 5px 8px;
+        font-size: 11px;
+      }
+
+      .ended-card {
+        padding: 40px 10px;
+      }
+      .ended-card h2 {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="toolbar">
+  <a href="https://t.me/CHiiiiiiiiiiiiiiiiii" target="_blank" rel="noopener noreferrer">Telegram</a>
+  <a href="https://x.com/taichicoin" target="_blank" rel="noopener noreferrer">X / Twitter</a>
+  <button id="langBtn">中</button>
+  <button id="themeBtn">Dark</button> <!-- ✅ 默认显示Dark按钮 -->
+</div>
+
+<div class="card">
+  <h1 id="title">Check and register</h1>
+
+  <!-- 注册结束页面 -->
+  <div id="endedPage" class="ended-card hidden">
+    <div class="ended-icon">
+      <svg viewBox="0 0 24 24">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+    </div>
+    <h2 id="endedTitle">Registration Closed</h2>
+    <p id="endedDesc">The airdrop registration phase has been completed.<br>Please wait for the claim channel to open.</p>
+    <div class="airdrop-status-card" style="text-align:left;">
+      <div class="airdrop-status-row">
+        <span id="endedTotalText">Total Airdrop Pool</span>
+        <span class="airdrop-status-value">5 000 000 CHI</span>
+      </div>
+      <div class="airdrop-status-row">
+        <span id="endedRegisteredText">Total Registered</span>
+        <span class="airdrop-status-value" id="endedRegisteredCount">0 CHI</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="mainContent">
+    <div class="steps">
+      <div class="progress-line" id="progressLine"></div>
+      <div class="step-item active clickable" id="step1">
+        <div class="step-circle">1</div>
+        <div class="step-text" id="stepText1">Check Eligibility</div>
+      </div>
+      <div class="step-item" id="step2">
+        <div class="step-circle">2</div>
+        <div class="step-text" id="stepText2">Confirm Registration</div>
+      </div>
+      <div class="step-item" id="step3">
+        <div class="step-circle">3</div>
+        <div class="step-text" id="stepText3">Wait to Claim</div>
+      </div>
+      <div class="step-item" id="step4">
+        <div class="step-circle">4</div>
+        <div class="step-text" id="stepText4">Wait Listing</div>
+      </div>
+    </div>
+
+    <div id="step1Content">
+      <div style="margin:20px 0;display:grid;place-items:center">
+        <div id="hcaptchaContainer" class="h-captcha"
+          data-sitekey="6950fbbe-54f8-4dcc-98d4-4c68e496545a"
+          data-theme="light"
+          data-lang="en"
+          data-callback="onHCaptchaSuccess"
+          data-expired-callback="onHCaptchaExpired"
+          data-error-callback="onHCaptchaError">
+        </div>
+      </div>
+
+      <div class="input-group">
+        <input type="text" id="address" placeholder="BSC ADDRESS (0x...)"/>
+        <button class="clear-btn" onclick="clearAddr()">×</button>
+      </div>
+      <button class="main-btn" id="checkBtn">CHECK ELIGIBILITY</button>
+
+      <!-- 第一步的空投状态卡片 -->
+      <div id="step1AirdropCard" class="airdrop-status-card">
+        <div class="airdrop-status-row">
+          <span id="step1TotalText">Total Airdrop Pool</span>
+          <span class="airdrop-status-value">5 000 000 CHI</span>
+        </div>
+        <div class="airdrop-status-row">
+          <span id="step1RegisteredText">Already Registered</span>
+          <span class="airdrop-status-value" id="step1RegisteredCount">Loading...</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-bar-fill" id="step1ProgressBar" style="width: 0%"></div>
+        </div>
+        <div class="progress-percent" id="step1ProgressPercent">0.0%</div>
+      </div>
+    </div>
+
+    <div id="result" class="result hidden"></div>
+    <button id="step1NextBtn" class="next-btn hidden" onclick="setStep(2)"><span id="nextBtnText">NEXT →</span></button>
+
+    <div id="step2Content" class="hidden">
+      <!-- 任务提示移到按钮上方 -->
+      <div class="reply-tip" id="replyTip">
+        Please complete the following tasks: Like + Retweet + Follow our official account + Tag 3 friends in the reply
+      </div>
+      <button class="reply-btn" id="replyBtn">Click to reply</button>
+
+      <!-- 第二步的空投状态卡片（点击回复后隐藏，提交后重新显示） -->
+      <div id="step2AirdropCard" class="airdrop-status-card">
+        <div class="airdrop-status-row">
+          <span id="step2TotalText">Total Airdrop Pool</span>
+          <span class="airdrop-status-value">5 000 000 CHI</span>
+        </div>
+        <div class="airdrop-status-row">
+          <span id="step2RegisteredText">Already Registered</span>
+          <span class="airdrop-status-value" id="step2RegisteredCount">Loading...</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-bar-fill" id="step2ProgressBar" style="width: 0%"></div>
+        </div>
+        <div class="progress-percent" id="step2ProgressPercent">0.0%</div>
+      </div>
+
+      <div id="registerForm" class="hidden">
+        <div class="input-group form-row">
+          <input type="text" id="twitter" placeholder="TWITTER USERNAME" class="enabled"/>
+        </div>
+        <div class="input-group form-row">
+          <input type="text" id="tweet" placeholder="REPLY LINK" class="enabled"/>
+        </div>
+        <button class="main-btn enabled" id="submitBtn">SUBMIT REGISTRATION</button>
+      </div>
+
+      <!-- 红色警告提示（替代弹窗） -->
+      <div id="registerWarning" class="warning-alert hidden">
+        <span class="warning-icon">✕</span>
+        <div class="warning-text" id="warningText"></div>
+      </div>
+
+      <div id="registerResult" class="result hidden"></div>
+      <button id="step2NextBtn" class="next-btn hidden" onclick="setStep(3)"><span id="nextBtnText2">下一步 →</span></button>
+    </div>
+
+    <div id="step3Content" class="hidden">
+      <div class="wait-claim-card">
+        <div class="wait-claim-header">
+          <div style="width:48px;height:48px;border:2px solid var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent)">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <h2 id="waitClaimTitle">Wait to Claim</h2>
+          <p id="waitClaimSubtitle">Your allocation amount has been confirmed, waiting for the claim channel to open</p>
+        </div>
+        <div class="wait-claim-total">
+          <p id="waitClaimTotalText">Total Allocation</p>
+          <div class="amount" id="totalAmount">0</div>
+        </div>
+        <div class="wait-claim-grid">
+          <div class="wait-claim-grid-item">
+            <p id="claimedText">Claimed</p>
+            <div class="amount">0</div>
+          </div>
+          <div class="wait-claim-grid-item">
+            <p id="claimableText">Pending Claim</p>
+            <div class="amount" id="claimableAmount">0</div>
+          </div>
+        </div>
+        <button class="wait-claim-btn" id="claimBtn">Claim Now</button>
+      </div>
+      <div class="wait-claim-tip" id="waitClaimTip">
+        Claim will be available 72 hours after the registration phase is completed<br>Status: Pending
+      </div>
+    </div>
+
+    <div id="step4Content" class="hidden">
+      <div class="listing-card">
+        <div class="listing-icon">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="12 6 12 12 16 14" />
+          </svg>
+        </div>
+        <h2 id="listingTitle">Coming Soon</h2>
+        <p id="listingDesc">
+          Token listing is pending, please wait for the official announcement.
+        </p>
+        <span class="listing-tag" id="listingTag">Status: Pending</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// 仅用于「总空投池/已注册代币」的三位空格格式化，其他数字完全不动
+function formatNumSpace(num){
+  return String(num).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+}
+
+// 后端接口地址
+const API = "https://sznjaotjoljaiawbvfro.supabase.co/functions/v1/super-task";
+const BRIGHT_API = "https://sznjaotjoljaiawbvfro.supabase.co/functions/v1/bright-service";
+const TOTAL_AIRDROP = 5000000; // 总空投代币上限
+
+// 全局状态：注册是否已结束
+let registrationEnded = false;
+
+const texts = {
+  en: {
+    stepText1: "Check Eligibility",
+    stepText2: "Confirm Registration",
+    stepText3: "Wait to Claim",
+    stepText4: "Wait Listing",
+    title: "Check and register",
+    addrPlaceholder: "BSC ADDRESS (0x...)",
+    checkBtn: "CHECK ELIGIBILITY",
+    checking: "CHECKING...",
+    capSuccess: "hCaptcha verified ✅ You can now check eligibility",
+    capExpired: "hCaptcha expired ❌ Please verify again",
+    capFailed: "hCaptcha failed ❌ Please try again",
+    needCap: "Please complete hCaptcha first",
+    invalidAddr: "Please enter a valid BSC address",
+    scanning: "SCANNING ON-CHAIN DATA...",
+    scanFail: "SCAN FAILED, PLEASE TRY AGAIN",
+    eligible: "✅ ELIGIBLE",
+    addr: "ADDRESS",
+    tx: "TX COUNT",
+    drop: "AIRDROP ALLOCATION",
+    notEligible: "❌ NOT ELIGIBLE",
+    minReq: "MIN REQUIRED: 300 TXS",
+    nextBtn: "NEXT →",
+    twitterPlaceholder: "TWITTER USERNAME",
+    tweetPlaceholder: "REPLY LINK",
+    submitBtn: "SUBMIT REGISTRATION",
+    submitting: "SUBMITTING...",
+    checkFirst: "PLEASE CHECK ELIGIBILITY FIRST",
+    fillAll: "PLEASE FILL IN ALL FIELDS",
+    registered: "✅ REGISTRATION COMPLETED",
+    regFail: "REGISTER FAILED",
+    netErr: "NETWORK ERROR, PLEASE TRY AGAIN",
+    alreadyReg: "Already registered, do not register repeatedly",
+    replyBtn: "Click to reply",
+    replyTip: "Please complete the following tasks: Like + Retweet + Follow our official account + Tag 3 friends in the reply",
+    waitClaimTitle: "Wait to Claim",
+    waitClaimSubtitle: "Your allocation amount has been confirmed, waiting for the claim channel to open",
+    waitClaimTotalText: "Total Allocation",
+    claimedText: "Claimed",
+    claimableText: "Pending Claim",
+    waitClaimTip: "Claim will be available 72 hours after the registration phase is completed<br>Status: Pending",
+    claimBtn: "Claim Now",
+    listingTitle: "Coming Soon",
+    listingDesc: "Token listing is pending, please wait for the official announcement.",
+    listingTag: "Status: Pending",
+    langBtn: "中",
+    themeBtn: "Light",
+    themeBtnDark: "Dark",
+    totalAirdropPool: "Total Airdrop Pool",
+    alreadyRegistered: "Already Registered",
+    loading: "Loading...",
+    // 注册结束提示
+    endedTitle: "Registration Closed",
+    endedDesc: "The airdrop registration phase has been completed.<br>Please wait for the claim channel to open."
+  },
+  zh: {
+    stepText1: "资格检查",
+    stepText2: "确认注册",
+    stepText3: "等待领取",
+    stepText4: "等待上市",
+    title: "资格查询与注册",
+    addrPlaceholder: "BSC 钱包地址 (0x...)",
+    checkBtn: "查询资格",
+    checking: "查询中...",
+    capSuccess: "人机验证完成 ✅ 可查询资格",
+    capExpired: "验证已过期 ❌ 请重新验证",
+    capFailed: "验证失败 ❌ 请重试",
+    needCap: "请先完成人机验证",
+    invalidAddr: "请输入有效 BSC 地址",
+    scanning: "读取链上数据中...",
+    scanFail: "查询失败，请重试",
+    eligible: "✅ 符合空投资格",
+    addr: "地址",
+    tx: "交易数",
+    drop: "空投分配数量",
+    notEligible: "❌ 暂不符合资格",
+    minReq: "最低要求：300 笔交易",
+    nextBtn: "下一步 →",
+    twitterPlaceholder: "推特用户名",
+    tweetPlaceholder: "回复链接",
+    submitBtn: "提交注册",
+    submitting: "提交中...",
+    checkFirst: "请先查询资格",
+    fillAll: "请填写完整信息",
+    registered: "✅ 注册成功",
+    regFail: "注册失败",
+    netErr: "网络异常，请重试",
+    alreadyReg: "已注册，请勿重复注册",
+    replyBtn: "回复这条推文",
+    replyTip: "请完成以下任务：点赞 + 转推 + 关注官方账号 + 在回复中艾特3位好友",
+    waitClaimTitle: "等待领取",
+    waitClaimSubtitle: "你的分配额度已确定，等待领取开放",
+    waitClaimTotalText: "总分配额度",
+    claimedText: "已领取",
+    claimableText: "待领取",
+    waitClaimTip: "注册阶段完成后 72 小时领取将上线<br>状态：待定",
+    claimBtn: "立即领取",
+    listingTitle: "即将公布",
+    listingDesc: "代币上市正在筹备中，请等待官方公告",
+    listingTag: "状态：待定",
+    langBtn: "EN",
+    themeBtn: "浅色",
+    themeBtnDark: "深色",
+    totalAirdropPool: "总空投池",
+    alreadyRegistered: "已注册代币",
+    loading: "加载中...",
+    // 注册结束提示
+    endedTitle: "注册阶段已完成",
+    endedDesc: "空投注册阶段已结束<br>请等待领取通道开放"
+  }
+};
+
+let lang = "en";
+let light = true; // ✅ 默认启用浅色主题
+let hcaptchaWidgetId = null;
+let capOk = false;
+let currentAddr = "";
+let currentAirdropAmount = 0;
+let registered = false;
+let currentStep = 1;
+let stepsEnabled = false;
+
+const title = document.getElementById("title");
+const addr = document.getElementById("address");
+const checkBtn = document.getElementById("checkBtn");
+const twitter = document.getElementById("twitter");
+const tweet = document.getElementById("tweet");
+const submitBtn = document.getElementById("submitBtn");
+const result = document.getElementById("result");
+const step1NextBtn = document.getElementById("step1NextBtn");
+const registerForm = document.getElementById("registerForm");
+const registerResult = document.getElementById("registerResult");
+const registerWarning = document.getElementById("registerWarning");
+const warningText = document.getElementById("warningText");
+const step2NextBtn = document.getElementById("step2NextBtn");
+const langBtn = document.getElementById("langBtn");
+const themeBtn = document.getElementById("themeBtn");
+const hcaptchaContainer = document.getElementById("hcaptchaContainer");
+const replyBtn = document.getElementById("replyBtn");
+const replyTip = document.getElementById("replyTip");
+
+const mainContent = document.getElementById("mainContent");
+const endedPage = document.getElementById("endedPage");
+const step1Content = document.getElementById("step1Content");
+const step2Content = document.getElementById("step2Content");
+const step3Content = document.getElementById("step3Content");
+const step4Content = document.getElementById("step4Content");
+
+const progressLine = document.getElementById("progressLine");
+const step1 = document.getElementById("step1");
+const step2 = document.getElementById("step2");
+const step3 = document.getElementById("step3");
+const step4 = document.getElementById("step4");
+
+const totalAmount = document.getElementById("totalAmount");
+const claimableAmount = document.getElementById("claimableAmount");
+const waitClaimTip = document.getElementById("waitClaimTip");
+const waitClaimTitle = document.getElementById("waitClaimTitle");
+const waitClaimSubtitle = document.getElementById("waitClaimSubtitle");
+const waitClaimTotalText = document.getElementById("waitClaimTotalText");
+const claimedText = document.getElementById("claimedText");
+const claimableText = document.getElementById("claimableText");
+const listingTitle = document.getElementById("listingTitle");
+const listingDesc = document.getElementById("listingDesc");
+const listingTag = document.getElementById("listingTag");
+
+// 全局封锁函数：注册结束
+function lockRegistration(registeredToken) {
+  registrationEnded = true;
+  // 停止自动刷新
+  clearInterval(window.airdropInterval);
+  
+  // 隐藏所有主内容，显示结束页面
+  mainContent.classList.add("hidden");
+  endedPage.classList.remove("hidden");
+
+  // 更新结束页面数据
+  const showStr = formatNumSpace(registeredToken) + " CHI";
+  document.getElementById("endedRegisteredCount").textContent = showStr;
+  document.getElementById("endedTotalText").textContent = texts[lang].totalAirdropPool;
+  document.getElementById("endedRegisteredText").textContent = texts[lang].alreadyRegistered;
+  document.getElementById("endedTitle").textContent = texts[lang].endedTitle;
+  document.getElementById("endedDesc").innerHTML = texts[lang].endedDesc;
+}
+
+// 获取并更新空投状态 + 自动检测并封锁
+async function updateAirdropStatus() {
+  if (registrationEnded) return;
+
+  try {
+    const response = await fetch(BRIGHT_API);
+    const data = await response.json();
+    const registeredToken = data.totalAirdrop || 0;
+
+    // ✅ 核心封锁逻辑：大于500万立即封锁，等于500万不封锁
+    if (registeredToken > TOTAL_AIRDROP) {
+      lockRegistration(registeredToken);
+      return;
+    }
+
+    // 计算代币占比，保留0.1%
+    let percentage = (registeredToken / TOTAL_AIRDROP) * 100;
+    const formattedPercent = percentage.toFixed(1);
+
+    // 仅在这里做三位空格+CHI，其他数字完全不动
+    const showStr = formatNumSpace(registeredToken) + " CHI";
+
+    // 更新第一步卡片
+    document.getElementById("step1RegisteredCount").textContent = showStr;
+    document.getElementById("step1ProgressBar").style.width = `${percentage}%`;
+    document.getElementById("step1ProgressPercent").textContent = `${formattedPercent}%`;
+
+    // 更新第二步卡片
+    document.getElementById("step2RegisteredCount").textContent = showStr;
+    document.getElementById("step2ProgressBar").style.width = `${percentage}%`;
+    document.getElementById("step2ProgressPercent").textContent = `${formattedPercent}%`;
+
+  } catch (error) {
+    console.error("Failed to fetch airdrop status:", error);
+    // 兜底默认值，格式一致
+    const fallbackToken = 209918;
+    const fallbackPercent = "4.2";
+    const showFb = formatNumSpace(fallbackToken) + " CHI";
+
+    document.getElementById("step1RegisteredCount").textContent = showFb;
+    document.getElementById("step2RegisteredCount").textContent = showFb;
+    document.getElementById("step1ProgressBar").style.width = `${fallbackPercent}%`;
+    document.getElementById("step2ProgressBar").style.width = `${fallbackPercent}%`;
+    document.getElementById("step1ProgressPercent").textContent = `${fallbackPercent}%`;
+    document.getElementById("step2ProgressPercent").textContent = `${fallbackPercent}%`;
+  }
+}
+
+replyBtn.onclick = () => {
+  if (registrationEnded) return;
+  document.getElementById("step2AirdropCard").classList.add("hidden");
+  replyBtn.classList.add("hidden");
+  replyTip.classList.add("hidden");
+  window.open('https://x.com/i/status/2038807057860833310', '_blank');
+  registerForm.classList.remove("hidden");
+};
+
+function bindStepClicks() {
+  step1.onclick = () => {
+    if (registrationEnded) return;
+    location.reload();
+  };
+  step2.onclick = () => {
+    if (registrationEnded) return;
+    if (stepsEnabled) setStep(2);
+  };
+  step3.onclick = () => {
+    if (registrationEnded) return;
+    if (stepsEnabled) setStep(3);
+  };
+  step4.onclick = () => {
+    if (registrationEnded) return;
+    if (stepsEnabled) setStep(4);
+  };
+}
+
+function setStep(stepNum) {
+  if (registrationEnded) return;
+  currentStep = stepNum;
+  [step1, step2, step3, step4].forEach(item => {
+    item.classList.remove("active", "completed");
+  });
+  for(let i=1; i<stepNum; i++) {
+    const stepItem = document.getElementById(`step${i}`);
+    stepItem.classList.add("completed");
+    stepItem.querySelector(".step-circle").innerHTML = "✓";
+  }
+  document.getElementById(`step${stepNum}`).classList.add("active");
+  progressLine.style.width = `${((stepNum-1)/3)*100}%`;
+
+  step1Content.classList.add("hidden");
+  result.classList.add("hidden");
+  step1NextBtn.classList.add("hidden");
+  step2Content.classList.add("hidden");
+  step3Content.classList.add("hidden");
+  step4Content.classList.add("hidden");
+
+  if (stepNum === 1) {
+    step1Content.classList.remove("hidden");
+  } else if (stepNum === 2) {
+    step2Content.classList.remove("hidden");
+    result.classList.remove("hidden");
+  } else if (stepNum === 3) {
+    step3Content.classList.remove("hidden");
+    // 这里完全不动用户个人分配数字，原样显示
+    totalAmount.textContent = currentAirdropAmount;
+    claimableAmount.textContent = currentAirdropAmount;
+  } else if (stepNum === 4) {
+    step4Content.classList.remove("hidden");
+  }
+}
+
+function enableAllSteps() {
+  stepsEnabled = true;
+  step2.classList.add("clickable");
+  step3.classList.add("clickable");
+  step4.classList.add("clickable");
+}
+
+function initHCaptcha() {
+  if (window.hcaptcha) {
+    if (hcaptchaWidgetId) {
+      hcaptcha.remove(hcaptchaWidgetId);
+    }
+    const hcaptchaTheme = light ? "light" : "dark";
+    hcaptchaContainer.setAttribute("data-theme", hcaptchaTheme);
+    hcaptchaContainer.setAttribute("data-lang", "en");
+    hcaptchaWidgetId = hcaptcha.render(hcaptchaContainer, {
+      sitekey: "6950fbbe-54f8-4dcc-98d4-4c68e496545a",
+      theme: hcaptchaTheme,
+      lang: "en",
+      callback: onHCaptchaSuccess,
+      'expired-callback': onHCaptchaExpired,
+      'error-callback': onHCaptchaError
+    });
+  }
+}
+
+window.onload = function() {
+  updateAirdropStatus();
+  // 保存定时器ID，方便结束时停止
+  window.airdropInterval = setInterval(updateAirdropStatus, 30000);
+
+  const hcaptchaInterval = setInterval(() => {
+    if (window.hcaptcha) {
+      initHCaptcha();
+      clearInterval(hcaptchaInterval);
+    }
+  }, 100);
+  setStep(1);
+  bindStepClicks();
+};
+
+function updateUI() {
+  const t = texts[lang];
+  document.getElementById("stepText1").textContent = t.stepText1;
+  document.getElementById("stepText2").textContent = t.stepText2;
+  document.getElementById("stepText3").textContent = t.stepText3;
+  document.getElementById("stepText4").textContent = t.stepText4;
+  title.textContent = t.title;
+  addr.placeholder = t.addrPlaceholder;
+  checkBtn.textContent = checkBtn.disabled ? t.checking : t.checkBtn;
+  document.getElementById("nextBtnText").textContent = t.nextBtn;
+  document.getElementById("nextBtnText2").textContent = t.nextBtn;
+  twitter.placeholder = t.twitterPlaceholder;
+  tweet.placeholder = t.tweetPlaceholder;
+  submitBtn.textContent = submitBtn.disabled ? t.submitting : t.submitBtn;
+  replyBtn.textContent = t.replyBtn;
+  replyTip.innerHTML = t.replyTip;
+  document.getElementById("step1TotalText").textContent = t.totalAirdropPool;
+  document.getElementById("step1RegisteredText").textContent = t.alreadyRegistered;
+  document.getElementById("step2TotalText").textContent = t.totalAirdropPool;
+  document.getElementById("step2RegisteredText").textContent = t.alreadyRegistered;
+  waitClaimTitle.textContent = t.waitClaimTitle;
+  waitClaimSubtitle.textContent = t.waitClaimSubtitle;
+  waitClaimTotalText.textContent = t.waitClaimTotalText;
+  claimedText.textContent = t.claimedText;
+  claimableText.textContent = t.claimableText;
+  waitClaimTip.innerHTML = t.waitClaimTip;
+  document.getElementById("claimBtn").textContent = t.claimBtn;
+  listingTitle.textContent = t.listingTitle;
+  listingDesc.textContent = t.listingDesc;
+  listingTag.textContent = t.listingTag;
+  langBtn.textContent = t.langBtn;
+  themeBtn.textContent = light ? t.themeBtnDark : t.themeBtn;
+
+  // 如果已经结束，同步更新结束页面语言
+  if (registrationEnded) {
+    document.getElementById("endedTitle").textContent = t.endedTitle;
+    document.getElementById("endedDesc").innerHTML = t.endedDesc;
+    document.getElementById("endedTotalText").textContent = t.totalAirdropPool;
+    document.getElementById("endedRegisteredText").textContent = t.alreadyRegistered;
+  }
+}
+
+function isMobile() {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
+if (isMobile()) {
+  langBtn.ontouchstart = function(e) {
+    e.preventDefault();
+    lang = lang === "en" ? "zh" : "en";
+    updateUI();
+  };
+} else {
+  langBtn.onclick = function() {
+    lang = lang === "en" ? "zh" : "en";
+    updateUI();
+  };
+}
+
+if (isMobile()) {
+  themeBtn.ontouchstart = function(e) {
+    e.preventDefault();
+    light = !light;
+    document.documentElement.classList.toggle("light", light);
+    updateUI();
+    initHCaptcha();
+  };
+} else {
+  themeBtn.onclick = function() {
+    light = !light;
+    document.documentElement.classList.toggle("light", light);
+    updateUI();
+    initHCaptcha();
+  };
+}
+
+function clearAddr() {
+  addr.value = "";
+  addr.focus();
+}
+
+function onHCaptchaSuccess() {
+  if (registrationEnded) return;
+  capOk = true;
+  addr.classList.add("enabled");
+  checkBtn.classList.add("enabled");
+  alert(texts[lang].capSuccess);
+}
+function onHCaptchaExpired() {
+  if (registrationEnded) return;
+  capOk = false;
+  addr.classList.remove("enabled");
+  checkBtn.classList.remove("enabled");
+  alert(texts[lang].capExpired);
+}
+function onHCaptchaError() {
+  if (registrationEnded) return;
+  capOk = false;
+  addr.classList.remove("enabled");
+  checkBtn.classList.remove("enabled");
+  alert(texts[lang].capFailed);
+}
+
+function needCap() {
+  if (registrationEnded) return false;
+  if (!capOk) {
+    alert(texts[lang].needCap);
+    return false;
+  }
+  return true;
+}
+
+checkBtn.onclick = async () => {
+  if (registrationEnded) return;
+  document.getElementById("step1AirdropCard").classList.add("hidden");
+
+  if (!needCap()) return;
+  const t = texts[lang];
+  const v = addr.value.trim();
+
+  if (!v.startsWith("0x") || v.length !== 42) {
+    result.className = "result error";
+    result.textContent = t.invalidAddr;
+    result.classList.remove("hidden");
+    step1NextBtn.classList.add("hidden");
+    return;
+  }
+
+  checkBtn.disabled = true;
+  checkBtn.textContent = t.checking;
+  result.classList.remove("hidden");
+  result.textContent = t.scanning;
+  step1NextBtn.classList.add("hidden");
+
+  try {
+    const r = await fetch(API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ address: v })
+    });
+    const d = await r.json();
+    currentAddr = v;
+
+    if (d.eligible) {
+      currentAirdropAmount = d.airdrop_amount || 0;
+      result.className = "result success";
+      result.innerHTML = `
+        ${t.eligible}<br>
+        ${t.addr}: ${v}<br>
+        ${t.tx}: ${d.tx_count}<br>
+        ${t.drop}: ${currentAirdropAmount} CHI
+      `;
+      step1NextBtn.classList.remove("hidden");
+      enableAllSteps();
+    } else {
+      result.className = "result error";
+      result.innerHTML = `
+        ${t.notEligible}<br>
+        ${t.addr}: ${v}<br>
+        ${t.tx}: ${d.tx_count || 0}<br>
+        ${t.minReq}
+      `;
+      step1NextBtn.classList.add("hidden");
+    }
+  } catch (e) {
+    result.className = "result error";
+    result.textContent = t.scanFail;
+    step1NextBtn.classList.add("hidden");
+  } finally {
+    checkBtn.disabled = false;
+    checkBtn.textContent = texts[lang].checkBtn;
+  }
+};
+
+submitBtn.onclick = async () => {
+  if (registrationEnded) return;
+  if (!needCap()) return;
+  const t = texts[lang];
+  const u = twitter.value.trim();
+  const l = tweet.value.trim();
+
+  if (!currentAddr) return alert(t.checkFirst);
+  if (!u || !l) return alert(t.fillAll);
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = t.submitting;
+  // 先隐藏之前的提示
+  registerResult.classList.add("hidden");
+  registerWarning.classList.add("hidden");
+
+  try {
+    const r = await fetch(API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        address: currentAddr,
+        twitterUser: u,
+        tweetLink: l
+      })
+    });
+    const d = await r.json();
+
+    // 提交后立即检查是否已满
+    await updateAirdropStatus();
+    if (registrationEnded) return;
+
+    if (d.eligible) {
+      replyBtn.classList.add("hidden");
+      replyTip.classList.add("hidden");
+      registerForm.classList.add("hidden");
+      document.getElementById("step2AirdropCard").classList.remove("hidden");
+
+      registerResult.className = "result success";
+      registerResult.innerHTML = t.registered;
+      registerResult.classList.remove("hidden");
+      step2NextBtn.classList.remove("hidden");
+      registered = true;
+    } 
+    // 重复注册显示红色叉号警告
+    else if (d.error === "Already registered" || d.error === "已注册") {
+      replyBtn.classList.add("hidden");
+      replyTip.classList.add("hidden");
+      registerForm.classList.add("hidden");
+      document.getElementById("step2AirdropCard").classList.remove("hidden");
+
+      warningText.textContent = t.alreadyReg;
+      registerWarning.classList.remove("hidden");
+      step2NextBtn.classList.remove("hidden");
+      registered = true;
+    } 
+    else {
+      let msg = d.msg || d.error || t.regFail;
+      registerResult.className = "result error";
+      registerResult.textContent = msg;
+      registerResult.classList.remove("hidden");
+      step2NextBtn.classList.add("hidden");
+    }
+  } catch (e) {
+    alert(t.netErr);
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = texts[lang].submitBtn;
+  }
+};
+
+document.getElementById("claimBtn").onclick = function() {
+  if (registrationEnded) return;
+  setStep(4);
+};
+
+updateUI();
+</script>
+</body>
+</html>
