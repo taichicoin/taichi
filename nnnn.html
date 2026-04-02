@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>太極 | Taichicoin</title>
+<style>
+/* 全局重置 移动端优先 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+body {
+  background: #fff;
+  color: #222;
+  min-height: 100vh;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* 🌟 核心：黄色太极横幅｜锁定为页面主容器，手机全屏，不会错位 */
+.hero {
+  width: 100%;
+  height: 100vh; /* 占满手机屏幕，作为主页面 */
+  padding: 2rem 1rem 1rem; /* 顶部给菜单留位，底部给内容留位 */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; /* 内容靠上，太极居中 */
+  background: linear-gradient(160deg, #ffd54f 0%, #ffb300 50%, #ff9c00 100%);
+  overflow: hidden;
+}
+
+/* 🌟 汉堡菜单：锁定在黄色横幅右上角，永远不会跑 */
+.hamburger-wrap {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 99;
+}
+.hamburger-btn {
+  width: 36px;
+  height: 32px;
+  background: rgba(0,0,0,0.15);
+  border-radius: 8px;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+}
+.hamburger-btn span {
+  width: 20px;
+  height: 2px;
+  background: #111;
+  display: block;
+}
+.menu-list {
+  position: absolute;
+  top: 38px;
+  right: 0;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+  min-width: 160px;
+  overflow: hidden;
+  display: none;
+}
+.menu-list a {
+  display: block;
+  padding: 10px 14px;
+  color: #333;
+  text-decoration: none;
+  font-size: 13px;
+  border-bottom: 1px solid #f5f5f5;
+}
+.menu-list a:last-child {border:none;}
+.menu-list a:hover {background: #fff3cd; color:#e69500;}
+.hamburger-wrap.active .menu-list {display:block;}
+
+/* 旋转太极｜横幅正中间，手机适配大小 */
+.taiji-icon {
+  width: 140px;
+  height: 140px;
+  margin: 2rem 0 1rem;
+  animation: slowRotate 25s linear infinite;
+  filter: drop-shadow(0 0 15px rgba(255,255,255,0.4));
+}
+@keyframes slowRotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(-360deg); }
+}
+
+.hero-title {
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: 6px;
+  color: #1a1a1a;
+  margin-bottom: 4px;
+}
+.hero-desc {
+  font-size: 15px;
+  color: #333;
+  opacity: 0.9;
+}
+.hero-en {
+  font-size: 12px;
+  margin-top: 4px;
+  color: #444;
+  opacity: 0.8;
+}
+
+/* 🌟 核心：弹出内容区｜和黄色横幅【完全同宽同边距】，点击才显示，不会错位 */
+.popup-card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 2rem 1rem 1rem;
+  background: #fff;
+  border-radius: 0; /* 无边圆角，贴合屏幕 */
+  box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
+  display: none;
+  height: 100vh;
+  overflow-y: auto;
+}
+/* 显示状态 */
+.popup-card.show {display: block;}
+
+.popup-card h2 {
+  text-align: center;
+  color: #e69500;
+  font-size: 18px;
+  margin-bottom: 0.8rem;
+  letter-spacing: 2px;
+  padding-top: 40px; /* 给汉堡菜单留位 */
+}
+.popup-card p {
+  color: #444;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* 合约地址区域｜小巧精致，同宽适配 */
+.ca-wrapper {
+  background: #fef8e6;
+  border-radius: 12px;
+  padding: 10px;
+  margin: 1rem 0;
+  display: flex;
+  gap: 8px;
+  border: 1px solid #ffd54f;
+}
+.ca-text {
+  flex: 1;
+  font-family: monospace;
+  color: #b37400;
+  font-size: 12px;
+  overflow-x: auto;
+}
+.copy-btn {
+  background: linear-gradient(135deg, #ffc107, #ff9800);
+  color: #111;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* 底部链接｜紧贴底部，不悬空 */
+.bottom-links {
+  position: absolute;
+  bottom: 1rem;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  color: #777;
+  font-size: 13px;
+}
+.bottom-links a {
+  color: #777;
+  text-decoration: none;
+  margin: 0 6px;
+  font-size: 13px;
+}
+</style>
+</head>
+<body>
+
+<!-- 🌟 主页面：黄色太极横幅（锁定不动） -->
+<section class="hero" id="mainHero">
+  <!-- 汉堡菜单 -->
+  <div class="hamburger-wrap" id="menuWrap">
+    <button class="hamburger-btn" onclick="toggleMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <div class="menu-list">
+      <a href="register">Early Airdrop</a>
+      <a href="https://taichicoin.xyz/card">YY Card game demo</a>
+      <a href="javascript:showPopup('about')">About 太極</a>
+      <a href="javascript:showPopup('token')">Token allocations</a>
+    </div>
+  </div>
+
+  <!-- 太极图标 + 文字 -->
+  <svg class="taiji-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <g transform="rotate(-45 50 50)">
+      <path d="M50 0 A50 50 0 0 1 50 100 A25 25 0 0 0 50 50 A25 25 0 0 1 50 0 Z M50 25 m -8 0 a 8 8 0 1 0 16 0 a 8 8 0 1 0 -16 0" fill="white" fill-rule="evenodd"/>
+      <circle cx="50" cy="75" r="8" fill="white"/>
+    </g>
+  </svg>
+  <h1 class="hero-title">太極</h1>
+  <p class="hero-desc">万物负阴而抱阳，冲气以为和。</p>
+  <p class="hero-en">All things carry Yin and embrace Yang; harmony flows through vital energy.</p>
+
+  <!-- 🌟 底部版权/社交：锁定在黄色横幅最底部 -->
+  <div class="bottom-links">
+    © 2026 @Taichicoin · Built by Ai<br>
+    <a href="https://x.com/taichicoin">Twitter</a>
+    <a href="https://t.me/CHiiiiiiiiiiiiiiiiii">Telegram</a>
+  </div>
+</section>
+
+<!-- 🌟 弹出内容：About 太極 -->
+<div class="popup-card" id="about">
+  <h2>About 太極</h2>
+  <p>
+    A Classic symbol from ancient China.<br><br>
+    $CHI the Yin Yang, balance Your bags. hold the DAO.
+  </p>
+</div>
+
+<!-- 🌟 弹出内容：Token allocations -->
+<div class="popup-card" id="token">
+  <h2>Token allocations</h2>
+  <div class="ca-wrapper">
+    <div class="ca-text" id="caText">0x5342022fb61cbbcc31e147c7080df71aba70da8d</div>
+    <button class="copy-btn" onclick="copyCA()">Copy</button>
+  </div>
+  <p>
+    Total supply: 50 000 000<br><br>
+    50% Presale<br>
+    20% Liquidity pool<br>
+    10% AI creators<br>
+    10% dev<br>
+    10% Marketing, Early Airdrop
+  </p>
+</div>
+
+<script>
+// 汉堡菜单
+function toggleMenu(){
+  document.getElementById("menuWrap").classList.toggle("active");
+}
+document.addEventListener('click',function(e){
+  let wrap = document.getElementById("menuWrap");
+  if(!wrap.contains(e.target)) wrap.classList.remove("active");
+});
+
+// 🌟 核心逻辑：显示对应弹窗，隐藏主横幅
+function showPopup(id){
+  document.getElementById("mainHero").classList.remove("show"); // 隐藏主横幅
+  document.getElementById(id).classList.add("show"); // 显示对应内容
+  toggleMenu(); // 收起菜单
+  window.scrollTo(0,0); // 置顶
+}
+
+// 返回主页（点击空白处也可以返回）
+document.getElementById("mainHero").addEventListener('click', function(){
+  document.querySelectorAll(".popup-card").forEach(card => card.classList.remove("show"));
+  document.getElementById("mainHero").classList.add("show");
+});
+
+// 复制CA
+function copyCA(){
+  const text = document.getElementById("caText").innerText.trim();
+  navigator.clipboard.writeText(text).then(()=>{
+    alert("CA Copied:\n" + text + "\n\nDo NOT send funds to this contract address!");
+  }).catch(()=>{
+    alert("Copy failed, please copy manually!");
+  });
+}
+</script>
+
+</body>
+</html>
