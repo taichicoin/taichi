@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<!-- 强制手机一屏锁定、禁止缩放、禁止页面滚动 -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>太極 | Taichicoin</title>
+<style>
+/* 全局重置 一屏锁定核心 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: system-ui, sans-serif;
+}
+
+/* 🔒 核心：页面固定100vh，禁止滚动，一屏锁定 */
+body {
+  background: #ffffff;
+  color: #222;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+  background-image: radial-gradient(circle at top, rgba(255,193,7,0.08) 0%, transparent 60%);
+}
+
+/* 🟡 顶部黄色太极横幅｜永久固定在屏幕顶部，主视觉锁定 */
+.hero {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, #ffd54f 0%, #ffb300 50%, #ff9c00 100%);
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(255,179,0,0.2);
+  z-index: 10;
+  min-height: 60vh;
+}
+
+/* 右上角汉堡菜单｜固定在横幅右上角，永不错位 */
+.hamburger-wrap {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 99;
+}
+.hamburger-btn {
+  width: 36px;
+  height: 32px;
+  background: rgba(0,0,0,0.15);
+  border-radius: 8px;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+}
+.hamburger-btn span {
+  width: 20px;
+  height: 2px;
+  background: #111;
+  display: block;
+}
+.menu-list {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+  min-width: 160px;
+  overflow: hidden;
+  display: none;
+  z-index: 100;
+}
+.menu-list a {
+  display: block;
+  padding: 10px 14px;
+  color: #333;
+  text-decoration: none;
+  font-size: 13px;
+  border-bottom: 1px solid #f5f5f5;
+}
+.menu-list a:last-child {border:none;}
+.menu-list a:hover {background: #fff3cd; color:#e69500;}
+.hamburger-wrap.active .menu-list {display:block;}
+
+/* 旋转太极｜横幅内居中，大小适配手机 */
+.taiji-icon {
+  width: 120px;
+  height: 120px;
+  margin-bottom: 1rem;
+  animation: slowRotate 25s linear infinite;
+  filter: drop-shadow(0 0 15px rgba(255,255,255,0.4));
+}
+@keyframes slowRotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(-360deg); }
+}
+
+.hero-title {
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: 6px;
+  color: #1a1a1a;
+  margin-bottom: 6px;
+}
+.hero-desc {
+  font-size: 15px;
+  color: #333;
+  opacity: 0.9;
+  text-align: center;
+}
+.hero-en {
+  font-size: 12px;
+  margin-top: 4px;
+  color: #444;
+  opacity: 0.8;
+  text-align: center;
+}
+
+/* 🎯 悬浮弹窗容器｜固定在横幅下方，居中，大小和横幅协调 */
+.modal-container {
+  position: fixed;
+  top: 62vh;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 92%;
+  max-height: 30vh;
+  overflow-y: auto;
+  z-index: 20;
+  display: none;
+}
+
+/* 弹窗卡片｜紧凑精致，和横幅风格统一 */
+.mod-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 1rem;
+  border: 1px solid rgba(255,193,7,0.25);
+  border-top: 4px solid #ffc107;
+  box-shadow: 0 4px 12px rgba(255,179,0,0.1);
+}
+.mod-card h2 {
+  text-align: center;
+  color: #e69500;
+  font-size: 16px;
+  margin-bottom: 0.6rem;
+  letter-spacing: 2px;
+}
+.mod-card p {
+  color: #444;
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+/* 合约地址区域｜弹窗内小巧 */
+.ca-wrapper {
+  background: #fef8e6;
+  border-radius: 12px;
+  padding: 8px;
+  margin: 0.8rem 0;
+  display: flex;
+  gap: 6px;
+  border: 1px solid #ffd54f;
+}
+.ca-text {
+  flex: 1;
+  font-family: monospace;
+  color: #b37400;
+  font-size: 11px;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+.copy-btn {
+  background: linear-gradient(135deg, #ffc107, #ff9800);
+  color: #111;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: bold;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* 🟢 底部版权栏｜永久固定在屏幕最底部，永不错位 */
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  padding: 1rem;
+  background: rgba(255,193,7,0.05);
+  color: #777;
+  font-size: 12px;
+  z-index: 10;
+}
+.footer-social{
+  margin-top: 0.4rem;
+}
+.footer-social a{
+  color: #777;
+  font-size: 12px;
+  text-decoration: none;
+  margin: 0 6px;
+}
+.footer-social a:hover{
+  color: #999;
+  text-decoration: underline;
+}
+
+/* 点击遮罩关闭弹窗 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.1);
+  z-index: 15;
+  display: none;
+}
+
+/* 桌面端适配（不影响手机核心） */
+@media (min-width:768px) {
+  .hero{min-height: 65vh; padding: 3rem 2rem;}
+  .taiji-icon{width: 160px; height: 160px;}
+  .hero-title{font-size: 42px;}
+  .modal-container{top: 68vh; width: 600px; max-height: 25vh;}
+}
+</style>
+</head>
+<body>
+
+<!-- 遮罩层：点击关闭弹窗/菜单 -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeAll()"></div>
+
+<!-- 🟡 固定顶部的黄色太极横幅（主视觉，永远锁定） -->
+<section class="hero">
+  <div class="hamburger-wrap" id="menuWrap">
+    <button class="hamburger-btn" onclick="toggleMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <div class="menu-list">
+      <a href="register">Early Airdrop</a>
+      <a href="https://taichicoin.xyz/card">YY Card game demo</a>
+      <a href="javascript:showAbout()">About 太極</a>
+      <a href="javascript:showToken()">Token allocations</a>
+    </div>
+  </div>
+
+  <svg class="taiji-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <g transform="rotate(-45 50 50)">
+      <path d="M50 0 A50 50 0 0 1 50 100 A25 25 0 0 0 50 50 A25 25 0 0 1 50 0 Z M50 25 m -8 0 a 8 8 0 1 0 16 0 a 8 8 0 1 0 -16 0" fill="white" fill-rule="evenodd"/>
+      <circle cx="50" cy="75" r="8" fill="white"/>
+    </g>
+  </svg>
+  <h1 class="hero-title">太極</h1>
+  <p class="hero-desc">万物负阴而抱阳，冲气以为和。</p>
+  <p class="hero-en">All things carry Yin and embrace Yang; harmony flows through vital energy.</p>
+</section>
+
+<!-- 🎯 悬浮弹窗容器（默认隐藏，点菜单弹出） -->
+<div class="modal-container" id="modalContainer">
+  <!-- About 弹窗 -->
+  <div class="mod-card" id="aboutCard">
+    <h2>About 太極</h2>
+    <p>
+      A Classic symbol from ancient China.<br><br>
+      $CHI the Yin Yang, balance Your bags. hold the DAO.
+    </p>
+  </div>
+
+  <!-- Token 弹窗 -->
+  <div class="mod-card" id="tokenCard" style="display:none;">
+    <h2>Token allocations</h2>
+    <div class="ca-wrapper">
+      <div class="ca-text" id="caText">0x5342022fb61cbbcc31e147c7080df71aba70da8d</div>
+      <button class="copy-btn" onclick="copyCA()">Copy</button>
+    </div>
+    <p>
+      Total supply: 50 000 000<br><br>
+      50% Presale<br>
+      20% Liquidity pool<br>
+      10% AI creators<br>
+      10% dev<br>
+      10% Marketing, Early Airdrop
+    </p>
+  </div>
+</div>
+
+<!-- 🟢 固定底部的版权栏（永远锁定） -->
+<div class="footer">
+  © 2026 @Taichicoin · Built by Ai
+  <div class="footer-social">
+    <a href="https://x.com/taichicoin">Twitter</a>
+    <a href="https://t.me/CHiiiiiiiiiiiiiiiiii">Telegram</a>
+  </div>
+</div>
+
+<script>
+// 🔒 核心交互：所有操作不滚动页面，只控制弹窗
+const menuWrap = document.getElementById("menuWrap");
+const modalContainer = document.getElementById("modalContainer");
+const modalOverlay = document.getElementById("modalOverlay");
+const aboutCard = document.getElementById("aboutCard");
+const tokenCard = document.getElementById("tokenCard");
+
+// 切换汉堡菜单
+function toggleMenu(){
+  menuWrap.classList.toggle("active");
+  modalOverlay.style.display = menuWrap.classList.contains("active") ? "block" : "none";
+}
+
+// 关闭所有（菜单+弹窗）
+function closeAll(){
+  menuWrap.classList.remove("active");
+  modalContainer.style.display = "none";
+  modalOverlay.style.display = "none";
+  aboutCard.style.display = "block";
+  tokenCard.style.display = "none";
+}
+
+// 显示About弹窗
+function showAbout(){
+  aboutCard.style.display = "block";
+  tokenCard.style.display = "none";
+  modalContainer.style.display = "block";
+  modalOverlay.style.display = "block";
+  toggleMenu();
+}
+
+// 显示Token弹窗
+function showToken(){
+  tokenCard.style.display = "block";
+  aboutCard.style.display = "none";
+  modalContainer.style.display = "block";
+  modalOverlay.style.display = "block";
+  toggleMenu();
+}
+
+// 复制CA
+function copyCA(){
+  const text = document.getElementById("caText").innerText.trim();
+  navigator.clipboard.writeText(text).then(()=>{
+    alert("CA Copied:\n" + text + "\n\nDo NOT send funds to this contract address!");
+  }).catch(()=>{
+    alert("Copy failed, please copy manually!");
+  });
+}
+</script>
+
+</body>
+</html>
