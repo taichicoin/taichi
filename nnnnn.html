@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>太極 | Taichicoin</title>
+<style>
+/* 全局重置 移动端优先 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+body {
+  background: #fff;
+  color: #222;
+  min-height: 100vh;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* 黄色横幅：内容靠顶部对齐 */
+.hero {
+  width: 100%;
+  min-height: 100vh;
+  padding: 1rem 0 2rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background: linear-gradient(160deg, #ffd54f 0%, #ffb300 50%, #ff9c00 100%);
+}
+
+/* 右上角汉堡菜单 */
+.hamburger-wrap {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  left: 12px;
+  z-index: 99;
+}
+.hamburger-btn {
+  width: 36px;
+  height: 32px;
+  background: rgba(0,0,0,0.15);
+  border-radius: 8px;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+  margin-left: auto;
+}
+.hamburger-btn span {
+  width: 20px;
+  height: 2px;
+  background: #111;
+  display: block;
+}
+
+/* 菜单全屏拉满 */
+.menu-list {
+  position: absolute;
+  top: 38px;
+  left: 0;
+  right: 0;
+  width: 100%;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  display: none;
+}
+.menu-list a {
+  display: block;
+  width: 100%;
+  padding: 14px 20px;
+  color: #333;
+  text-decoration: none;
+  font-size: 15px;
+  text-align: center;
+  border-bottom: 1px solid #f5f5f5;
+}
+.menu-list a:last-child {border:none;}
+.menu-list a:hover {background: #fff3cd; color:#e69500;}
+.hamburger-wrap.active .menu-list {display:block;}
+
+/* 顶部固定文字 */
+.top-text{
+  text-align:center;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  padding: 0 10px;
+}
+.top-text h1{
+  font-size:32px;
+  font-weight:bold;
+  color:#1a1a1a;
+  letter-spacing:6px;
+}
+.top-text .cn{
+  font-size:15px;
+  color:#222;
+  margin:4px 0;
+}
+.top-text .en{
+  font-size:12px;
+  color:#333;
+}
+
+/* 旋转太极 */
+.taiji-rotate{
+  width:160px;
+  height:160px;
+  animation: slowRotate 25s linear infinite;
+  filter: drop-shadow(0 0 15px rgba(255,255,255,0.4));
+  margin-bottom: 2rem;
+}
+@keyframes slowRotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(-360deg); }
+}
+
+/* ========== 图文展示区：TC1~TC5 全局样式 ========== */
+.img-gallery{
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+.gallery-item{
+  width: 100%;
+  margin-bottom: 2rem;
+}
+/* 图片全屏左右拉满，不变形 */
+.gallery-img{
+  width: 100%;
+  height: auto;
+  display: block;
+  border: none;
+}
+/* 图片下方文字说明 */
+.gallery-desc{
+  width: 100%;
+  padding: 12px 15px;
+  text-align: center;
+  font-size: 14px;
+  color: #222;
+  line-height: 1.8;
+  background: rgba(255,255,255,0.15);
+}
+
+/* 弹窗内容 */
+.popup-card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 2rem 1rem 1rem;
+  background: #fff;
+  border-radius: 0;
+  box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
+  display: none;
+  height: 100vh;
+  overflow-y: auto;
+}
+.popup-card.show {display: block;}
+.popup-card h2 {
+  text-align: center;
+  color: #e69500;
+  font-size: 18px;
+  margin-bottom: 0.8rem;
+  letter-spacing: 2px;
+  padding-top: 40px;
+}
+.popup-card p {
+  color: #444;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* 合约地址 */
+.ca-wrapper {
+  background: #fef8e6;
+  border-radius: 12px;
+  padding: 10px;
+  margin: 1rem 0;
+  display: flex;
+  gap: 8px;
+  border: 1px solid #ffd54f;
+}
+.ca-text {
+  flex: 1;
+  font-family: monospace;
+  color: #b37400;
+  font-size: 12px;
+  overflow-x: auto;
+}
+.copy-btn {
+  background: linear-gradient(135deg, #ffc107, #ff9800);
+  color: #111;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* 底部纯白版权 */
+.bottom-links {
+  position: relative;
+  width: 100%;
+  padding:12px 0;
+  background:#ffffff !important;
+  text-align: center;
+  color: #777;
+  font-size: 13px;
+  margin-top: 3rem;
+}
+.bottom-links a {
+  color: #777;
+  text-decoration: none;
+  margin: 0 6px;
+  font-size: 13px;
+}
+</style>
+</head>
+<body>
+
+<section class="hero" id="mainHero">
+  <!-- 汉堡菜单 -->
+  <div class="hamburger-wrap" id="menuWrap">
+    <button class="hamburger-btn" onclick="toggleMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <div class="menu-list">
+      <a href="register">Early Airdrop</a>
+      <a href="https://taichicoin.xyz/card">YY Card game demo</a>
+      <a href="javascript:showPopup('about')">About 太極</a>
+      <a href="javascript:showPopup('token')">Token allocations</a>
+    </div>
+  </div>
+
+  <!-- 顶部固定文字 -->
+  <div class="top-text">
+    <h1>太極</h1>
+    <p class="cn">万物负阴而抱阳，冲气以为和。</p>
+    <p class="en">All things carry Yin and embrace Yang; harmony flows through vital energy.</p>
+  </div>
+
+  <!-- 旋转太极图标 -->
+  <svg class="taiji-rotate" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <g transform="rotate(-45 50 50)">
+      <path d="M50 0 A50 50 0 0 1 50 100 A25 25 0 0 0 50 50 A25 25 0 0 1 50 0 Z M50 25 m -8 0 a 8 8 0 1 0 16 0 a 8 8 0 1 0 -16 0" fill="white" fill-rule="evenodd"/>
+      <circle cx="50" cy="75" r="8" fill="white"/>
+    </g>
+  </svg>
+
+  <!-- ============================================== -->
+  <!-- 【集中可编辑区：图片+文字 全部在这里改！】 -->
+  <!-- 图片文件名：TC1.jpg / TC2.jpg / TC3.jpg / TC4.jpg / TC5.jpg （同GitHub仓库根目录） -->
+  <!-- ============================================== -->
+  <div class="img-gallery">
+
+    <!-- 第1张图 TC1.jpg（你现在的TCE.jpg改名TC1.jpg即可） -->
+    <div class="gallery-item">
+      <img class="gallery-img" src="TC1.jpg" alt="太極展示图1">
+      <div class="gallery-desc">
+        【第一张说明】太極本源 · 万物归一<br>All things start from Tai Chi balance
+      </div>
+    </div>
+
+    <!-- 第2张图 TC2.jpg -->
+    <div class="gallery-item">
+      <img class="gallery-img" src="TC2.jpg" alt="太極展示图2">
+      <div class="gallery-desc">
+        【第二张说明】阴阳相生 · 虚实相伴<br>Yin and Yang generate each other eternally
+      </div>
+    </div>
+
+    <!-- 第3张图 TC3.jpg -->
+    <div class="gallery-item">
+      <img class="gallery-img" src="TC3.jpg" alt="太極展示图3">
+      <div class="gallery-desc">
+        【第三张说明】大道至简 · 返璞归真<br>The greatest truth is always simple
+      </div>
+    </div>
+
+    <!-- 第4张图 TC4.jpg -->
+    <div class="gallery-item">
+      <img class="gallery-img" src="TC4.jpg" alt="太極展示图4">
+      <div class="gallery-desc">
+        【第四张说明】乾坤定序 · 道法自然<br>Follow nature with Tai Chi wisdom
+      </div>
+    </div>
+
+    <!-- 第5张图 TC5.jpg -->
+    <div class="gallery-item">
+      <img class="gallery-img" src="TC5.jpg" alt="太極展示图5">
+      <div class="gallery-desc">
+        【第五张说明】生生不息 · 永续循环<br>Eternal circulation of cosmic energy
+      </div>
+    </div>
+
+  </div>
+  <!-- ============================================== -->
+  <!-- 可编辑区结束 以后只改上面文字/上传对应图片即可 -->
+  <!-- ============================================== -->
+
+  <!-- 底部纯白版权 -->
+  <div class="bottom-links">
+    © 2026 @Taichicoin · Built by Ai<br>
+    <a href="https://x.com/taichicoin">Twitter</a>
+    <a href="https://t.me/CHiiiiiiiiiiiiiiiiii">Telegram</a>
+  </div>
+</section>
+
+<!-- 弹窗：About -->
+<div class="popup-card" id="about">
+  <h2>About 太極</h2>
+  <p>A Classic symbol from ancient China.<br><br>$CHI the Yin Yang, balance Your bags. hold the DAO.</p>
+</div>
+
+<!-- 弹窗：Token -->
+<div class="popup-card" id="token">
+  <h2>Token allocations</h2>
+  <div class="ca-wrapper">
+    <div class="ca-text" id="caText">0x5342022fb61cbbcc31e147c7080df71aba70da8d</div>
+    <button class="copy-btn" onclick="copyCA()">Copy</button>
+  </div>
+  <p>Total supply: 50 000 000<br><br>50% Presale<br>20% Liquidity pool<br>10% AI creators<br>10% dev<br>10% Marketing, Early Airdrop</p>
+</div>
+
+<script>
+// 汉堡菜单
+function toggleMenu(){
+  document.getElementById("menuWrap").classList.toggle("active");
+}
+document.addEventListener('click',function(e){
+  let wrap = document.getElementById("menuWrap");
+  if(!wrap.contains(e.target)) wrap.classList.remove("active");
+});
+
+// 弹窗切换
+function showPopup(id){
+  document.getElementById("mainHero").classList.remove("show");
+  document.getElementById(id).classList.add("show");
+  toggleMenu();
+  window.scrollTo(0,0);
+}
+
+// 返回主页
+document.getElementById("mainHero").addEventListener('click', function(){
+  document.querySelectorAll(".gallery-item,.popup-card").forEach(el => el.classList.remove("show"));
+  document.getElementById("mainHero").classList.add("show");
+});
+
+// 复制CA
+function copyCA(){
+  const text = document.getElementById("caText").innerText.trim();
+  navigator.clipboard.writeText(text).then(()=>{
+    alert("CA Copied:\n" + text + "\n\nDo NOT send funds to this contract address!");
+  }).catch(()=>{
+    alert("Copy failed, please copy manually!");
+  });
+}
+</script>
+
+</body>
+</html>
