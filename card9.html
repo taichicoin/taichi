@@ -1,0 +1,408 @@
+---
+permalink: /card9
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>Shan Hai Jing Card Game</title>
+<style>
+* {margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
+body{
+  background:linear-gradient(180deg,#4a5a72 0%,#6b7a92 50%,#8a9ab2 100%);
+  color:#fff;
+  padding:10px;
+  min-height:100vh;
+  overflow-x:hidden;
+  display:flex;
+  flex-direction:column;
+  touch-action: none; /* 禁用浏览器默认触摸行为 */
+}
+.container{
+  max-width:100%;
+  margin:0 auto;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+
+/* 顶部标题金币 */
+.shop-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;max-width:350px;margin-left:auto;margin-right:auto;}
+.shop-title{font-size:20px;font-weight:bold;color:#feca57;text-shadow:1px 1px 2px rgba(0,0,0,0.3);}
+.gold-display{
+  font-size:12px;font-weight:bold;color:#ffcc00;
+  background:#161624;padding:2px 8px;border-radius:4px;border:1px solid #d4af37;
+  box-shadow:0 1px 2px rgba(0,0,0,0.3);
+}
+
+/* 上方商店 3张并排 */
+.shop-cards{
+  display:flex;gap:8px;justify-content:center;margin-bottom:6px;flex-wrap:nowrap;
+  transition:all 0.2s;
+}
+/* 出售红色虚线引导 */
+.shop-cards.sell-ready{
+  border:2px dashed #ff6b6b;
+  border-radius:12px;
+  padding:6px;
+  background:rgba(255,107,107,0.1);
+}
+.card-wrapper{display:flex;flex-direction:column;align-items:center;}
+
+/* 卡牌样式 */
+.card{
+  width:110px;height:150px;
+  border-radius:12px;overflow:hidden;
+  cursor:grab;background:#000;position:relative;
+  box-shadow:0 2px 4px rgba(0,0,0,0.3);
+  transition:opacity 0.2s;
+  user-select:none;
+  -webkit-user-select:none;
+}
+.card.dragging-source{opacity:0.3;}
+.card img{width:100%;height:100%;object-fit:cover;pointer-events:none;}
+.card-cost-external{
+  margin-top:3px;font-size:12px;font-weight:bold;color:#fff;
+  background:#ff6b6b;width:22px;height:22px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;border:1px solid white;
+  box-shadow:0 1px 2px rgba(0,0,0,0.3);
+}
+.card.insufficient-funds{opacity:0.6;cursor:not-allowed;}
+
+/* 黄色虚线引导框 */
+#drag-preview{
+  position:fixed;
+  z-index:9999;
+  pointer-events:none;
+  border:2px dashed #feca57;
+  border-radius:12px;
+  width:110px;
+  height:150px;
+  display:none;
+}
+
+/* 中间按钮栏 - 左中右分布 */
+.control-bar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:10px auto;
+  max-width:350px;
+  width:100%;
+}
+.turn-display{
+  font-size:12px;font-weight:bold;background:#4834d4;
+  padding:4px 10px;border-radius:10px;
+  box-shadow:0 1px 2px rgba(0,0,0,0.3);
+}
+#next-turn-btn,#refresh-btn{
+  padding:4px 10px;border:none;border-radius:6px;
+  color:white;font-size:12px;font-weight:bold;cursor:pointer;
+  box-shadow:0 1px 2px rgba(0,0,0,0.3);
+}
+#next-turn-btn{background:#2ed573;}
+#refresh-btn{background:#ff6b6b;}
+button:disabled{background:#666;cursor:not-allowed;}
+
+/* 下方卡组 */
+.grid-section{margin-top:10px;}
+.grid-title{
+  font-size:16px;font-weight:bold;color:#feca57;
+  text-align:center;margin-bottom:6px;
+  text-shadow:1px 1px 2px rgba(0,0,0,0.3);
+}
+.card-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  justify-items:center;
+  max-width:350px;
+  margin:0 auto;
+}
+.grid-slot{
+  width:110px;height:150px;
+  border:2px dashed #888;border-radius:12px;
+  background:rgba(255,255,255,0.05);
+  transition:all 0.2s;
+}
+.grid-slot.swap-ready{
+  border-color:#2ed573;
+  background:rgba(46,213,115,0.2);
+}
+
+/* 页脚：紧贴屏幕最底部 */
+footer{
+  text-align:center;font-size:9px;
+  color:rgba(255,255,255,0.6);
+  margin-top:10px;
+  margin-bottom:0;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="shop-section">
+    <div class="shop-header">
+      <div class="shop-title">Card Shop</div>
+      <div class="gold-display">Gold: <span id="current-gold">2</span></div>
+    </div>
+    <div class="shop-cards" id="shop-cards"></div>
+  </div>
+
+  <div class="control-bar">
+    <div class="turn-display">Turn: <span id="current-turn">1</span></div>
+    <button id="next-turn-btn">Next</button>
+    <button id="refresh-btn">Refresh(1G)</button>
+  </div>
+
+  <div class="grid-section">
+    <div class="grid-title">Your Deck (Max 6)</div>
+    <div class="card-grid" id="card-grid">
+      <div class="grid-slot"></div><div class="grid-slot"></div><div class="grid-slot"></div>
+      <div class="grid-slot"></div><div class="grid-slot"></div><div class="grid-slot"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 黄色虚线引导框 -->
+<div id="drag-preview"></div>
+
+<footer>© 2026 Taichicoin · Built by AI</footer>
+
+<script>
+const allCardsData = [
+  {id:1,name:"Ying Dragon",image:"yl.jpg",atk:3,hp:5,cost:1},
+  {id:2,name:"Nine-Tailed Fox",image:"jwf.jpg",atk:8,hp:10,cost:3},
+  {id:3,name:"Bai Ze",image:"bz.jpg",atk:5,hp:10,cost:2},
+  {id:4,name:"Qiong Qi",image:"qq.jpg",atk:10,hp:15,cost:4},
+  {id:5,name:"Jingwei",image:"jw.jpg",atk:12,hp:18,cost:5}
+];
+let currentGold=2,currentTurn=1,isNextTurnDisabled=false;
+
+// 全局拖拽状态
+let isDragging = false;
+let draggedCard = null;
+let draggedFromSlot = null;
+let draggedElement = null;
+let shopBottom = 0;
+
+const turnGoldIncrement=[0,2,3,5,7,10,15,20];
+const shopArea = document.getElementById("shop-cards");
+const cardGrid = document.getElementById("card-grid");
+const dragPreview = document.getElementById("drag-preview");
+
+// 初始化商店
+function renderShop(){
+  shopArea.innerHTML="";
+  const sel=[...allCardsData].sort(()=>Math.random()-0.5).slice(0,3);
+  sel.forEach(card=>{
+    const wrap=document.createElement("div");wrap.className="card-wrapper";
+    const el=document.createElement("div");el.className="card";
+    if(currentGold<card.cost){el.classList.add("insufficient-funds");}
+    el.innerHTML=`<img src="${card.image}" alt="${card.name}">`;
+    const c=document.createElement("div");c.className="card-cost-external";c.innerText=card.cost;
+    wrap.append(el,c);shopArea.appendChild(wrap);
+    
+    // 只绑定移动端touch事件，彻底避免事件冲突
+    el.addEventListener("touchstart",(e)=>{
+      if(el.classList.contains("insufficient-funds"))return;
+      e.preventDefault(); // 关键：阻止浏览器模拟鼠标事件
+      startDrag(e.touches[0], card, null, el);
+    });
+  });
+  
+  // 计算商店底部坐标（精确判定卖出区域）
+  const shopRect = shopArea.getBoundingClientRect();
+  shopBottom = shopRect.bottom;
+  updateButtonStates();
+}
+
+// 初始化卡组槽位
+function initGridSlots(){
+  const slots = document.querySelectorAll(".grid-slot");
+  slots.forEach(slot=>{
+    // 只绑定移动端touch事件
+    slot.addEventListener("touchstart",(e)=>{
+      if(!slot.children.length)return;
+      e.preventDefault(); // 关键：阻止浏览器模拟鼠标事件
+      const card = getCardDataFromElement(slot.firstChild);
+      startDrag(e.touches[0], card, slot, slot.firstChild);
+    });
+  });
+}
+
+// 从DOM元素获取卡牌数据
+function getCardDataFromElement(element){
+  // 简单实现：根据图片src匹配卡牌数据
+  const imgSrc = element.querySelector("img").src;
+  return allCardsData.find(card=>imgSrc.includes(card.image));
+}
+
+// 创建卡组卡牌
+function createDeckCard(slot, cardData){
+  slot.innerHTML = "";
+  const d=document.createElement("div");
+  d.className="card";
+  d.innerHTML=`<img src="${cardData.image}" alt="${cardData.name}">`;
+  
+  // 只绑定移动端touch事件
+  d.addEventListener("touchstart",(e)=>{
+    e.preventDefault(); // 关键：阻止浏览器模拟鼠标事件
+    startDrag(e.touches[0], cardData, slot, d);
+  });
+
+  slot.appendChild(d);
+}
+
+// 开始拖拽
+function startDrag(e, cardData, fromSlot, element){
+  isDragging = true;
+  draggedCard = cardData;
+  draggedFromSlot = fromSlot;
+  draggedElement = element;
+  
+  // 原卡牌半透明
+  element.classList.add("dragging-source");
+  
+  // 显示黄色虚线引导
+  dragPreview.style.display = "block";
+  updateDragPreview(e.clientX, e.clientY);
+  
+  // 绑定全局移动和结束事件
+  document.addEventListener("touchmove", onDragMove);
+  document.addEventListener("touchend", onGlobalTouchEnd);
+}
+
+// 拖拽移动
+function onDragMove(e){
+  if(!isDragging)return;
+  e.preventDefault(); // 关键：阻止浏览器默认滚动行为
+  
+  const clientX = e.touches[0].clientX;
+  const clientY = e.touches[0].clientY;
+  
+  // 更新黄色虚线位置
+  updateDragPreview(clientX, clientY);
+  
+  // 检查是否进入出售区域（卡牌底部超过商店底部）
+  const cardBottom = clientY + 75; // 卡牌高度150，中心偏移75
+  if(cardBottom <= shopBottom){
+    shopArea.classList.add("sell-ready");
+  }else{
+    shopArea.classList.remove("sell-ready");
+  }
+  
+  // 检查是否经过空槽位
+  const slots = document.querySelectorAll(".grid-slot");
+  slots.forEach(slot=>{
+    const rect = slot.getBoundingClientRect();
+    if(clientX >= rect.left && clientX <= rect.right &&
+       clientY >= rect.top && clientY <= rect.bottom &&
+       !slot.children.length){
+      slot.classList.add("swap-ready");
+    }else{
+      slot.classList.remove("swap-ready");
+    }
+  });
+}
+
+// 更新黄色虚线引导
+function updateDragPreview(clientX, clientY){
+  dragPreview.style.left = (clientX - 55) + "px"; // 卡牌宽度110，中心偏移55
+  dragPreview.style.top = (clientY - 75) + "px"; // 卡牌高度150，中心偏移75
+}
+
+// 全局触摸结束
+function onGlobalTouchEnd(e){
+  if(!isDragging)return;
+  e.preventDefault();
+  
+  // 移除事件监听
+  document.removeEventListener("touchmove", onDragMove);
+  document.removeEventListener("touchend", onGlobalTouchEnd);
+  
+  // 隐藏引导和高亮
+  dragPreview.style.display = "none";
+  shopArea.classList.remove("sell-ready");
+  document.querySelectorAll(".grid-slot").forEach(s=>s.classList.remove("swap-ready"));
+  
+  // 恢复原卡牌
+  if(draggedElement){
+    draggedElement.classList.remove("dragging-source");
+  }
+  
+  const clientX = e.changedTouches[0].clientX;
+  const clientY = e.changedTouches[0].clientY;
+  const cardBottom = clientY + 75;
+  
+  // 情况1：放开到商店区域 → 卖出
+  if(draggedFromSlot && cardBottom <= shopBottom){
+    currentGold += draggedCard.cost;
+    draggedFromSlot.innerHTML = "";
+    updateGameStatus();
+    renderShop();
+  }
+  // 情况2：放开到空槽位 → 购买/交换
+  else{
+    // 主动检测当前位置是否在空槽位上
+    const slots = document.querySelectorAll(".grid-slot");
+    let targetSlot = null;
+    slots.forEach(slot=>{
+      const rect = slot.getBoundingClientRect();
+      if(clientX >= rect.left && clientX <= rect.right &&
+         clientY >= rect.top && clientY <= rect.bottom &&
+         !slot.children.length){
+        targetSlot = slot;
+      }
+    });
+    
+    if(targetSlot){
+      // 购买商店的卡
+      if(!draggedFromSlot){
+        currentGold -= draggedCard.cost;
+        createDeckCard(targetSlot, draggedCard);
+        updateGameStatus();
+        renderShop();
+      }
+      // 交换卡组内的卡
+      else{
+        createDeckCard(targetSlot, draggedCard);
+        draggedFromSlot.innerHTML = "";
+      }
+    }
+    // 情况3：其他情况 → 取消操作，卡牌回到原位
+  }
+  
+  // 重置状态
+  isDragging = false;
+  draggedCard = null;
+  draggedFromSlot = null;
+  draggedElement = null;
+}
+
+function startNextTurn(){
+  if(isNextTurnDisabled)return;currentTurn++;currentGold+=turnGoldIncrement[currentTurn]||0;
+  if(currentTurn>=7){isNextTurnDisabled=true;document.getElementById("next-turn-btn").disabled=true;document.getElementById("next-turn-btn").innerText="Game Over";}
+  updateGameStatus();renderShop();
+}
+document.getElementById("refresh-btn").onclick=()=>{if(currentGold>=1){currentGold--;updateGameStatus();renderShop();}};
+function updateGameStatus(){document.getElementById("current-gold").innerText=currentGold;document.getElementById("current-turn").innerText=currentTurn;updateButtonStates();}
+function updateButtonStates(){document.getElementById("refresh-btn").disabled=currentGold<1;}
+document.getElementById("next-turn-btn").onclick=startNextTurn;
+
+// 初始化
+window.onload = ()=>{
+  renderShop();
+  initGridSlots();
+};
+
+// 窗口大小改变时重新计算商店底部
+window.addEventListener("resize",()=>{
+  const shopRect = shopArea.getBoundingClientRect();
+  shopBottom = shopRect.bottom;
+});
+</script>
+</body>
+</html>
