@@ -1,0 +1,554 @@
+---
+permalink: /card5
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>Shan Hai Jing Card Game</title>
+<style>
+* {margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
+body{
+  background:linear-gradient(180deg,#4a5a72 0%,#6b7a92 50%,#8a9ab2 100%);
+  color:#fff;
+  padding:10px;
+  min-height:100vh;
+  overflow-x:hidden;
+  display:flex;
+  flex-direction:column;
+  touch-action: none;
+}
+.container{
+  max-width:100%;
+  margin:0 auto;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+
+.shop-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;max-width:350px;margin-left:auto;margin-right:auto;}
+.shop-title{font-size:20px;font-weight:bold;color:#feca57;text-shadow:1px 1px 2px rgba(0,0,0,0.3);}
+.gold-display{
+  font-size:12px;font-weight:bold;color:#ffcc00;
+  background:#161624;padding:2px 8px;border-radius:4px;border:1px solid #d4af37;
+  box-shadow:0 1px 2px rgba(0,0,0,0.3);
+}
+
+.shop-cards{
+  display:flex;gap:8px;justify-content:center;margin-bottom:6px;flex-wrap:nowrap;
+  transition:all 0.2s;
+}
+.shop-cards.sell-ready{
+  border:2px dashed #ff6b6b;
+  border-radius:12px;
+  padding:6px;
+  background:rgba(255,107,107,0.1);
+}
+.card-wrapper{display:flex;flex-direction:column;align-items:center;}
+
+.card{
+  width:110px;height:150px;
+  border-radius:12px;overflow:hidden;
+  cursor:grab;background:#000;position:relative;
+  box-shadow:0 2px 4px rgba(0,0,0,0.3);
+  transition:all 0.3s ease;
+  user-select:none;
+  -webkit-user-select:none;
+}
+.card.dragging-source{opacity:0.3;}
+.card img{width:100%;height:100%;object-fit:cover;pointer-events:none;}
+/* 卡牌攻防文字 */
+.card-stat{
+  position:absolute;left:4px;bottom:4px;
+  font-size:14px;font-weight:bold;color:#fff;
+  text-shadow:1px 1px 3px #000;
+  z-index:2;
+}
+.card-grow-flash{
+  animation: growFlash 0.6s ease;
+}
+@keyframes growFlash{
+  0%{transform:scale(1);box-shadow:0 0 0 #2ed573;}
+  50%{transform:scale(1.05);box-shadow:0 0 15px #2ed573;}
+  100%{transform:scale(1);}
+}
+.float-text{
+  position:absolute;pointer-events:none;
+  font-weight:bold;font-size:12px;
+  color:#2ed573;text-shadow:1px 1px 2px #000;
+  animation: floatUp 1s ease forwards;
+  z-index:10;
+}
+@keyframes floatUp{
+  0%{opacity:1;bottom:20px;}
+  100%{opacity:0;bottom:60px;}
+}
+
+.card-cost-external{
+  margin-top:3px;font-size:12px;font-weight:bold;color:#fff;
+  background:#ff6b6b;width:22px;height:22px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;border:1px solid white;
+  box-shadow:0 1px 2px rgba(0,0,0,0.3);
+}
+.card.insufficient-funds{opacity:0.6;cursor:not-allowed;}
+
+#drag-preview{
+  position:fixed;
+  z-index:9999;
+  pointer-events:none;
+  border:2px dashed #feca57;
+  border-radius:12px;
+  width:110px;
+  height:150px;
+  display:none;
+}
+
+.control-bar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:10px auto;
+  max-width:350px;
+  width:100%;
+}
+.turn-display{
+  font-size:12px;font-weight:bold;background:#4834d4;
+  padding:4px 10px;border-radius:10px;
+  box-shadow:0 1px 2px rgba(0,0,0,0.3);
+}
+#next-turn-btn,#refresh-btn{
+  padding:4px 10px;border:none;border-radius:6px;
+  color:white;font-size:12px;font-weight:bold;cursor:pointer;
+  box-shadow:0 1px 2px rgba(0,0,0,0.3);
+}
+#next-turn-btn{background:#2ed573;}
+#refresh-btn{background:#ff6b6b;}
+button:disabled{background:#666;cursor:not-allowed;}
+
+.grid-section{margin-top:10px;}
+.grid-title{
+  font-size:16px;font-weight:bold;color:#feca57;
+  text-align:center;margin-bottom:6px;
+  text-shadow:1px 1px 2px rgba(0,0,0,0.3);
+}
+.card-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  justify-items:center;
+  max-width:350px;
+  margin:0 auto;
+}
+.grid-slot{
+  width:110px;height:150px;
+  border:2px dashed #888;border-radius:12px;
+  background:rgba(255,255,255,0.05);
+  transition:all 0.2s;
+  position:relative;
+}
+.grid-slot.swap-ready{
+  border-color:#2ed573;
+  background:rgba(46,213,115,0.2);
+}
+.card.swap-target{
+  border:2px solid #feca57;
+  box-shadow:0 0 12px #feca57;
+}
+
+footer{
+  text-align:center;font-size:9px;
+  color:rgba(255,255,255,0.6);
+  margin-top:10px;
+  margin-bottom:0;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="shop-section">
+    <div class="shop-header">
+      <div class="shop-title">Card Shop</div>
+      <div class="gold-display">Gold: <span id="current-gold">2</span></div>
+    </div>
+    <div class="shop-cards" id="shop-cards"></div>
+  </div>
+
+  <div class="control-bar">
+    <div class="turn-display">Turn: <span id="current-turn">1</span></div>
+    <button id="next-turn-btn">Next</button>
+    <button id="refresh-btn">Refresh(1G)</button>
+  </div>
+
+  <div class="grid-section">
+    <div class="grid-title">Your Deck (Max 6)</div>
+    <div class="card-grid" id="card-grid">
+      <div class="grid-slot"></div><div class="grid-slot"></div><div class="grid-slot"></div>
+      <div class="grid-slot"></div><div class="grid-slot"></div><div class="grid-slot"></div>
+    </div>
+  </div>
+</div>
+
+<div id="drag-preview"></div>
+<footer>© 2026 Taichicoin · Built by AI</footer>
+
+<script>
+// 全卡牌基础数据 + 技能标识
+const allCardsData = [
+  {id:1,name:"Ying Dragon",skill:"yinglong",image:"yl.jpg",baseAtk:3,baseHp:5,cost:1},
+  {id:2,name:"Nine-Tailed Fox",skill:"jiuweihu",image:"jwf.jpg",baseAtk:8,baseHp:10,cost:3},
+  {id:3,name:"Bai Ze",skill:"baize",image:"bz.jpg",baseAtk:5,baseHp:10,cost:2},
+  {id:4,name:"Qiong Qi",skill:"qiongqi",image:"qq.jpg",baseAtk:10,baseHp:15,cost:4},
+  {id:5,name:"Jingwei",skill:"jingwei",image:"jw.jpg",baseAtk:12,baseHp:18,cost:5}
+];
+
+// 全局游戏变量
+let currentGold=2,currentTurn=1,isNextTurnDisabled=false;
+let cardSaveData = {}; // 存储场上卡牌成长数据
+
+let isDragging = false;
+let draggedCard = null;
+let draggedFromSlot = null;
+let draggedElement = null;
+let shopBottom = 0;
+
+const turnGoldIncrement=[0,2,3,5,7,10,15,20];
+const shopArea = document.getElementById("shop-cards");
+const cardGrid = document.getElementById("card-grid");
+const dragPreview = document.getElementById("drag-preview");
+
+// 获取所有卡槽卡牌信息
+function getGridCards(){
+  const slots = Array.from(document.querySelectorAll(".grid-slot"));
+  let list = [];
+  slots.forEach((slot,idx)=>{
+    const card = slot.querySelector(".card");
+    let row = idx < 3 ? 1 : 2; // 两行：1行前3，2行后3
+    if(card){
+      list.push({
+        idx,row,slot,el:card,
+        id:parseInt(card.dataset.cardId),
+        name:card.dataset.cardName,
+        skill:card.dataset.skill
+      });
+    }else{
+      list.push({idx,row,slot,el:null});
+    }
+  });
+  return list;
+}
+
+// 初始化商店
+function renderShop(){
+  shopArea.innerHTML="";
+  const sel=[...allCardsData].sort(()=>Math.random()-0.5).slice(0,3);
+  sel.forEach(card=>{
+    const wrap=document.createElement("div");wrap.className="card-wrapper";
+    const el=document.createElement("div");el.className="card";
+    el.dataset.cardId = card.id;
+    el.dataset.cardName = card.name;
+    el.dataset.cardSkill = card.skill;
+    el.dataset.cardImage = card.image;
+    el.dataset.cardAtk = card.baseAtk;
+    el.dataset.cardHp = card.baseHp;
+    el.dataset.cardCost = card.cost;
+    
+    if(currentGold<card.cost) el.classList.add("insufficient-funds");
+    el.innerHTML=`<img src="${card.image}" alt="${card.name}">`;
+    const c=document.createElement("div");c.className="card-cost-external";c.innerText=card.cost;
+    wrap.append(el,c);shopArea.appendChild(wrap);
+    
+    el.addEventListener("touchstart",(e)=>{
+      if(el.classList.contains("insufficient-funds"))return;
+      e.preventDefault();
+      const cardData = {
+        id: parseInt(el.dataset.cardId),
+        name: el.dataset.cardName,
+        skill: el.dataset.cardSkill,
+        image: el.dataset.cardImage,
+        baseAtk: parseInt(el.dataset.cardAtk),
+        baseHp: parseInt(el.dataset.cardHp),
+        cost: parseInt(el.dataset.cardCost)
+      };
+      startDrag(e.touches[0], cardData, null, el);
+    });
+  });
+  const shopRect = shopArea.getBoundingClientRect();
+  shopBottom = shopRect.bottom;
+  updateButtonStates();
+}
+
+// 创建卡组卡牌（带成长数据+攻防显示）
+function createDeckCard(slot, cardData){
+  let saveKey = slot.getAttribute("data-savekey") || Math.random().toString(36);
+  slot.setAttribute("data-savekey", saveKey);
+  
+  // 初始化成长存档
+  if(!cardSaveData[saveKey]){
+    cardSaveData[saveKey] = {
+      jw:0,yl:0,qq:0,bzAtk:0,bzHp:0
+    };
+  }
+  const grow = cardSaveData[saveKey];
+  const nowAtk = cardData.baseAtk + grow.jw + grow.yl + grow.qq + grow.bzAtk;
+  const nowHp = cardData.baseHp + grow.jw + grow.yl + grow.qq + grow.bzHp;
+
+  slot.innerHTML = "";
+  const d=document.createElement("div");
+  d.className="card";
+  d.dataset.cardId = cardData.id;
+  d.dataset.cardName = cardData.name;
+  d.dataset.cardSkill = cardData.skill;
+  d.dataset.cardImage = cardData.image;
+  d.dataset.baseAtk = cardData.baseAtk;
+  d.dataset.baseHp = cardData.baseHp;
+  d.innerHTML=`
+    <img src="${cardData.image}" alt="${cardData.name}">
+    <div class="card-stat">${nowAtk}/${nowHp}</div>
+  `;
+  
+  d.addEventListener("touchstart",(e)=>{
+    e.preventDefault();
+    const data = {
+      id: parseInt(d.dataset.cardId),
+      name: d.dataset.cardName,
+      skill: d.dataset.cardSkill,
+      image: d.dataset.cardImage,
+      baseAtk: parseInt(d.dataset.baseAtk),
+      baseHp: parseInt(d.dataset.baseHp),
+      cost: cardData.cost
+    };
+    startDrag(e.touches[0], data, slot, d);
+  });
+  slot.appendChild(d);
+}
+
+// 技能核心：回合结算所有成长
+function calcAllSkillGrow(){
+  const grids = getGridCards();
+  const turnAdd = currentTurn - 1; // 当前回合成长层数
+  let hasJingwei = grids.some(x=>x.skill==="jingwei");
+  let allYinglongRows = grids.filter(x=>x.skill==="yinglong").map(x=>x.row);
+  
+  // 遍历所有场上卡牌结算
+  grids.forEach(g=>{
+    if(!g.el) return;
+    const saveKey = g.slot.getAttribute("data-savekey");
+    if(!cardSaveData[saveKey]) return;
+    const gdata = cardSaveData[saveKey];
+
+    // 1.精卫全队成长
+    if(hasJingwei) gdata.jw = turnAdd;
+
+    // 2.应龙同排成长
+    if(allYinglongRows.includes(g.row)) gdata.yl = turnAdd * 2;
+
+    // 3.穷奇自身成长
+    if(g.skill==="qiongqi") gdata.qq = turnAdd;
+
+    // 4.九尾狐：同排加速（额外一层精卫+应龙）
+    const rowHasFox = grids.some(x=>x.row===g.row && x.skill==="jiuweihu");
+    if(rowHasFox){
+      gdata.jw += 1;
+      gdata.yl += 2;
+    }
+
+    // 5.触发白泽被动：每次任意成长+2攻+5血
+    const totalTrigger = (hasJingwei?1:0) + (allYinglongRows.includes(g.row)?1:0) + (g.skill==="qiongqi"?1:0) + (rowHasFox?1:0);
+    grids.forEach(b=>{
+      if(b.skill==="baize" && b.el){
+        const bKey = b.slot.getAttribute("data-savekey");
+        if(cardSaveData[bKey]){
+          cardSaveData[bKey].bzAtk += totalTrigger * 2;
+          cardSaveData[bKey].bzHp += totalTrigger * 5;
+        }
+      }
+    });
+
+    // 刷新卡牌显示+闪光动画
+    const baseAtk = parseInt(g.el.dataset.baseAtk);
+    const baseHp = parseInt(g.el.dataset.baseHp);
+    const nowAtk = baseAtk + gdata.jw + gdata.yl + gdata.qq + gdata.bzAtk;
+    const nowHp = baseHp + gdata.jw + gdata.yl + gdata.qq + gdata.bzHp;
+    g.el.querySelector(".card-stat").innerText = `${nowAtk}/${nowHp}`;
+    g.el.classList.add("card-grow-flash");
+    setTimeout(()=>g.el.classList.remove("card-grow-flash"),600);
+  });
+}
+
+// 开始拖拽
+function startDrag(e, cardData, fromSlot, element){
+  isDragging = true;
+  draggedCard = cardData;
+  draggedFromSlot = fromSlot;
+  draggedElement = element;
+  
+  element.classList.add("dragging-source");
+  dragPreview.style.display = "block";
+  updateDragPreview(e.clientX, e.clientY);
+  
+  document.addEventListener("touchmove", onDragMove);
+  document.addEventListener("touchend", onGlobalTouchEnd);
+}
+
+// 拖拽移动
+function onDragMove(e){
+  if(!isDragging)return;
+  e.preventDefault();
+  const clientX = e.touches[0].clientX;
+  const clientY = e.touches[0].clientY;
+  updateDragPreview(clientX, clientY);
+
+  const cardBottom = clientY + 75;
+  if(cardBottom <= shopBottom){
+    shopArea.classList.add("sell-ready");
+  }else{
+    shopArea.classList.remove("sell-ready");
+  }
+
+  document.querySelectorAll(".grid-slot").forEach(s=>s.classList.remove("swap-ready"));
+  document.querySelectorAll(".card").forEach(c=>c.classList.remove("swap-target"));
+
+  const targetCardEl = document.elementFromPoint(clientX, clientY);
+  if(targetCardEl?.closest(".card") && targetCardEl !== draggedElement){
+    const targetCard = targetCardEl.closest(".card");
+    targetCard.classList.add("swap-target");
+    return;
+  }
+
+  const slots = document.querySelectorAll(".grid-slot");
+  slots.forEach(slot=>{
+    const r = slot.getBoundingClientRect();
+    if(clientX >= r.left && clientX <= r.right &&
+       clientY >= r.top && clientY <= r.bottom &&
+       !slot.children.length){
+      slot.classList.add("swap-ready");
+    }
+  });
+}
+
+function updateDragPreview(x,y){
+  dragPreview.style.left = (x-55)+"px";
+  dragPreview.style.top  = (y-75)+"px";
+}
+
+// 结束拖拽
+function onGlobalTouchEnd(e){
+  if(!isDragging)return;
+  e.preventDefault();
+  document.removeEventListener("touchmove", onDragMove);
+  document.removeEventListener("touchend", onGlobalTouchEnd);
+
+  dragPreview.style.display = "none";
+  shopArea.classList.remove("sell-ready");
+  document.querySelectorAll(".grid-slot").forEach(s=>s.classList.remove("swap-ready"));
+  document.querySelectorAll(".card").forEach(c=>c.classList.remove("swap-target"));
+
+  if(draggedElement) draggedElement.classList.remove("dragging-source");
+
+  const clientX = e.changedTouches[0].clientX;
+  const clientY = e.changedTouches[0].clientY;
+  const cardBottom = clientY + 75;
+
+  if(draggedFromSlot && cardBottom <= shopBottom){
+    currentGold += draggedCard.cost;
+    delete cardSaveData[draggedFromSlot.getAttribute("data-savekey")];
+    draggedFromSlot.innerHTML = "";
+    updateGameStatus();
+    renderShop();
+  }else{
+    const targetCardEl = document.elementFromPoint(clientX, clientY);
+    if(targetCardEl?.closest(".card") && targetCardEl !== draggedElement){
+      const targetCard = targetCardEl.closest(".card");
+      const targetSlot = targetCard.parentElement;
+      const targetData = {
+        id: parseInt(targetCard.dataset.cardId),
+        name: targetCard.dataset.cardName,
+        skill: targetCard.dataset.cardSkill,
+        image: targetCard.dataset.cardImage,
+        baseAtk: parseInt(targetCard.dataset.baseAtk),
+        baseHp: parseInt(targetCard.dataset.baseHp),
+        cost: parseInt(targetCard.dataset.cardCost)
+      };
+      // 互换成长数据
+      let tempSave = cardSaveData[draggedFromSlot.getAttribute("data-savekey")];
+      cardSaveData[draggedFromSlot.getAttribute("data-savekey")] = cardSaveData[targetSlot.getAttribute("data-savekey")];
+      cardSaveData[targetSlot.getAttribute("data-savekey")] = tempSave;
+
+      createDeckCard(draggedFromSlot, targetData);
+      createDeckCard(targetSlot, draggedCard);
+    }else{
+      const slots = document.querySelectorAll(".grid-slot");
+      let targetSlot = null;
+      slots.forEach(slot=>{
+        const r=slot.getBoundingClientRect();
+        if(clientX >= r.left && clientX <= r.right &&
+           clientY >= r.top && clientY <= r.bottom &&
+           !slot.children.length){
+          targetSlot=slot;
+        }
+      });
+      if(targetSlot){
+        if(!draggedFromSlot){
+          currentGold -= draggedCard.cost;
+          createDeckCard(targetSlot, draggedCard);
+          updateGameStatus();
+          renderShop();
+        }else{
+          createDeckCard(targetSlot, draggedCard);
+          delete cardSaveData[draggedFromSlot.getAttribute("data-savekey")];
+          draggedFromSlot.innerHTML = "";
+        }
+      }
+    }
+  }
+
+  isDragging = false;
+  draggedCard = null;
+  draggedFromSlot = null;
+  draggedElement = null;
+}
+
+// 下一回合（触发所有技能成长）
+function startNextTurn(){
+  if(isNextTurnDisabled)return;
+  currentTurn++;
+  currentGold+=turnGoldIncrement[currentTurn]||0;
+
+  // 核心：结算所有山海经技能数值增长
+  calcAllSkillGrow();
+
+  if(currentTurn>=7){
+    isNextTurnDisabled=true;
+    document.getElementById("next-turn-btn").disabled=true;
+    document.getElementById("next-turn-btn").innerText="Game Over";
+  }
+  updateGameStatus();
+  renderShop();
+}
+
+document.getElementById("refresh-btn").onclick=()=>{
+  if(currentGold>=1){
+    currentGold--;
+    updateGameStatus();
+    renderShop();
+  }
+};
+function updateGameStatus(){
+  document.getElementById("current-gold").innerText=currentGold;
+  document.getElementById("current-turn").innerText=currentTurn;
+  updateButtonStates();
+}
+function updateButtonStates(){
+  document.getElementById("refresh-btn").disabled=currentGold<1;
+}
+document.getElementById("next-turn-btn").onclick=startNextTurn;
+
+window.onload = ()=>{ renderShop(); };
+window.addEventListener("resize",()=>{
+  shopBottom = shopArea.getBoundingClientRect().bottom;
+});
+</script>
+</body>
+</html>
