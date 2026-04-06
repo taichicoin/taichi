@@ -1,0 +1,1212 @@
+---
+permalink: /claim9
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claim Test</title>
+  <script src="https://cdn.bootcdn.net/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'JetBrains Mono', monospace;
+      transition: all 0.3s;
+    }
+
+    html { touch-action: manipulation; }
+    button {
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      cursor: pointer !important;
+    }
+
+    :root {
+      --bg: #0B0E16;
+      --card: #111827;
+      --input: #0F141F;
+      --border: #1F2937;
+      --text: #E1E7F5;
+      --muted: #4B5663;
+      --accent: #00B3CF;
+      --success: #00B3CF;
+      --error: #E53935;
+      --link-color: #00B3CF;
+      --mask: rgba(0,0,0,0.7);
+    }
+
+    :root.light {
+      --bg: #f8fafc;
+      --card: #fff;
+      --input: #f1f5f9;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748B;
+      --accent: #009AAD;
+      --success: #009AAD;
+      --error: #E53935;
+      --link-color: #009AAD;
+      --mask: rgba(0,0,0,0.5);
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+    }
+
+    a.custom-link{
+      color: var(--link-color);
+      text-decoration: underline;
+      font-weight: bold;
+    }
+    a.custom-link:hover{
+      opacity:0.8;
+    }
+
+    .toolbar {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      gap: 16px;
+      z-index: 9999;
+      flex-wrap: wrap;
+    }
+    .toolbar a,
+    .toolbar button {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+    }
+    .toolbar a:hover,
+    .toolbar a:active,
+    .toolbar button:hover,
+    .toolbar button:active {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 500px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 40px 30px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+      animation: scan 3s linear infinite;
+    }
+    @keyframes scan {
+      0%   { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 24px;
+      font-size: 24px;
+      line-height: 1.3;
+      transition: all 0.3s;
+    }
+    h1.hidden {
+      opacity: 0;
+      height: 0;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    .steps {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 30px;
+      position: relative;
+    }
+    .steps::before {
+      content: '';
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      height: 2px;
+      background: var(--border);
+      z-index: 0;
+    }
+    .steps .progress-line {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      height: 2px;
+      background: var(--accent);
+      z-index: 1;
+      transition: width 0.3s ease;
+    }
+    .step-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      width: 33.33%;
+      position: relative;
+      z-index: 2;
+      cursor: default;
+    }
+    .step-item.clickable {
+      cursor: pointer;
+    }
+    .step-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--border);
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .step-item.completed .step-circle {
+      background: var(--accent);
+      color: #fff;
+    }
+    .step-item.active .step-circle {
+      background: var(--accent);
+      color: #fff;
+    }
+    .step-text {
+      font-size: 11px;
+      text-align: center;
+      color: var(--muted);
+      line-height: 1.3;
+      word-break: break-word;
+      min-height: 30px;
+    }
+    .step-item.completed .step-text,
+    .step-item.active .step-text {
+      color: var(--text);
+    }
+
+    .input-group {
+      margin-bottom: 16px;
+      position: relative;
+    }
+    .address-wrap {
+      position: relative;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .address-input {
+      width: 100%;
+      padding: 14px 50px 14px 14px;
+      background: var(--input);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      outline: none;
+      cursor: pointer;
+      pointer-events: none;
+    }
+    .address-input::placeholder {
+      color: var(--muted);
+    }
+
+    .address-wrap:hover .address-input,
+    .address-wrap:active .address-input {
+      border-color: var(--accent);
+    }
+
+    .arrow-btn {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--accent);
+      border: 1.5px solid var(--accent);
+      color: #fff;
+      width: 36px;
+      height: 36px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+    }
+    .arrow-btn:hover {
+      opacity: 0.9;
+    }
+
+    button.main-btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--accent);
+      border: none;
+      border-radius: 4px;
+      color: #fff;
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+    button.main-btn:disabled {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    button.next-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(90deg, #2563eb, var(--accent));
+      border: none;
+      border-radius: 4px;
+      color: #fff;
+      font-weight: bold;
+      margin-top: 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .result {
+      margin: 20px 0;
+      padding: 14px;
+      background: var(--input);
+      border-left: 3px solid var(--border);
+      font-size: 13px;
+      line-height: 1.5;
+      word-break: break-all;
+      overflow-wrap: break-word;
+    }
+    .result.success { border-color: var(--success); }
+    .result.error { border-color: var(--error); }
+    .result.info { border-color: var(--accent); }
+
+    .form-row { margin: 16px 0; }
+    .hidden { display: none !important; }
+
+    /* 验证码区域样式 */
+    .code-row{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      margin:20px 0;
+    }
+    .code-box{
+      flex:1;
+      font-size:28px;
+      font-weight:bold;
+      color:#00B3CF;
+      letter-spacing:6px;
+      text-align:center;
+      padding:12px;
+      background:var(--input);
+      border:1px solid var(--border);
+      border-radius:4px;
+    }
+    .copy-code-btn{
+      padding:12px 16px;
+      background:var(--accent);
+      border:none;
+      color:#fff;
+      border-radius:4px;
+      font-weight:bold;
+      white-space:nowrap;
+    }
+
+    /* TG半屏弹窗 不占全屏 手机可关闭 */
+    .tg-mask {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 50vh;
+      background: var(--card);
+      border-top:2px solid var(--accent);
+      z-index: 99999;
+      padding:24px;
+      display:flex;
+      flex-direction:column;
+      gap:20px;
+    }
+    .tg-close{
+      align-self:flex-end;
+      font-size:24px;
+      color:var(--muted);
+      background:none;
+      border:none;
+      cursor:pointer;
+    }
+
+    /* 钱包选择弹窗 */
+    .wallet-mask {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--mask);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 99998;
+      padding: 20px;
+    }
+    .wallet-modal {
+      width: 100%;
+      max-width: 400px;
+      background: var(--card);
+      border-radius: 12px;
+      padding: 24px;
+      border: 1px solid var(--border);
+    }
+    .wallet-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .wallet-modal-header h3 {
+      font-size: 18px;
+    }
+    .wallet-close-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 24px;
+      cursor: pointer;
+      line-height: 1;
+    }
+    .wallet-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .wallet-item {
+      width: 100%;
+      padding: 16px;
+      background: var(--input);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+    .wallet-item:hover,
+    .wallet-item:active {
+      border-color: var(--accent);
+    }
+    .wallet-item-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .wallet-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    .wallet-name {
+      font-size: 16px;
+      font-weight: 500;
+    }
+    .wallet-arrow {
+      color: var(--muted);
+      font-size: 18px;
+    }
+    .wallet-tip {
+      font-size: 10px;
+      color: var(--muted);
+      text-align: center;
+      margin-top: -8px;
+      margin-bottom: 12px;
+      padding: 0 16px;
+    }
+
+    .wait-claim-card {
+      margin-top: 20px;
+      background: var(--input);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .wait-claim-header {
+      padding: 20px 16px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .wait-claim-header h2 {
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+    .wait-claim-header p {
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .wait-claim-total {
+      padding: 20px 16px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .wait-claim-total p {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .wait-claim-total .amount {
+      font-size: 32px;
+      font-weight: bold;
+      color: var(--text);
+    }
+    .wait-claim-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    .wait-claim-grid-item {
+      padding: 16px;
+      text-align: center;
+    }
+    .wait-claim-grid-item:first-child {
+      border-right: 1px solid var(--border);
+    }
+    .wait-claim-grid-item p {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .wait-claim-grid-item .amount {
+      font-size: 20px;
+      font-weight: bold;
+      color: var(--text);
+    }
+    .wait-claim-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(90deg, #2563eb, var(--accent));
+      border: none;
+      color: #fff;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .wait-claim-btn:disabled {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+    .wait-claim-tip {
+      margin-top: 16px;
+      padding: 12px;
+      background: var(--input);
+      border-left: 3px solid var(--accent);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .listing-card {
+      margin-top: 20px;
+      text-align: center;
+      padding: 40px 20px;
+      background: var(--input);
+      border-radius: 8px;
+    }
+    .listing-icon {
+      width: 64px;
+      height: 64px;
+      border: 2px solid var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+    .listing-icon svg {
+      width: 32px;
+      height: 32px;
+      stroke: var(--accent);
+      stroke-width: 2;
+      fill: none;
+    }
+    .listing-card h2 {
+      font-size: 24px;
+      margin-bottom: 12px;
+    }
+    .listing-card p {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+    .listing-tag {
+      display: inline-block;
+      padding: 6px 16px;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    @media (max-width: 480px) {
+      .card {
+        padding: 30px 20px;
+      }
+      h1 {
+        font-size: 22px;
+        margin-bottom: 20px;
+      }
+      .steps {
+        margin-bottom: 24px;
+      }
+      .steps::before,
+      .steps .progress-line {
+        top: 14px;
+        left: 12px;
+        right: 12px;
+      }
+      .step-circle {
+        width: 28px;
+        height: 28px;
+        font-size: 12px;
+      }
+      .step-text {
+        font-size: 9px;
+        line-height: 1.2;
+        min-height: 26px;
+        gap: 6px;
+      }
+      button.main-btn,
+      button.next-btn {
+        margin-top: 14px;
+        margin-bottom: 14px;
+      }
+      .input-group {
+        margin-bottom: 14px;
+      }
+      .result {
+        margin: 16px 0;
+      }
+      .toolbar {
+        top: 10px;
+        right: 10px;
+        gap: 10px;
+      }
+      .toolbar a,
+      .toolbar button {
+        padding: 5px 8px;
+        font-size: 11px;
+      }
+      .wallet-icon {
+        width: 28px;
+        height: 28px;
+      }
+      .code-box{font-size:22px;}
+      .tg-mask{height:50vh;}
+    }
+  </style>
+</head>
+<body>
+
+<div class="toolbar">
+  <a href="https://t.me/CHiiiiiiiiiiiiiiiiii" target="_blank" rel="noopener noreferrer">Telegram</a>
+  <a href="https://x.com/taichicoin" target="_blank" rel="noopener noreferrer">X / Twitter</a>
+  <button id="langBtn">中</button>
+  <button id="themeBtn">Light</button>
+</div>
+
+<div class="card">
+  <h1 id="title">Allocation Confirm</h1>
+
+  <div class="steps">
+    <div class="progress-line" id="progressLine"></div>
+    <div class="step-item active clickable" id="step1">
+      <div class="step-circle">1</div>
+      <div class="step-text" id="stepText1">Allocation Confirm</div>
+    </div>
+    <div class="step-item" id="step2">
+      <div class="step-circle">2</div>
+      <div class="step-text" id="stepText2">TG Bind Verify</div>
+    </div>
+    <div class="step-item" id="step3">
+      <div class="step-circle">3</div>
+      <div class="step-text" id="stepText3">Wait Listing</div>
+    </div>
+  </div>
+
+  <!-- 第一步：钱包连接 + 资格查询 -->
+  <div id="step1Content">
+    <div class="input-group">
+      <div class="address-wrap" id="addressWrap">
+        <input type="text" id="address" class="address-input" placeholder="click to connect wallet" readonly/>
+        <button class="arrow-btn" id="walletArrowBtn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 6L6 18M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <button class="main-btn" id="confirmBtn">CONFIRM ALLOCATION</button>
+    <div id="result" class="result hidden"></div>
+    <button id="step1NextBtn" class="next-btn hidden">Generate Bind Code</button>
+  </div>
+
+  <!-- 第二步：验证码 + 复制 + TG机器人/频道 + 验证 -->
+  <div id="step2Content" class="hidden">
+    <div id="codeTip" class="result info hidden"></div>
+    <div class="code-row">
+      <div class="code-box" id="showCodeBox">------</div>
+      <button class="copy-code-btn" id="copyCodeBtn">Copy</button>
+    </div>
+
+    <button class="next-btn" id="openBotBtn">Open Telegram Bot / 打开机器人</button>
+    <button class="next-btn" id="joinChannelBtn">Join Official Channel / 加入官方频道</button>
+    <button class="main-btn" id="finalCheckBtn">Verify Binding & Membership / 一键验证</button>
+    <div id="verifyResult" class="result hidden"></div>
+
+    <div class="wait-claim-card" style="margin-top:24px;">
+      <div class="wait-claim-header">
+        <div style="width:48px;height:48px;border:2px solid var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent)">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+        <h2 id="waitClaimTitle">Ready to Claim</h2>
+        <p id="waitClaimSubtitle">Your allocation has been finalized, you can claim now.</p>
+      </div>
+      <div class="wait-claim-total">
+        <p id="waitClaimTotalText">Total Allocation</p>
+        <div class="amount" id="totalAmount">0</div>
+      </div>
+      <div class="wait-claim-grid">
+        <div class="wait-claim-grid-item">
+          <p id="claimedText">Claimed</p>
+          <div class="amount">0</div>
+        </div>
+        <div class="wait-claim-grid-item">
+          <p id="claimableText">Pending Claim</p>
+          <div class="amount" id="claimableAmount">0</div>
+        </div>
+      </div>
+      <button class="wait-claim-btn" id="claimBtn" disabled>Waiting Verify...</button>
+    </div>
+    <div id="claimResult" class="result hidden"></div>
+  </div>
+
+  <!-- 第三步：等待上市 -->
+  <div id="step3Content" class="hidden">
+    <div class="listing-card">
+      <div class="listing-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10" />
+          <polyline points="12 6 12 12 16 14" />
+        </svg>
+      </div>
+      <h2 id="listingTitle">Coming Soon</h2>
+      <p id="listingDesc">
+        Token listing is pending, please wait for the official announcement.
+      </p>
+      <span class="listing-tag" id="listingTag">Status: Pending</span>
+    </div>
+  </div>
+</div>
+
+<!-- TG半屏弹窗 底部弹出 可关闭 不卡死手机DApp -->
+<div class="tg-mask hidden" id="tgPopup">
+  <button class="tg-close" id="closeTgPopup">× Close / 关闭</button>
+  <div style="text-align:center;padding-top:30px;">
+    <p id="popupNotice">Finish Telegram operation, close window to return</p>
+  </div>
+</div>
+
+<!-- 钱包选择弹窗 -->
+<div class="wallet-mask hidden" id="walletModal">
+  <div class="wallet-modal">
+    <div class="wallet-modal-header">
+      <h3 id="walletModalTitle">Connect Wallet</h3>
+      <button class="wallet-close-btn" id="walletCloseBtn">×</button>
+    </div>
+    <div class="wallet-list">
+      <div class="wallet-item" id="walletMetaMask">
+        <div class="wallet-item-left">
+          <img src="mm.jpg" alt="MetaMask" class="wallet-icon" />
+          <div class="wallet-name">MetaMask</div>
+        </div>
+        <div class="wallet-arrow">→</div>
+      </div>
+      <div class="wallet-item" id="walletOKX">
+        <div class="wallet-item-left">
+          <img src="okx.jpg" alt="OKX Wallet" class="wallet-icon" />
+          <div class="wallet-name">OKX Wallet</div>
+        </div>
+        <div class="wallet-arrow">→</div>
+      </div>
+      <div class="wallet-item" id="walletTokenPocket">
+        <div class="wallet-item-left">
+          <img src="tp.jpg" alt="TokenPocket" class="wallet-icon" />
+          <div class="wallet-name">TokenPocket</div>
+        </div>
+        <div class="wallet-arrow">→</div>
+      </div>
+      <div class="wallet-item" id="walletTrust">
+        <div class="wallet-item-left">
+          <img src="tw.jpg" alt="Trust Wallet" class="wallet-icon" />
+          <div class="wallet-name">Trust Wallet</div>
+        </div>
+        <div class="wallet-arrow">→</div>
+      </div>
+      <p class="wallet-tip" id="walletTip"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===================== 仅保留后端唯一接口 =====================
+// 彻底删除所有Supabase密钥、URL、直连数据库代码
+const BACKEND_API = "https://sznjaotjoljaiawbvfro.supabase.co/functions/v1/claim-check";
+const CONTRACT_ADDRESS = "0xedb9f60e0607fB8828501F9d20Ef9ad20872DEa5";
+const BSC_TESTNET_CHAINID = "0x61";
+const BSC_TESTNET_CHAINID_DEC = 97;
+const TOKEN_DECIMALS = 18;
+
+// TG固定链接（可自行替换）
+const TELEGRAM_BOT_LINK = "https://t.me/taichicoinbot";
+const TELEGRAM_CHANNEL_LINK = "https://t.me/CHiiiiiiiiiiiiiiiiii";
+
+// 钱包唤醒跳转链接
+const WALLET_DEEPLINK = {
+  metamask: {
+    name: "MetaMask",
+    link: (pageUrl) => `https://metamask.app.link/dapp/${pageUrl.replace("https://", "").replace("http://", "")}`
+  },
+  okx: {
+    name: "OKX Wallet",
+    link: (pageUrl) => `https://www.okx.com/download?deeplink=okx://wallet/dapp/url?dappUrl=${encodeURIComponent(pageUrl)}`
+  },
+  tokenpocket: {
+    name: "TokenPocket",
+    link: (pageUrl) => `tpdapp://open?params=${encodeURIComponent(JSON.stringify({ url: pageUrl, title: "TAICHI Airdrop" }))}`
+  },
+  trust: {
+    name: "Trust Wallet",
+    link: (pageUrl) => `https://link.trustwallet.com/open_url?url=${encodeURIComponent(pageUrl)}&coin_id=714`
+  }
+};
+
+// 合约ABI
+const CONTRACT_ABI = [
+  "function claim(bytes32[] calldata proof, uint256 amount) external",
+  "function alreadyClaimed(address) view returns(bool)",
+  "event ClaimSuccess(address indexed user, uint256 amount)"
+];
+
+// BSC测试网配置
+const BSC_TESTNET_PARAMS = {
+  chainId: BSC_TESTNET_CHAINID,
+  chainName: "BSC Testnet",
+  nativeCurrency: {
+    name: "tBNB",
+    symbol: "tBNB",
+    decimals: 18
+  },
+  rpcUrls: [
+    "https://bsc-testnet-rpc.publicnode.com",
+    "https://bsc-testnet.publicnode.com"
+  ],
+  blockExplorerUrls: ["https://testnet.bscscan.com/"]
+};
+
+// 中英双语文案
+const texts = {
+  en: {
+    stepText1: "Allocation Confirm",
+    stepText2: "TG Bind Verify",
+    stepText3: "Wait Listing",
+    title: "Allocation Confirm",
+    addrPlaceholder: "click to connect wallet",
+    confirmBtn: "CONFIRM ALLOCATION",
+    confirming: "CONFIRMING...",
+    invalidAddr: "Please connect wallet first",
+    eligible: "✅ ALLOCATION CONFIRMED",
+    addr: "ADDRESS",
+    drop: "AIRDROP ALLOCATION",
+    notEligible: "❌ NO ALLOCATION FOUND",
+    copyCodeTip: "Copy code send to Telegram Bot",
+    copyCodeTipZh: "Copy code to TAICHI Bot",
+    copyOk: "Copied successfully!",
+    verifySuccess: "✅ Binding + Channel Membership Verified",
+    verifyFail: "❌ Not finished bind or join channel",
+    walletTip: "Open link in wallet DApp browser"
+  },
+  zh: {
+    stepText1: "分配确认",
+    stepText2: "TG绑定验证",
+    stepText3: "等待上市",
+    title: "分配确认",
+    addrPlaceholder: "点击连接钱包",
+    confirmBtn: "确认分配",
+    confirming: "确认中...",
+    invalidAddr: "请先连接钱包",
+    eligible: "✅ 分配已确认",
+    addr: "钱包地址",
+    drop: "空投数量",
+    notEligible: "❌ 无空投资格",
+    copyCodeTip: "复制验证码发送TG机器人",
+    copyCodeTipZh: "Copy code send to Telegram Bot",
+    copyOk: "复制成功！",
+    verifySuccess: "✅ 绑定成功+已加入官方频道",
+    verifyFail: "❌ 未完成绑定/未加入频道",
+    walletTip: "复制链接在钱包DApp打开"
+  }
+};
+
+// 全局状态变量
+let lang = "en";
+let light = false;
+let currentData = {
+  address: "",
+  rawAmount: 0,
+  amountFull: "",
+  proof: []
+};
+let currentStep = 1;
+let stepsEnabled = false;
+let ethersLoaded = false;
+let provider = null;
+let signer = null;
+let telegramVerified = false;
+let currentBindCode = "";
+
+// DOM快捷获取
+const title = document.getElementById("title");
+const addrInput = document.getElementById("address");
+const addressWrap = document.getElementById("addressWrap");
+const confirmBtn = document.getElementById("confirmBtn");
+const result = document.getElementById("result");
+const step1NextBtn = document.getElementById("step1NextBtn");
+const claimBtn = document.getElementById("claimBtn");
+const claimResult = document.getElementById("claimResult");
+const langBtn = document.getElementById("langBtn");
+const themeBtn = document.getElementById("themeBtn");
+const step1Content = document.getElementById("step1Content");
+const step2Content = document.getElementById("step2Content");
+const step3Content = document.getElementById("step3Content");
+const progressLine = document.getElementById("progressLine");
+const step1 = document.getElementById("step1");
+const step2 = document.getElementById("step2");
+const step3 = document.getElementById("step3");
+const totalAmount = document.getElementById("totalAmount");
+const claimableAmount = document.getElementById("claimableAmount");
+const walletArrowBtn = document.getElementById("walletArrowBtn");
+const walletModal = document.getElementById("walletModal");
+const walletCloseBtn = document.getElementById("walletCloseBtn");
+const codeTip = document.getElementById("codeTip");
+const showCodeBox = document.getElementById("showCodeBox");
+const verifyResult = document.getElementById("verifyResult");
+const tgPopup = document.getElementById("tgPopup");
+
+// ===================== 工具函数 =====================
+function showResult(message, type = "error") {
+  result.className = `result ${type}`;
+  result.innerHTML = message;
+  result.classList.remove("hidden");
+}
+
+function showCodeTip(html){
+  codeTip.innerHTML = html;
+  codeTip.classList.remove("hidden");
+}
+
+// 生成6位纯数字验证码
+function gen6Code(){
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
+
+// 切换BSC测试网
+async function switchBscTestnet() {
+  const t = texts[lang];
+  if (!window.ethereum) return true;
+  try {
+    await window.ethereum.request({
+      method: "wallet_switchEthereumChain",
+      params: [{ chainId: BSC_TESTNET_CHAINID }]
+    });
+    return true;
+  } catch (switchError) {
+    if (switchError.code === 4902) {
+      try {
+        await window.ethereum.request({
+          method: "wallet_addEthereumChain",
+          params: [BSC_TESTNET_PARAMS]
+        });
+        return true;
+      } catch (addError) {
+        showResult("添加BSC测试网失败", "error");
+        return false;
+      }
+    }
+    showResult("请切换到BSC测试网", "error");
+    return false;
+  }
+}
+
+// 打开/关闭钱包弹窗
+function openWalletModal(){walletModal.classList.remove("hidden");}
+function closeWalletModal(){walletModal.classList.add("hidden");}
+
+// 唤醒钱包跳转
+function openWallet(walletType) {
+  const currentPageUrl = window.location.href;
+  const wallet = WALLET_DEEPLINK[walletType];
+  const targetUrl = wallet.link(currentPageUrl);
+  window.open(targetUrl, "_blank");
+  closeWalletModal();
+}
+
+// 连接插件钱包
+async function connectInjectedWallet() {
+  if (!window.ethereum) {
+    openWalletModal();
+    return;
+  }
+  try {
+    const chainOk = await switchBscTestnet();
+    if (!chainOk) return;
+
+    const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+    const userAddr = accounts[0].toLowerCase();
+    addrInput.value = userAddr;
+    currentData.address = userAddr;
+    provider = new ethers.providers.Web3Provider(window.ethereum);
+    signer = provider.getSigner();
+  } catch (e) {
+    openWalletModal();
+  }
+}
+
+// 断开钱包
+function disconnectWallet() {
+  if (window.ethereum) {
+    window.ethereum.removeAllListeners("accountsChanged");
+    window.ethereum.removeAllListeners("chainChanged");
+  }
+  addrInput.value = "";
+  currentData = { address: "", rawAmount: 0, amountFull: "", proof: [] };
+  provider = null;
+  signer = null;
+  telegramVerified = false;
+  currentBindCode = "";
+  result.classList.add("hidden");
+  step1NextBtn.classList.add("hidden");
+}
+
+// 查询合约是否已领取
+async function checkContractClaimed(userAddr, retry = 3) {
+  try {
+    if (!provider) provider = new ethers.providers.JsonRpcProvider(BSC_TESTNET_PARAMS.rpcUrls[0]);
+    const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, provider);
+    return await contract.alreadyClaimed(userAddr.toLowerCase());
+  } catch (e) {
+    if (retry > 0) {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      return checkContractClaimed(userAddr, retry - 1);
+    }
+    return false;
+  }
+}
+
+// ===================== 核心业务逻辑 =====================
+// 1. 确认分配 / 查询资格
+confirmBtn.onclick = async () => {
+  const t = texts[lang];
+  const inputAddress = addrInput.value.trim();
+
+  if (!inputAddress || !inputAddress.startsWith("0x")) {
+    showResult(t.invalidAddr, "error");
+    step1NextBtn.classList.add("hidden");
+    return;
+  }
+
+  confirmBtn.disabled = true;
+  confirmBtn.textContent = t.confirming;
+  result.classList.add("hidden");
+
+  // 纯调用后端接口查资格
+  const res = await fetch(BACKEND_API,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({action:"check_eligible",wallet:inputAddress})
+  });
+  const json = await res.json();
+
+  if(!json.eligible){
+    showResult(t.notEligible, "error");
+    confirmBtn.disabled = false;
+    confirmBtn.textContent = t.confirmBtn;
+    return;
+  }
+
+  // 保存后端返回的金额+Proof
+  currentData.rawAmount = json.amount;
+  currentData.proof = json.proof;
+  currentData.amountFull = json.amount.toString() + "000000000000000000";
+  currentData.address = inputAddress.toLowerCase();
+
+  showResult(`
+    ${t.eligible}<br>
+    ${t.addr}: ${inputAddress}<br>
+    ${t.drop}: ${json.amount}
+  `, "success");
+
+  step1NextBtn.classList.remove("hidden");
+  confirmBtn.classList.add("hidden");
+};
+
+// 2. 生成验证码
+step1NextBtn.onclick = async () => {
+  const t = texts[lang];
+  currentBindCode = gen6Code();
+
+  // 发送验证码到后端保存
+  await fetch(BACKEND_API,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({action:"get_code",wallet:currentData.address,code:currentBindCode})
+  });
+
+  // 展示验证码
+  showCodeBox.innerText = currentBindCode;
+  showCodeTip(`${t.copyCodeTip}<br>${t.copyCodeTipZh}`);
+
+  // 切换到第二步
+  step2Content.classList.remove("hidden");
+  totalAmount.innerText = currentData.rawAmount;
+  claimableAmount.innerText = currentData.rawAmount;
+};
+
+// 3. 复制验证码
+copyCodeBtn.onclick = async () => {
+  const t = texts[lang];
+  await navigator.clipboard.writeText(currentBindCode);
+  alert(t.copyOk);
+};
+
+// 打开TG机器人 + 弹出半屏弹窗
+openBotBtn.onclick = () => {
+  window.open(TELEGRAM_BOT_LINK,"_blank");
+  tgPopup.classList.remove("hidden");
+};
+
+// 打开TG频道 + 弹出半屏弹窗
+joinChannelBtn.onclick = () => {
+  window.open(TELEGRAM_CHANNEL_LINK,"_blank");
+  tgPopup.classList.remove("hidden");
+};
+
+// 关闭TG半屏弹窗
+closeTgPopup.onclick = () => {
+  tgPopup.classList.add("hidden");
+};
+
+// 4. 一键验证绑定+频道
+finalCheckBtn.onclick = async () => {
+  const t = texts[lang];
+  const res = await fetch(BACKEND_API,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({action:"final_check",wallet:currentData.address})
+  });
+  const json = await res.json();
+
+  if(json.pass){
+    telegramVerified = true;
+    verifyResult.className = "result success";
+    verifyResult.innerText = t.verifySuccess;
+    verifyResult.classList.remove("hidden");
+    claimBtn.disabled = false;
+    claimBtn.innerText = "Claim Now / 立即领取";
+  }else{
+    verifyResult.className = "result error";
+    verifyResult.innerText = t.verifyFail;
+    verifyResult.classList.remove("hidden");
+  }
+};
+
+// 5. 合约领取代币
+claimBtn.onclick = async () => {
+  if(!signer){alert("请先连接钱包！");return;}
+  const iface = new ethers.utils.Interface(CONTRACT_ABI);
+  const txData = iface.encodeFunctionData("claim",[currentData.proof,currentData.amountFull]);
+
+  try{
+    const tx = await signer.sendTransaction({
+      to:CONTRACT_ADDRESS,
+      data:txData,
+      gasLimit:1000000
+    });
+    showResult(`✅ 领取成功！Tx哈希：${tx.hash}`,"success");
+  }catch(e){
+    showResult(`领取失败：${e.message}`,"error");
+  }
+};
+
+// ===================== 页面基础绑定 =====================
+// 钱包点击连接
+addressWrap.onclick = (e) => {
+  if(e.target.id === "walletArrowBtn") return;
+  connectInjectedWallet();
+};
+walletArrowBtn.onclick = disconnectWallet;
+
+// 钱包弹窗关闭/选择
+walletCloseBtn.onclick = closeWalletModal;
+walletMetaMask.onclick = ()=>openWallet("metamask");
+walletOKX.onclick = ()=>openWallet("okx");
+walletTokenPocket.onclick = ()=>openWallet("tokenpocket");
+walletTrust.onclick = ()=>openWallet("trust");
+
+// 双语/深色模式
+langBtn.onclick = () => {
+  lang = lang === "en" ? "zh" : "en";
+  langBtn.innerText = lang === "en" ? "中" : "EN";
+};
+themeBtn.onclick = () => {
+  light = !light;
+  document.documentElement.classList.toggle("light", light);
+};
+
+// 初始化
+window.onload = async () => {
+  if(window.ethereum){
+    const accounts = await window.ethereum.request({method:"eth_accounts"});
+    if(accounts.length > 0) connectInjectedWallet();
+  }
+};
+</script>
+</body>
+</html>
