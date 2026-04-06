@@ -1,0 +1,936 @@
+---
+permalink: /claim2
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claim Test</title>
+  <!-- 国内稳定CDN -->
+  <script src="https://cdn.bootcdn.net/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'JetBrains Mono', monospace;
+      transition: all 0.3s;
+    }
+
+    html { touch-action: manipulation; }
+    button {
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      cursor: pointer !important;
+    }
+
+    :root {
+      --bg: #0B0E16;
+      --card: #111827;
+      --input: #0F141F;
+      --border: #1F2937;
+      --text: #E1E7F5;
+      --muted: #4B5663;
+      --accent: #00B3CF;
+      --success: #00B3CF;
+      --error: #E53935;
+      --link-color: #00B3CF;
+      --mask: rgba(0,0,0,0.7);
+    }
+
+    :root.light {
+      --bg: #f8fafc;
+      --card: #fff;
+      --input: #f1f5f9;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --muted: #64748B;
+      --accent: #009AAD;
+      --success: #009AAD;
+      --error: #E53935;
+      --link-color: #009AAD;
+      --mask: rgba(0,0,0,0.5);
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+    }
+
+    a.custom-link{
+      color: var(--link-color);
+      text-decoration: underline;
+      font-weight: bold;
+    }
+    a.custom-link:hover{
+      opacity:0.8;
+    }
+
+    .toolbar {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      gap: 16px;
+      z-index: 9999;
+      flex-wrap: wrap;
+    }
+    .toolbar a,
+    .toolbar button {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+    }
+    .toolbar a:hover,
+    .toolbar a:active,
+    .toolbar button:hover,
+    .toolbar button:active {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 500px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 40px 30px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+      animation: scan 3s linear infinite;
+    }
+    @keyframes scan {
+      0%   { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 24px;
+      font-size: 24px;
+      line-height: 1.3;
+      transition: all 0.3s;
+    }
+    h1.hidden {
+      opacity: 0;
+      height: 0;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    .steps {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 30px;
+      position: relative;
+    }
+    .steps::before {
+      content: '';
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      height: 2px;
+      background: var(--border);
+      z-index: 0;
+    }
+    .steps .progress-line {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      height: 2px;
+      background: var(--accent);
+      z-index: 1;
+      transition: width 0.3s ease;
+    }
+    .step-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      width: 33.33%;
+      position: relative;
+      z-index: 2;
+      cursor: default;
+    }
+    .step-item.clickable {
+      cursor: pointer;
+    }
+    .step-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--border);
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .step-item.completed .step-circle {
+      background: var(--accent);
+      color: #fff;
+    }
+    .step-item.active .step-circle {
+      background: var(--accent);
+      color: #fff;
+    }
+    .step-text {
+      font-size: 11px;
+      text-align: center;
+      color: var(--muted);
+      line-height: 1.3;
+      word-break: break-word;
+      min-height: 30px;
+    }
+    .step-item.completed .step-text,
+    .step-item.active .step-text {
+      color: var(--text);
+    }
+
+    .input-group {
+      margin-bottom: 16px;
+      position: relative;
+    }
+    .address-wrap {
+      position: relative;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .address-input {
+      width: 100%;
+      padding: 14px 50px 14px 14px;
+      background: var(--input);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      outline: none;
+      cursor: pointer;
+      pointer-events: none;
+    }
+    .address-input::placeholder {
+      color: var(--muted);
+    }
+    .address-wrap:hover .address-input,
+    .address-wrap:active .address-input {
+      border-color: var(--accent);
+    }
+
+    .arrow-btn {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--accent);
+      border: 1.5px solid var(--accent);
+      color: #fff;
+      width: 36px;
+      height: 36px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+    }
+    .arrow-btn:hover {
+      opacity: 0.9;
+    }
+
+    button.main-btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--accent);
+      border: none;
+      border-radius: 4px;
+      color: #fff;
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+    button.main-btn:disabled {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    button.next-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(90deg, #2563eb, var(--accent));
+      border: none;
+      border-radius: 4px;
+      color: #fff;
+      font-weight: bold;
+      margin-top: 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .result {
+      margin: 20px 0;
+      padding: 14px;
+      background: var(--input);
+      border-left: 3px solid var(--border);
+      font-size: 13px;
+      line-height: 1.5;
+      word-break: break-all;
+      overflow-wrap: break-word;
+    }
+    .result.success { border-color: var(--success); }
+    .result.error { border-color: var(--error); }
+    .result.info { border-color: var(--accent); }
+
+    .form-row { margin: 16px 0; }
+    .hidden { display: none !important; }
+
+    /* 钱包弹窗 */
+    .wallet-mask {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--mask);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 99999;
+      padding: 20px;
+    }
+    .wallet-modal {
+      width: 100%;
+      max-width: 400px;
+      background: var(--card);
+      border-radius: 12px;
+      padding: 24px;
+      border: 1px solid var(--border);
+    }
+    .wallet-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .wallet-modal-header h3 {
+      font-size: 18px;
+    }
+    .wallet-close-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 24px;
+      cursor: pointer;
+      line-height: 1;
+    }
+    .wallet-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .wallet-item {
+      width: 100%;
+      padding: 16px;
+      background: var(--input);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+    .wallet-item:hover,
+    .wallet-item:active {
+      border-color: var(--accent);
+    }
+    .wallet-item-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .wallet-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+    }
+    .wallet-name {
+      font-size: 16px;
+      font-weight: 500;
+    }
+    .wallet-arrow {
+      color: var(--muted);
+      font-size: 18px;
+    }
+    .wallet-tip {
+      font-size: 10px;
+      color: var(--muted);
+      text-align: center;
+      margin-top: -8px;
+      margin-bottom: 12px;
+      padding: 0 16px;
+    }
+
+    .wait-claim-card {
+      margin-top: 20px;
+      background: var(--input);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .wait-claim-header {
+      padding: 20px 16px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .wait-claim-header h2 {
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+    .wait-claim-header p {
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .wait-claim-total {
+      padding: 20px 16px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .wait-claim-total p {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .wait-claim-total .amount {
+      font-size: 32px;
+      font-weight: bold;
+      color: var(--text);
+    }
+    .wait-claim-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    .wait-claim-grid-item {
+      padding: 16px;
+      text-align: center;
+    }
+    .wait-claim-grid-item:first-child {
+      border-right: 1px solid var(--border);
+    }
+    .wait-claim-grid-item p {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .wait-claim-grid-item .amount {
+      font-size: 20px;
+      font-weight: bold;
+      color: var(--text);
+    }
+    .wait-claim-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(90deg, #2563eb, var(--accent));
+      border: none;
+      color: #fff;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .wait-claim-btn:disabled {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+    .wait-claim-tip {
+      margin-top: 16px;
+      padding: 12px;
+      background: var(--input);
+      border-left: 3px solid var(--accent);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .listing-card {
+      margin-top: 20px;
+      text-align: center;
+      padding: 40px 20px;
+      background: var(--input);
+      border-radius: 8px;
+    }
+    .listing-icon {
+      width: 64px;
+      height: 64px;
+      border: 2px solid var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+    .listing-icon svg {
+      width: 32px;
+      height: 32px;
+      stroke: var(--accent);
+      stroke-width: 2;
+      fill: none;
+    }
+    .listing-card h2 {
+      font-size: 24px;
+      margin-bottom: 12px;
+    }
+    .listing-card p {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+    .listing-tag {
+      display: inline-block;
+      padding: 6px 16px;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    @media (max-width: 480px) {
+      .card {
+        padding: 30px 20px;
+      }
+      h1 {
+        font-size: 22px;
+        margin-bottom: 20px;
+      }
+      .steps {
+        margin-bottom: 24px;
+      }
+      .steps::before,
+      .steps .progress-line {
+        top: 14px;
+        left: 12px;
+        right: 12px;
+      }
+      .step-circle {
+        width: 28px;
+        height: 28px;
+        font-size: 12px;
+      }
+      .step-text {
+        font-size: 9px;
+        line-height: 1.2;
+        min-height: 26px;
+        gap: 6px;
+      }
+      button.main-btn,
+      button.next-btn {
+        margin-top: 14px;
+        margin-bottom: 14px;
+      }
+      .input-group {
+        margin-bottom: 14px;
+      }
+      .result {
+        margin: 16px 0;
+      }
+      .toolbar {
+        top: 10px;
+        right: 10px;
+        gap: 10px;
+      }
+      .toolbar a,
+      .toolbar button {
+        padding: 5px 8px;
+        font-size: 11px;
+      }
+      .wallet-icon {
+        width: 28px;
+        height: 28px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="toolbar">
+  <a href="https://t.me/CHiiiiiiiiiiiiiiiiii" target="_blank" rel="noopener noreferrer">Telegram</a>
+  <a href="https://x.com/taichicoin" target="_blank" rel="noopener noreferrer">X / Twitter</a>
+  <button id="langBtn">中</button>
+  <button id="themeBtn">Light</button>
+</div>
+
+<div class="card">
+  <h1 id="title">Allocation Confirm</h1>
+
+  <div class="steps">
+    <div class="progress-line" id="progressLine"></div>
+    <div class="step-item active clickable" id="step1">
+      <div class="step-circle">1</div>
+      <div class="step-text" id="stepText1">Allocation Confirm</div>
+    </div>
+    <div class="step-item" id="step2">
+      <div class="step-circle">2</div>
+      <div class="step-text" id="stepText2">Ready to Claim</div>
+    </div>
+    <div class="step-item" id="step3">
+      <div class="step-circle">3</div>
+      <div class="step-text" id="stepText3">Wait Listing</div>
+    </div>
+  </div>
+
+  <div id="step1Content">
+    <div class="input-group">
+      <div class="address-wrap" id="addressWrap">
+        <input type="text" id="address" class="address-input" placeholder="click to connect wallet" readonly/>
+        <button class="arrow-btn" id="walletArrowBtn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 6L6 18M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <button class="main-btn" id="confirmBtn">CONFIRM ALLOCATION</button>
+    <div id="result" class="result hidden"></div>
+    <button id="step1NextBtn" class="next-btn hidden" onclick="setStep(2)"><span id="nextBtnText">NEXT →</span></button>
+  </div>
+
+  <div id="step2Content" class="hidden">
+    <div class="wait-claim-card">
+      <div class="wait-claim-header">
+        <div style="width:48px;height:48px;border:2px solid var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent)">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+        <h2 id="waitClaimTitle">Ready to Claim</h2>
+        <p id="waitClaimSubtitle">Your allocation has been finalized, you can claim now.</p>
+      </div>
+      <div class="wait-claim-total">
+        <p id="waitClaimTotalText">Total Allocation</p>
+        <div class="amount" id="totalAmount">0</div>
+      </div>
+      <div class="wait-claim-grid">
+        <div class="wait-claim-grid-item">
+          <p id="claimedText">Claimed</p>
+          <div class="amount">0</div>
+        </div>
+        <div class="wait-claim-grid-item">
+          <p id="claimableText">Pending Claim</p>
+          <div class="amount" id="claimableAmount">0</div>
+        </div>
+      </div>
+      <button class="wait-claim-btn" id="claimBtn" disabled>LOADING...</button>
+    </div>
+    <div id="claimResult" class="result hidden"></div>
+  </div>
+
+  <div id="step3Content" class="hidden">
+    <div class="listing-card">
+      <div class="listing-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10" />
+          <polyline points="12 6 12 12 16 14" />
+        </svg>
+      </div>
+      <h2 id="listingTitle">Coming Soon</h2>
+      <p id="listingDesc">
+        Token listing is pending, please wait for the official announcement.
+      </p>
+      <span class="listing-tag" id="listingTag">Status: Pending</span>
+    </div>
+  </div>
+</div>
+
+<!-- 钱包弹窗 -->
+<div class="wallet-mask hidden" id="walletModal">
+  <div class="wallet-modal">
+    <div class="wallet-modal-header">
+      <h3 id="walletModalTitle">Connect Wallet</h3>
+      <button class="wallet-close-btn" id="walletCloseBtn">×</button>
+    </div>
+    <div class="wallet-list">
+      <div class="wallet-item" id="walletMetaMask">
+        <div class="wallet-item-left">
+          <img src="mm.jpg" alt="MetaMask" class="wallet-icon" />
+          <div class="wallet-name">MetaMask</div>
+        </div>
+        <div class="wallet-arrow">→</div>
+      </div>
+      <div class="wallet-item" id="walletOKX">
+        <div class="wallet-item-left">
+          <img src="okx.jpg" alt="OKX Wallet" class="wallet-icon" />
+          <div class="wallet-name">OKX Wallet</div>
+        </div>
+        <div class="wallet-arrow">→</div>
+      </div>
+      <div class="wallet-item" id="walletTokenPocket">
+        <div class="wallet-item-left">
+          <img src="tp.jpg" alt="TokenPocket" class="wallet-icon" />
+          <div class="wallet-name">TokenPocket</div>
+        </div>
+        <div class="wallet-arrow">→</div>
+      </div>
+      <div class="wallet-item" id="walletTrust">
+        <div class="wallet-item-left">
+          <img src="tw.jpg" alt="Trust Wallet" class="wallet-icon" />
+          <div class="wallet-name">Trust Wallet</div>
+        </div>
+        <div class="wallet-arrow">→</div>
+      </div>
+      <p class="wallet-tip" id="walletTip"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+// ========== 核心固定配置 ==========
+const API_CHECK = "https://sznjaotjoljaiawbvfro.supabase.co/functions/v1/claim-check";
+const CONTRACT_ADDRESS = "0xedb9f60e0607fB8828501F9d20Ef9ad20872DEa5";
+const BSC_TESTNET_CHAINID = "0x61";
+const BSC_TESTNET_CHAINID_DEC = 97;
+const TOKEN_DECIMALS = 18;
+
+const WALLET_DEEPLINK = {
+  metamask: {name: "MetaMask",link: (u) => `https://metamask.app.link/dapp/${u.replace("https://","")}`},
+  okx: {name: "OKX",link: (u) => `https://www.okx.com/download?deeplink=okx://wallet/dapp/url?dappUrl=${encodeURIComponent(u)}`},
+  tokenpocket: {name: "TP",link: (u) => `tpdapp://open?params=${encodeURIComponent(JSON.stringify({url:u}))}`},
+  trust: {name: "Trust",link: (u) => `https://link.trustwallet.com/open_url?url=${encodeURIComponent(u)}`}
+};
+
+const CONTRACT_ABI = [
+  "function claim(bytes32[] calldata proof, uint256 amount) external",
+  "function alreadyClaimed(address) view returns(bool)",
+  "event ClaimSuccess(address indexed user, uint256 amount)"
+];
+
+const BSC_TESTNET_PARAMS = {
+  chainId:"0x61",chainName:"BSC Testnet",
+  nativeCurrency:{name:"tBNB",symbol:"tBNB",decimals:18},
+  rpcUrls:["https://bsc-testnet-rpc.publicnode.com","https://bsc-testnet.publicnode.com"],
+  blockExplorerUrls:["https://testnet.bscscan.com/"]
+};
+
+// 双语文案
+const texts = {
+  en:{
+    stepText1:"Allocation Confirm",stepText2:"Ready to Claim",stepText3:"Wait Listing",
+    title:"Allocation Confirm",addrPlaceholder:"click to connect wallet",
+    confirmBtn:"CONFIRM ALLOCATION",confirming:"CONFIRMING...",
+    invalidAddr:"Please connect wallet first",eligible:"✅ ALLOCATION CONFIRMED",
+    addr:"ADDRESS",drop:"AIRDROP ALLOCATION",notEligible:"❌ NO ALLOCATION FOUND",
+    noRecord:"No allocation record for this address,Please visit the <a href='https://taichicoin.xyz/register' target='_blank' class='custom-link'>Check and Register</a> Page",
+    nextBtn:"NEXT →",waitClaimTitle:"Ready to Claim",
+    waitClaimSubtitle:"Your allocation has been finalized, you can claim now.",
+    waitClaimTotalText:"Total Allocation",claimedText:"Claimed",claimableText:"Pending Claim",
+    claimBtn:"Claim Now",claiming:"CLAIMING...",loading:"LOADING...",checking:"CHECKING STATUS...",
+    listingTitle:"Coming Soon",listingDesc:"Token listing is pending, please wait for the official announcement.",
+    listingTag:"Status: Pending",langBtn:"中",themeBtn:"Light",themeBtnDark:"Dark",
+    err_ethers:"Wallet library loading failed, please refresh the page",err_noWallet:"No wallet detected",
+    err_addrNotMatch:"Wallet address not match",err_switchChain:"Please switch to BSC Testnet",
+    err_noRecord:"No valid allocation data",err_claimFailed:"Claim failed",err_alreadyClaimed:"Already Claimed",
+    err_invalidProof:"Invalid Merkle Proof",err_invalidAmount:"Invalid amount",err_txTimeout:"Transaction submitted",
+    walletModalTitle:"Connect Wallet",walletTip:"Copy link open in wallet DApp",success_claim:"✅ Claim successful"
+  },
+  zh:{
+    stepText1:"分配确认",stepText2:"准备领取",stepText3:"等待上市",
+    title:"分配确认",addrPlaceholder:"点击连接钱包",confirmBtn:"确认分配",confirming:"确认中...",
+    invalidAddr:"请先连接钱包",eligible:"✅ 分配已确认",addr:"地址",drop:"空投分配数量",
+    notEligible:"❌ 未找到分配记录",noRecord:"请访问<a href='https://taichicoin.xyz/register' target='_blank' class='custom-link'>资格查询和注册</a>页面",
+    nextBtn:"下一步 →",waitClaimTitle:"准备领取",waitClaimSubtitle:"分配已确认，可领取代币",
+    waitClaimTotalText:"总分配额度",claimedText:"已领取",claimableText:"待领取",claimBtn:"立即领取",
+    claiming:"领取中...",loading:"加载中...",checking:"检查状态中...",listingTitle:"即将上线",
+    listingDesc:"代币等待上线，请留意官方公告",listingTag:"状态：待定",langBtn:"EN",themeBtn:"浅色",
+    themeBtnDark:"深色",err_ethers:"钱包库加载失败，请刷新",err_noWallet:"未检测到钱包",
+    err_addrNotMatch:"钱包地址不匹配",err_switchChain:"请切换BSC测试网",err_noRecord:"无有效分配数据",
+    err_claimFailed:"领取失败",err_alreadyClaimed:"已领取",err_invalidProof:"凭证格式错误",
+    err_invalidAmount:"数量无效",err_txTimeout:"交易已提交",walletModalTitle:"连接钱包",
+    walletTip:"复制链接到钱包DApp打开",success_claim:"✅ 领取成功"
+  }
+};
+
+// 全局变量
+let lang = "en", light = false;
+let currentData = {address:"",rawAmount:0,amountFull:"",proof:[]};
+let currentStep = 1, stepsEnabled = false;
+let ethersLoaded = false, provider = null, signer = null;
+
+// DOM
+const title = document.getElementById("title");
+const addrInput = document.getElementById("address");
+const addressWrap = document.getElementById("addressWrap");
+const confirmBtn = document.getElementById("confirmBtn");
+const result = document.getElementById("result");
+const step1NextBtn = document.getElementById("step1NextBtn");
+const claimBtn = document.getElementById("claimBtn");
+const claimResult = document.getElementById("claimResult");
+const langBtn = document.getElementById("langBtn");
+const themeBtn = document.getElementById("themeBtn");
+const step1Content = document.getElementById("step1Content");
+const step2Content = document.getElementById("step2Content");
+const step3Content = document.getElementById("step3Content");
+const progressLine = document.getElementById("progressLine");
+const step1 = document.getElementById("step1");
+const step2 = document.getElementById("step2");
+const step3 = document.getElementById("step3");
+const totalAmount = document.getElementById("totalAmount");
+const claimableAmount = document.getElementById("claimableAmount");
+const walletArrowBtn = document.getElementById("walletArrowBtn");
+const walletModal = document.getElementById("walletModal");
+const walletCloseBtn = document.getElementById("walletCloseBtn");
+const walletMetaMask = document.getElementById("walletMetaMask");
+const walletOKX = document.getElementById("walletOKX");
+const walletTokenPocket = document.getElementById("walletTokenPocket");
+const walletTrust = document.getElementById("walletTrust");
+const walletModalTitle = document.getElementById("walletModalTitle");
+const walletTip = document.getElementById("walletTip");
+
+// 工具方法
+function showResult(msg,type="error"){result.className=`result ${type}`;result.innerHTML=msg;result.classList.remove("hidden");}
+async function switchBscTestnet(){const t=texts[lang];if(!window.ethereum)return true;try{await window.ethereum.request({method:"wallet_switchEthereumChain",params:[{chainId:BSC_TESTNET_CHAINID}]});return true;}catch(e){if(e.code===4902){try{await window.ethereum.request({method:"wallet_addEthereumChain",params:[BSC_TESTNET_PARAMS]});return true;}catch(){showResult(t.err_addChain,"error");return false;}}showResult(t.err_switchChain,"error");return false;}}
+function openWallet(walletType){const u=window.location.href;const l=WALLET_DEEPLINK[walletType].link(u);let o=false;window.location.href=l;document.addEventListener("visibilitychange",()=>{if(document.hidden)o=true;});setTimeout(()=>{if(!o)window.open(l,"_blank");closeWalletModal();},3000);}
+async function connectInjectedWallet(){const t=texts[lang];if(!window.ethereum){openWalletModal();return;}const ok=await switchBscTestnet();if(!ok)return;const acc=await window.ethereum.request({method:"eth_requestAccounts"});const addr=acc[0].toLowerCase();addrInput.value=addr;currentData.address=addr;provider=new ethers.providers.Web3Provider(window.ethereum);signer=provider.getSigner();window.ethereum.on("accountsChanged",a=>{if(!a.length)disconnectWallet();else addrInput.value=a[0].toLowerCase();});window.ethereum.on("chainChanged",c=>{if(c!==BSC_TESTNET_CHAINID)showResult(t.err_switchChain,"error");});}
+function openWalletModal(){walletModalTitle.textContent=texts[lang].walletModalTitle;walletTip.textContent=texts[lang].walletTip;walletModal.classList.remove("hidden");}
+function closeWalletModal(){walletModal.classList.add("hidden");}
+async function connectWallet(){if(currentData.address)return;await connectInjectedWallet();}
+function disconnectWallet(){if(window.ethereum){window.ethereum.removeAllListeners("accountsChanged");window.ethereum.removeAllListeners("chainChanged");}addrInput.value="";currentData={address:"",rawAmount:0,amountFull:"",proof:[]};provider=null;signer=null;result.classList.add("hidden");step1NextBtn.classList.add("hidden");confirmBtn.classList.remove("hidden");stepsEnabled=false;setStep(1);}
+async function checkContractClaimed(addr,retry=3){try{if(!provider)provider=new ethers.providers.JsonRpcProvider(BSC_TESTNET_PARAMS.rpcUrls[0]);const c=new ethers.Contract(CONTRACT_ADDRESS,CONTRACT_ABI,provider);return await c.alreadyClaimed(addr.toLowerCase());}catch(e){if(retry>0){provider=new ethers.providers.JsonRpcProvider(BSC_TESTNET_PARAMS.rpcUrls[retry%BSC_TESTNET_PARAMS.rpcUrls.length]);await new Promise(r=>setTimeout(r,1000));return checkContractClaimed(addr,retry-1);}return false;}}
+function setUIFullyClaimed(){document.querySelector(".wait-claim-grid .wait-claim-grid-item:first-child .amount").textContent=currentData.rawAmount;claimableAmount.textContent="0";claimBtn.disabled=true;claimBtn.textContent=texts[lang].err_alreadyClaimed;}
+async function pollTxStatus(h,addr){const t=texts[lang];let r=10;const p=new ethers.providers.JsonRpcProvider(BSC_TESTNET_PARAMS.rpcUrls[0]);while(r>0){try{const tx=await p.getTransactionReceipt(h);if(tx&&tx.status===1){setUIFullyClaimed();claimResult.className="result success";claimResult.innerHTML=`${t.success_claim}<br><a href="https://testnet.bscscan.com/tx/${h}" target="_blank" style="color:var(--accent)">查看链上记录</a>`;claimResult.classList.remove("hidden");setTimeout(()=>setStep(3),12000);return true;}}catch(e){}r--;await new Promise(r=>setTimeout(r,2000));}const ok=await checkContractClaimed(addr);if(ok){setUIFullyClaimed();claimResult.className="result success";claimResult.innerHTML=`${t.success_claim}<br><a href="https://testnet.bscscan.com/tx/${h}" target="_blank" style="color:var(--accent)">查看链上记录</a>`;claimResult.classList.remove("hidden");setTimeout(()=>setStep(3),12000);return true;}else{claimResult.className="result error";claimResult.textContent=t.err_txTimeout;claimResult.classList.remove("hidden");return false;}}
+
+// 页面交互
+addressWrap.addEventListener("click",e=>{if(!e.target.closest("#walletArrowBtn"))connectWallet();});
+walletArrowBtn.addEventListener("click",disconnectWallet);
+walletCloseBtn.addEventListener("click",closeWalletModal);
+walletMetaMask.onclick=()=>openWallet("metamask");
+walletOKX.onclick=()=>openWallet("okx");
+walletTokenPocket.onclick=()=>openWallet("tokenpocket");
+walletTrust.onclick=()=>openWallet("trust");
+
+window.onload=async()=>{setStep(1);bindStepClicks();checkEthersLoaded();if(window.ethereum){const acc=await window.ethereum.request({method:"eth_accounts"});if(acc.length>0)await connectInjectedWallet();}updateUI();};
+function bindStepClicks(){step1.onclick=()=>location.reload();step2.onclick=()=>stepsEnabled&&setStep(2);step3.onclick=()=>stepsEnabled&&setStep(3);}
+function setStep(n){currentStep=n;[step1,step2,step3].forEach(i=>i.classList.remove("active","completed"));for(let i=1;i<n;i++){const el=document.getElementById(`step${i}`);el.classList.add("completed");el.querySelector(".step-circle").innerText="✓";}document.getElementById(`step${n}`).classList.add("active");progressLine.style.width=`${((n-1)/2)*100}%`;title.classList.toggle("hidden",n!==1);step1Content.classList.add("hidden");step2Content.classList.add("hidden");step3Content.classList.add("hidden");result.classList.add("hidden");claimResult.classList.add("hidden");if(n===1)step1Content.classList.remove("hidden");if(n===2){step2Content.classList.remove("hidden");totalAmount.textContent=currentData.rawAmount;claimableAmount.textContent=currentData.rawAmount;claimBtn.textContent=texts[lang].checking;checkContractClaimed(currentData.address).then(x=>x?setUIFullyClaimed():(claimBtn.textContent=texts[lang].claimBtn,claimBtn.disabled=false));}if(n===3)step3Content.classList.remove("hidden");}
+function enableAllSteps(){stepsEnabled=true;step2.classList.add("clickable");step3.classList.add("clickable");}
+function updateUI(){const t=texts[lang];document.getElementById("stepText1").innerText=t.stepText1;document.getElementById("stepText2").innerText=t.stepText2;document.getElementById("stepText3").innerText=t.stepText3;title.innerText=t.title;addrInput.placeholder=t.addrPlaceholder;langBtn.innerText=t.langBtn;themeBtn.innerText=light?t.themeBtnDark:t.themeBtn;}
+function checkEthersLoaded(){if(typeof ethers!=="undefined"){ethersLoaded=true;claimBtn.textContent=texts[lang].claimBtn;claimBtn.disabled=false;}else{let c=0;const iv=setInterval(()=>{c++;if(typeof ethers!=="undefined"){ethersLoaded=true;claimBtn.textContent=texts[lang].claimBtn;claimBtn.disabled=false;clearInterval(iv);}else if(c>=10){claimBtn.textContent=texts[lang].err_ethers;claimBtn.disabled=true;clearInterval(iv);}},500);}}
+const bindClick=(el,cb)=>{el.onclick=cb;el.ontouchstart=e=>{e.preventDefault();cb();};};
+bindClick(langBtn,()=>{lang=lang==="en"?"zh":"en";updateUI();});
+bindClick(themeBtn,()=>{light=!light;document.documentElement.classList.toggle("light",light);updateUI();});
+
+// ========== 核心：已替换为 claim-check 云函数（删除前端直连数据库） ==========
+confirmBtn.onclick=async()=>{
+  const t=texts[lang];
+  const inputAddr=addrInput.value.trim().toLowerCase();
+  if(!/^0x[a-fA-F0-9]{40}$/.test(inputAddr)){showResult(t.invalidAddr,"error");step1NextBtn.classList.add("hidden");return;}
+
+  confirmBtn.disabled=true;
+  confirmBtn.textContent=t.confirming;
+  showResult(t.confirming,"info");
+  step1NextBtn.classList.add("hidden");
+
+  try{
+    // 调用你指定的唯一后端接口
+    const res=await fetch(API_CHECK,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({address:inputAddr})
+    });
+    const data=await res.json();
+
+    // 无资格
+    if(!data||!data.address){
+      result.className="result error";
+      result.innerHTML=`${t.notEligible}<br>${t.addr}:${inputAddr}<br>${t.noRecord}`;
+      step1NextBtn.classList.add("hidden");
+      confirmBtn.classList.remove("hidden");
+      return;
+    }
+
+    // 解析数据
+    const rawAmt=Number(data.airdrop_amount);
+    if(isNaN(rawAmt)||rawAmt<=0){showResult(t.err_invalidAmount,"error");confirmBtn.disabled=false;confirmBtn.textContent=t.confirmBtn;return;}
+
+    let proof=[];
+    try{
+      proof=typeof data.merkle_proof==="string"?JSON.parse(data.merkle_proof):data.merkle_proof;
+      if(!Array.isArray(proof)||proof.length===0)throw new Error();
+      proof.forEach(p=>{if(!p.startsWith("0x")||p.length!==66)throw new Error();});
+    }catch(){showResult(t.err_invalidProof,"error");confirmBtn.disabled=false;confirmBtn.textContent=t.confirmBtn;return;}
+
+    const fullAmt=rawAmt.toString()+"000000000000000000";
+    currentData={address:data.address.toLowerCase(),rawAmount:rawAmt,amountFull:fullAmt,proof:proof};
+
+    // 成功展示
+    result.className="result success";
+    result.innerHTML=`${t.eligible}<br>${t.addr}:${data.address}<br>${t.drop}:${rawAmt} CHI`;
+    step1NextBtn.classList.remove("hidden");
+    enableAllSteps();
+    confirmBtn.classList.add("hidden");
+  }catch(e){
+    console.error(e);
+    showResult(t.err_claimFailed,"error");
+    step1NextBtn.classList.add("hidden");
+  }finally{
+    confirmBtn.disabled=false;
+    confirmBtn.textContent=t.confirmBtn;
+  }
+};
+
+// 合约领取逻辑（完全保留原版）
+claimBtn.onclick=async function(){
+  const t=texts[lang];
+  const orgTxt=claimBtn.textContent;
+  claimBtn.disabled=true;claimBtn.textContent=t.checking;
+
+  const already=await checkContractClaimed(currentData.address);
+  if(already){setUIFullyClaimed();claimResult.className="result success";claimResult.textContent=t.err_alreadyClaimed;claimResult.classList.remove("hidden");return;}
+  if(!currentData.address||!currentData.proof?.length||!currentData.amountFull){claimResult.className="result error";claimResult.textContent=t.err_noRecord;claimResult.classList.remove("hidden");claimBtn.disabled=false;claimBtn.textContent=orgTxt;return;}
+  if(!signer){claimResult.className="result error";claimResult.textContent=t.err_noWallet;claimResult.classList.remove("hidden");claimBtn.disabled=false;claimBtn.textContent=orgTxt;return;}
+
+  claimBtn.textContent=t.claiming;claimResult.classList.add("hidden");
+  try{
+    const walletAddr=await signer.getAddress();
+    if(walletAddr.toLowerCase()!==currentData.address.toLowerCase()){claimResult.className="result error";claimResult.textContent=t.err_addrNotMatch;claimResult.classList.remove("hidden");claimBtn.disabled=false;claimBtn.textContent=orgTxt;return;}
+
+    const iface=new ethers.utils.Interface(CONTRACT_ABI);
+    const txData=iface.encodeFunctionData("claim",[currentData.proof,currentData.amountFull]);
+    const tx=await signer.sendTransaction({to:CONTRACT_ADDRESS,data:txData,gasLimit:1000000});
+    await pollTxStatus(tx.hash,currentData.address);
+  }catch(err){
+    console.error(err);
+    const finalCheck=await checkContractClaimed(currentData.address);
+    if(finalCheck){setUIFullyClaimed();claimResult.className="result success";claimResult.innerHTML=`${t.success_claim}`;claimResult.classList.remove("hidden");}
+    else{claimResult.className="result error";claimResult.textContent=`Claim failed: ${err.reason||err.message||"execution reverted"}`;claimResult.classList.remove("hidden");}
+  }finally{
+    const finalCheck=await checkContractClaimed(currentData.address);
+    if(!finalCheck){claimBtn.disabled=false;claimBtn.textContent=orgTxt;}
+  }
+};
+</script>
+</body>
+</html>
