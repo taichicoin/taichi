@@ -1,4 +1,4 @@
-// 图片已自动改成 assets/card/ 不影响显示
+// 1.原有山海经卡牌
 const allCardsData = [
   {id:1,name:"Ying Dragon",skill:"yinglong",image:"assets/card/yl.jpg",baseAtk:3,baseHp:5,cost:1},
   {id:2,name:"Nine-Tailed Fox",skill:"jiuweihu",image:"assets/card/jwf.jpg",baseAtk:8,baseHp:10,cost:3},
@@ -6,6 +6,9 @@ const allCardsData = [
   {id:4,name:"Qiong Qi",skill:"qiongqi",image:"assets/card/qq.jpg",baseAtk:10,baseHp:15,cost:4},
   {id:5,name:"Jingwei",skill:"jingwei",image:"assets/card/jw.jpg",baseAtk:12,baseHp:18,cost:5}
 ];
+
+// 2.合并：山海经 + 西游 全部进商店卡池
+const totalCardPool = [...allCardsData, ...XiYouCards];
 
 let currentGold=2,currentTurn=1,isNextTurnDisabled=false;
 let cardSaveData = {};
@@ -40,7 +43,8 @@ function getGridCards(){
 
 function refreshShopOnly(){
   shopArea.innerHTML="";
-  const sel=[...allCardsData].sort(()=>Math.random()-0.5).slice(0,3);
+  // 从总卡池（山海经+西游）随机刷3张
+  const sel=[...totalCardPool].sort(()=>Math.random()-0.5).slice(0,3);
   sel.forEach(card=>{
     const wrap=document.createElement("div");wrap.className="card-wrapper";
     const el=document.createElement("div");el.className="card";
@@ -148,7 +152,7 @@ function updateCardStatsVisual(){
     let nowHp = g.baseHp + s.jing + s.ying + s.qiong + s.baizeHp;
     g.el.querySelector(".card-stat").innerHTML = `<span class="atk-red">${nowAtk}</span>/<span class="hp-green">${nowHp}</span>`;
     g.el.classList.add("card-grow-flash");
-    setTimeout(()=>g.el.classList.remove("card-grow-flash"),600);
+    setTimeout(()=>g.el.removeAttribute("class"),600);
   });
 }
 
