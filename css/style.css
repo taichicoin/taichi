@@ -1,52 +1,82 @@
-* { margin: 0; padding: 0; box-sizing: border-box; }
+/* ========== 纯原生原版样式 1:1 不动 ========== */
+* {margin: 0;padding: 0;box-sizing: border-box;}
 body {
-  background: #000;
-  color: #fff;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #111 0%, #000 100%);
-  min-height: 100vh;
+    background: #222;
+    color: #fff;
+    font-family: sans-serif;
+    padding: 10px;
 }
-#game-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
+h3 {
+    margin: 8px 0;
+    font-size: 16px;
+    color: #ffd700;
 }
-h1 {
-  color: #ffd700;
-  text-align: center;
-  margin-bottom: 30px;
-  text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700;
-}
+/* 原版卡片尺寸 丝毫不改 */
 .card {
-  display: inline-block;
-  width: 180px;
-  height: 260px;
-  border: 2px solid #ffd700;
-  border-radius: 10px;
-  margin: 10px;
-  padding: 10px;
-  background: rgba(0,0,0,0.8);
-  text-align: center;
-  box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
-  transition: all 0.3s ease;
-}
-.card:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
+    width: 90px;
+    height: 120px;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+    background: #000;
+    display: inline-block;
+    margin: 3px;
+    cursor: grab;
 }
 .card img {
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
-  border-radius: 5px;
-  margin-bottom: 10px;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
-.card h3 {
-  color: #ffd700;
-  font-size: 16px;
-  margin-bottom: 5px;
+.card-data {
+    position: absolute;
+    bottom: 2px;
+    left: 2px;
+    font-size: 12px;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px #000;
 }
-.card p {
-  font-size: 12px;
-  color: #ccc;
+.atk {color: #ff4444;}
+.hp {color: #4cd137;}
+.cost {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background: red;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    font-size: 11px;
+    text-align: center;
+    line-height: 18px;
+}
+/* 原版格子布局 */
+.grid-slot {
+    width: 90px;
+    height: 120px;
+    border: 2px dashed #666;
+    border-radius: 6px;
+    display: inline-block;
+    margin: 3px;
+    vertical-align: top;
+}
+/* 原版按钮/文字 */
+.ctrl {margin: 10px 0;}
+button {
+    padding: 6px 12px;
+    margin: 0 3px;
+    border: none;
+    border-radius: 4px;
+    background: #ffd700;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+}
+.gold-text {color: #ffd700;margin: 0 5px;}
+/* 原版动画不变 */
+.grow-flash {animation: growFlash 0.5s ease;}
+@keyframes growFlash{
+    0%{transform:scale(1);}
+    50%{transform:scale(1.05);box-shadow:0 0 8px #ffd700;}
+    100%{transform:scale(1);}
 }
