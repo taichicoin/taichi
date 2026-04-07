@@ -1,34 +1,41 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
-<title>悠悠牌 · 山海经</title>
-<!-- 只引用样式文件 -->
+<title>Shan Hai Jing Card Game</title>
+<!-- 引入外部CSS -->
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<!-- 只写页面骨架，所有渲染逻辑交给 main.js -->
-<h3>🏪 卡牌商店 <span class="gold-text">灵石：<span id="gold">2</span></span></h3>
-<div id="shop"></div>
+<div class="container">
+  <div class="shop-section">
+    <div class="shop-header">
+      <div class="shop-title">Card Shop</div>
+      <div class="gold-display">Gold: <span id="current-gold">2</span></div>
+    </div>
+    <div class="shop-cards" id="shop-cards"></div>
+  </div>
 
-<div class="ctrl">
-    <span>回合：<span id="turn">1</span></span>
-    <button id="nextTurnBtn">下一回合</button>
-    <button id="refreshBtn">刷新(1灵石)</button>
+  <div class="control-bar">
+    <div class="turn-display">Turn: <span id="current-turn">1</span></div>
+    <button id="next-turn-btn">Next</button>
+    <button id="refresh-btn">Refresh(1G)</button>
+  </div>
+
+  <div class="grid-section">
+    <div class="grid-title">Your Deck (Max 6)</div>
+    <div class="card-grid" id="card-grid">
+      <div class="grid-slot"></div><div class="grid-slot"></div><div class="grid-slot"></div>
+      <div class="grid-slot"></div><div class="grid-slot"></div><div class="grid-slot"></div>
+    </div>
+  </div>
 </div>
 
-<h3>🎴 我的卡组阵位</h3>
-<div id="grid">
-    <div class="grid-slot"></div>
-    <div class="grid-slot"></div>
-    <div class="grid-slot"></div>
-    <div class="grid-slot"></div>
-    <div class="grid-slot"></div>
-    <div class="grid-slot"></div>
-</div>
+<div id="drag-preview"></div>
+<footer>© 2026 Taichicoin · Built by AI</footer>
 
-<!-- 只引用逻辑文件 -->
+<!-- 引入外部JS逻辑 -->
 <script src="js/main.js"></script>
 </body>
 </html>
