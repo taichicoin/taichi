@@ -1,14 +1,461 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-  <meta charset="utf-8">
-  <title>YY卡牌</title>
-  <link rel="stylesheet" href="css/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>CF & 山海经 卡牌主游戏</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+/* 保留你原版完整商店+卡组样式 */
+* {margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
+body{
+  background:linear-gradient(180deg,#4a5a72 0%,#6b7a92 50%,#8a9ab2 100%);
+  color:#fff;
+  padding:10px;
+  min-height:100vh;
+  overflow-x:hidden;
+  display:flex;
+  flex-direction:column;
+  touch-action: none;
+}
+.container{
+  max-width:100%;
+  margin:0 auto;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+
+.shop-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;max-width:350px;margin-left:auto;margin-right:auto;}
+.shop-title{font-size:20px;font-weight:bold;color:#feca57;text-shadow:1px 1px 2px rgba(0,0,0,0.3);}
+.gold-display{
+  font-size:12px;font-weight:bold;color:#ffcc00;
+  background:#161624;padding:2px 8px;border-radius:4px;border:1px solid #d4af37;
+  box-shadow:0 1px 2px rgba(0,0,0,0.3);
+}
+
+.shop-cards{
+  display:flex;gap:8px;justify-content:center;margin-bottom:6px;flex-wrap:nowrap;
+  transition:all 0.2s;
+}
+.shop-cards.sell-ready{
+  border:2px dashed #ff6b6b;
+  border-radius:12px;
+  padding:6px;
+  background:rgba(255,107,107,0.1);
+}
+.card-wrapper{display:flex;flex-direction:column;align-items:center;}
+
+.card{
+  width:110px;height:150px;
+  border-radius:12px;overflow:hidden;
+  cursor:grab;background:#000;position:relative;
+  box-shadow:0 2px 4px rgba(0,0,0,0.3);
+  transition:all 0.3s ease;
+  user-select:none;
+  -webkit-user-select:none;
+}
+.card.dragging-source{opacity:0.3;}
+.card img{width:100%;height:100%;object-fit:cover;pointer-events:none;display:block;}
+.card-stat{
+  position:absolute;left:4px;bottom:4px;
+  font-size:14px;font-weight:bold;
+  text-shadow:1px 1px 3px #000;
+  z-index:2;
+}
+.atk-red{color:#ff4444;}
+.hp-green{color:#2ee060;}
+
+.card-grow-flash{
+  animation: growFlash 0.6s ease;
+}
+@keyframes growFlash{
+  0%{transform:scale(1);box-shadow:0 0 0 #2ed573;}
+  50%{transform:scale(1.05);box-shadow:0 0 15px #2ed573;}
+  100%{transform:scale(1);}
+}
+.float-text{
+  position:absolute;pointer-events:none;
+  font-weight:bold;font-size:12px;
+  color:#2ed573;text-shadow:1px 1px 2px #000;
+  animation: floatUp 1s ease forwards;
+  z-index:10;
+}
+@keyframes floatUp{
+  0%{opacity:1;bottom:20px;}
+  100%{opacity:0;bottom:60px;}
+}
+
+.card-cost-external{
+  margin-top:3px;font-size:12px;font-weight:bold;color:#fff;
+  background:#ff6b6b;width:22px;height:22px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;border:1px solid white;
+  box-shadow:0 1px 2px rgba(0,0,0,0.3);
+}
+.card.insufficient-funds{opacity:0.6;cursor:not-allowed;}
+
+#drag-preview{
+  position:fixed;
+  z-index:9999;
+  pointer-events:none;
+  border:2px dashed #feca57;
+  border-radius:12px;
+  width:110px;
+  height:150px;
+  display:none;
+}
+
+.control-bar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:10px auto;
+  max-width:350px;
+  width:100%;
+}
+.turn-display{
+  font-size:12px;font-weight:bold;background:#4834d4;
+  padding:4px 10px;border-radius:10px;
+  box-shadow:0 1px 2px rgba(0,0,0,0.3);
+}
+#next-turn-btn,#refresh-btn{
+  padding:4px 10px;border:none;border-radius:6px;
+  color:white;font-size:12px;font-weight:bold;cursor:pointer;
+  box-shadow:0 1px 2px rgba(0,0,0,0.3);
+}
+#next-turn-btn{background:#2ed573;}
+#refresh-btn{background:#ff6b6b;}
+button:disabled{background:#666;cursor:not-allowed;}
+
+.grid-section{margin-top:10px;}
+.grid-title{
+  font-size:16px;font-weight:bold;color:#feca57;
+  text-align:center;margin-bottom:6px;
+  text-shadow:1px 1px 2px rgba(0,0,0,0.3);
+}
+.card-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  justify-items:center;
+  max-width:350px;
+  margin:0 auto;
+}
+.grid-slot{
+  width:110px;height:150px;
+  border:2px dashed #888;border-radius:12px;
+  background:rgba(255,255,255,0.05);
+  transition:all 0.2s;
+  position:relative;
+}
+.grid-slot.swap-ready{
+  border-color:#2ed573;
+  background:rgba(46,213,115,0.2);
+}
+.card.swap-target{
+  border:2px solid #feca57;
+  box-shadow:0 0 12px #feca57;
+}
+
+footer{
+  text-align:center;font-size:9px;
+  color:rgba(255,255,255,0.6);
+  margin-top:10px;
+  margin-bottom:0;
+  padding-bottom:5px;
+}
+</style>
 </head>
 <body>
-  <h1>游戏框架已启动</h1>
-  <div id="game"></div>
+<div class="container">
+  <div class="shop-section">
+    <div class="shop-header">
+      <div class="shop-title">山海经卡牌商店</div>
+      <div class="gold-display">金币: <span id="current-gold">2</span></div>
+    </div>
+    <div class="shop-cards" id="shop-cards"></div>
+  </div>
 
-  <script src="js/main.js"></script>
+  <div class="control-bar">
+    <div class="turn-display">回合: <span id="current-turn">1</span></div>
+    <button id="next-turn-btn">下一回合</button>
+    <button id="refresh-btn">刷新(1金币)</button>
+  </div>
+
+  <div class="grid-section">
+    <div class="grid-title">我的卡组 (最多6张)</div>
+    <div class="card-grid" id="card-grid">
+      <div class="grid-slot"></div><div class="grid-slot"></div><div class="grid-slot"></div>
+      <div class="grid-slot"></div><div class="grid-slot"></div><div class="grid-slot"></div>
+    </div>
+  </div>
+</div>
+
+<div id="drag-preview"></div>
+<footer>© 2026 山海经原版技能 | 已整合入主游戏</footer>
+
+<script>
+// 图片路径自动适配你现在的 assets/card/
+const allCardsData = [
+  {id:1,name:"应龙",skill:"yinglong",image:"assets/card/yl.jpg",baseAtk:3,baseHp:5,cost:1},
+  {id:2,name:"九尾狐",skill:"jiuweihu",image:"assets/card/jwf.jpg",baseAtk:8,baseHp:10,cost:3},
+  {id:3,name:"白泽",skill:"baize",image:"assets/card/bz.jpg",baseAtk:5,baseHp:10,cost:2},
+  {id:4,name:"穷奇",skill:"qiongqi",image:"assets/card/qq.jpg",baseAtk:10,baseHp:15,cost:4},
+  {id:5,name:"精卫",skill:"jingwei",image:"assets/card/jw.jpg",baseAtk:12,baseHp:18,cost:5}
+];
+
+let currentGold=2,currentTurn=1,isNextTurnDisabled=false;
+let cardSaveData = {};
+let isDragging = false, draggedCard = null, draggedFromSlot = null, draggedElement = null, shopBottom = 0;
+
+const turnGoldOriginal = [0,2,3,5,7,10,15];
+const goldAfterSeven = turnGoldOriginal[6] + 3;
+
+const shopArea = document.getElementById("shop-cards");
+const cardGrid = document.getElementById("card-grid");
+const dragPreview = document.getElementById("drag-preview");
+
+function getGridCards(){
+  const slots = Array.from(document.querySelectorAll(".grid-slot"));
+  let list = [];
+  slots.forEach((slot,idx)=>{
+    const card = slot.querySelector(".card");
+    let row = idx < 3 ? 1 : 2;
+    if(card){
+      list.push({
+        idx,row,slot,el:card,
+        id:parseInt(card.dataset.cardId),
+        skill:card.dataset.skill,
+        baseAtk:parseInt(card.dataset.baseAtk),
+        baseHp:parseInt(card.dataset.baseHp),
+        saveKey: slot.dataset.saveKey
+      });
+    }
+  });
+  return list;
+}
+
+function refreshShopOnly(){
+  shopArea.innerHTML="";
+  const sel=[...allCardsData].sort(()=>Math.random()-0.5).slice(0,3);
+  sel.forEach(card=>{
+    const wrap=document.createElement("div");wrap.className="card-wrapper";
+    const el=document.createElement("div");el.className="card";
+    el.dataset.cardId = card.id;
+    el.dataset.cardName = card.name;
+    el.dataset.skill = card.skill;
+    el.dataset.image = card.image;
+    el.dataset.baseAtk = card.baseAtk;
+    el.dataset.baseHp = card.baseHp;
+    el.dataset.cost = card.cost;
+    if(currentGold<card.cost) el.classList.add("insufficient-funds");
+    el.innerHTML=`<img src="${card.image}"><div class="card-stat"><span class="atk-red">${card.baseAtk}</span>/<span class="hp-green">${card.baseHp}</span></div>`;
+    const c=document.createElement("div");c.className="card-cost-external";c.innerText=card.cost;
+    wrap.append(el,c);shopArea.appendChild(wrap);
+    el.addEventListener("touchstart",(e)=>{
+      if(currentGold<card.cost) return;
+      e.preventDefault();
+      const cd={id:card.id,name:card.name,skill:card.skill,image:card.image,baseAtk:card.baseAtk,baseHp:card.baseHp,cost:card.cost};
+      startDrag(e.touches[0],cd,null,el);
+    });
+  });
+  shopBottom = shopArea.getBoundingClientRect().bottom;
+  updateButtonStates();
+}
+
+function createDeckCard(slot, cardData){
+  let key = slot.dataset.saveKey || Math.random().toString(36);
+  slot.dataset.saveKey = key;
+  if(!cardSaveData[key]) cardSaveData[key]={jing:0,ying:0,qiong:0,baizeAtk:0,baizeHp:0};
+  let g=cardSaveData[key];
+  let atk=cardData.baseAtk+g.jing+g.ying+g.qiong+g.baizeAtk;
+  let hp=cardData.baseHp+g.jing+g.ying+g.qiong+g.baizeHp;
+
+  slot.innerHTML="";
+  let d=document.createElement("div");
+  d.className="card";
+  d.dataset.cardId=cardData.id;
+  d.dataset.skill=cardData.skill;
+  d.dataset.baseAtk=cardData.baseAtk;
+  d.dataset.baseHp=cardData.baseHp;
+  d.innerHTML=`<img src="${cardData.image}"><div class="card-stat"><span class="atk-red">${atk}</span>/<span class="hp-green">${hp}</span></div>`;
+  d.addEventListener("touchstart",e=>{
+    e.preventDefault();
+    let cd={id:cardData.id,skill:cardData.skill,image:cardData.image,baseAtk:cardData.baseAtk,baseHp:cardData.baseHp,cost:cardData.cost};
+    startDrag(e.touches[0],cd,slot,d);
+  });
+  slot.appendChild(d);
+}
+
+// 你原版全部山海经技能完整保留
+function updateCardStatsVisual(){
+  const grids=getGridCards();
+  const layer=currentTurn-1;
+  let totalTriggerCount = 0;
+
+  const hasJing = grids.some(x=>x.skill==="jingwei");
+  if(hasJing) totalTriggerCount++;
+  grids.forEach(g=>{
+    let s=cardSaveData[g.saveKey];
+    if(!s) return;
+    if(hasJing) s.jing += layer;
+  });
+
+  const yingRows = grids.filter(x=>x.skill==="yinglong").map(x=>x.row);
+  if(yingRows.length>0) totalTriggerCount++;
+  grids.forEach(g=>{
+    let s=cardSaveData[g.saveKey];
+    if(!s) return;
+    if(yingRows.includes(g.row)) s.ying += layer*2;
+  });
+
+  const hasQiong = grids.some(x=>x.skill==="qiongqi");
+  if(hasQiong) totalTriggerCount++;
+  grids.forEach(g=>{
+    let s=cardSaveData[g.saveKey];
+    if(!s) return;
+    if(g.skill==="qiongqi") s.qiong += layer;
+  });
+
+  grids.forEach(fox=>{
+    if(fox.skill==="jiuweihu"){
+      totalTriggerCount++;
+      grids.filter(c=>c.row===fox.row).forEach(g=>{
+        let s=cardSaveData[g.saveKey];
+        if(!s) return;
+        if(hasJing) s.jing += layer;
+        if(yingRows.includes(g.row)) s.ying += layer*2;
+        if(g.skill==="qiongqi") s.qiong += layer;
+      });
+    }
+  });
+
+  grids.forEach(g=>{
+    if(g.skill==="baize"){
+      let s=cardSaveData[g.saveKey];
+      if(!s) return;
+      s.baizeAtk += totalTriggerCount * 2;
+      s.baizeHp += totalTriggerCount * 5;
+    }
+  });
+
+  grids.forEach(g=>{
+    let s=cardSaveData[g.saveKey];
+    if(!s) return;
+    let nowAtk = g.baseAtk + s.jing + s.ying + s.qiong + s.baizeAtk;
+    let nowHp = g.baseHp + s.jing + s.ying + s.qiong + s.baizeHp;
+    g.el.querySelector(".card-stat").innerHTML = `<span class="atk-red">${nowAtk}</span>/<span class="hp-green">${nowHp}</span>`;
+    g.el.classList.add("card-grow-flash");
+    setTimeout(()=>g.el.classList.remove("card-grow-flash"),600);
+  });
+}
+
+function startDrag(e,cd,slot,el){
+  isDragging=true;draggedCard=cd;draggedFromSlot=slot;draggedElement=el;
+  el.classList.add("dragging-source");
+  dragPreview.style.display="block";
+  dragPreview.innerHTML=`<img src="${cd.image}" style="width:100%;height:100%;">`;
+  updateDragPreview(e.clientX,e.clientY);
+  document.addEventListener("touchmove",onDragMove);
+  document.addEventListener("touchend",onGlobalTouchEnd);
+}
+function onDragMove(e){
+  if(!isDragging)return;e.preventDefault();
+  let x=e.touches[0].clientX,y=e.touches[0].clientY;
+  updateDragPreview(x,y);
+  shopArea.classList.toggle("sell-ready", y+75<=shopBottom);
+  document.querySelectorAll(".grid-slot,.card").forEach(n=>n.classList.remove("swap-ready","swap-target"));
+  let tCard=document.elementFromPoint(x,y)?.closest(".card");
+  if(tCard&&tCard!==draggedElement){tCard.classList.add("swap-target");return;}
+  document.querySelectorAll(".grid-slot").forEach(s=>{
+    let r=s.getBoundingClientRect();
+    if(x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom&&!s.children.length)s.classList.add("swap-ready");
+  });
+}
+function updateDragPreview(x,y){dragPreview.style.left=(x-55)+"px";dragPreview.style.top=(y-75)+"px";}
+function onGlobalTouchEnd(e){
+  if(!isDragging)return;e.preventDefault();
+  document.removeEventListener("touchmove",onDragMove);document.removeEventListener("touchend",onGlobalTouchEnd);
+  dragPreview.style.display="none";
+  shopArea.classList.remove("sell-ready");
+  document.querySelectorAll(".grid-slot,.card").forEach(n=>n.classList.remove("swap-ready","swap-target"));
+  if(draggedElement)draggedElement.classList.remove("dragging-source");
+
+  let x=e.changedTouches[0].clientX,y=e.changedTouches[0].clientY;
+  if(draggedFromSlot&&y+75<=shopBottom){
+    currentGold+=draggedCard.cost;
+    delete cardSaveData[draggedFromSlot.dataset.saveKey];
+    draggedFromSlot.innerHTML="";
+  }else{
+    let tCard=document.elementFromPoint(x,y)?.closest(".card");
+    if(tCard&&tCard!==draggedElement){
+      let tSlot=tCard.parentElement;
+      let temp=cardSaveData[draggedFromSlot.dataset.saveKey];
+      cardSaveData[draggedFromSlot.dataset.saveKey]=cardSaveData[tSlot.dataset.saveKey];
+      cardSaveData[tSlot.dataset.saveKey]=temp;
+      createDeckCard(draggedFromSlot,{id:parseInt(tCard.dataset.cardId),skill:tCard.dataset.skill,image:tCard.querySelector("img").src,baseAtk:parseInt(tCard.dataset.baseAtk),baseHp:parseInt(tCard.dataset.baseHp),cost:0});
+      createDeckCard(tSlot,draggedCard);
+    }else{
+      let tSlot=null;
+      document.querySelectorAll(".grid-slot").forEach(s=>{
+        let r=s.getBoundingClientRect();
+        if(x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom&&!s.children.length)tSlot=s;
+      });
+      if(tSlot){
+        if(!draggedFromSlot){
+          if(currentGold >= draggedCard.cost){
+            currentGold -= draggedCard.cost;
+            createDeckCard(tSlot, draggedCard);
+          }
+        }else{
+          createDeckCard(tSlot, draggedCard);
+          delete cardSaveData[draggedFromSlot.dataset.saveKey];
+          draggedFromSlot.innerHTML="";
+        }
+      }
+    }
+  }
+  updateGameStatus();
+  refreshShopOnly();
+  isDragging=false;draggedCard=null;draggedFromSlot=null;draggedElement=null;
+}
+
+function startNextTurn(){
+  if(isNextTurnDisabled)return;
+  currentTurn++;
+  currentGold += currentTurn<=7 ? (turnGoldOriginal[currentTurn]||0) : goldAfterSeven;
+
+  updateCardStatsVisual();
+
+  if(currentTurn>=15){
+    isNextTurnDisabled=true;
+    document.getElementById("next-turn-btn").disabled=true;
+    document.getElementById("next-turn-btn").innerText="游戏结束";
+  }
+  updateGameStatus();
+  refreshShopOnly();
+}
+
+document.getElementById("refresh-btn").onclick=()=>{
+  if(currentGold>=1){
+    currentGold--;
+    refreshShopOnly();
+    updateGameStatus();
+  }
+};
+function updateGameStatus(){
+  document.getElementById("current-gold").innerText=currentGold;
+  document.getElementById("current-turn").innerText=currentTurn;
+  updateButtonStates();
+}
+function updateButtonStates(){
+  document.getElementById("refresh-btn").disabled=currentGold<1;
+}
+document.getElementById("next-turn-btn").onclick=startNextTurn;
+
+window.onload=()=>{refreshShopOnly();};
+window.addEventListener("resize",()=>{shopBottom=shopArea.getBoundingClientRect().bottom;});
+</script>
 </body>
 </html>
