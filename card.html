@@ -20,7 +20,7 @@
   <div class="control-bar">
     <div class="turn-display">Turn: <span id="current-turn">1</span></div>
     <button id="next-turn-btn">Next</button>
-    <button id="refresh-btn">Refresh(1G)</button>
+    <button id="refresh-btn">(1G)</button>
   </div>
 
   <div class="grid-section">
@@ -35,7 +35,9 @@
 <div id="drag-preview"></div>
 <footer>© 2026 Taichicoin · Built by AI</footer>
 
-<!-- 引入外部JS逻辑 -->
+<!-- 先加载西游独立卡牌配置 -->
+<script src="js/faction-xiyou.js"></script>
+<!-- 最后加载主逻辑 -->
 <script src="js/main.js"></script>
 </body>
 </html>
