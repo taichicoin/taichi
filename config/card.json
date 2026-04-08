@@ -1,1 +1,330 @@
+[
+  // ------------------------------
+  // 山海经阵营（5张）
+  // ------------------------------
+  {
+    "id": "card_sh_001",
+    "name": "应龙",
+    "rarity": "common",
+    "cost": 1,
+    "baseAttack": 3,
+    "baseHp": 5,
+    "faction": "shanhaijing",
+    "cardImage": "assets/card/yinglong.jpg",
+    "heroImage": "",
+    "skillId": "skill_sh_yinglong",
+    "voice": {"attack": "", "kill": "", "win": ""},
+    "animationClass": ""
+  },
+  {
+    "id": "card_sh_002",
+    "name": "白泽",
+    "rarity": "common",
+    "cost": 1,
+    "baseAttack": 2,
+    "baseHp": 7,
+    "faction": "shanhaijing",
+    "cardImage": "assets/card/baize.jpg",
+    "heroImage": "",
+    "skillId": "skill_sh_baize",
+    "voice": {"attack": "", "kill": "", "win": ""},
+    "animationClass": ""
+  },
+  {
+    "id": "card_sh_003",
+    "name": "九尾狐",
+    "rarity": "epic",
+    "cost": 3,
+    "baseAttack": 8,
+    "baseHp": 10,
+    "faction": "shanhaijing",
+    "cardImage": "assets/card/jiuweihu.jpg",
+    "heroImage": "",
+    "skillId": "skill_sh_jiuweihu",
+    "voice": {"attack": "", "kill": "", "win": ""},
+    "animationClass": ""
+  },
+  {
+    "id": "card_sh_004",
+    "name": "穷奇",
+    "rarity": "epic",
+    "cost": 4,
+    "baseAttack": 10,
+    "baseHp": 15,
+    "faction": "shanhaijing",
+    "cardImage": "assets/card/qiongqi.jpg",
+    "heroImage": "",
+    "skillId": "skill_sh_qiongqi",
+    "voice": {"attack": "", "kill": "", "win": ""},
+    "animationClass": ""
+  },
+  {
+    "id": "card_sh_005",
+    "name": "精卫",
+    "rarity": "legendary",
+    "cost": 5,
+    "baseAttack": 12,
+    "baseHp": 18,
+    "faction": "shanhaijing",
+    "cardImage": "assets/card/jingwei.jpg",
+    "heroImage": "",
+    "skillId": "skill_sh_jingwei",
+    "voice": {"attack": "", "kill": "", "win": ""},
+    "animationClass": ""
+  },
+
+  // ------------------------------
+  // 西游阵营（5张）
+  // ------------------------------
+  {
+    "id": "card_xy_001",
+    "name": "唐僧",
+    "rarity": "common",
+    "cost": 1,
+    "baseAttack": 2,
+    "baseHp": 8,
+    "faction": "xiyou",
+    "cardImage": "assets/card/tangseng.jpg",
+    "heroImage": "",
+    "skillId": "skill_xy_tangseng",
+    "voice": {"attack": "", "kill": "", "win": ""},
+    "animationClass": ""
+  },
+  {
+    "id": "card_xy_002",
+    "name": "沙和尚",
+    "rarity": "common",
+    "cost": 2,
+    "baseAttack": 5,
+    "baseHp": 16,
+    "faction": "xiyou",
+    "cardImage": "assets/card/shaseng.jpg",
+    "heroImage": "",
+    "skillId": "skill_xy_shaseng",
+    "voice": {"attack": "", "kill": "", "win": ""},
+    "animationClass": ""
+  },
+  {
+    "id": "card_xy_003",
+    "name": "猪八戒",
+    "rarity": "rare",
+    "cost": 3,
+    "baseAttack": 7,
+    "baseHp": 14,
+    "faction": "xiyou",
+    "cardImage": "assets/card/zhubajie.jpg",
+    "heroImage": "",
+    "skillId": "skill_xy_zhubajie",
+    "voice": {"attack": "", "kill": "", "win": ""},
+    "animationClass": ""
+  },
+  {
+    "id": "card_xy_004",
+    "name": "孙悟空",
+    "rarity": "legendary",
+    "cost": 4,
+    "baseAttack": 12,
+    "baseHp": 10,
+    "faction": "xiyou",
+    "cardImage": "assets/card/sunwukong.jpg",
+    "heroImage": "",
+    "skillId": "skill_xy_sunwukong",
+    "voice": {"attack": "", "kill": "", "win": ""},
+    "animationClass": ""
+  },
+  {
+    "id": "card_xy_005",
+    "name": "白龙马",
+    "rarity": "rare",
+    "cost": 2,
+    "baseAttack": 4,
+    "baseHp": 12,
+    "faction": "xiyou",
+    "cardImage": "assets/card/bailongma.jpg",
+    "heroImage": "",
+    "skillId": "skill_xy_bailongma",
+    "voice": {"attack": "", "kill": "", "win": ""},
+    "animationClass": ""
+  },
+
+  // ------------------------------
+  // 三国阵营（5张）
+  // ------------------------------
+  {
+    "id": "card_sg_001",
+    "name": "刘备",
+    "rarity": "common",
+    "cost": 1,
+    "baseAttack": 2,
+    "baseHp": 9,
+    "faction": "sanguo",
+    "cardImage": "assets/card/liubei.jpg",
+    "heroImage": "",
+    "skillId": "skill_sg_liubei",
+    "voice": {"attack": "", "kill": "", "win": ""},
+    "animationClass": ""
+  },
+  {
+    "id": "card_sg_002",
+    "name": "关羽",
+    "rarity": "legendary",
+    "cost": 5,
+    "baseAttack": 15,
+    "baseHp": 12,
+    "faction": "sanguo",
+    "cardImage": "assets/card/guanyu.jpg",
+    "heroImage": "",
+    "skillId": "skill_sg_guanyu",
+    "voice": {"attack": "", "kill": "", "win": ""},
+    "animationClass": ""
+  },
+  {
+    "id": "card_sg_003",
+    "name": "张飞",
+    "rarity": "epic",
+    "cost": 4,
+    "baseAttack": 13,
+    "baseHp": 11,
+    "faction": "sanguo",
+    "cardImage": "assets/card/zhangfei.jpg",
+    "heroImage": "",
+    "skillId": "skill_sg_zhangfei",
+    "voice": {"attack": "", "kill": "", "win": ""},
+    "animationClass": ""
+  },
+  {
+    "id": "card_sg_004",
+    "name": "赵云",
+    "rarity": "epic",
+    "cost": 4,
+    "baseAttack": 11,
+    "baseHp": 13,
+    "faction": "sanguo",
+    "cardImage": "assets/card/zhaoyun.jpg",
+    "heroImage": "",
+    "skillId": "skill_sg_zhaoyun",
+    "voice": {"attack": "", "kill": "", "win": ""},
+    "animationClass": ""
+  },
+  {
+    "id": "card_sg_005",
+    "name": "诸葛亮",
+    "rarity": "legendary",
+    "cost": 5,
+    "baseAttack": 8,
+    "baseHp": 16,
+    "faction": "sanguo",
+    "cardImage": "assets/card/zhugeliang.jpg",
+    "heroImage": "",
+    "skillId": "skill_sg_zhugeliang",
+    "voice": {"attack": "", "kill": "", "win": ""},
+    "animationClass": ""
+  },
+
+  // ------------------------------
+  // 封神阵营（5张）
+  // ------------------------------
+  {
+    "id": "card_fs_001",
+    "name": "姜子牙",
+    "rarity": "common",
+    "cost": 1,
+    "baseAttack": 3,
+    "baseHp": 6,
+    "faction": "fengshen",
+    "cardImage": "assets/card/jiangziya.jpg",
+    "heroImage": "",
+    "skillId": "skill_fs_jiangziya",
+    "voice": {"attack": "", "kill": "", "win": ""},
+    "animationClass": ""
+  },
+  {
+    "id": "card_fs_002",
+    "name": "哪吒",
+    "rarity": "epic",
+    "cost": 4,
+    "baseAttack": 12,
+    "baseHp": 9,
+    "faction": "fengshen",
+    "cardImage": "assets/card/nezha.jpg",
+    "heroImage": "",
+    "skillId": "skill_fs_nezha",
+    "voice": {"attack": "", "kill": "", "win": ""},
+    "animationClass": ""
+  },
+  {
+    "id": "card_fs_003",
+    "name": "杨戬",
+    "rarity": "legendary",
+    "cost": 5,
+    "baseAttack": 14,
+    "baseHp": 11,
+    "faction": "fengshen",
+    "cardImage": "assets/card/yangjian.jpg",
+    "heroImage": "",
+    "skillId": "skill_fs_yangjian",
+    "voice": {"attack": "", "kill": "", "win": ""},
+    "animationClass": ""
+  },
+  {
+    "id": "card_fs_004",
+    "name": "妲己",
+    "rarity": "epic",
+    "cost": 3,
+    "baseAttack": 9,
+    "baseHp": 10,
+    "faction": "fengshen",
+    "cardImage": "assets/card/daji.jpg",
+    "heroImage": "",
+    "skillId": "skill_fs_daji",
+    "voice": {"attack": "", "kill": "", "win": ""},
+    "animationClass": ""
+  },
+  {
+    "id": "card_fs_005",
+    "name": "雷震子",
+    "rarity": "rare",
+    "cost": 3,
+    "baseAttack": 10,
+    "baseHp": 8,
+    "faction": "fengshen",
+    "cardImage": "assets/card/leizhenzi.jpg",
+    "heroImage": "",
+    "skillId": "skill_fs_leizhenzi",
+    "voice": {"attack": "", "kill": "", "win": ""},
+    "animationClass": ""
+  },
+
+  // ------------------------------
+  // 中立阵营（2张，无羁绊）
+  // ------------------------------
+  {
+    "id": "card_zl_001",
+    "name": "盘古",
+    "rarity": "legendary",
+    "cost": 5,
+    "baseAttack": 16,
+    "baseHp": 16,
+    "faction": "neutral",
+    "cardImage": "assets/card/pangu.jpg",
+    "heroImage": "",
+    "skillId": "skill_zl_pangu",
+    "voice": {"attack": "", "kill": "", "win": ""},
+    "animationClass": ""
+  },
+  {
+    "id": "card_zl_002",
+    "name": "女娲",
+    "rarity": "legendary",
+    "cost": 5,
+    "baseAttack": 6,
+    "baseHp": 20,
+    "faction": "neutral",
+    "cardImage": "assets/card/nvwa.jpg",
+    "heroImage": "",
+    "skillId": "skill_zl_nvwa",
+    "voice": {"attack": "", "kill": "", "win": ""},
+    "animationClass": ""
+  }
+]
 
