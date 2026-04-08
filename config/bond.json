@@ -1,1 +1,74 @@
+[
+  // 山海经阵营
+  {
+    "id": "bond_sh_1",
+    "name": "山海异兽",
+    "faction": "shanhaijing",
+    "required": 2,
+    "description": "所有山海经卡牌生命+4",
+    "effect": {"attackBonus": 0, "hpBonus": 4}
+  },
+  {
+    "id": "bond_sh_2",
+    "name": "洪荒之力",
+    "faction": "shanhaijing",
+    "required": 4,
+    "description": "所有山海经卡牌攻击+5，生命+6",
+    "effect": {"attackBonus": 5, "hpBonus": 6}
+  },
+
+  // 西游阵营
+  {
+    "id": "bond_xy_1",
+    "name": "西天取经",
+    "faction": "xiyou",
+    "required": 2,
+    "description": "所有西游卡牌攻击+2",
+    "effect": {"attackBonus": 2, "hpBonus": 0}
+  },
+  {
+    "id": "bond_xy_2",
+    "name": "师徒同心",
+    "faction": "xiyou",
+    "required": 4,
+    "description": "所有西游卡牌攻击+4，生命+5",
+    "effect": {"attackBonus": 4, "hpBonus": 5}
+  },
+
+  // 三国阵营
+  {
+    "id": "bond_sg_1",
+    "name": "桃园结义",
+    "faction": "sanguo",
+    "required": 2,
+    "description": "所有三国卡牌攻击+3",
+    "effect": {"attackBonus": 3, "hpBonus": 0}
+  },
+  {
+    "id": "bond_sg_2",
+    "name": "蜀汉霸业",
+    "faction": "sanguo",
+    "required": 4,
+    "description": "所有三国卡牌攻击+6，生命+4",
+    "effect": {"attackBonus": 6, "hpBonus": 4}
+  },
+
+  // 封神阵营
+  {
+    "id": "bond_fs_1",
+    "name": "阐教弟子",
+    "faction": "fengshen",
+    "required": 2,
+    "description": "所有封神卡牌生命+5",
+    "effect": {"attackBonus": 0, "hpBonus": 5}
+  },
+  {
+    "id": "bond_fs_2",
+    "name": "封神大业",
+    "faction": "fengshen",
+    "required": 4,
+    "description": "所有封神卡牌攻击+5，生命+7",
+    "effect": {"attackBonus": 5, "hpBonus": 7}
+  }
+]
 
