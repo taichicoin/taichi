@@ -1,11 +1,12 @@
 import { supabase } from './client.js'
 
-// 谷歌登录
+// 谷歌登录（修复：登录后直接跳回游戏页 /card）
 export async function signInWithGoogle() {
   const { error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: window.location.origin
+      // ✅ 改这里：写死游戏完整地址，不再跳回主页
+      redirectTo: "https://taichicoin.xyz/card"
     }
   })
   if (error) alert('谷歌登录失败：' + error.message)
@@ -23,7 +24,7 @@ export async function getCurrentUser() {
   return user
 }
 
-// 全局挂载（核心修复，解决点击没反应）
+// 全局挂载（解决点击没反应）
 window.signInWithGoogle = signInWithGoogle
 window.signOut = signOut
 window.getCurrentUser = getCurrentUser
