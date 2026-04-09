@@ -1,12 +1,16 @@
 import { supabase } from './client.js'
 
-// ========== 谷歌登录 ==========
+// ========== 谷歌登录（修复回调+作用域） ==========
 export async function signInWithGoogle() {
   const { error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: "https://taichicoin.xyz/card",
-      scopes: "email profile"
+      redirectTo: window.location.origin + window.location.pathname,
+      scopes: "email profile",
+      queryParams: {
+        access_type: 'offline',
+        prompt: 'consent'
+      }
     }
   })
   if (error) alert('谷歌登录失败：' + error.message)
@@ -18,10 +22,26 @@ export async function signOut() {
   window.location.reload()
 }
 
-// ========== 获取Auth用户 ==========
+// ========== 核心修复：等待session加载完成 ==========
 export async function getCurrentUser() {
-  const { data: { user } } = await supabase.auth.getUser()
-  return user
+  // 先尝试直接获取
+  const { data: { user }, error } = await supabase.auth.getUser()
+  if (user) return user
+
+  // 如果没拿到，等待onAuthStateChange事件
+  return new Promise((resolve) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.user) {
+        subscription.unsubscribe()
+        resolve(session.user)
+      }
+    })
+    // 超时兜底
+    setTimeout(() => {
+      subscription.unsubscribe()
+      resolve(null)
+    }, 10000)
+  })
 }
 
 // ========== 获取profiles完整资料 ==========
@@ -33,7 +53,10 @@ export async function getUserProfile() {
     .select("id,email,full_name,avatar_url,wallet_address,last_wallet_update,last_avatar_update")
     .eq("id", user.id)
     .single()
-  if(error) return null
+  if(error) {
+    console.error("获取profile失败:", error)
+    return null
+  }
   return data
 }
 
@@ -75,6 +98,8 @@ export async function bindWalletFlow() {
 
   if(error) return alert("失败: " + error.message)
   alert("钱包绑定成功")
+  // 绑定后刷新页面更新按钮状态
+  window.location.reload()
 }
 
 // ========== 上传头像（带7天冷却） ==========
