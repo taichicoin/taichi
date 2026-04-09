@@ -1,0 +1,310 @@
+---
+permalink: /card
+---
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>太极悠悠牌</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cf: {
+              dark: '#0f111a',
+              darker: '#090b10',
+              blue: '#165DFF',
+              gold: '#FFD700',
+              red: '#FF4D4F',
+              green: '#52C41A',
+              gray: '#1f2335'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .card-glow { box-shadow: 0 0 15px rgba(22, 93, 255, 0.5); }
+      .player-glow { box-shadow: 0 0 10px rgba(82, 196, 26, 0.7); }
+      .hp-bar { background: linear-gradient(90deg, #FF4D4F 0%, #FF7875 100%); }
+    }
+  </style>
+</head>
+<body class="bg-cf-dark text-white min-h-screen overflow-hidden">
+
+  <!-- ================== 1. 登录页面【只保留谷歌登录，删掉首页钱包登录】 ================== -->
+  <div id="login-page" class="flex flex-col items-center justify-center min-h-screen">
+    <h1 class="text-5xl font-bold mb-12 text-cf-gold">太极悠悠牌</h1>
+    <div class="space-y-4 w-80">
+      <button onclick="signInWithGoogle()" class="w-full py-3 bg-white text-black rounded-lg font-medium hover:bg-gray-100 transition">
+        使用 Google 登录
+      </button>
+    </div>
+    <p class="mt-8 text-gray-400 text-sm">登录即表示同意用户协议和隐私政策</p>
+  </div>
+
+  <!-- ================== 2. 大厅页面 ================== -->
+  <div id="lobby-page" class="hidden min-h-screen flex flex-col">
+    <!-- 顶部导航栏 -->
+    <header class="h-16 bg-cf-darker flex items-center justify-between px-6 border-b border-gray-700">
+      <h1 class="text-2xl font-bold text-cf-gold">太极悠悠牌</h1>
+      
+      <!-- 右上角用户菜单 -->
+      <div class="relative">
+        <button id="user-menu-btn" class="flex items-center space-x-3 hover:bg-cf-gray px-3 py-2 rounded-lg">
+          <img id="user-avatar" src="" alt="头像" class="w-8 h-8 rounded-full object-cover">
+          <span id="user-name" class="font-medium"></span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+        
+        <div id="user-menu" class="hidden absolute right-0 top-12 w-48 bg-cf-gray rounded-lg shadow-lg py-2 z-50">
+          <button onclick="openAvatarModal()" class="w-full text-left px-4 py-2 hover:bg-cf-dark">修改头像</button>
+          <button onclick="bindWallet()" class="w-full text-left px-4 py-2 hover:bg-cf-dark">绑定钱包</button>
+          <button onclick="bindGoogle()" class="w-full text-left px-4 py-2 hover:bg-cf-dark">绑定谷歌账号</button>
+          <hr class="my-2 border-gray-700">
+          <button onclick="signOut()" class="w-full text-left px-4 py-2 text-cf-red hover:bg-cf-dark">退出登录</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="flex-1 flex flex-col items-center justify-center">
+      <h2 class="text-3xl font-bold mb-8">欢迎来到太极悠悠牌</h2>
+      <button id="match-btn" onclick="startMatchmaking()" class="px-12 py-4 bg-cf-blue text-xl font-bold rounded-lg hover:bg-blue-600 transition card-glow">
+        快速匹配
+      </button>
+      <p id="match-status" class="mt-4 text-gray-400 hidden">正在匹配中... (0/8)</p>
+      <button id="cancel-match-btn" onclick="cancelMatchmaking()" class="mt-2 text-gray-400 hover:text-white hidden">取消匹配</button>
+    </main>
+  </div>
+
+  <!-- ================== 3. 对战页面 ================== -->
+  <div id="game-page" class="hidden min-h-screen flex flex-col">
+    <header class="h-12 bg-cf-darker flex items-center justify-between px-4 border-b border-gray-700">
+      <div class="flex items-center space-x-4">
+        <span id="phase-text" class="font-medium">第 1 回合</span>
+        <span id="timer" class="text-cf-gold text-xl font-bold">30</span>
+      </div>
+      <span id="room-id" class="text-gray-400">房间号：加载中</span>
+    </header>
+
+    <div class="flex flex-1 overflow-hidden">
+      <aside class="w-48 bg-cf-darker p-2 space-y-2 border-r border-gray-700">
+        <div id="players-list" class="space-y-2"></div>
+      </aside>
+
+      <main class="flex-1 flex flex-col">
+        <div id="battle-board" class="flex-1 grid grid-cols-4 grid-rows-3 gap-2 p-4 bg-cf-gray"></div>
+        <footer class="h-40 bg-cf-darker border-t border-gray-700 p-2">
+          <div id="shop" class="flex space-x-2 mb-2"></div>
+          <div id="hand" class="flex space-x-2 h-20 overflow-x-auto"></div>
+        </footer>
+      </main>
+
+      <aside class="w-48 bg-cf-darker p-4 border-l border-gray-700 flex flex-col justify-between">
+        <div>
+          <div class="mb-4">
+            <p class="text-400 text-sm">金币</p>
+            <p id="gold" class="text-2xl font-bold text-cf-gold">10</p>
+          </div>
+          <div class="mb-4">
+            <p class="text-gray-400 text-sm">等级 <span id="level">1</span></p>
+            <div class="w-full bg-gray-700 rounded-full h-2">
+              <div id="exp-bar" class="hp-bar h-2 rounded-full"></div>
+            </div>
+            <p id="exp-text" class="text-xs text-gray-400 mt-1">0/2</p>
+          </div>
+          <div class="mb-4">
+            <p class="text-gray-400 text-sm">人口</p>
+            <p id="population" class="text-xl font-bold">1/1</p>
+          </div>
+        </div>
+        <div class="space-y-2">
+          <button onclick="payToRefreshShop()" class="w-full py-2 bg-cf-blue rounded hover:bg-blue-600">刷新 (2金)</button>
+          <button onclick="buyExp()" class="w-full py-2 bg-cf-green rounded hover:bg-green-600">买经验 (4金)</button>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- 修改头像弹窗 -->
+  <div id="avatar-modal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+    <div class="bg-cf-gray p-6 rounded-lg w-96">
+      <h3 class="text-xl font-bold mb-4">修改头像</h3>
+      <input type="file" id="avatar-input" accept="image/*" class="mb-4">
+      <div class="flex justify-end space-x-2">
+        <button onclick="closeAvatarModal()" class="px-4 py-2 bg-gray-600 rounded">取消</button>
+        <button onclick="uploadAvatar()" class="px-4 py-2 bg-cf-blue rounded">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/supabase/client.js"></script>
+  <script type="module" src="js/supabase/auth.js"></script>
+  <script type="module" src="js/supabase/multiplayer.js"></script>
+  <script src="js/main.js"></script>
+
+  <script>
+    let currentUser = null
+    let matchSubscription = null
+
+    async function init() {
+      currentUser = await getCurrentUser()
+      if (currentUser) {
+        showPage('lobby')
+        loadUserInfo()
+      } else {
+        showPage('login')
+      }
+
+      document.getElementById('user-menu-btn').addEventListener('click', ()=>{
+        document.getElementById('user-menu').classList.toggle('hidden')
+      })
+      document.addEventListener('click',e=>{
+        if(!e.target.closest("#user-menu-btn") && !e.target.closest("#user-menu")){
+          document.getElementById('user-menu').classList.add('hidden')
+        }
+      })
+    }
+
+    function showPage(page){
+      document.querySelectorAll("#login-page,#lobby-page,#game-page").forEach(el=>el.classList.add("hidden"))
+      document.getElementById(page+"-page").classList.remove("hidden")
+    }
+
+    async function loadUserInfo(){
+      const {data:profile} = await supabase
+        .from("profiles")
+        .select("username,avatar_url,wallet_address")
+        .eq("id",currentUser.id).single()
+
+      document.getElementById("user-name").textContent = profile.username ?? ("玩家"+currentUser.id.slice(0,6))
+      document.getElementById("user-avatar").src = profile.avatar_url ?? "https://api.dicebear.com/7.x/avataaars?seed="+currentUser.id
+    }
+
+    async function bindWallet(){
+      await signInWithWallet()
+    }
+    async function bindGoogle(){
+      await supabase.auth.linkIdentity({provider:"google"})
+      alert("谷歌账号绑定成功")
+    }
+
+    function openAvatarModal(){document.getElementById("avatar-modal").classList.remove("hidden")}
+    function closeAvatarModal(){document.getElementById("avatar-modal").classList.add("hidden")}
+
+    async function uploadAvatar(){
+      const f = document.getElementById("avatar-input").files[0]
+      if(!f)return
+      const path = currentUser.id+"/"+Date.now()+"."+f.name.split(".").pop()
+      const {error} = await supabase.storage.from("avatars").upload(path,f)
+      if(error)return alert("上传失败")
+      const {data:{publicUrl}} = supabase.storage.from("avatars").getPublicUrl(path)
+      await supabase.from("profiles").update({avatar_url:publicUrl}).eq("id",currentUser.id)
+      document.getElementById("user-avatar").src = publicUrl
+      closeAvatarModal()
+    }
+
+    async function startMatchmaking(){
+      await supabase.from("matchmaking").insert({
+        user_id:currentUser.id,
+        username:document.getElementById("user-name").textContent,
+        avatar_url:document.getElementById("user-avatar").src
+      })
+      document.getElementById("match-btn").classList.add("hidden")
+      document.getElementById("match-status").classList.remove("hidden")
+      document.getElementById("cancel-match-btn").classList.remove("hidden")
+
+      matchSubscription = supabase.channel("matchmaking")
+      .on("postgres_changes",{event:"*",schema:"public",table:"matchmaking"},async()=>{
+        const {count} = await supabase.from("matchmaking").select("*",{count:"exact",head:true})
+        document.getElementById("match-status").textContent = `正在匹配中... (${count}/8)`
+        if(count >= 8){
+          const {data:queue} = await supabase.from("matchmaking")
+            .select("user_id,username,avatar_url")
+            .order("created_at",{ascending:true}).limit(8)
+          
+          if(queue[0].user_id === currentUser.id){
+            const room = await createRoom()
+            for(let p of queue){
+              await supabase.from("room_players").insert({
+                room_id:room.id,
+                user_id:p.user_id,
+                username:p.username,
+                avatar_url:p.avatar_url,
+                hp:100,gold:10,level:1,exp:0
+              })
+            }
+            await supabase.from("matchmaking").delete().neq("user_id","00000000-0000-0000-0000-000000000000")
+            await startGame()
+          }
+          supabase.removeChannel(matchSubscription)
+          showPage("game")
+          document.getElementById("room-id").textContent = "房间号："+currentRoom.id
+        }
+      }).subscribe()
+    }
+
+    async function cancelMatchmaking(){
+      await supabase.from("matchmaking").delete().eq("user_id",currentUser.id)
+      if(matchSubscription) supabase.removeChannel(matchSubscription)
+      document.getElementById("match-btn").classList.remove("hidden")
+      document.getElementById("match-status").classList.add("hidden")
+      document.getElementById("cancel-match-btn").classList.add("hidden")
+    }
+
+    window.updatePlayersUI = async function(){
+      const {data:players} = await supabase.from("room_players")
+        .select("*").eq("room_id",currentRoom.id).order("hp",{ascending:true})
+      const wrap = document.getElementById("players-list")
+      wrap.innerHTML=""
+      players.forEach(p=>{
+        const me = p.user_id === currentUser.id
+        const div = document.createElement("div")
+        div.className = `p-2 rounded ${me?'bg-cf-gray player-glow':'bg-cf-dark'} ${p.eliminated?'opacity-50':''}`
+        div.innerHTML=`
+          <div class="flex items-center gap-2 mb-1">
+            <img src="${p.avatar_url}" class="w-6 h-6 rounded-full"/>
+            <span class="text-sm">${p.username}</span>
+          </div>
+          <div class="w-full bg-gray-700 h-2 rounded-full">
+            <div class="hp-bar h-2 rounded-full" style="width:${p.hp}%"></div>
+          </div>
+          <div class="text-right text-xs">${p.hp}/100</div>
+        `
+        wrap.appendChild(div)
+      })
+      const me = players.find(x=>x.user_id===currentUser.id)
+      if(!me)return
+      document.getElementById("gold").innerText = me.gold
+      document.getElementById("level").innerText = me.level
+      document.getElementById("population").innerText = me.level+"/"+me.level
+      const tbl = [0,2,6,10,16,22,30,40,50]
+      document.getElementById("exp-bar").style.width = (me.exp/tbl[me.level]*100)+"%"
+      document.getElementById("exp-text").innerText = me.exp+"/"+tbl[me.level]
+    }
+
+    window.updateTimerUI = function(s){
+      document.getElementById("timer").innerText = s
+    }
+    window.showPrepareUI = function(ph){
+      document.getElementById("phase-text").innerText = `第 ${ph} 回合 - 准备阶段`
+    }
+    window.showFightingUI = function(){
+      document.getElementById("phase-text").innerText = `战斗阶段`
+    }
+    window.showGameResultUI = function(winId){
+      alert(winId===currentUser.id?"你胜利了":"对局结束")
+      showPage("lobby")
+    }
+
+    init()
+  </script>
+</body>
+</html>
