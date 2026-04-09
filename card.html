@@ -1,0 +1,72 @@
+<!-- ===== 快手悠悠牌风格 UI 模板 ===== -->
+<div id="game-container" style="font-family: -apple-system, sans-serif; background: #0b0e1a; color: #fff; min-height: 100vh; margin: 0; padding: 0;">
+
+  <!-- 房间顶部条 -->
+  <div id="room-header" style="background: #161b33; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1);">
+    <div>
+      <span id="room-id" style="font-size: 14px; opacity: 0.8;">房间号：加载中...</span>
+      <div style="font-size: 12px; opacity: 0.6;">回合数：<span id="phase-count">1</span></div>
+    </div>
+    <div id="game-status" style="background: #2753ff; padding: 6px 12px; border-radius: 12px; font-size: 12px;">等待开始</div>
+  </div>
+
+  <!-- 中央主区域：棋盘 + 玩家列表 -->
+  <div style="display: flex; height: calc(100vh - 180px);">
+
+    <!-- 左侧：10 人玩家列表 / 淘汰面板 -->
+    <div style="width: 220px; background: #101428; padding: 12px; border-right: 1px solid rgba(255,255,255,0.05); overflow-y: auto;">
+      <div style="font-size: 14px; margin-bottom: 10px;">玩家列表（<span id="player-count">0</span>/10）</div>
+      <div id="player-list" style="display: flex; flex-direction: column; gap: 10px;"></div>
+    </div>
+
+    <!-- 右侧：棋盘 + 对战信息 -->
+    <div style="flex: 1; padding: 12px; position: relative;">
+      <!-- 倒计时大数字 -->
+      <div id="phase-timer" style="position: absolute; top: 20px; left: 0; right: 0; text-align: center; font-size: 42px; font-weight: bold; pointer-events: none; opacity: 0.9; z-index: 10;">30</div>
+
+      <!-- 棋盘区域 -->
+      <div id="board-container" style="position: relative; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+        <div id="battle-display" style="font-size: 18px; margin-bottom: 20px; color: #ffd700; display: none;"></div>
+
+        <!-- 棋盘格子 -->
+        <div style="display: grid; grid-template-columns: repeat(5, 90px); gap: 10px;">
+          <!-- 这里由你原有 JS 渲染卡牌 -->
+          <div id="board-slot-1" class="board-slot" style="width: 90px; height: 90px; background: rgba(255,255,255,0.05); border-radius: 10px; border: 2px solid rgba(255,255,255,0.2);"></div>
+          <div id="board-slot-2" class="board-slot" style="width: 90px; height: 90px; background: rgba(255,255,255,0.05); border-radius: 10px; border: 2px solid rgba(255,255,255,0.2);"></div>
+          <div id="board-slot-3" class="board-slot" style="width: 90px; height: 90px; background: rgba(255,255,255,0.05); border-radius: 10px; border: 2px solid rgba(255,255,255,0.2);"></div>
+          <div id="board-slot-4" class="board-slot" style="width: 90px; height: 90px; background: rgba(255,255,255,0.05); border-radius: 10px; border: 2px solid rgba(255,255,255,0.2);"></div>
+          <div id="board-slot-5" class="board-slot" style="width: 90px; height: 90px; background: rgba(255,255,255,0.05); border-radius: 10px; border: 2px solid rgba(255,255,255,0.2);"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 底部操作条 -->
+  <div id="control-bar" style="position: fixed; bottom: 0; left: 0; right: 0; background: #161b33; padding: 12px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; gap: 10px; align-items: center;">
+    <button id="btn-ready" onclick="toggleReady()" style="background: #2753ff; border: none; color: #fff; padding: 10px 16px; border-radius: 10px; font-weight: bold;">准备</button>
+    <button id="btn-start" onclick="startGame()" style="background: #00c48c; border: none; color: #fff; padding: 10px 16px; border-radius: 10px; font-weight: bold; display: none;">开始游戏</button>
+
+    <div style="flex: 1;"></div>
+
+    <div id="my-status" style="display: flex; align-items: center; gap: 10px;">
+      <div style="width: 40px; height: 40px; border-radius: 50%; background: #fff; overflow: hidden;">
+        <img id="my-avatar" src="" style="width: 100%; height: 100%; object-fit: cover;">
+      </div>
+      <div>
+        <div id="my-name" style="font-size: 14px;"></div>
+        <div style="font-size: 12px; opacity: 0.8;">金币：<span id="my-gold">10</span> | 等级：<span id="my-level">1</span> | HP：<span id="my-hp">100</span></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- 战斗结果弹窗 -->
+<div id="battle-result-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 100; display: flex; justify-content: center; align-items: center;">
+  <div style="background: #161b33; padding: 20px; border-radius: 12px; width: 320px; text-align: center;">
+    <div id="battle-result-text" style="font-size: 20px; margin-bottom: 10px;"></div>
+    <div id="battle-damage" style="margin-bottom: 20px; font-size: 14px; opacity: 0.8;"></div>
+    <button onclick="document.getElementById('battle-result-modal').style.display = 'none'" style="background: #2753ff; border: none; color: #fff; padding: 10px 20px; border-radius: 10px;">继续</button>
+  </div>
+</div>
