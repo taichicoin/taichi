@@ -1,0 +1,63 @@
+---
+permalink: /signup
+---
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>登录 | 太极悠悠牌</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cf: {
+              dark: '#0f111a',
+              darker: '#090b10',
+              gold: '#FFD700'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body{background:#0f111a;}
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center">
+
+  <h1 class="text-5xl font-bold mb-12 text-cf-gold">太极悠悠牌</h1>
+
+  <button id="loginBtn" onclick="signInWithGoogle()" class="w-64 py-3 bg-white text-black rounded-lg font-medium text-lg hover:bg-gray-100 transition">
+    使用 Google 账号登录
+  </button>
+
+  <p class="mt-8 text-gray-400 text-sm">登录即同意用户协议与隐私政策</p>
+
+
+  <script type="module" src="js/supabase/client.js"></script>
+  <script type="module" src="js/supabase/auth.js"></script>
+
+  <script>
+    import {supabase, signInWithGoogle, getCurrentUser} from './js/supabase/auth.js';
+
+    window.addEventListener("DOMContentLoaded", async ()=>{
+      // 谷歌授权回调解析
+      if(location.hash.includes("access_token")){
+        await supabase.auth.getSessionFromUrl();
+        location.href = "/card";
+      }
+
+      // 已经登录直接跳转游戏
+      const user = await getCurrentUser();
+      if(user){
+        location.href = "/card";
+      }
+    })
+  </script>
+
+</body>
+</html>
