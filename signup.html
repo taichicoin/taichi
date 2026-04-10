@@ -1,0 +1,362 @@
+---
+permalink: /signup
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- 修复移动端适配，禁止缩放，避免桌面模式 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sign Up - Taiji Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .signup-container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px 30px;
+            width: 100%;
+            max-width: 420px;
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo h1 {
+            font-size: 28px;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+        .logo p {
+            color: #666;
+            font-size: 14px;
+        }
+        .avatar-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            overflow: hidden;
+            border: 3px solid #667eea;
+            background: #f5f5f5;
+        }
+        .avatar-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: #667eea;
+            color: white;
+            margin-bottom: 16px;
+        }
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+        .btn-primary:disabled {
+            background: #b4bfff;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn-google {
+            background: white;
+            color: #333;
+            border: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .btn-google:hover {
+            background: #f5f5f5;
+        }
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            color: #999;
+            font-size: 14px;
+            position: relative;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 40%;
+            height: 1px;
+            background: #e0e0e0;
+        }
+        .divider::before {
+            left: 0;
+        }
+        .divider::after {
+            right: 0;
+        }
+        /* Toast提示样式 */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            z-index: 9999;
+            transform: translateX(120%);
+            transition: transform 0.3s;
+        }
+        .toast.show {
+            transform: translateX(0);
+        }
+        .toast.success {
+            background: #10b981;
+        }
+        .toast.error {
+            background: #ef4444;
+        }
+        .toast.info {
+            background: #3b82f6;
+        }
+    </style>
+</head>
+<body>
+    <div class="signup-container">
+        <div class="logo">
+            <h1>Taiji Game</h1>
+            <p>Create your account to start the game</p>
+        </div>
+
+        <div class="avatar-preview">
+            <img id="avatarImg" src="" alt="Avatar">
+        </div>
+
+        <div class="input-group">
+            <label for="username">Username</label>
+            <input 
+                type="text" 
+                id="username" 
+                placeholder="Enter your username"
+                maxlength="20"
+            >
+        </div>
+
+        <button class="btn btn-primary" id="signupBtn">Sign Up</button>
+
+        <div class="divider">or continue with</div>
+
+        <button class="btn btn-google" id="googleBtn">
+            <svg width="18" height="18" viewBox="0 0 18 18">
+                <path d="M17.64 9.204c0-.638-.057-1.256-.164-1.856H9v3.517h4.844a4.12 4.12 0 01-1.796 2.707v2.245h2.908c1.698-1.566 2.684-3.868 2.684-6.613z" fill="#4285F4"/>
+                <path d="M9 18c2.43 0 4.467-.806 5.956-2.183l-2.908-2.245c-.806.54-1.836.86-3.048.86-2.344 0-4.328-1.584-5.036-3.71H.964v2.32A8.996 8.996 0 009 18z" fill="#34A853"/>
+                <path d="M3.964 10.722a5.396 5.396 0 010-3.444V4.958H.964A8.986 8.986 0 000 9c0 1.452.348 2.826.964 4.042l3.001-2.32z" fill="#FBBC05"/>
+                <path d="M9 3.58c1.322 0 2.508.454 3.44 1.346l2.582-2.582C13.463.891 11.426 0 9 0A8.996 8.996 0 00.964 4.958l3.001 2.32C4.672 5.164 6.656 3.58 9 3.58z" fill="#EA4335"/>
+            </svg>
+            Sign in with Google
+        </button>
+    </div>
+
+    <!-- Toast提示容器 -->
+    <div id="toast" class="toast"></div>
+
+    <script type="module">
+        // 固定Supabase版本，避免兼容性问题
+        import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
+
+        // 统一配置管理
+        const CONFIG = {
+            SUPA_URL: "https://sznjaotjoljaiawbvfro.supabase.co",
+            SUPA_ANON_KEY: "sb_publishable_iN3D88OfHeUre4ddCaDH7g_rlsQ8LGN",
+            AVATAR_API: "https://api.dicebear.com/7.x/avataaars/svg?seed=",
+            USERNAME_RULE: /^[a-z0-9_]{3,20}$/
+        };
+
+        // 单例Supabase客户端，避免重复创建
+        const supabase = createClient(CONFIG.SUPA_URL, CONFIG.SUPA_ANON_KEY);
+        window.supabase = supabase;
+
+        // DOM元素
+        const usernameInput = document.getElementById('username');
+        const avatarImg = document.getElementById('avatarImg');
+        const signupBtn = document.getElementById('signupBtn');
+        const googleBtn = document.getElementById('googleBtn');
+        const toast = document.getElementById('toast');
+
+        // 通用Toast提示函数
+        function showToast(message, type = 'info', duration = 3000) {
+            toast.textContent = message;
+            toast.className = `toast ${type} show`;
+            setTimeout(() => {
+                toast.className = 'toast';
+            }, duration);
+        }
+
+        // 生成随机头像
+        function generateAvatar(seed) {
+            const avatarSeed = seed || Math.random().toString(36).substring(2, 10);
+            avatarImg.src = `${CONFIG.AVATAR_API}${avatarSeed}`;
+            return avatarSeed;
+        }
+
+        // 用户名输入实时格式化：转小写、过滤非法字符
+        let avatarSeed = generateAvatar();
+        usernameInput.addEventListener('input', (e) => {
+            let value = e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, '');
+            e.target.value = value;
+            // 输入内容变化时更新头像seed，保持用户名与头像关联
+            if (value) {
+                avatarSeed = generateAvatar(value);
+            } else {
+                avatarSeed = generateAvatar();
+            }
+        });
+
+        // 邮箱密码注册逻辑
+        signupBtn.addEventListener('click', async () => {
+            const username = usernameInput.value.trim();
+            
+            // 前端校验
+            if (!username) {
+                showToast('Please enter your username', 'error');
+                return;
+            }
+            if (!CONFIG.USERNAME_RULE.test(username)) {
+                showToast('Username must be 3-20 characters, only letters, numbers and underscore', 'error');
+                return;
+            }
+
+            // 按钮防重复点击
+            signupBtn.disabled = true;
+            signupBtn.textContent = 'Signing Up...';
+
+            try {
+                // 1. 校验用户名唯一性
+                const { data: existingUser } = await supabase
+                    .from('profiles')
+                    .select('username')
+                    .eq('username', username)
+                    .single();
+
+                if (existingUser) {
+                    showToast('Username already exists', 'error');
+                    return;
+                }
+
+                // 2. 匿名创建用户（适配无邮箱场景，可替换为邮箱密码注册）
+                const { data: { user }, error: authError } = await supabase.auth.signInAnonymously({
+                    options: {
+                        data: {
+                            username: username,
+                            avatar_seed: avatarSeed
+                        }
+                    }
+                });
+
+                if (authError) throw authError;
+
+                // 3. 写入用户资料到profiles表
+                const { error: profileError } = await supabase
+                    .from('profiles')
+                    .insert({
+                        id: user.id,
+                        username: username,
+                        avatar_seed: avatarSeed,
+                        created_at: new Date().toISOString()
+                    });
+
+                if (profileError) throw profileError;
+
+                showToast('Sign up success! Redirecting...', 'success');
+                // 注册成功直接跳转游戏页，彻底解决卡登录页问题
+                setTimeout(() => {
+                    window.location.replace('/card');
+                }, 800);
+
+            } catch (error) {
+                showToast(`Sign up failed: ${error.message}`, 'error');
+            } finally {
+                // 恢复按钮状态
+                signupBtn.disabled = false;
+                signupBtn.textContent = 'Sign Up';
+            }
+        });
+
+        // Google登录逻辑 - 核心修复：直接跳转card，避免卡signup
+        googleBtn.addEventListener('click', async () => {
+            googleBtn.disabled = true;
+            try {
+                const { error } = await supabase.auth.signInWithOAuth({
+                    provider: 'google',
+                    options: {
+                        // 授权后直接跳转到游戏页，不再经过signup中转，彻底解决卡顿
+                        redirectTo: `${window.location.origin}/card`,
+                        scopes: "email profile"
+                    }
+                });
+                if (error) throw error;
+            } catch (error) {
+                showToast(`Google login failed: ${error.message}`, 'error');
+                googleBtn.disabled = false;
+            }
+        });
+
+        // 核心修复：页面加载先校验登录态，已登录用户直接跳card
+        // 解决用户后退、登录回调后卡在signup的问题
+        async function initPage() {
+            const { data: { user } } = await supabase.auth.getUser();
+            // 已登录用户，直接跳转到游戏页
+            if (user) {
+                window.location.replace('/card');
+                return;
+            }
+        }
+
+        // 页面初始化
+        initPage();
+    </script>
+</body>
+</html>
