@@ -1,0 +1,158 @@
+---
+permalink: /signup
+---
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=no">
+  <title>登录 | 太极悠悠牌</title>
+  <script src="https://cdn.tailwindcss.com/3.4.1"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cf: {
+              dark: '#0f111a',
+              darker: '#090b10',
+              blue: '#165DFF',
+              gold: '#FFD700',
+              red: '#FF4D4F',
+              gray: '#1f2335'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    * {
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      background: #0f111a;
+      overscroll-behavior: none;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
+  <!-- 页面加载遮罩 -->
+  <div id="page-loading" class="fixed inset-0 bg-cf-dark z-[9999] flex items-center justify-center">
+    <div class="text-center">
+      <div class="w-12 h-12 border-4 border-cf-gold border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+      <p class="text-cf-gold font-medium">正在加载...</p>
+    </div>
+  </div>
+
+  <h1 class="text-4xl sm:text-5xl font-bold mb-12 text-cf-gold text-center">太极悠悠牌</h1>
+  
+  <!-- 登录按钮 -->
+  <button 
+    id="google-login-btn" 
+    onclick="signInWithGoogle()" 
+    class="w-full max-w-sm py-3 bg-white text-black rounded-lg text-lg font-medium hover:bg-gray-100 active:bg-gray-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+  >
+    <span id="btn-text">使用 Google 账号登录</span>
+  </button>
+
+  <!-- 错误提示 -->
+  <div id="error-tip" class="mt-6 text-cf-red text-sm text-center hidden max-w-sm"></div>
+
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0'
+    // 全局常量统一管理
+    window.TAIJI_CONST = {
+      SUPA_URL: "https://sznjaotjoljaiawbvfro.supabase.co",
+      SUPA_ANON_KEY: "sb_publishable_iN3D88OfHeUre4ddCaDH7g_rlsQ8LGN",
+      USERNAME_RULE: /^[a-z0-9]{1,7}$/,
+      REDIRECT_URL: `${window.location.origin}/card`
+    }
+
+    // 全局唯一Supabase实例
+    window.supabase = createClient(
+      TAIJI_CONST.SUPA_URL,
+      TAIJI_CONST.SUPA_ANON_KEY
+    )
+
+    const loadingEl = document.getElementById('page-loading')
+    const loginBtn = document.getElementById('google-login-btn')
+    const btnText = document.getElementById('btn-text')
+    const errorTip = document.getElementById('error-tip')
+
+    // XSS转义工具
+    window.escapeHtml = (str) => {
+      if (!str) return ''
+      return str.replace(/[&<>"']/g, (m) => {
+        const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }
+        return map[m]
+      })
+    }
+
+    // 防抖工具
+    window.debounce = (fn, delay = 300) => {
+      let timer = null
+      return (...args) => {
+        clearTimeout(timer)
+        timer = setTimeout(() => fn.apply(this, args), delay)
+      }
+    }
+
+    // 登录函数
+    window.signInWithGoogle = debounce(async () => {
+      loginBtn.disabled = true
+      btnText.textContent = '正在跳转...'
+      errorTip.classList.add('hidden')
+
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: TAIJI_CONST.REDIRECT_URL,
+          scopes: "email profile",
+          queryParams: { access_type: 'offline', prompt: 'consent' }
+        }
+      })
+
+      if (error) {
+        errorTip.textContent = `登录失败：${escapeHtml(error.message)}`
+        errorTip.classList.remove('hidden')
+        btnText.textContent = '使用 Google 账号登录'
+        loginBtn.disabled = false
+      }
+    }, 1000)
+
+    // 页面初始化
+    async function init() {
+      try {
+        // 处理OAuth回调
+        if (window.location.hash.includes("access_token")) {
+          const { error } = await supabase.auth.getSessionFromUrl()
+          if (error) throw error
+          window.history.replaceState(null, document.title, "/signup")
+          window.location.replace(TAIJI_CONST.REDIRECT_URL)
+          return
+        }
+
+        // 已登录直接跳转
+        const { data: { user } } = await supabase.auth.getUser()
+        if (user) {
+          window.location.replace(TAIJI_CONST.REDIRECT_URL)
+          return
+        }
+      } catch (err) {
+        errorTip.textContent = `初始化失败：${escapeHtml(err.message)}`
+        errorTip.classList.remove('hidden')
+      } finally {
+        // 关闭加载遮罩
+        loadingEl.classList.add('hidden')
+        loginBtn.disabled = false
+      }
+    }
+
+    init()
+  </script>
+</body>
+</html>
