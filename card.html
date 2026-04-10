@@ -1,0 +1,922 @@
+---
+permalink: /card
+---
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=no">
+  <title>太极悠悠牌</title>
+
+  <script>
+    (function fixChromeDesktopMode(){
+      document.documentElement.style.zoom = "1";
+      document.documentElement.style.width = "100vw";
+      document.documentElement.style.maxWidth = "100vw";
+      window.visualViewport && (window.visualViewport.scale = 1);
+    })();
+  </script>
+
+  <script src="https://cdn.tailwindcss.com/3.4.1"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cf: {
+              dark: '#0f111a', 
+              darker: '#090b10', 
+              blue: '#165DFF',
+              gold: '#FFD700', 
+              red: '#FF4D4F', 
+              green: '#52C41A', 
+              gray: '#1f2335'
+            }
+          },
+          animation: {
+            'spin-slow': 'spin 2s linear infinite',
+            'fade-in': 'fadeIn 0.3s ease-in-out',
+          },
+          keyframes: {
+            fadeIn: {
+              '0%': { opacity: '0', transform: 'scale(0.95)' },
+              '100%': { opacity: '1', transform: 'scale(1)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .card-glow { box-shadow: 0 0 15px rgba(22, 93, 255, 0.5); }
+      .player-glow { box-shadow: 0 0 10px rgba(82, 196, 26, 0.7); }
+      .hp-bar { background: linear-gradient(90deg, #FF4D4F 0%, #FF7875 100%); }
+      .modal-backdrop { backdrop-filter: blur(4px); }
+      .scrollbar-hide::-webkit-scrollbar { display: none; }
+      .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+      .no-scroll { overflow: hidden !important; position: fixed; inset: 0; }
+    }
+    html,body{max-width:100vw; overflow-x:hidden; overscroll-behavior: none;}
+  </style>
+</head>
+<body class="bg-cf-dark text-white min-h-screen overflow-x-hidden">
+  <div id="app-container" class="min-h-screen flex flex-col">
+    <!-- 大厅页面 -->
+    <div id="lobby-page" class="min-h-screen flex flex-col">
+      <header class="h-16 bg-cf-darker flex items-center justify-between px-4 sm:px-6 border-b border-gray-700 shrink-0">
+        <h1 class="text-xl sm:text-2xl font-bold text-cf-gold">太极悠悠牌</h1>
+        <div class="relative">
+          <button 
+            id="user-menu-btn" 
+            class="flex items-center space-x-2 sm:space-x-3 hover:bg-cf-gray px-2 sm:px-3 py-2 rounded-lg transition-colors active:bg-cf-gray/80"
+          >
+            <img 
+              id="user-avatar" 
+              src="" 
+              alt="头像" 
+              class="w-8 h-8 rounded-full object-cover bg-gray-700"
+              onerror="this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=default'"
+            >
+            <span id="user-name" class="font-medium max-w-[80px] sm:max-w-none truncate"></span>
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </button>
+          <div 
+            id="user-menu" 
+            class="hidden absolute right-0 top-12 w-48 bg-cf-gray rounded-lg shadow-lg py-2 z-50 animate-fade-in"
+          >
+            <div id="googleEmailLine" class="px-4 py-2 text-gray-300 text-sm border-b border-gray-700 truncate">
+              加载中...
+            </div>
+            <button onclick="openAvatarModal()" class="w-full text-left px-4 py-2 hover:bg-cf-dark transition-colors">修改头像</button>
+            <button id="menuRenameBtn" onclick="openRenameModal()" class="w-full text-left px-4 py-2 hover:bg-cf-dark transition-colors">修改用户名</button>
+            <button id="menuBindWalletBtn" onclick="bindWallet()" class="w-full text-left px-4 py-2 hover:bg-cf-dark transition-colors">绑定钱包</button>
+            <button id="menuUnbindWalletBtn" onclick="unbindWallet()" class="w-full text-left px-4 py-2 hover:bg-cf-dark transition-colors hidden">解绑钱包</button>
+            <hr class="my-2 border-gray-700">
+            <button onclick="signOut()" class="w-full text-left px-4 py-2 text-cf-red hover:bg-cf-dark transition-colors">退出登录</button>
+          </div>
+        </div>
+      </header>
+
+      <main class="flex-1 flex flex-col items-center justify-center p-4">
+        <h2 class="text-2xl sm:text-3xl font-bold mb-8 text-center">欢迎来到太极悠悠牌</h2>
+        <button 
+          id="match-btn" 
+          onclick="startMatchmaking()" 
+          class="px-10 sm:px-12 py-4 bg-cf-blue text-xl font-bold rounded-lg hover:bg-blue-600 active:bg-blue-700 transition-all card-glow disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          快速匹配
+        </button>
+        <p id="match-status" class="mt-4 text-gray-400 hidden">正在匹配中... (0/8)</p>
+        <button 
+          id="cancel-match-btn" 
+          onclick="cancelMatchmaking()" 
+          class="mt-2 text-gray-400 hover:text-white transition-colors hidden"
+        >
+          取消匹配
+        </button>
+      </main>
+    </div>
+
+    <!-- 游戏页面 -->
+    <div id="game-page" class="hidden min-h-screen flex flex-col">
+      <header class="h-12 bg-cf-darker flex items-center justify-between px-4 border-b border-gray-700 shrink-0">
+        <div class="flex items-center space-x-4">
+          <span id="phaseTitle" class="font-medium">第 1 回合</span>
+          <span id="timerNum" class="text-cf-gold text-xl font-bold">30</span>
+        </div>
+        <span id="room-id" class="text-gray-400 text-sm">房间号：加载中</span>
+      </header>
+      <div class="flex flex-1 overflow-hidden flex-col sm:flex-row">
+        <aside class="w-full sm:w-48 bg-cf-darker p-2 space-y-2 border-b sm:border-b-0 sm:border-r border-gray-700 shrink-0 max-h-[120px] sm:max-h-full overflow-y-auto scrollbar-hide">
+          <div id="playersList" class="space-y-2 flex sm:flex-col gap-2"></div>
+        </aside>
+        <main class="flex-1 flex flex-col min-h-0">
+          <div id="battle-board" class="flex-1 grid grid-cols-2 sm:grid-cols-4 grid-rows-3 gap-2 p-4 bg-cf-gray overflow-y-auto scrollbar-hide"></div>
+          <footer class="h-auto sm:h-40 bg-cf-darker border-t border-gray-700 p-2 shrink-0">
+            <div id="shop" class="flex space-x-2 mb-2 overflow-x-auto scrollbar-hide pb-2"></div>
+            <div id="hand" class="flex space-x-2 h-20 overflow-x-auto scrollbar-hide pb-2"></div>
+          </footer>
+        </main>
+        <aside class="w-full sm:w-48 bg-cf-darker p-4 border-t sm:border-t-0 sm:border-l border-gray-700 flex sm:flex-col justify-between shrink-0 gap-4">
+          <div class="flex sm:flex-col gap-4 sm:gap-0">
+            <div class="mb-4">
+              <p class="text-gray-400 text-sm">金币</p>
+              <p id="goldText" class="text-2xl font-bold text-cf-gold">10</p>
+            </div>
+            <div class="mb-4">
+              <p class="text-gray-400 text-sm">等级 <span id="levelText">1</span></p>
+              <div class="w-full bg-gray-700 rounded-full h-2">
+                <div id="expBar" class="hp-bar h-2 rounded-full w-0"></div>
+              </div>
+              <p id="expText" class="text-xs text-gray-400 mt-1">0/2</p>
+            </div>
+            <div class="mb-4">
+              <p class="text-gray-400 text-sm">人口</p>
+              <p id="popText" class="text-xl font-bold">1/1</p>
+            </div>
+          </div>
+          <div class="flex sm:flex-col space-x-2 sm:space-x-0 sm:space-y-2">
+            <button onclick="payToRefreshShop()" class="flex-1 sm:w-full py-2 bg-cf-blue rounded hover:bg-blue-600 active:bg-blue-700 transition-colors">刷新 (2金)</button>
+            <button onclick="buyExp()" class="flex-1 sm:w-full py-2 bg-cf-green rounded hover:bg-green-600 active:bg-green-700 transition-colors">买经验 (4金)</button>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+
+  <!-- 强制设置用户名弹窗 -->
+  <div id="username-set-modal" class="hidden fixed inset-0 bg-black/80 modal-backdrop flex items-center justify-center z-[9999] p-4">
+    <div class="bg-cf-gray p-6 rounded-lg w-full max-w-sm animate-fade-in">
+      <h3 class="text-xl font-bold mb-2 text-center">设置唯一用户名</h3>
+      <p class="text-gray-400 text-sm mb-4 text-center">1-7位小写字母/数字，全局唯一，设置后进入游戏</p>
+      <div class="mb-4">
+        <input 
+          type="text" 
+          id="username-input" 
+          placeholder="请输入1-7位小写字母/数字" 
+          maxlength="7"
+          oninput="checkUsernameInput()"
+          class="w-full bg-cf-dark border border-gray-600 rounded px-3 py-2 focus:outline-none focus:border-cf-blue transition-colors"
+        >
+        <p id="username-tip" class="text-xs text-gray-400 mt-1">仅支持小写英文字母a-z、数字0-9</p>
+      </div>
+      <div class="flex justify-center">
+        <button 
+          id="submit-username-btn" 
+          onclick="submitFirstUsername()" 
+          class="w-full py-2 bg-cf-blue rounded hover:bg-blue-600 active:bg-blue-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          确认设置并进入
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 修改用户名弹窗 -->
+  <div id="username-rename-modal" class="hidden fixed inset-0 bg-black/70 modal-backdrop flex items-center justify-center z-50 p-4">
+    <div class="bg-cf-gray p-6 rounded-lg w-full max-w-sm animate-fade-in">
+      <h3 class="text-xl font-bold mb-4">修改用户名</h3>
+      <div class="mb-4 bg-cf-dark/50 p-3 rounded">
+        <p class="text-sm text-gray-300 mb-1">当前用户名：<span id="current-username" class="text-white font-medium"></span></p>
+        <p class="text-sm text-gray-300 mb-1">剩余改名卡：<span id="rename-card-count" class="text-cf-gold font-medium">0</span></p>
+        <p id="last-rename-tip" class="text-sm text-gray-400">上次改名：从未修改</p>
+        <p id="rename-limit-tip" class="text-sm text-cf-red mt-2 hidden">无可用改名卡，且未满1年冷却，无法修改</p>
+      </div>
+      <div class="mb-4">
+        <input 
+          type="text" 
+          id="rename-input" 
+          placeholder="新用户名" 
+          maxlength="7"
+          oninput="checkRenameInput()"
+          class="w-full bg-cf-dark border border-gray-600 rounded px-3 py-2 focus:outline-none focus:border-cf-blue transition-colors"
+        >
+        <p id="rename-tip" class="text-xs text-gray-400 mt-1">仅支持小写英文字母a-z、数字0-9</p>
+      </div>
+      <div class="flex justify-end space-x-2">
+        <button onclick="closeRenameModal()" class="px-4 py-2 bg-gray-600 rounded hover:bg-gray-500 transition-colors">取消</button>
+        <button 
+          id="submit-rename-btn" 
+          onclick="submitRename()" 
+          class="px-4 py-2 bg-cf-blue rounded hover:bg-blue-600 active:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          确认修改
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 修改头像弹窗 -->
+  <div id="avatar-modal" class="hidden fixed inset-0 bg-black/70 modal-backdrop flex items-center justify-center z-50 p-4">
+    <div class="bg-cf-gray p-6 rounded-lg w-full max-w-sm animate-fade-in">
+      <h3 class="text-xl font-bold mb-4">修改头像</h3>
+      <input 
+        type="file" 
+        id="avatar-input" 
+        accept="image/jpeg,image/png,image/webp" 
+        class="mb-4 w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-cf-blue file:text-white hover:file:bg-blue-600"
+      >
+      <p id="avatar-tip" class="text-xs text-gray-400 mb-4">仅支持JPG/PNG/WebP格式，文件大小不超过2MB</p>
+      <div class="flex justify-end space-x-2">
+        <button onclick="closeAvatarModal()" class="px-4 py-2 bg-gray-600 rounded hover:bg-gray-500 transition-colors">取消</button>
+        <button 
+          id="upload-avatar-btn" 
+          onclick="uploadAvatar()" 
+          class="px-4 py-2 bg-cf-blue rounded hover:bg-blue-600 active:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          确定
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 全局错误提示 -->
+  <div id="global-toast" class="fixed top-4 left-1/2 -translate-x-1/2 bg-cf-red/90 text-white px-4 py-2 rounded-lg z-[10000] hidden max-w-[90vw] text-center"></div>
+
+  <script type="module">
+    // 常量复用登录页的定义，防止重复
+    if (!window.TAIJI_CONST) {
+      window.TAIJI_CONST = {
+        SUPA_URL: "https://sznjaotjoljaiawbvfro.supabase.co",
+        SUPA_ANON_KEY: "sb_publishable_iN3D88OfHeUre4ddCaDH7g_rlsQ8LGN",
+        USERNAME_RULE: /^[a-z0-9]{1,7}$/,
+        REDIRECT_URL: `${window.location.origin}/card`
+      }
+    }
+    const { SUPA_URL, SUPA_ANON_KEY, USERNAME_RULE } = TAIJI_CONST
+
+    // 复用Supabase实例
+    if (!window.supabase) {
+      const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2.45.0')
+      window.supabase = createClient(SUPA_URL, SUPA_ANON_KEY)
+    }
+    const supabase = window.supabase
+    const { escapeHtml, debounce } = window
+
+    // 全局状态管理，减少window污染
+    const APP_STATE = {
+      currentUser: null,
+      currentUserProfile: null,
+      matchSubscription: null,
+      currentRoom: null,
+      isMatching: false,
+      isSubmitting: false,
+      gameTimer: null
+    }
+
+    // 全局工具函数
+    // 吐司提示
+    window.showToast = (message, type = 'error') => {
+      const toast = document.getElementById('global-toast')
+      toast.textContent = escapeHtml(message)
+      toast.className = toast.className.replace(/bg-\w+\/\d+/, '')
+      toast.classList.add(type === 'error' ? 'bg-cf-red/90' : 'bg-cf-green/90')
+      toast.classList.remove('hidden')
+      setTimeout(() => toast.classList.add('hidden'), 3000)
+    }
+
+    // 锁定/解锁页面滚动
+    window.lockBody = () => document.body.classList.add('no-scroll')
+    window.unlockBody = () => document.body.classList.remove('no-scroll')
+
+    // 清理所有订阅和定时器
+    window.clearAllSubscriptions = async () => {
+      if (APP_STATE.matchSubscription) {
+        await supabase.removeChannel(APP_STATE.matchSubscription)
+        APP_STATE.matchSubscription = null
+      }
+      if (APP_STATE.gameTimer) {
+        clearInterval(APP_STATE.gameTimer)
+        APP_STATE.gameTimer = null
+      }
+    }
+
+    // 页面切换
+    window.showPage = (page) => {
+      ["lobby","game"].forEach(x => {
+        document.getElementById(x+"-page").classList.add("hidden");
+      })
+      document.getElementById(page+"-page").classList.remove("hidden");
+    }
+
+    // 登录态校验
+    async function checkLogin() {
+      try {
+        // 校验登录状态
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if(error || !session){
+          window.location.replace("/signup");
+          return;
+        }
+        APP_STATE.currentUser = session.user;
+
+        // 重试读取用户资料，最多3次
+        let profile = null
+        let retryCount = 0
+        const maxRetry = 3
+        while (!profile && retryCount < maxRetry) {
+          const { data, error: profileError } = await supabase
+            .from("profiles")
+            .select("*")
+            .eq("id", APP_STATE.currentUser.id)
+            .single();
+          
+          if (!profileError && data) {
+            profile = data
+            break
+          }
+          retryCount++
+          if (retryCount < maxRetry) await new Promise(resolve => setTimeout(resolve, 1000))
+        }
+
+        if (!profile) {
+          showToast('用户资料加载失败，请刷新页面重试')
+          return
+        }
+        APP_STATE.currentUserProfile = profile
+
+        // 校验用户名有效性
+        const hasValidUsername = profile.username && profile.username.trim() !== "" && USERNAME_RULE.test(profile.username);
+        if(!hasValidUsername){
+          showUsernameSetModal();
+          return;
+        }
+
+        // 加载用户UI
+        await loadUserUI();
+        showPage('lobby')
+      } catch (err) {
+        showToast(`登录校验失败：${err.message}`)
+      }
+    }
+
+    // 加载用户UI
+    async function loadUserUI() {
+      const p = APP_STATE.currentUserProfile
+      const userId = APP_STATE.currentUser.id
+
+      // 顶部用户名和头像
+      document.getElementById("user-name").textContent = escapeHtml(p.username);
+      const avatarUrl = p.avatar_url ?? `https://api.dicebear.com/7.x/avataaars/svg?seed=${userId}`
+      document.getElementById("user-avatar").src = avatarUrl;
+
+      // 谷歌邮箱显示
+      const emailEl = document.getElementById("googleEmailLine");
+      const mail = APP_STATE.currentUser.email || '';
+      emailEl.innerText = (mail.length>22) ? mail.slice(0,19)+"…" : mail;
+
+      // 钱包绑定状态
+      const bindBtn = document.getElementById("menuBindWalletBtn");
+      const unbindBtn = document.getElementById("menuUnbindWalletBtn");
+      if(p.wallet_address){
+        const shortAddr = p.wallet_address.slice(0,6)+"…"+p.wallet_address.slice(-4);
+        bindBtn.innerText = "已绑定："+shortAddr;
+        bindBtn.disabled = true;
+        unbindBtn.classList.remove("hidden");
+      }else{
+        bindBtn.innerText = "绑定钱包";
+        bindBtn.disabled = false;
+        unbindBtn.classList.add("hidden");
+      }
+    }
+
+    // 强制设置用户名弹窗
+    window.showUsernameSetModal = () => {
+      document.getElementById("app-container").classList.add("hidden");
+      document.getElementById("username-set-modal").classList.remove("hidden");
+      lockBody()
+    }
+    window.hideUsernameSetModal = () => {
+      document.getElementById("app-container").classList.remove("hidden");
+      document.getElementById("username-set-modal").classList.add("hidden");
+      unlockBody()
+    }
+
+    // 用户名输入实时校验
+    window.checkUsernameInput = () => {
+      const input = document.getElementById("username-input");
+      const tip = document.getElementById("username-tip");
+      const raw = input.value.trim().toLowerCase();
+      input.value = raw.replace(/[^a-z0-9]/g, '') // 实时过滤非法字符
+
+      if (!raw) {
+        tip.className = "text-xs text-gray-400 mt-1";
+        tip.innerText = "仅支持小写英文字母a-z、数字0-9";
+        return;
+      }
+      if (!USERNAME_RULE.test(raw)) {
+        tip.className = "text-xs text-cf-red mt-1";
+        tip.innerText = "格式错误！仅支持1-7位小写字母、数字";
+        return;
+      }
+      tip.className = "text-xs text-cf-green mt-1";
+      tip.innerText = "格式正确，点击确认提交";
+    }
+
+    // 首次设置用户名
+    window.submitFirstUsername = debounce(async () => {
+      if (APP_STATE.isSubmitting) return
+      APP_STATE.isSubmitting = true
+
+      const input = document.getElementById("username-input");
+      const tip = document.getElementById("username-tip");
+      const btn = document.getElementById("submit-username-btn");
+      const raw = input.value.trim().toLowerCase();
+
+      // 格式校验
+      if(!USERNAME_RULE.test(raw)){
+        tip.className="text-xs text-cf-red mt-1";
+        tip.innerText="格式错误！仅支持1-7位小写字母、数字";
+        APP_STATE.isSubmitting = false
+        btn.disabled = false
+        return;
+      }
+
+      btn.disabled = true;
+      tip.className="text-xs text-gray-400 mt-1";
+      tip.innerText="正在检测用户名是否可用...";
+
+      try {
+        // 检测用户名是否被占用
+        const { data: exist } = await supabase
+          .from("profiles")
+          .select("id")
+          .eq("username", raw)
+          .single();
+        if(exist){
+          tip.className="text-xs text-cf-red mt-1";
+          tip.innerText="该用户名已被占用，请换一个";
+          return;
+        }
+
+        // 写入数据库
+        tip.innerText="正在保存用户名...";
+        const { error: updateError } = await supabase
+          .from("profiles")
+          .update({ username: raw })
+          .eq("id", APP_STATE.currentUser.id);
+        
+        if(updateError) throw updateError
+
+        // 重新读取最新资料
+        const { data: newProfile } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", APP_STATE.currentUser.id)
+          .single();
+        APP_STATE.currentUserProfile = newProfile;
+
+        // 成功进入
+        tip.className="text-xs text-cf-green mt-1";
+        tip.innerText="设置成功，正在进入...";
+        setTimeout(()=>{
+          hideUsernameSetModal();
+          loadUserUI();
+          showPage('lobby')
+        },800);
+      } catch (err) {
+        tip.className="text-xs text-cf-red mt-1";
+        tip.innerText="保存失败："+escapeHtml(err.message);
+      } finally {
+        APP_STATE.isSubmitting = false
+        btn.disabled = false;
+      }
+    }, 1000)
+
+    // 修改用户名弹窗
+    window.openRenameModal = debounce(async () => {
+      // 重新读取最新资料
+      const { data: newProfile, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", APP_STATE.currentUser.id)
+        .single();
+      
+      if (error) {
+        showToast('用户资料读取失败')
+        return
+      }
+      APP_STATE.currentUserProfile = newProfile;
+      const p = APP_STATE.currentUserProfile;
+
+      // 填充当前信息
+      document.getElementById("current-username").innerText = escapeHtml(p.username);
+      document.getElementById("rename-card-count").innerText = p.rename_card_count || 0;
+      document.getElementById("rename-input").value = "";
+      document.getElementById("rename-tip").className = "text-xs text-gray-400 mt-1";
+      document.getElementById("rename-tip").innerText = "仅支持小写英文字母a-z、数字0-9";
+
+      // 计算冷却时间
+      const lastRenameTip = document.getElementById("last-rename-tip");
+      const limitTip = document.getElementById("rename-limit-tip");
+      const submitBtn = document.getElementById("submit-rename-btn");
+      let canRename = false;
+      let remainDays = 0;
+
+      if(p.last_rename_date){
+        const lastDate = new Date(p.last_rename_date);
+        const nextFreeDate = new Date(lastDate);
+        nextFreeDate.setFullYear(nextFreeDate.getFullYear() + 1);
+        const now = new Date();
+        const isCoolDownOver = now >= nextFreeDate;
+        remainDays = Math.ceil((nextFreeDate - now) / (1000 * 60 * 60 * 24));
+
+        lastRenameTip.innerText = `上次改名：${lastDate.toLocaleDateString()} | 下次免费改名：${isCoolDownOver ? '已可用' : `剩余${remainDays}天`}`;
+        canRename = (p.rename_card_count > 0) || isCoolDownOver;
+      }else{
+        lastRenameTip.innerText = "从未改名";
+        canRename = true;
+      }
+
+      // 禁用状态处理
+      if(!canRename){
+        limitTip.classList.remove("hidden");
+        limitTip.innerText = `无可用改名卡，且剩余${remainDays}天冷却，无法修改`
+        submitBtn.disabled = true;
+        submitBtn.className = "px-4 py-2 bg-gray-600 rounded cursor-not-allowed";
+      }else{
+        limitTip.classList.add("hidden");
+        submitBtn.disabled = false;
+        submitBtn.className = "px-4 py-2 bg-cf-blue rounded hover:bg-blue-600 active:bg-blue-700 transition-colors";
+      }
+
+      document.getElementById("username-rename-modal").classList.remove("hidden");
+      lockBody()
+    }, 500)
+
+    window.closeRenameModal = () => {
+      document.getElementById("username-rename-modal").classList.add("hidden");
+      unlockBody()
+    }
+
+    // 改名输入实时校验
+    window.checkRenameInput = () => {
+      const input = document.getElementById("rename-input");
+      const tip = document.getElementById("rename-tip");
+      const raw = input.value.trim().toLowerCase();
+      input.value = raw.replace(/[^a-z0-9]/g, '')
+
+      if (!raw) {
+        tip.className = "text-xs text-gray-400 mt-1";
+        tip.innerText = "仅支持小写英文字母a-z、数字0-9";
+        return;
+      }
+      if (raw === APP_STATE.currentUserProfile.username) {
+        tip.className = "text-xs text-cf-red mt-1";
+        tip.innerText = "新用户名不能和当前用户名一致";
+        return;
+      }
+      if (!USERNAME_RULE.test(raw)) {
+        tip.className = "text-xs text-cf-red mt-1";
+        tip.innerText = "格式错误！仅支持1-7位小写字母、数字";
+        return;
+      }
+      tip.className = "text-xs text-cf-green mt-1";
+      tip.innerText = "格式正确，点击确认修改";
+    }
+
+    // 提交改名
+    window.submitRename = debounce(async () => {
+      if (APP_STATE.isSubmitting) return
+      APP_STATE.isSubmitting = true
+
+      const input = document.getElementById("rename-input");
+      const tip = document.getElementById("rename-tip");
+      const btn = document.getElementById("submit-rename-btn");
+      const p = APP_STATE.currentUserProfile;
+      const newName = input.value.trim().toLowerCase();
+
+      // 格式校验
+      if(!USERNAME_RULE.test(newName)){
+        tip.className="text-xs text-cf-red mt-1";
+        tip.innerText="格式错误！仅支持1-7位小写字母、数字";
+        APP_STATE.isSubmitting = false
+        btn.disabled = false
+        return;
+      }
+      if(newName === p.username){
+        tip.className="text-xs text-cf-red mt-1";
+        tip.innerText="新用户名不能和当前用户名一致";
+        APP_STATE.isSubmitting = false
+        btn.disabled = false
+        return;
+      }
+
+      // 二次校验改名权限
+      let haveCard = p.rename_card_count > 0;
+      let canYearFree = false;
+      if(!p.last_rename_date){
+        canYearFree = true;
+      }else{
+        const lastDate = new Date(p.last_rename_date);
+        const nextFreeDate = new Date(lastDate);
+        nextFreeDate.setFullYear(nextFreeDate.getFullYear() + 1);
+        canYearFree = new Date() >= nextFreeDate;
+      }
+      if(!haveCard && !canYearFree){
+        tip.className="text-xs text-cf-red mt-1";
+        tip.innerText="无可用改名卡，且未满1年冷却，无法修改";
+        APP_STATE.isSubmitting = false
+        btn.disabled = false
+        return;
+      }
+
+      btn.disabled = true;
+      tip.innerText="正在检测用户名是否可用...";
+
+      try {
+        // 检测占用
+        const { data: exist } = await supabase
+          .from("profiles")
+          .select("id")
+          .eq("username", newName)
+          .single();
+        if(exist){
+          tip.className="text-xs text-cf-red mt-1";
+          tip.innerText="该用户名已被占用，请换一个";
+          return;
+        }
+
+        // 写入数据库
+        tip.innerText="正在修改用户名...";
+        const updateData = {
+          username: newName,
+          last_rename_date: new Date().toISOString()
+        };
+        if(haveCard && !canYearFree){
+          updateData.rename_card_count = p.rename_card_count - 1;
+        }
+
+        const { error: updateError } = await supabase
+          .from("profiles")
+          .update(updateData)
+          .eq("id", APP_STATE.currentUser.id);
+        
+        if(updateError) throw updateError
+
+        // 更新本地资料
+        const { data: newProfile } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", APP_STATE.currentUser.id)
+          .single();
+        APP_STATE.currentUserProfile = newProfile;
+        await loadUserUI();
+
+        // 成功提示
+        tip.className="text-xs text-cf-green mt-1";
+        tip.innerText="修改成功！";
+        showToast('用户名修改成功', 'success')
+        setTimeout(()=>{
+          closeRenameModal();
+        },1000);
+      } catch (err) {
+        tip.className="text-xs text-cf-red mt-1";
+        tip.innerText="修改失败："+escapeHtml(err.message);
+      } finally {
+        APP_STATE.isSubmitting = false
+        btn.disabled = false;
+      }
+    }, 1000)
+
+    // 头像弹窗
+    window.openAvatarModal = () => {
+      document.getElementById("avatar-input").value = ''
+      document.getElementById("avatar-tip").className = "text-xs text-gray-400 mb-4"
+      document.getElementById("avatar-modal").classList.remove("hidden");
+      lockBody()
+    }
+    window.closeAvatarModal = () => {
+      document.getElementById("avatar-modal").classList.add("hidden");
+      unlockBody()
+    }
+
+    // 上传头像
+    window.uploadAvatar = debounce(async () => {
+      if (APP_STATE.isSubmitting) return
+      APP_STATE.isSubmitting = true
+
+      const file = document.getElementById("avatar-input").files[0];
+      const btn = document.getElementById("upload-avatar-btn");
+      const tip = document.getElementById("avatar-tip");
+
+      if(!file){
+        showToast('请选择要上传的图片')
+        APP_STATE.isSubmitting = false
+        return;
+      }
+
+      // 文件校验
+      const maxSize = 2 * 1024 * 1024; // 2MB
+      const allowTypes = ['image/jpeg', 'image/png', 'image/webp'];
+      if (!allowTypes.includes(file.type)) {
+        tip.className = "text-xs text-cf-red mb-4"
+        tip.innerText = "仅支持JPG/PNG/WebP格式的图片"
+        APP_STATE.isSubmitting = false
+        return
+      }
+      if (file.size > maxSize) {
+        tip.className = "text-xs text-cf-red mb-4"
+        tip.innerText = "图片大小不能超过2MB"
+        APP_STATE.isSubmitting = false
+        return
+      }
+
+      btn.disabled = true;
+      tip.className = "text-xs text-gray-400 mb-4"
+      tip.innerText = "正在上传头像..."
+
+      try {
+        const fileName = `${APP_STATE.currentUser.id}-${Date.now()}`;
+        const { error: uploadError } = await supabase.storage.from("avatars").upload(fileName, file);
+        if(uploadError) throw uploadError
+
+        const { data: { publicUrl } } = supabase.storage.from("avatars").getPublicUrl(fileName);
+        const { error: updateError } = await supabase.from("profiles").update({ avatar_url: publicUrl }).eq("id", APP_STATE.currentUser.id);
+        if(updateError) throw updateError
+
+        // 更新头像
+        document.getElementById("user-avatar").src = publicUrl;
+        showToast('头像修改成功', 'success')
+        closeAvatarModal();
+      } catch (err) {
+        tip.className = "text-xs text-cf-red mb-4"
+        tip.innerText = "上传失败：" + escapeHtml(err.message)
+      } finally {
+        APP_STATE.isSubmitting = false
+        btn.disabled = false;
+      }
+    }, 1000)
+
+    // 钱包绑定/解绑
+    window.bindWallet = async () => {
+      showToast('钱包绑定功能开发中，敬请期待', 'success')
+    };
+    window.unbindWallet = debounce(async () => {
+      if(!confirm("确定解绑钱包？解绑后将无法使用钱包相关功能")) return;
+      const { error } = await supabase.from("profiles").update({wallet_address:null}).eq("id", APP_STATE.currentUser.id);
+      if(!error) {
+        showToast('钱包解绑成功', 'success')
+        await checkLogin();
+      } else {
+        showToast('解绑失败：' + error.message)
+      }
+    }, 1000)
+
+    // 退出登录
+    window.signOut = debounce(async () => {
+      if(!confirm("确定退出登录吗？")) return;
+      try {
+        // 清理所有订阅
+        await clearAllSubscriptions()
+        // 退出登录
+        await supabase.auth.signOut();
+        // 清空状态
+        Object.keys(APP_STATE).forEach(key => APP_STATE[key] = null)
+        // 跳转登录页
+        location.href="/signup";
+      } catch (err) {
+        showToast('退出登录失败：' + err.message)
+      }
+    }, 1000)
+
+    // 匹配功能
+    window.startMatchmaking = debounce(async () => {
+      if(APP_STATE.isMatching) return
+      if(!APP_STATE.currentUser || !APP_STATE.currentUserProfile?.username) {
+        showToast('用户信息异常，请刷新页面重试')
+        return
+      }
+
+      APP_STATE.isMatching = true
+      const matchBtn = document.getElementById("match-btn")
+      const matchStatus = document.getElementById("match-status")
+      const cancelBtn = document.getElementById("cancel-match-btn")
+
+      // 插入匹配队列
+      const { error } = await supabase.from("matching").insert({
+        user_id: APP_STATE.currentUser.id,
+        username: APP_STATE.currentUserProfile.username,
+        avatar_url: document.getElementById("user-avatar").src
+      }).catch(err => err);
+
+      if(error) {
+        showToast('加入匹配队列失败：' + error.message)
+        APP_STATE.isMatching = false
+        return
+      }
+
+      // 更新UI
+      matchBtn.classList.add("hidden");
+      matchStatus.classList.remove("hidden");
+      cancelBtn.classList.remove("hidden");
+
+      // 订阅匹配队列
+      APP_STATE.matchSubscription = supabase.channel("matchmaking")
+      .on("postgres_changes",{event:"*",schema:"public",table:"matching"},async ()=>{
+        const {count} = await supabase.from("matching").select("*",{count:"exact",head:true});
+        matchStatus.innerText = `正在匹配中... (${count}/8)`;
+      }).subscribe();
+    }, 1000)
+
+    window.cancelMatchmaking = debounce(async () => {
+      const matchBtn = document.getElementById("match-btn")
+      const matchStatus = document.getElementById("match-status")
+      const cancelBtn = document.getElementById("cancel-match-btn")
+
+      // 移除匹配队列
+      await supabase.from("matching").delete().eq("user_id", APP_STATE.currentUser.id);
+      // 取消订阅
+      if (APP_STATE.matchSubscription) {
+        await supabase.removeChannel(APP_STATE.matchSubscription)
+        APP_STATE.matchSubscription = null
+      }
+
+      // 更新UI
+      matchBtn.classList.remove("hidden");
+      matchStatus.classList.add("hidden");
+      cancelBtn.classList.add("hidden");
+      APP_STATE.isMatching = false
+    }, 500)
+
+    // 游戏功能占位
+    window.payToRefreshShop = () => showToast('商店刷新功能开发中', 'success')
+    window.buyExp = () => showToast('购买经验功能开发中', 'success')
+
+    // 页面初始化
+    window.addEventListener('DOMContentLoaded', async ()=>{
+      await checkLogin();
+    })
+
+    // 页面离开时清理
+    window.addEventListener('beforeunload', async () => {
+      await clearAllSubscriptions()
+      if (APP_STATE.isMatching) {
+        await supabase.from("matching").delete().eq("user_id", APP_STATE.currentUser?.id);
+      }
+    })
+
+    // 点击遮罩关闭弹窗
+    ;['username-set-modal', 'username-rename-modal', 'avatar-modal'].forEach(id => {
+      const modal = document.getElementById(id)
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          if (id === 'username-set-modal') return // 强制设置弹窗不允许点击遮罩关闭
+          modal.classList.add('hidden')
+          unlockBody()
+        }
+      })
+    })
+
+    // ESC键关闭弹窗
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        ;['username-rename-modal', 'avatar-modal'].forEach(id => {
+          const modal = document.getElementById(id)
+          if (!modal.classList.contains('hidden')) {
+            modal.classList.add('hidden')
+            unlockBody()
+          }
+        })
+      }
+    })
+
+    // 用户菜单点击事件
+    document.getElementById('user-menu-btn').addEventListener('click', (e) => {
+      e.stopPropagation()
+      document.getElementById('user-menu').classList.toggle('hidden');
+    });
+    document.addEventListener('click', e => {
+      if(!e.target.closest("#user-menu-btn") && !e.target.closest("#user-menu")){
+        document.getElementById('user-menu').classList.add("hidden");
+      }
+    });
+  </script>
+</body>
+</html>
