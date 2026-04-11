@@ -1,6 +1,3 @@
----
-permalink: /yycard
----
 <!DOCTYPE html>
 <html lang="zh">
 <head>
@@ -8,7 +5,6 @@ permalink: /yycard
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>YY Card · 游戏大厅</title>
     <link rel="stylesheet" href="css/lobby.css">
-    <!-- Supabase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -25,7 +21,7 @@ permalink: /yycard
             </div>
             <button class="btn" id="logout-btn">登出</button>
         </div>
-        <button class="btn-primary" id="start-match-btn">⚡ 开始匹配</button>
+        <button class="btn-primary" id="start-match-btn" disabled>请先设置游戏ID</button>
         <div id="match-status" class="match-status">等待开始...</div>
         <div class="action-buttons">
             <button class="btn" id="set-username-btn">设置游戏ID</button>
@@ -34,20 +30,30 @@ permalink: /yycard
         </div>
     </div>
 
-    <!-- 对战视图（简化，先保证大厅功能） -->
+    <!-- 对战视图 -->
     <div id="battle-view" class="view">
         <div class="battle-header">
             <span>❤️ <span id="my-health">100</span></span>
             <span>💰 <span id="my-gold">5</span></span>
-            <button class="btn" id="leave-room-btn">退出房间</button>
+            <span>⭐ Lv.<span id="shop-level">1</span></span>
+            <button class="btn" id="leave-room-btn">退出</button>
         </div>
-        <div id="battle-content" style="text-align:center;padding:40px;">
-            对战界面开发中...<br>
-            <button class="btn" id="debug-end-turn">[调试] 结束回合</button>
+        <div id="enemy-board" class="board"></div>
+        <div style="text-align:center;">VS</div>
+        <div id="my-board" class="board"></div>
+        <div id="phase-info">准备阶段</div>
+        <div id="hand-container" class="hand"></div>
+        <div class="shop">
+            <div style="display:flex; justify-content:space-between;">
+                <span>商店</span>
+                <button class="btn" id="refresh-shop">刷新 (1💰)</button>
+            </div>
+            <div id="shop-cards" class="hand"></div>
         </div>
+        <button class="btn-primary" id="end-prepare-btn">结束准备</button>
     </div>
 
-    <!-- 用户名设置模态框 -->
+    <!-- 模态框：设置用户名 -->
     <div id="username-modal" class="modal" style="display:none;">
         <div class="modal-content">
             <h3>设置游戏ID</h3>
@@ -59,7 +65,7 @@ permalink: /yycard
         </div>
     </div>
 
-    <!-- 钱包绑定模态框 -->
+    <!-- 模态框：绑定钱包 -->
     <div id="wallet-modal" class="modal" style="display:none;">
         <div class="modal-content">
             <h3>绑定以太坊钱包</h3>
@@ -72,7 +78,7 @@ permalink: /yycard
         </div>
     </div>
 
-    <!-- 头像修改模态框 -->
+    <!-- 模态框：修改头像 -->
     <div id="avatar-modal" class="modal" style="display:none;">
         <div class="modal-content">
             <h3>更换头像</h3>
@@ -87,24 +93,14 @@ permalink: /yycard
     </div>
 </div>
 
-<!-- 按顺序加载模块 -->
+<!-- 按依赖顺序加载模块 -->
 <script src="js/config.js"></script>
 <script src="js/utils.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/profile.js"></script>
-<script src="js/game-core.js"></script>
-<!-- 内联初始化，确保执行 -->
-<script>
-    console.log('🚀 YY Card 大厅启动...');
-    // 等待 DOM 加载完成
-    document.addEventListener('DOMContentLoaded', () => {
-        console.log('📄 DOM 已加载');
-        if (typeof window.initApp === 'function') {
-            window.initApp();
-        } else {
-            console.error('❌ initApp 函数未定义，请检查 game-core.js 是否加载');
-        }
-    });
-</script>
+<script src="js/matchmaking.js"></script>
+<script src="js/game-state.js"></script>
+<script src="js/battle.js"></script>
+<script src="js/main.js"></script>
 </body>
 </html>
