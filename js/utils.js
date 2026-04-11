@@ -36,3 +36,12 @@ function formatRemaining(ms) {
     const hours = Math.floor((ms % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
     return `${days}天${hours}小时`;
 }
+
+// 默认卡组（简化版，后续可替换为 characters.json）
+function getDefaultDeck() {
+    return [
+        { id: uuid(), name: '斯沃特', atk: 5, hp: 8, rare: 'Common', star: 0 },
+        { id: uuid(), name: '赛斯', atk: 6, hp: 6, rare: 'Common', star: 0 },
+        { id: uuid(), name: '精卫', atk: 22, hp: 28, rare: 'Legendary', star: 0 },
+    ];
+}
