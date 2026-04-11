@@ -1,0 +1,110 @@
+---
+permalink: /yycard
+---
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>YY Card · 游戏大厅</title>
+    <link rel="stylesheet" href="css/lobby.css">
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<div id="app">
+    <!-- 大厅视图 -->
+    <div id="lobby-view" class="view active">
+        <div class="header-bar">
+            <div class="user-profile">
+                <img id="lobby-avatar" class="avatar" src="" alt="avatar">
+                <div class="user-info">
+                    <div id="lobby-username"></div>
+                    <div id="lobby-wallet" class="user-wallet"></div>
+                </div>
+            </div>
+            <button class="btn" id="logout-btn">登出</button>
+        </div>
+        <button class="btn-primary" id="start-match-btn">⚡ 开始匹配</button>
+        <div id="match-status" class="match-status">等待开始...</div>
+        <div class="action-buttons">
+            <button class="btn" id="set-username-btn">设置游戏ID</button>
+            <button class="btn" id="bind-wallet-btn">绑定钱包</button>
+            <button class="btn" id="change-avatar-btn">修改头像</button>
+        </div>
+    </div>
+
+    <!-- 对战视图（简化，先保证大厅功能） -->
+    <div id="battle-view" class="view">
+        <div class="battle-header">
+            <span>❤️ <span id="my-health">100</span></span>
+            <span>💰 <span id="my-gold">5</span></span>
+            <button class="btn" id="leave-room-btn">退出房间</button>
+        </div>
+        <div id="battle-content" style="text-align:center;padding:40px;">
+            对战界面开发中...<br>
+            <button class="btn" id="debug-end-turn">[调试] 结束回合</button>
+        </div>
+    </div>
+
+    <!-- 用户名设置模态框 -->
+    <div id="username-modal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <h3>设置游戏ID</h3>
+            <p>7位小写字母或数字，设置后不可更改</p>
+            <input type="text" id="username-input" maxlength="7" placeholder="例如: king123">
+            <div id="username-error" class="error-msg"></div>
+            <button class="btn-primary" id="confirm-username-btn">确认</button>
+            <button class="btn" id="cancel-username-btn">取消</button>
+        </div>
+    </div>
+
+    <!-- 钱包绑定模态框 -->
+    <div id="wallet-modal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <h3>绑定以太坊钱包</h3>
+            <input type="text" id="wallet-input" placeholder="0x...">
+            <div id="wallet-error" class="error-msg"></div>
+            <div class="modal-buttons">
+                <button class="btn" id="confirm-wallet-btn">确认</button>
+                <button class="btn" id="cancel-wallet-btn">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 头像修改模态框 -->
+    <div id="avatar-modal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <h3>更换头像</h3>
+            <p id="cooldown-warning" class="cool-down"></p>
+            <input type="file" id="avatar-file-input" accept="image/png,image/jpeg,image/webp">
+            <div id="upload-status"></div>
+            <div class="modal-buttons">
+                <button class="btn" id="upload-avatar-btn">上传</button>
+                <button class="btn" id="cancel-avatar-btn">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 按顺序加载模块 -->
+<script src="js/config.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/profile.js"></script>
+<script src="js/game-core.js"></script>
+<!-- 内联初始化，确保执行 -->
+<script>
+    console.log('🚀 YY Card 大厅启动...');
+    // 等待 DOM 加载完成
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('📄 DOM 已加载');
+        if (typeof window.initApp === 'function') {
+            window.initApp();
+        } else {
+            console.error('❌ initApp 函数未定义，请检查 game-core.js 是否加载');
+        }
+    });
+</script>
+</body>
+</html>
