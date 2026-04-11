@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>认证诊断</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <h1>YY Card 认证诊断</h1>
+    <div id="status"></div>
+    <button id="login">Google 登录</button>
+    <button id="logout">登出</button>
+    <button id="check">检查会话</button>
+    <pre id="output"></pre>
+
+    <script>
+        const SUPABASE_URL = 'https://sznjaotjoljaiawbvfro.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_iN3D88OfHeUre4ddCaDH7g_rlsQ8LGN';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        const statusEl = document.getElementById('status');
+        const outputEl = document.getElementById('output');
+
+        async function showSession() {
+            const { data: { session }, error } = await supabase.auth.getSession();
+            outputEl.textContent = JSON.stringify({ session, error }, null, 2);
+            statusEl.textContent = session ? `✅ 已登录: ${session.user.email}` : '❌ 未登录';
+        }
+
+        // 监听状态变化
+        supabase.auth.onAuthStateChange((event, session) => {
+            outputEl.textContent += `\n\n[Event] ${event}`;
+            showSession();
+        });
+
+        document.getElementById('login').onclick = () => {
+            supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.href } });
+        };
+        document.getElementById('logout').onclick = () => supabase.auth.signOut();
+        document.getElementById('check').onclick = showSession;
+
+        showSession();
+    </script>
+</body>
+</html>
