@@ -1,0 +1,259 @@
+/* ==================== 对局界面样式（悠悠牌最终风格） ==================== */
+body {
+    overscroll-behavior: none;
+    touch-action: pan-y;
+    background: radial-gradient(circle at 20% 20%, #1a2a4a, #0a0f1a);
+    min-height: 100vh;
+    color: #f0f0f0;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+}
+
+/* ----- 右上角8名玩家状态栏 ----- */
+.players-status-bar {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    z-index: 100;
+    width: 140px;
+    background: rgba(10, 18, 30, 0.85);
+    backdrop-filter: blur(8px);
+    border-radius: 20px;
+    padding: 8px 10px;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+.player-status-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.player-status-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.player-status-item img {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1.5px solid #f5d76e;
+    background: #2a3a5c;
+}
+.player-status-item .hp-bar {
+    flex: 1;
+    height: 6px;
+    background: #3a4a6a;
+    border-radius: 3px;
+    overflow: hidden;
+}
+.player-status-item .hp-fill {
+    height: 100%;
+    background: #e94560;
+    width: 0%;
+}
+
+/* ----- 左上角操作区（退出/设置） ----- */
+.top-left-actions {
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    z-index: 100;
+    display: flex;
+    gap: 8px;
+}
+.top-left-actions .btn {
+    background: rgba(20, 28, 48, 0.8);
+    backdrop-filter: blur(4px);
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    border: 1px solid rgba(255,215,0,0.2);
+}
+
+/* ----- 准备阶段：商店区域（顶部） ----- */
+.shop-area {
+    position: fixed;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 180px); /* 避开左右按钮 */
+    max-width: 400px;
+    z-index: 90;
+    background: rgba(10, 18, 30, 0.8);
+    backdrop-filter: blur(8px);
+    border-radius: 30px;
+    padding: 8px 12px;
+    border: 1px solid rgba(255,215,0,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.shop-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #f5d76e;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+.shop-cards {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 2px 0;
+}
+.shop-cards .card {
+    min-width: 70px;
+    flex-shrink: 0;
+}
+
+/* ----- 准备阶段：操作按钮区（底部） ----- */
+.prepare-actions {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    z-index: 90;
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+.prepare-actions .btn {
+    flex: 1;
+    max-width: 120px;
+    padding: 12px 0;
+    font-size: 1rem;
+    background: rgba(30, 40, 60, 0.9);
+    backdrop-filter: blur(4px);
+    border: 1px solid #f5d76e;
+}
+.prepare-actions .btn-primary {
+    background: linear-gradient(145deg, #f5d76e, #f0b34b);
+    color: #0b0f1c;
+    border: none;
+}
+
+/* ----- 手牌区域（准备阶段显示在操作按钮上方） ----- */
+.hand-area {
+    position: fixed;
+    bottom: 90px;
+    left: 20px;
+    right: 20px;
+    z-index: 89;
+    background: rgba(10, 18, 30, 0.7);
+    backdrop-filter: blur(8px);
+    border-radius: 20px;
+    padding: 8px 12px;
+    border: 1px solid rgba(255,215,0,0.2);
+}
+.hand-label {
+    font-size: 0.7rem;
+    margin-bottom: 4px;
+    padding-left: 4px;
+    color: #aab9d4;
+}
+.hand {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+}
+.hand .card {
+    min-width: 70px;
+    flex-shrink: 0;
+}
+
+/* ----- 棋盘区域（准备和战斗共用） ----- */
+.board-area {
+    position: fixed;
+    top: 80px;
+    bottom: 180px;
+    left: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.enemy-board-section, .my-board-section {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 16px;
+    padding: 8px;
+}
+.board-label {
+    font-size: 0.8rem;
+    opacity: 0.7;
+    margin-bottom: 4px;
+    text-align: left;
+    padding-left: 4px;
+}
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+.battle-divider {
+    text-align: center;
+    margin: 12px 0;
+    color: #f5d76e;
+    font-weight: bold;
+    text-shadow: 0 0 8px #000;
+    letter-spacing: 4px;
+    font-size: 1.1rem;
+}
+
+/* ----- 战斗阶段特有：倒计时/阶段提示（可置于分界线旁） ----- */
+.battle-timer {
+    text-align: center;
+    font-size: 0.9rem;
+    color: #e94560;
+    margin-top: -8px;
+    margin-bottom: 8px;
+}
+
+/* ----- 卡牌通用样式 ----- */
+.card-slot { cursor: pointer; }
+.card {
+    background: #141a2a;
+    border: 1.5px solid #3a4a6a;
+    border-radius: 8px;
+    padding: 4px 2px;
+    text-align: center;
+    font-size: 0.7rem;
+    transition: all 0.15s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+.card .card-name { font-weight: bold; }
+.card .card-stats { font-size: 0.65rem; display: flex; justify-content: center; gap: 6px; }
+.card .card-price { color: #f5d76e; margin-top: 2px; }
+.card.selected { border-color: #f5d76e; box-shadow: 0 0 10px #f5d76e; }
+.empty-slot {
+    opacity: 0.3;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 按钮通用 */
+.btn {
+    background: #2e3f5e;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 40px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    box-shadow: 0 4px 0 #121927;
+}
+.btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #121927; }
+.btn-primary {
+    background: linear-gradient(145deg, #f5d76e, #f0b34b);
+    color: #0b0f1c;
+    box-shadow: 0 4px 0 #a05f20;
+}
+
+/* 阶段切换时显示/隐藏 */
+.prepare-only { display: block; }
+.battle-only { display: none; }
+.battle-view-mode .prepare-only { display: none; }
+.battle-view-mode .battle-only { display: block; }
