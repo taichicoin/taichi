@@ -1,17 +1,17 @@
-/* ==================== 对局界面样式（悠悠牌风格） ==================== */
+/* ==================== 对局界面样式（悠悠牌截图风格） ==================== */
 body {
     overscroll-behavior: none;
     touch-action: pan-y;
     background: linear-gradient(145deg, #0b0f1c 0%, #1a1f33 100%);
 }
 
-/* ----- 8名玩家状态栏（右上角） ----- */
+/* ----- 8名玩家状态栏（右上角悬浮） ----- */
 .players-status-bar {
     position: fixed;
     top: 10px;
     right: 10px;
-    z-index: 10;
-    max-width: 160px;
+    z-index: 100;
+    max-width: 150px;
     background: rgba(20, 28, 48, 0.85);
     backdrop-filter: blur(8px);
     border-radius: 20px;
@@ -47,17 +47,68 @@ body {
     background: #e94560;
 }
 
-/* ----- 棋盘区域 ----- */
-.enemy-board-area, .my-board-area {
-    padding: 0 8px;
+/* ----- 顶部商店区域（固定，3张卡牌横向） ----- */
+.shop-area {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    right: 170px; /* 给右侧状态栏留空间 */
+    z-index: 90;
+    background: rgba(20, 28, 48, 0.8);
+    backdrop-filter: blur(8px);
+    border-radius: 20px;
+    padding: 8px 12px;
+    border: 1px solid rgba(255,215,0,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
-.battle-divider {
-    text-align: center;
-    margin: 8px 0;
-    color: #f5d76e;
+.shop-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.shop-header span {
     font-weight: bold;
-    text-shadow: 0 0 5px #000;
-    letter-spacing: 4px;
+    color: #f5d76e;
+}
+.shop-cards {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+}
+.shop-cards .card {
+    min-width: 70px;
+    flex-shrink: 0;
+}
+.shop-actions {
+    display: flex;
+    gap: 6px;
+    margin-left: 10px;
+}
+.shop-actions .btn {
+    padding: 6px 10px;
+    font-size: 0.7rem;
+    white-space: nowrap;
+}
+
+/* ----- 中间棋盘区域（动态留出顶部和底部空间） ----- */
+.board-area {
+    position: fixed;
+    top: 80px;   /* 为顶部商店留空间 */
+    bottom: 120px; /* 为底部手牌留空间 */
+    left: 10px;
+    right: 10px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.enemy-board-section, .my-board-section {
+    background: rgba(10, 15, 25, 0.4);
+    border-radius: 16px;
+    padding: 8px;
+    backdrop-filter: blur(4px);
 }
 .board-label {
     font-size: 0.8rem;
@@ -70,44 +121,28 @@ body {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 6px;
-    background: rgba(10, 15, 25, 0.5);
-    padding: 8px;
-    border-radius: 16px;
-    backdrop-filter: blur(4px);
 }
-
-/* ----- 卡牌样式（紧凑） ----- */
-.card-slot { cursor: pointer; }
-.card {
-    background: #1a1e2e;
-    border: 1.5px solid #3a4a6a;
-    border-radius: 8px;
-    padding: 4px 2px;
+.battle-divider {
     text-align: center;
-    font-size: 0.7rem;
+    margin: 8px 0;
+    color: #f5d76e;
+    font-weight: bold;
+    text-shadow: 0 0 5px #000;
+    letter-spacing: 4px;
 }
-.card .card-name { font-weight: bold; }
-.card .card-stats { font-size: 0.65rem; }
-.card .card-price { color: #f5d76e; }
-.card.selected { border-color: #f5d76e; box-shadow: 0 0 8px #f5d76e; }
 
-/* ----- 底部操作栏：手牌 + 右侧商店 ----- */
-.bottom-action-bar {
+/* ----- 底部手牌区域（固定） ----- */
+.hand-area {
     position: fixed;
     bottom: 10px;
     left: 10px;
     right: 10px;
-    display: flex;
-    align-items: flex-end;
-    gap: 10px;
-}
-.hand-area {
-    flex: 1;
-    background: rgba(20, 28, 48, 0.7);
+    z-index: 90;
+    background: rgba(20, 28, 48, 0.8);
     backdrop-filter: blur(8px);
     border-radius: 20px;
-    padding: 8px;
-    border: 1px solid rgba(255,215,0,0.2);
+    padding: 8px 12px;
+    border: 1px solid rgba(255,215,0,0.3);
 }
 .hand-label {
     font-size: 0.7rem;
@@ -116,7 +151,7 @@ body {
 }
 .hand {
     display: flex;
-    gap: 6px;
+    gap: 8px;
     overflow-x: auto;
     padding-bottom: 4px;
 }
@@ -125,52 +160,62 @@ body {
     flex-shrink: 0;
 }
 
-/* 右侧商店操作区 */
-.shop-actions {
-    width: 100px;
-    background: rgba(20, 28, 48, 0.8);
-    backdrop-filter: blur(8px);
-    border-radius: 20px;
-    padding: 10px 8px;
+/* ----- 卡牌通用样式（紧凑） ----- */
+.card-slot { cursor: pointer; }
+.card {
+    background: #1a1e2e;
+    border: 1.5px solid #3a4a6a;
+    border-radius: 8px;
+    padding: 4px 2px;
     text-align: center;
-    border: 1px solid rgba(255,215,0,0.3);
+    font-size: 0.7rem;
+    transition: all 0.15s;
+}
+.card .card-name { font-weight: bold; }
+.card .card-stats { font-size: 0.65rem; }
+.card .card-price { color: #f5d76e; }
+.card.selected { border-color: #f5d76e; box-shadow: 0 0 8px #f5d76e; }
+.empty-slot { opacity: 0.4; font-size: 1.5rem; }
+
+/* ----- 阶段信息与退出按钮（整合在右上状态栏下方） ----- */
+.battle-info {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 101;
+    margin-top: 0;
 }
 .phase-info {
-    font-size: 0.8rem;
     background: #e94560;
     border-radius: 20px;
-    padding: 4px;
+    padding: 4px 8px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-align: center;
     margin-bottom: 8px;
 }
-.shop-quick {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    margin-bottom: 8px;
-}
-.shop-actions .btn {
-    padding: 6px 4px;
+#leave-battle-btn {
+    background: #2e3f5e;
+    padding: 6px 12px;
     font-size: 0.7rem;
 }
-.shop-actions .btn-primary {
-    padding: 8px 4px;
-    font-size: 0.8rem;
-}
 
-/* 商店展开面板 */
-.shop-panel {
-    position: fixed;
-    bottom: 100px;
-    left: 10px;
-    right: 10px;
-    background: #1e2a44;
-    border-radius: 20px;
-    padding: 12px;
-    border: 1px solid #f5d76e;
-    z-index: 20;
+/* 按钮通用 */
+.btn {
+    background: #2e3f5e;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 40px;
+    font-weight: 600;
+    cursor: pointer;
 }
-.shop-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 8px;
-    }
+.btn-primary {
+    background: linear-gradient(145deg, #f5d76e, #f0b34b);
+    color: #0b0f1c;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 40px;
+    font-weight: bold;
+    cursor: pointer;
+        }
