@@ -1,46 +1,88 @@
-// 匹配系统（含人机填充）
-window.YYCardMatchmaking = {
-    currentRoom: null,
-    roomSubscription: null,
-    matchmakingTimer: null,
+// ==================== 匹配系统（含人机填充 + 取消匹配） ====================
+window.YYCardMatchmaking = (function() {
+    const supabase = window.supabase;
+    const auth = window.YYCardAuth;
+    const utils = window.YYCardUtils;
+    const config = window.YYCardConfig;
 
-    log(msg, isError = false) {
-        window.YYCardAuth.log(msg, isError);
-    },
+    let currentRoom = null;
+    let roomSubscription = null;
+    let matchmakingTimer = null;
+
+    // 日志输出
+    function log(msg, isError = false) {
+        if (auth && typeof auth.log === 'function') {
+            auth.log(msg, isError);
+        } else {
+            console.log(msg);
+        }
+    }
 
     // 更新匹配状态显示
-    updateStatus(text, show = true) {
+    function updateStatus(text, show = true) {
         const el = document.getElementById('match-status');
         if (el) {
             el.style.display = show ? 'block' : 'none';
             el.textContent = text;
         }
-    },
+    }
+
+    // 重置UI（启用匹配按钮，隐藏状态）
+    function resetUI() {
+        const startBtn = document.getElementById('start-match-btn');
+        if (startBtn) {
+            startBtn.disabled = !auth.currentProfile?.username;
+            startBtn.textContent = auth.currentProfile?.username ? '⚡ 开始匹配' : '请先设置游戏ID';
+        }
+        updateStatus('', false);
+        if (matchmakingTimer) {
+            clearTimeout(matchmakingTimer);
+            matchmakingTimer = null;
+        }
+    }
+
+    // 清理房间订阅和计时器
+    function cleanup() {
+        if (roomSubscription) {
+            roomSubscription.unsubscribe();
+            roomSubscription = null;
+        }
+        if (matchmakingTimer) {
+            clearTimeout(matchmakingTimer);
+            matchmakingTimer = null;
+        }
+    }
 
     // 开始匹配
-    async start() {
-        const auth = window.YYCardAuth;
-        const supabase = window.supabase;
-        const config = window.YYCardConfig;
-        const utils = window.YYCardUtils;
+    async function start() {
+        const startBtn = document.getElementById('start-match-btn');
+        
+        // 防重复点击
+        if (startBtn.disabled) {
+            log('⚠️ 匹配已在进行中，请稍候...');
+            return;
+        }
 
         if (!auth.currentProfile || !auth.currentProfile.username) {
             alert('请先设置游戏ID');
             return;
         }
 
-        this.log('🔍 开始匹配...');
-        const startBtn = document.getElementById('start-match-btn');
+        log('🔍 开始匹配...');
         startBtn.disabled = true;
         startBtn.textContent = '⏳ 匹配中...';
-        this.updateStatus('正在寻找对手...', true);
+        updateStatus('正在寻找对手...', true);
+
+        // 显示取消匹配按钮（如果存在）
+        const cancelBtn = document.getElementById('cancel-match-btn');
+        if (cancelBtn) cancelBtn.style.display = 'inline-block';
 
         const myMmr = auth.currentProfile.mmr || 1000;
 
         // 启动超时计时器
-        this.matchmakingTimer = setTimeout(() => {
-            this.log('⏰ 匹配超时，将使用人机填充');
-            this.handleTimeout();
+        matchmakingTimer = setTimeout(() => {
+            log('⏰ 匹配超时，将使用人机填充');
+            handleTimeout();
         }, config.MATCHMAKING_TIMEOUT_MS);
 
         try {
@@ -64,11 +106,27 @@ window.YYCardMatchmaking = {
 
                 if (createError) throw createError;
                 room = newRoom;
-                this.log(`✅ 创建新房间: ${room.id}`);
+                log(`✅ 创建新房间: ${room.id}`);
             } else {
-                this.log(`✅ 加入现有房间: ${room.id}`);
+                log(`✅ 加入现有房间: ${room.id}`);
             }
 
+            // 检查是否已在该房间中
+            const { data: existing } = await supabase
+                .from('room_players')
+                .select('*')
+                .eq('room_id', room.id)
+                .eq('player_id', auth.currentUser.id)
+                .maybeSingle();
+
+            if (existing) {
+                log('⚠️ 您已在此房间中，继续监听...');
+                currentRoom = room;
+                subscribeToRoom(room.id);
+                return;
+            }
+
+            // 加入房间
             const { error: joinError } = await supabase
                 .from('room_players')
                 .insert({
@@ -81,40 +139,82 @@ window.YYCardMatchmaking = {
 
             if (joinError) throw joinError;
 
-            this.currentRoom = room;
-            this.subscribeToRoom(room.id);
+            currentRoom = room;
+            subscribeToRoom(room.id);
 
         } catch (err) {
-            this.log(`❌ 匹配失败: ${err.message}`, true);
-            this.resetUI();
-            clearTimeout(this.matchmakingTimer);
+            log(`❌ 匹配失败: ${err.message}`, true);
+            resetUI();
+            const cancelBtn = document.getElementById('cancel-match-btn');
+            if (cancelBtn) cancelBtn.style.display = 'none';
         }
-    },
+    }
+
+    // 取消匹配
+    async function cancel() {
+        if (!currentRoom) {
+            resetUI();
+            return;
+        }
+
+        log('🛑 正在取消匹配...');
+        cleanup();
+
+        // 从房间移除自己
+        const { error } = await supabase
+            .from('room_players')
+            .delete()
+            .eq('room_id', currentRoom.id)
+            .eq('player_id', auth.currentUser.id);
+
+        if (error) {
+            log(`❌ 取消匹配失败: ${error.message}`, true);
+        } else {
+            log('✅ 已退出匹配队列');
+        }
+
+        // 检查房间是否还有真人玩家
+        const { data: remaining } = await supabase
+            .from('room_players')
+            .select('*')
+            .eq('room_id', currentRoom.id)
+            .eq('is_bot', false);
+
+        // 如果没有真人玩家了，删除房间和游戏状态
+        if (!remaining || remaining.length === 0) {
+            await supabase.from('game_states').delete().eq('room_id', currentRoom.id);
+            await supabase.from('rooms').delete().eq('id', currentRoom.id);
+            log('🧹 房间已清空');
+        }
+
+        currentRoom = null;
+        resetUI();
+        
+        const cancelBtn = document.getElementById('cancel-match-btn');
+        if (cancelBtn) cancelBtn.style.display = 'none';
+    }
 
     // 处理超时
-    async handleTimeout() {
-        if (!this.currentRoom) return;
-
-        const supabase = window.supabase;
-        const config = window.YYCardConfig;
+    async function handleTimeout() {
+        if (!currentRoom) return;
 
         const { data: players } = await supabase
             .from('room_players')
             .select('*')
-            .eq('room_id', this.currentRoom.id);
+            .eq('room_id', currentRoom.id);
 
         const currentCount = players?.length || 0;
         const neededBots = config.MAX_PLAYERS - currentCount;
 
         if (neededBots <= 0) return;
 
-        this.log(`🤖 需要填充 ${neededBots} 个人机`);
+        log(`🤖 需要填充 ${neededBots} 个人机`);
 
         const botPromises = [];
         for (let i = 0; i < neededBots; i++) {
             botPromises.push(
                 supabase.from('room_players').insert({
-                    room_id: this.currentRoom.id,
+                    room_id: currentRoom.id,
                     player_id: `bot_${Date.now()}_${i}`,
                     mmr_at_join: 1000,
                     health: 100,
@@ -123,17 +223,16 @@ window.YYCardMatchmaking = {
             );
         }
         await Promise.all(botPromises);
-        this.log(`✅ 已添加 ${neededBots} 个人机`);
-    },
+        log(`✅ 已添加 ${neededBots} 个人机`);
+    }
 
     // 订阅房间变化
-    subscribeToRoom(roomId) {
-        const supabase = window.supabase;
-        if (this.roomSubscription) {
-            this.roomSubscription.unsubscribe();
+    function subscribeToRoom(roomId) {
+        if (roomSubscription) {
+            roomSubscription.unsubscribe();
         }
 
-        this.roomSubscription = supabase
+        roomSubscription = supabase
             .channel(`room:${roomId}`)
             .on('postgres_changes', {
                 event: '*',
@@ -141,55 +240,50 @@ window.YYCardMatchmaking = {
                 table: 'room_players',
                 filter: `room_id=eq.${roomId}`
             }, async () => {
-                await this.checkRoomFull(roomId);
+                await checkRoomFull(roomId);
             })
             .subscribe();
 
-        this.checkRoomFull(roomId);
-    },
+        checkRoomFull(roomId);
+    }
 
     // 检查房间是否满员
-    async checkRoomFull(roomId) {
-        const supabase = window.supabase;
-        const config = window.YYCardConfig;
-
+    async function checkRoomFull(roomId) {
         const { data: players, error } = await supabase
             .from('room_players')
             .select('*')
             .eq('room_id', roomId);
 
         if (error) {
-            this.log(`❌ 获取房间人数失败: ${error.message}`, true);
+            log(`❌ 获取房间人数失败: ${error.message}`, true);
             return;
         }
 
         const playerCount = players?.length || 0;
-        this.updateStatus(`匹配中... ${playerCount}/${config.MAX_PLAYERS}`);
+        updateStatus(`匹配中... ${playerCount}/${config.MAX_PLAYERS}`);
 
         if (playerCount >= config.MAX_PLAYERS) {
-            if (this.matchmakingTimer) {
-                clearTimeout(this.matchmakingTimer);
-                this.matchmakingTimer = null;
+            if (matchmakingTimer) {
+                clearTimeout(matchmakingTimer);
+                matchmakingTimer = null;
             }
 
             await supabase.from('rooms').update({ status: 'battle' }).eq('id', roomId);
 
-            if (this.roomSubscription) {
-                this.roomSubscription.unsubscribe();
-                this.roomSubscription = null;
-            }
+            cleanup(); // 取消订阅
 
-            this.log('🎮 房间已满，开始游戏！');
-            this.updateStatus('', false);
-            await this.initializeGame(roomId, players);
+            log('🎮 房间已满，开始游戏！');
+            updateStatus('', false);
+            
+            const cancelBtn = document.getElementById('cancel-match-btn');
+            if (cancelBtn) cancelBtn.style.display = 'none';
+
+            await initializeGame(roomId, players);
         }
-    },
+    }
 
     // 初始化游戏状态
-    async initializeGame(roomId, players) {
-        const supabase = window.supabase;
-        const utils = window.YYCardUtils;
-
+    async function initializeGame(roomId, players) {
         const state = {
             round: 1,
             phase: 'prepare',
@@ -216,30 +310,20 @@ window.YYCardMatchmaking = {
             .from('game_states')
             .upsert({ room_id: roomId, state }, { onConflict: 'room_id' });
 
-        this.log('🎉 游戏初始化完成，准备进入对战...');
+        log('🎉 游戏初始化完成，准备进入对战...');
         alert('游戏开始！对战界面开发中...');
         // 后续这里切换到对战视图
         // window.showBattleView(roomId);
-        this.resetUI();
-    },
-
-    // 重置UI
-    resetUI() {
-        const startBtn = document.getElementById('start-match-btn');
-        const auth = window.YYCardAuth;
-        startBtn.disabled = !auth.currentProfile?.username;
-        startBtn.textContent = auth.currentProfile?.username ? '⚡ 开始匹配' : '请先设置游戏ID';
-        this.updateStatus('', false);
+        resetUI();
     }
-};
 
-// 绑定开始匹配按钮
-document.addEventListener('DOMContentLoaded', () => {
-    const btn = document.getElementById('start-match-btn');
-    if (btn) {
-        // 移除原有事件，绑定新事件
-        btn.onclick = () => window.YYCardMatchmaking.start();
-    }
-});
+    // 公开 API
+    return {
+        start: start,
+        cancel: cancel,
+        currentRoom: () => currentRoom
+    };
+})();
 
+// 绑定按钮事件（由主入口统一绑定，这里不再重复绑定）
 console.log('✅ matchmaking.js 加载完成');
