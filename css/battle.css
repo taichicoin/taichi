@@ -1,4 +1,9 @@
 /* ==================== 对局界面样式 ==================== */
+body {
+    /* 新增：禁止下拉刷新 */
+    overscroll-behavior: none;
+    touch-action: pan-y;
+}
 .battle-header {
     display: flex;
     justify-content: space-between;
@@ -88,4 +93,4 @@
 }
 .battle-actions {
     margin-top: 20px;
-}
+        }
