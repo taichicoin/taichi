@@ -1,0 +1,285 @@
+---
+permalink: /yycard
+---
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no, viewport-fit=cover">
+    <title>YY Card · 游戏大厅</title>
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="this.src='https://unpkg.com/@supabase/supabase-js@2'"></script>
+    <!-- 大厅样式：负责头部、用户信息、按钮、匹配状态、模态框等 -->
+    <link rel="stylesheet" href="css/lobby.css">
+    <!-- 对局样式：负责棋盘、手牌、商店、回合信息等（悠悠牌风格） -->
+    <link rel="stylesheet" href="css/battle.css">
+</head>
+<body>
+<div id="app">
+    <!-- ===== 大厅视图（保持不变） ===== -->
+    <div id="lobby-view">
+        <div class="header-bar">
+            <div class="user-profile">
+                <img id="lobby-avatar" class="avatar" src="" alt="avatar" onerror="this.src='/yycard/assets/default-avatar.png'">
+                <div class="user-info">
+                    <div id="lobby-username"></div>
+                    <div id="lobby-wallet" class="user-wallet"></div>
+                    <div id="lobby-card-count" class="user-card">改名卡：0张</div>
+                </div>
+            </div>
+            <button class="btn" id="logout-btn">登出</button>
+        </div>
+        <button class="btn-primary" id="start-match-btn" disabled>请先设置游戏ID</button>
+        
+        <!-- 匹配状态 + 取消按钮 -->
+        <div class="match-row">
+            <div id="match-status"></div>
+            <button class="btn" id="cancel-match-btn">取消匹配</button>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn" id="set-username-btn">设置游戏ID</button>
+            <button class="btn" id="bind-wallet-btn">绑定钱包</button>
+            <button class="btn" id="change-avatar-btn">修改头像</button>
+        </div>
+        <div id="debug-panel" class="debug-panel"></div>
+    </div>
+
+    <!-- ===== 对战视图（悠悠牌风格布局） ===== -->
+    <div id="battle-view" style="display:none;">
+        <!-- 顶部状态栏：8名玩家 -->
+        <div class="players-status-bar">
+            <div id="player-status-list" class="player-status-list">
+                <!-- 动态渲染8个玩家头像和血量 -->
+            </div>
+        </div>
+
+        <!-- 敌方棋盘区域（屏幕上半部分） -->
+        <div class="enemy-board-area">
+            <div class="board-label">敌方</div>
+            <div id="enemy-board" class="board"></div>
+        </div>
+
+        <!-- 中间分界线（楚河汉界） -->
+        <div class="battle-divider">
+            <span>⚔️ 楚河汉界 ⚔️</span>
+        </div>
+
+        <!-- 我方棋盘区域（屏幕下半部分） -->
+        <div class="my-board-area">
+            <div class="board-label">我方</div>
+            <div id="my-board" class="board"></div>
+        </div>
+
+        <!-- 底部操作栏：手牌 + 商店快捷入口 -->
+        <div class="bottom-action-bar">
+            <!-- 手牌区域（横向滑动） -->
+            <div class="hand-area">
+                <div class="hand-label">手牌 (<span id="hand-count">0</span>/15)</div>
+                <div id="hand-container" class="hand"></div>
+            </div>
+            
+            <!-- 商店与回合操作（右侧悬浮风格） -->
+            <div class="shop-actions">
+                <div class="phase-info" id="phase-info">准备阶段</div>
+                <div class="shop-quick">
+                    <button class="btn" id="refresh-shop-btn">🔄 刷新 (1💰)</button>
+                    <button class="btn" id="buy-exp-btn">📈 买经验</button>
+                </div>
+                <button class="btn-primary" id="end-prepare-btn">✅ 结束准备</button>
+                <button class="btn" id="leave-battle-btn" style="margin-top:8px;">退出</button>
+            </div>
+        </div>
+
+        <!-- 商店卡片展开区（默认隐藏，点击展开） -->
+        <div id="shop-panel" class="shop-panel" style="display:none;">
+            <div class="shop-header">
+                <span>🏪 商店</span>
+                <button class="btn" id="close-shop-btn">✖</button>
+            </div>
+            <div id="shop-container" class="hand"></div>
+        </div>
+    </div>
+</div>
+
+<!-- 头像上传模态框 -->
+<div id="avatar-modal" class="modal">
+    <div class="modal-content">
+        <h3>更换头像</h3>
+        <p id="cooldown-warning"></p>
+        <input type="file" id="avatar-file-input" accept="image/png,image/jpeg,image/webp">
+        <div id="upload-status"></div>
+        <div class="modal-buttons">
+            <button class="btn" id="upload-avatar-btn">上传</button>
+            <button class="btn" id="cancel-avatar-btn">取消</button>
+        </div>
+    </div>
+</div>
+
+<!-- 模块化 JS（顺序必须正确） -->
+<script src="js/config.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/profile-ui.js"></script>
+<script src="js/matchmaking.js"></script>
+<script src="js/battle.js"></script>
+<script>
+    // 重连检测函数（弹窗询问）
+    async function checkReconnect() {
+        const auth = window.YYCardAuth;
+        const uid = auth.currentUser?.id;
+        if (!uid) return;
+
+        // 1. 查询该玩家是否在某个房间中
+        const { data: myRoomPlayer } = await supabase
+            .from('room_players')
+            .select('room_id, is_bot')
+            .eq('player_id', uid)
+            .maybeSingle();
+
+        if (!myRoomPlayer) return;
+
+        const roomId = myRoomPlayer.room_id;
+
+        // 2. 查询房间状态
+        const { data: room } = await supabase
+            .from('rooms')
+            .select('status')
+            .eq('id', roomId)
+            .single();
+
+        if (!room) return;
+
+        // 3. 如果房间处于战斗中，弹窗询问
+        if (room.status === 'battle') {
+            const shouldReconnect = confirm('检测到您有一场进行中的对局，是否重新连接？\n\n点击“确定”重连，点击“取消”放弃并开始新游戏。');
+            
+            if (shouldReconnect) {
+                auth.log('🔄 玩家选择重连');
+                document.getElementById('lobby-view').style.display = 'none';
+                document.getElementById('battle-view').style.display = 'block';
+
+                if (window.YYCardMatchmaking) {
+                    window.YYCardMatchmaking.setCurrentRoom(roomId);
+                }
+
+                if (window.YYCardBattle?.enterBattle) {
+                    window.YYCardBattle.enterBattle(roomId);
+                }
+            } else {
+                auth.log('🚫 玩家放弃重连，清理房间记录');
+                await supabase.from('room_players').delete().eq('player_id', uid);
+                
+                // 检查房间是否还有真人，若无则清理
+                const { data: realPlayers } = await supabase
+                    .from('room_players')
+                    .select('player_id')
+                    .eq('room_id', roomId)
+                    .eq('is_bot', false);
+                
+                if (!realPlayers || realPlayers.length === 0) {
+                    await supabase.from('game_states').delete().eq('room_id', roomId);
+                    await supabase.from('rooms').delete().eq('id', roomId);
+                    auth.log(`🧹 房间 ${roomId} 已无真人，已清理`);
+                }
+            }
+        } else if (room.status === 'waiting') {
+            // 如果在等待匹配的房间中，直接恢复匹配状态
+            auth.log('🔄 检测到等待中的匹配，恢复状态...');
+            if (window.YYCardMatchmaking) {
+                window.YYCardMatchmaking.setCurrentRoom(roomId);
+                window.YYCardMatchmaking.subscribeToRoom(roomId);
+            }
+            const startBtn = document.getElementById('start-match-btn');
+            if (startBtn) {
+                startBtn.disabled = true;
+                startBtn.textContent = '⏳ 匹配中...';
+            }
+            document.getElementById('match-status').style.display = 'block';
+            document.getElementById('cancel-match-btn').style.display = 'inline-block';
+        }
+    }
+
+    // 主入口：等待 DOM 加载完成后启动
+    window.initApp = async function() {
+        const auth = window.YYCardAuth;
+        const profileUI = window.YYCardProfileUI;
+        const matchmaking = window.YYCardMatchmaking;
+
+        const success = await auth.init();
+        if (!success) return;
+
+        profileUI.update();
+        profileUI.bindEvents();
+
+        // 绑定匹配按钮
+        const matchBtn = document.getElementById('start-match-btn');
+        if (matchBtn) {
+            matchBtn.onclick = () => {
+                if (matchmaking && typeof matchmaking.start === 'function') {
+                    matchmaking.start();
+                } else {
+                    auth.log('❌ 匹配模块未正确加载', true);
+                }
+            };
+            auth.log('✅ 匹配按钮已绑定');
+        } else {
+            auth.log('❌ 未找到匹配按钮', true);
+        }
+
+        // 绑定取消匹配按钮
+        const cancelBtn = document.getElementById('cancel-match-btn');
+        if (cancelBtn) {
+            cancelBtn.onclick = () => {
+                if (matchmaking && typeof matchmaking.cancel === 'function') {
+                    matchmaking.cancel();
+                }
+            };
+            auth.log('✅ 取消匹配按钮已绑定');
+        }
+
+        // 登出：先取消匹配，再登出
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+            logoutBtn.onclick = async () => {
+                auth.log('🔚 正在登出，清理匹配数据...');
+                if (matchmaking && typeof matchmaking.cancel === 'function') {
+                    await matchmaking.cancel();
+                }
+                await auth.signOut();
+                window.location.href = window.YYCardConfig.LOGIN_PAGE_URL;
+            };
+        }
+
+        // 页面关闭/刷新时尽力清理
+        window.addEventListener('beforeunload', () => {
+            const uid = auth.currentUser?.id;
+            if (uid) {
+                fetch(`${window.YYCardConfig.SUPABASE_URL}/rest/v1/room_players?player_id=eq.${uid}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'apikey': window.YYCardConfig.SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${auth.currentSession?.access_token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    keepalive: true
+                }).catch(e => console.warn('页面关闭清理失败:', e));
+            }
+        });
+
+        // ===== 重连检测 =====
+        await checkReconnect();
+
+        auth.log('✅ 大厅初始化完成');
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof window.initApp === 'function') {
+            window.initApp();
+        } else {
+            console.error('❌ initApp 函数未定义，请检查模块加载');
+        }
+    });
+</script>
+</body>
+</html>
