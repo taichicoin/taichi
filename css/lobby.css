@@ -1,3 +1,4 @@
+/* ==================== YY Card 全局样式 ==================== */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
     font-family: 'Segoe UI', Roboto, sans-serif;
@@ -18,16 +19,17 @@ body {
     padding: 20px;
     border: 1px solid rgba(255,215,0,0.3);
 }
-.view { display: none; }
-.view.active { display: block; }
+
+/* ----- 大厅样式 ----- */
 .header-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
 .user-profile { display: flex; align-items: center; gap: 10px; }
-.avatar { width: 40px; height: 40px; border-radius: 50%; border: 2px solid #f5d76e; object-fit: cover; }
+.avatar { width: 40px; height: 40px; border-radius: 50%; border: 2px solid #f5d76e; object-fit: cover; background: #2a3a5c; }
 .user-info { font-weight: 600; }
 .user-wallet { font-size: 0.7rem; opacity: 0.8; }
+.user-card { font-size: 0.7rem; color: #f5d76e; opacity: 0.9; }
 .btn {
     background: #2e3f5e; color: white; border: none; padding: 10px 16px;
-    border-radius: 40px; font-weight: 600; cursor: pointer; transition: 0.1s;
+    border-radius: 40px; font-weight: 600; cursor: pointer;
 }
 .btn:hover { background: #3e5275; }
 .btn-primary {
@@ -36,18 +38,42 @@ body {
     border-radius: 60px; font-weight: bold; cursor: pointer; margin: 10px 0;
 }
 .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-.match-status { margin: 15px 0; padding: 10px; background: #1a2338; border-radius: 20px; text-align: center; }
 .action-buttons { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
 .action-buttons .btn { flex: 1; }
-.board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 15px 0; }
-.card { background: #1a1e2e; border: 1px solid #e94560; border-radius: 12px; padding: 8px; text-align: center; }
-.card .name { font-weight: bold; }
-.card .stats { font-size: 0.8rem; }
-.hand { display: flex; gap: 5px; overflow-x: auto; padding: 10px 0; }
-.shop { background: #0f1a2b; border-radius: 16px; padding: 10px; margin: 10px 0; }
+.debug-panel {
+    margin-top: 20px; padding: 10px; background: #1a1e2e;
+    border-radius: 10px; font-size: 0.8rem; max-height: 200px; overflow-y: auto;
+}
+.error-msg { color: #ff7b7b; }
+.success-msg { color: #7bffb1; }
+
+/* 匹配状态栏 */
+.match-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin: 10px 0;
+}
+#match-status {
+    flex: 1;
+    padding: 8px;
+    background: #1a1e2e;
+    border-radius: 20px;
+    text-align: center;
+    font-size: 0.9rem;
+    display: none;
+}
+#cancel-match-btn {
+    background: #e94560;
+    padding: 8px 16px;
+    white-space: nowrap;
+    display: none;
+}
+
+/* 模态框 */
 .modal {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.7); display: flex; align-items: center;
+    background: rgba(0,0,0,0.7); display: none; align-items: center;
     justify-content: center; z-index: 1000;
 }
 .modal-content {
@@ -60,5 +86,95 @@ input {
     background: #0f1a2b; color: white; font-size: 1rem;
     text-align: center; margin: 10px 0;
 }
-.error-msg { color: #ff7b7b; font-size: 0.9rem; }
-.cool-down { color: #f5d76e; }
+
+/* ==================== 对战视图样式 ==================== */
+.battle-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #2a3a5c;
+    margin-bottom: 12px;
+}
+.phase-info {
+    text-align: center;
+    padding: 8px;
+    background: #e94560;
+    border-radius: 20px;
+    margin: 10px 0;
+    font-weight: bold;
+}
+.board-label {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    margin: 8px 0 4px;
+}
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    min-height: 100px;
+}
+.card-slot { cursor: pointer; }
+.card {
+    background: #1a1e2e;
+    border: 2px solid #3a4a6a;
+    border-radius: 10px;
+    padding: 8px 4px;
+    text-align: center;
+    transition: all 0.15s;
+}
+.card.selected {
+    border-color: #f5d76e;
+    box-shadow: 0 0 10px #f5d76e;
+}
+.empty-slot {
+    opacity: 0.4;
+    font-size: 1.5rem;
+}
+.card .card-name {
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+.card .card-stats {
+    font-size: 0.75rem;
+    color: #aab9d4;
+}
+.card .card-price {
+    font-size: 0.7rem;
+    color: #f5d76e;
+}
+.card .card-star {
+    color: #f5d76e;
+    font-size: 0.7rem;
+}
+.hand-label {
+    margin: 16px 0 8px;
+}
+.hand {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 8px 0;
+    min-height: 90px;
+}
+.hand .card {
+    min-width: 80px;
+    flex-shrink: 0;
+}
+.shop-section {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid #2a3a5c;
+}
+.shop-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+.battle-actions {
+    margin-top: 20px;
+    }
