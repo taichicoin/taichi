@@ -1,33 +1,762 @@
-[
-  {"cardId":"char_yuanshi","name":"元始天尊","type":"character","category":"封神榜","rarity":"Common","star":0,"baseAtk":4,"baseHp":6,"icon":"/assets/card/yuanshi.png","skill":{"skillId":"skill_dadao_wuxing","skillName":"大道无形","type":"aura","trigger":"onField","scope":"shop","effect":{"target":"shop_cards","modifyType":"add","value":{"atk":3,"hp":3}}}},
-  {"cardId":"char_taishang","name":"太上老君","type":"character","category":"封神榜","rarity":"Epic","star":0,"baseAtk":8,"baseHp":10,"icon":"/assets/card/taishang.png","skill":{"skillId":"skill_liandan","skillName":"炼丹术","type":"active","trigger":"onBattleStart","effect":{"target":"self","modifyType":"heal","value":5}}},
-  {"cardId":"char_tongtian","name":"通天教主","type":"character","category":"封神榜","rarity":"Legendary","star":0,"baseAtk":12,"baseHp":12,"icon":"/assets/card/tongtian.png","skill":{"skillId":"skill_zhuxian","skillName":"诛仙剑阵","type":"active","trigger":"onBattleStart","effect":{"target":"enemyBoard","modifyType":"damage","value":4}}},
-  {"cardId":"char_jiangziya","name":"姜子牙","type":"character","category":"封神榜","rarity":"Rare","star":0,"baseAtk":5,"baseHp":7,"icon":"/assets/card/jiangziya.png","skill":{"skillId":"skill_fengshen","skillName":"封神","type":"passive","trigger":"onKill","effect":{"target":"self","modifyType":"buff","value":{"atk":2,"hp":2}}}},
-  {"cardId":"char_shennong","name":"神农","type":"character","category":"封神榜","rarity":"Common","star":0,"baseAtk":3,"baseHp":8,"icon":"/assets/card/shennong.png","skill":{"skillId":"skill_herb","skillName":"百草","type":"aura","trigger":"onField","scope":"allies","effect":{"target":"allies","modifyType":"healPerRound","value":1}}},
-  {"cardId":"card_pangu","name":"盘古斧","type":"weapon","category":"如有神助","rarity":"Legendary","star":0,"baseAtk":8,"baseHp":0,"icon":"/assets/card/pangu.png","skill":{"skillId":"skill_kaishi","skillName":"开天辟地","type":"active","trigger":"onBattleStart","effect":{"target":"enemyFront","modifyType":"damage","value":6}}},
-  {"cardId":"card_nvwa","name":"女娲石","type":"item","category":"如有神助","rarity":"Epic","star":0,"baseAtk":0,"baseHp":5,"icon":"/assets/card/nvwa.png","skill":{"skillId":"skill_butian","skillName":"补天","type":"passive","trigger":"onDeath","effect":{"target":"bearer","modifyType":"revive","value":{"hp":1}}}},
-  {"cardId":"card_kongtong","name":"崆峒印","type":"item","category":"如有神助","rarity":"Rare","star":0,"baseAtk":2,"baseHp":2,"icon":"/assets/card/kongtong.png","skill":{"skillId":"skill_bulao","skillName":"不老","type":"passive","trigger":"onRoundStart","effect":{"target":"bearer","modifyType":"buff","value":{"hp":1}}}},
-  {"cardId":"card_haotian","name":"昊天塔","type":"item","category":"如有神助","rarity":"Common","star":0,"baseAtk":1,"baseHp":3,"icon":"/assets/card/haotian.png","skill":{"skillId":"skill_zhenyao","skillName":"镇妖","type":"aura","trigger":"onField","scope":"enemy","effect":{"target":"enemyBoard","modifyType":"debuff","value":{"atk":1}}}},
-  {"cardId":"card_lianshi","name":"炼妖壶","type":"item","category":"如有神助","rarity":"Rare","star":0,"baseAtk":2,"baseHp":1,"icon":"/assets/card/lianshi.png","skill":{"skillId":"skill_xiyou","skillName":"吸收","type":"active","trigger":"onKill","effect":{"target":"bearer","modifyType":"buff","value":{"atk":1,"hp":1}}}},
-  {"cardId":"card_shennongding","name":"神农鼎","type":"item","category":"如有神助","rarity":"Epic","star":0,"baseAtk":0,"baseHp":8,"icon":"/assets/card/shennongding.png","skill":{"skillId":"skill_yaoxing","skillName":"药性","type":"aura","trigger":"onField","scope":"allies","effect":{"target":"allies","modifyType":"healAmp","value":0.2}}},
-  {"cardId":"char_jingwei","name":"精卫","type":"character","category":"山海经","rarity":"Common","star":0,"baseAtk":3,"baseHp":5,"icon":"/assets/card/jingwei.png","skill":{"skillId":"skill_tianhai","skillName":"填海","type":"passive","trigger":"onRoundStart","effect":{"target":"self","modifyType":"buff","value":{"atk":1}}}},
-  {"cardId":"char_yinglong","name":"应龙","type":"character","category":"山海经","rarity":"Epic","star":0,"baseAtk":9,"baseHp":9,"icon":"/assets/card/yinglong.png","skill":{"skillId":"skill_huyu","skillName":"呼雨","type":"active","trigger":"onBattleStart","effect":{"target":"enemyBoard","modifyType":"damage","value":3}}},
-  {"cardId":"char_kui","name":"夔","type":"character","category":"山海经","rarity":"Rare","star":0,"baseAtk":7,"baseHp":6,"icon":"/assets/card/kui.png","skill":{"skillId":"skill_leiming","skillName":"雷鸣","type":"passive","trigger":"onAttack","effect":{"target":"target","modifyType":"stun","chance":0.3}}},
-  {"cardId":"char_xingtian","name":"刑天","type":"character","category":"山海经","rarity":"Legendary","star":0,"baseAtk":11,"baseHp":13,"icon":"/assets/card/xingtian.png","skill":{"skillId":"skill_buxiu","skillName":"不朽","type":"passive","trigger":"onDeath","effect":{"target":"self","modifyType":"revive","value":{"hp":5}}}},
-  {"cardId":"char_xiangliu","name":"相柳","type":"character","category":"山海经","rarity":"Rare","star":0,"baseAtk":6,"baseHp":9,"icon":"/assets/card/xiangliu.png","skill":{"skillId":"skill_dushe","skillName":"毒液","type":"passive","trigger":"onAttack","effect":{"target":"target","modifyType":"poison","value":2}}},
-  {"cardId":"char_biyi","name":"毕方","type":"character","category":"山海经","rarity":"Common","star":0,"baseAtk":5,"baseHp":3,"icon":"/assets/card/biyi.png","skill":{"skillId":"skill_huo","skillName":"火精","type":"active","trigger":"onAttack","effect":{"target":"target","modifyType":"burn","value":1}}},
-  {"cardId":"char_taotie","name":"饕餮","type":"character","category":"山海经","rarity":"Epic","star":0,"baseAtk":8,"baseHp":11,"icon":"/assets/card/taotie.png","skill":{"skillId":"skill_tunshi","skillName":"吞噬","type":"active","trigger":"onKill","effect":{"target":"self","modifyType":"buff","value":{"atk":2,"hp":2}}}},
-  {"cardId":"char_sunwukong","name":"孙悟空","type":"character","category":"西游","rarity":"Legendary","star":0,"baseAtk":14,"baseHp":10,"icon":"/assets/card/sunwukong.png","skill":{"skillId":"skill_qishier","skillName":"七十二变","type":"passive","trigger":"onAttack","effect":{"target":"self","modifyType":"dodge","chance":0.3}}},
-  {"cardId":"char_tangsanzang","name":"唐僧","type":"character","category":"西游","rarity":"Common","star":0,"baseAtk":2,"baseHp":6,"icon":"/assets/card/tangsanzang.png","skill":{"skillId":"skill_jinchan","skillName":"金蝉","type":"aura","trigger":"onField","scope":"allies","effect":{"target":"allies","modifyType":"buff","value":{"hp":2}}}},
-  {"cardId":"char_zhuwuneng","name":"猪八戒","type":"character","category":"西游","rarity":"Rare","star":0,"baseAtk":6,"baseHp":8,"icon":"/assets/card/zhuwuneng.png","skill":{"skillId":"skill_tun","skillName":"饕餮","type":"passive","trigger":"onHit","effect":{"target":"self","modifyType":"heal","value":1}}},
-  {"cardId":"char_shaheshang","name":"沙悟净","type":"character","category":"西游","rarity":"Common","star":0,"baseAtk":4,"baseHp":7,"icon":"/assets/card/shaheshang.png","skill":{"skillId":"skill_baohu","skillName":"保护","type":"active","trigger":"onAllyAttacked","effect":{"target":"ally","modifyType":"shield","value":2}}},
-  {"cardId":"char_bailongma","name":"白龙马","type":"character","category":"西游","rarity":"Rare","star":0,"baseAtk":5,"baseHp":5,"icon":"/assets/card/bailongma.png","skill":{"skillId":"skill_chongfeng","skillName":"冲锋","type":"active","trigger":"onBattleStart","effect":{"target":"enemyFront","modifyType":"damage","value":3}}},
-  {"cardId":"char_guanyu","name":"关羽","type":"character","category":"三国","rarity":"Legendary","star":0,"baseAtk":13,"baseHp":11,"icon":"/assets/card/guanyu.png","skill":{"skillId":"skill_wusheng","skillName":"武圣","type":"active","trigger":"onAttack","effect":{"target":"target","modifyType":"crit","multiplier":2}}},
-  {"cardId":"char_zhangfei","name":"张飞","type":"character","category":"三国","rarity":"Epic","star":0,"baseAtk":10,"baseHp":12,"icon":"/assets/card/zhangfei.png","skill":{"skillId":"skill_nuhou","skillName":"怒吼","type":"active","trigger":"onBattleStart","effect":{"target":"enemyBoard","modifyType":"stun","chance":0.5}}},
-  {"cardId":"char_liubei","name":"刘备","type":"character","category":"三国","rarity":"Rare","star":0,"baseAtk":5,"baseHp":7,"icon":"/assets/card/liubei.png","skill":{"skillId":"skill_rende","skillName":"仁德","type":"aura","trigger":"onField","scope":"allies","effect":{"target":"allies","modifyType":"buff","value":{"hp":1}}}},
-  {"cardId":"char_zhaoyun","name":"赵云","type":"character","category":"三国","rarity":"Rare","star":0,"baseAtk":8,"baseHp":8,"icon":"/assets/card/zhaoyun.png","skill":{"skillId":"skill_longdan","skillName":"龙胆","type":"passive","trigger":"onBattleStart","effect":{"target":"self","modifyType":"buff","value":{"atk":2}}}},
-  {"cardId":"char_zhugeliang","name":"诸葛亮","type":"character","category":"三国","rarity":"Epic","star":0,"baseAtk":7,"baseHp":9,"icon":"/assets/card/zhugeliang.png","skill":{"skillId":"skill_baguazhen","skillName":"八卦阵","type":"active","trigger":"onRoundStart","effect":{"target":"allies","modifyType":"buff","value":{"atk":1,"hp":1}}}},
-  {"cardId":"char_heihua","name":"黑化帝","type":"character","category":"中立","rarity":"Legendary","star":0,"baseAtk":15,"baseHp":15,"icon":"/assets/card/heihua.png","skill":{"skillId":"skill_heian","skillName":"黑暗降临","type":"active","trigger":"onBattleStart","effect":{"target":"enemyBoard","modifyType":"damageByPercent","value":1.0}}},
-  {"cardId":"char_pixiu","name":"貔貅","type":"character","category":"中立","rarity":"Epic","star":0,"baseAtk":6,"baseHp":10,"icon":"/assets/card/pixiu.png","skill":{"skillId":"skill_zhucai","skillName":"聚财","type":"passive","trigger":"onRoundStart","effect":{"target":"player","modifyType":"gold","value":1}}},
-  {"cardId":"char_baihu","name":"白虎","type":"character","category":"中立","rarity":"Rare","star":0,"baseAtk":8,"baseHp":7,"icon":"/assets/card/baihu.png","skill":{"skillId":"skill_shaqi","skillName":"杀气","type":"passive","trigger":"onAttack","effect":{"target":"target","modifyType":"bleed","value":1}}}
-]
+{
+  "封神榜": [
+    {
+      "id": "char_yuanshi",
+      "name": "元始天尊",
+      "type": "character",
+      "faction": "封神榜",
+      "rarity": "Common",
+      "star": 0,
+      "baseAtk": 4,
+      "baseHp": 6,
+      "image": "/assets/card/yuanshi.png",
+      "skill": {
+        "skillId": "skill_dadao_wuxing",
+        "skillName": "大道无形",
+        "type": "aura",
+        "trigger": "onField",
+        "scope": "shop",
+        "effect": {
+          "target": "shop_cards",
+          "modifyType": "add",
+          "value": { "atk": 3, "hp": 3 }
+        }
+      }
+    },
+    {
+      "id": "char_taishang",
+      "name": "太上老君",
+      "type": "character",
+      "faction": "封神榜",
+      "rarity": "Epic",
+      "star": 0,
+      "baseAtk": 12,
+      "baseHp": 15,
+      "image": "/assets/card/taishang.png",
+      "skill": {
+        "skillId": "skill_bagua_liandan",
+        "skillName": "八卦炼丹",
+        "type": "enlightenment",
+        "trigger": "onRoundStart",
+        "scope": "shop",
+        "baseValue": { "atk": 1, "hp": 2 },
+        "increment": { "atk": 1, "hp": 2 },
+        "effect": {
+          "target": "shop_cards",
+          "modifyType": "add",
+          "valueSource": "enlightenment_count"
+        }
+      }
+    },
+    {
+      "id": "char_jiangziya",
+      "name": "姜子牙",
+      "type": "character",
+      "faction": "封神榜",
+      "rarity": "Legendary",
+      "star": 0,
+      "baseAtk": 22,
+      "baseHp": 25,
+      "image": "/assets/card/jiangziya.png",
+      "skill": {
+        "skillId": "skill_fengshen_shuaxin",
+        "skillName": "封神刷新",
+        "type": "trigger",
+        "trigger": "onShopRefresh",
+        "scope": "random_ally",
+        "effect": {
+          "target": "random_ally",
+          "modifyType": "add",
+          "valueSource": "shop_total_stats",
+          "percent": 100
+        }
+      }
+    },
+    {
+      "id": "char_sudaji",
+      "name": "苏妲己",
+      "type": "character",
+      "faction": "封神榜",
+      "rarity": "Legendary",
+      "star": 0,
+      "baseAtk": 20,
+      "baseHp": 28,
+      "image": "/assets/card/sudaji.png",
+      "skill": {
+        "skillId": "skill_humei_huozhu",
+        "skillName": "狐媚惑主",
+        "type": "enlightenment",
+        "trigger": "onRoundStart",
+        "scope": "self",
+        "effect": {
+          "target": "self",
+          "modifyType": "add",
+          "valueSource": "random_shop_card",
+          "percent": 100
+        }
+      }
+    },
+    {
+      "id": "char_nezha",
+      "name": "哪吒",
+      "type": "character",
+      "faction": "封神榜",
+      "rarity": "Epic",
+      "star": 0,
+      "baseAtk": 14,
+      "baseHp": 18,
+      "image": "/assets/card/nezha.png",
+      "skill": {
+        "skillId": "skill_santan_haihui",
+        "skillName": "三坛海会",
+        "type": "trigger",
+        "trigger": "onConsumableUsed",
+        "scope": "shop",
+        "effect": {
+          "target": "shop_cards",
+          "modifyType": "add",
+          "value": { "atk": 1, "hp": 3 }
+        }
+      }
+    }
+  ],
+  "如有神助": [
+    {
+      "id": "char_yu",
+      "name": "禹",
+      "type": "character",
+      "faction": "如有神助",
+      "rarity": "Legendary",
+      "star": 0,
+      "baseAtk": 25,
+      "baseHp": 30,
+      "image": "/assets/card/yu.png",
+      "skill": {
+        "skillId": "skill_divine_blessing_share",
+        "skillName": "如有神助",
+        "type": "trigger",
+        "trigger": "onRoundStart",
+        "scope": "random_ally",
+        "effect": {
+          "target": "random_ally",
+          "modifyType": "add",
+          "valueSource": "self_stats",
+          "percent": 50
+        }
+      }
+    },
+    {
+      "id": "char_yandi",
+      "name": "炎帝",
+      "type": "character",
+      "faction": "如有神助",
+      "rarity": "Epic",
+      "star": 0,
+      "baseAtk": 15,
+      "baseHp": 20,
+      "image": "/assets/card/yandi.png",
+      "skill": {
+        "skillId": "skill_shennong_changbaicao",
+        "skillName": "神农尝百草",
+        "type": "trigger",
+        "trigger": "onRoundStart",
+        "scope": "random_allies",
+        "targetCount": 2,
+        "effect": {
+          "target": "random_allies",
+          "action": "grant_shield",
+          "value": 1
+        }
+      }
+    },
+    {
+      "id": "char_huangdi",
+      "name": "黄帝",
+      "type": "character",
+      "faction": "如有神助",
+      "rarity": "Legendary",
+      "star": 0,
+      "baseAtk": 28,
+      "baseHp": 22,
+      "image": "/assets/card/huangdi.png",
+      "skill": {
+        "skillId": "skill_renwen_chuzu",
+        "skillName": "人文初祖",
+        "type": "aura",
+        "trigger": "onField",
+        "scope": "all_allies",
+        "effect": {
+          "target": "all_allies",
+          "modifyType": "trigger_count_increase",
+          "value": 1,
+          "skillIdFilter": "skill_divine_blessing"
+        }
+      }
+    },
+    {
+      "id": "char_yao",
+      "name": "尧",
+      "type": "character",
+      "faction": "如有神助",
+      "rarity": "Common",
+      "star": 0,
+      "baseAtk": 5,
+      "baseHp": 8,
+      "image": "/assets/card/yao.png",
+      "skill": {
+        "skillId": "skill_yaotian_shunri",
+        "skillName": "尧天舜日",
+        "type": "trigger",
+        "trigger": "onRoundStart",
+        "scope": "self",
+        "effect": {
+          "target": "self",
+          "modifyType": "add",
+          "valueSource": "self_atk",
+          "percent": 50,
+          "stat": "hp"
+        }
+      }
+    },
+    {
+      "id": "char_shun",
+      "name": "舜",
+      "type": "character",
+      "faction": "如有神助",
+      "rarity": "Epic",
+      "star": 0,
+      "baseAtk": 16,
+      "baseHp": 14,
+      "image": "/assets/card/shun.png",
+      "skill": {
+        "skillId": "skill_xiaogandongtian",
+        "skillName": "孝感动天",
+        "type": "trigger",
+        "trigger": "onDivineBlessingTriggered",
+        "scope": "self",
+        "effect": {
+          "target": "self",
+          "modifyType": "add",
+          "value": { "atk": 3, "hp": 4 }
+        }
+      }
+    },
+    {
+      "id": "char_pangu",
+      "name": "盘古",
+      "type": "character",
+      "faction": "如有神助",
+      "rarity": "Legendary",
+      "star": 0,
+      "baseAtk": 30,
+      "baseHp": 28,
+      "image": "/assets/card/pangu.png",
+      "skill": {
+        "skillId": "skill_kaitian_pidi",
+        "skillName": "开天辟地",
+        "type": "trigger",
+        "trigger": "onAttack",
+        "scope": "sameRow",
+        "effect": {
+          "target": "sameRow_allies",
+          "action": "trigger_skill",
+          "skillIdFilter": "skill_divine_blessing",
+          "times": 1
+        }
+      }
+    }
+  ],
+  "山海经": [
+    {
+      "id": "char_jingwei",
+      "name": "精卫",
+      "type": "character",
+      "faction": "山海经",
+      "rarity": "Legendary",
+      "star": 0,
+      "baseAtk": 22,
+      "baseHp": 28,
+      "image": "/assets/card/jingwei.png",
+      "skill": {
+        "skillId": "skill_xianshi_tianhai",
+        "skillName": "衔石填海",
+        "type": "enlightenment",
+        "trigger": "onRoundStart",
+        "scope": "all",
+        "baseValue": 1,
+        "increment": 1,
+        "effect": {
+          "target": "all_allies",
+          "modifyType": "add",
+          "valueSource": "enlightenment_count"
+        }
+      }
+    },
+    {
+      "id": "char_yinglong",
+      "name": "应龙",
+      "type": "character",
+      "faction": "山海经",
+      "rarity": "Common",
+      "star": 0,
+      "baseAtk": 6,
+      "baseHp": 7,
+      "image": "/assets/card/yinglong.png",
+      "skill": {
+        "skillId": "skill_xingyun_buyu",
+        "skillName": "兴云布雨",
+        "type": "enlightenment",
+        "trigger": "onRoundStart",
+        "scope": "sameRow",
+        "baseValue": 1,
+        "increment": 1,
+        "effect": {
+          "target": "sameRow_allies",
+          "modifyType": "add",
+          "valueSource": "enlightenment_count"
+        }
+      }
+    },
+    {
+      "id": "char_luoyu",
+      "name": "蠃鱼",
+      "type": "character",
+      "faction": "山海经",
+      "rarity": "Common",
+      "star": 0,
+      "baseAtk": 5,
+      "baseHp": 9,
+      "image": "/assets/card/luoyu.png",
+      "skill": {
+        "skillId": "skill_yuyue_yuyuan",
+        "skillName": "鱼跃于渊",
+        "type": "enlightenment",
+        "trigger": "onRoundStart",
+        "scope": "self",
+        "baseValue": 1,
+        "increment": 1,
+        "effect": {
+          "target": "self",
+          "modifyType": "add",
+          "valueSource": "enlightenment_count"
+        }
+      }
+    },
+    {
+      "id": "char_ninetailedfox",
+      "name": "九尾狐",
+      "type": "character",
+      "faction": "山海经",
+      "rarity": "Epic",
+      "star": 0,
+      "baseAtk": 14,
+      "baseHp": 16,
+      "image": "/assets/card/ninetailedfox.png",
+      "skill": {
+        "skillId": "skill_divine_blessing_trigger_enlightenment",
+        "skillName": "如有神助",
+        "type": "trigger",
+        "trigger": "onRoundStart",
+        "scope": "sameRow",
+        "effect": {
+          "target": "sameRow_allies",
+          "action": "trigger_enlightenment",
+          "times": 1,
+          "skillTypeFilter": "enlightenment"
+        }
+      }
+    },
+    {
+      "id": "char_baize",
+      "name": "白泽",
+      "type": "character",
+      "faction": "山海经",
+      "rarity": "Legendary",
+      "star": 0,
+      "baseAtk": 24,
+      "baseHp": 26,
+      "image": "/assets/card/baize.png",
+      "skill": {
+        "skillId": "skill_jinglei",
+        "skillName": "惊雷",
+        "type": "trigger",
+        "trigger": "onEnlightenmentTriggered",
+        "scope": "self",
+        "effect": {
+          "target": "self",
+          "modifyType": "add",
+          "value": { "atk": 2, "hp": 5 }
+        }
+      }
+    },
+    {
+      "id": "char_bifang",
+      "name": "毕方",
+      "type": "character",
+      "faction": "山海经",
+      "rarity": "Epic",
+      "star": 0,
+      "baseAtk": 13,
+      "baseHp": 15,
+      "image": "/assets/card/bifang.png",
+      "skill": {
+        "skillId": "skill_xianhuo_shoufa",
+        "skillName": "衔火授法",
+        "type": "enlightenment",
+        "trigger": "onRoundStart",
+        "scope": "self",
+        "effect": {
+          "target": "hand",
+          "action": "generate_consumable",
+          "consumableType": "shenhuofu",
+          "count": 1
+        }
+      }
+    },
+    {
+      "id": "char_qiongqi",
+      "name": "穷奇",
+      "type": "character",
+      "faction": "山海经",
+      "rarity": "Rare",
+      "star": 0,
+      "baseAtk": 9,
+      "baseHp": 12,
+      "image": "/assets/card/qiongqi.png",
+      "skill": {
+        "skillId": "skill_chengshan_yange",
+        "skillName": "惩善扬恶",
+        "type": "trigger",
+        "trigger": "onEnlightenmentTriggered",
+        "scope": "both",
+        "effect": {
+          "target": "self_and_source",
+          "modifyType": "add",
+          "value": { "atk": 1, "hp": 2 }
+        }
+      }
+    }
+  ],
+  "西游": [
+    {
+      "id": "char_sunwukong",
+      "name": "孙悟空",
+      "type": "character",
+      "faction": "西游",
+      "rarity": "Legendary",
+      "star": 0,
+      "baseAtk": 26,
+      "baseHp": 24,
+      "image": "/assets/card/sunwukong.png",
+      "skill": {
+        "skillId": "skill_qitian_dasheng",
+        "skillName": "齐天大圣",
+        "type": "trigger",
+        "trigger": "onAttack",
+        "scope": "random_ally",
+        "times": 1,
+        "effect": {
+          "target": "random_ally",
+          "modifyType": "add",
+          "valueSource": "global_slay_demon_count",
+          "multiplier": 1
+        },
+        "requiresTangSeng": true
+      }
+    },
+    {
+      "id": "char_zhubajie",
+      "name": "猪八戒",
+      "type": "character",
+      "faction": "西游",
+      "rarity": "Common",
+      "star": 0,
+      "baseAtk": 7,
+      "baseHp": 10,
+      "image": "/assets/card/zhubajie.png",
+      "skill": {
+        "skillId": "skill_taotie_zhiqv",
+        "skillName": "饕餮之躯",
+        "type": "trigger",
+        "trigger": "onAttack",
+        "scope": "self",
+        "effect": {
+          "target": "self",
+          "modifyType": "add",
+          "value": { "atk": 2, "hp": 4 }
+        },
+        "requiresTangSeng": true
+      }
+    },
+    {
+      "id": "char_shawujing",
+      "name": "沙悟净",
+      "type": "character",
+      "faction": "西游",
+      "rarity": "Epic",
+      "star": 0,
+      "baseAtk": 15,
+      "baseHp": 17,
+      "image": "/assets/card/shawujing.png",
+      "skill": {
+        "skillId": "skill_cibei_weihuai",
+        "skillName": "慈悲为怀",
+        "type": "trigger",
+        "trigger": "onAttack",
+        "scope": "self",
+        "effect": {
+          "target": "hand",
+          "action": "generate_consumable",
+          "consumableType": "shenhuofu",
+          "count": 1
+        },
+        "requiresTangSeng": true
+      }
+    },
+    {
+      "id": "char_tangseng",
+      "name": "唐僧",
+      "type": "character",
+      "faction": "西游",
+      "rarity": "Legendary",
+      "star": 0,
+      "baseAtk": 20,
+      "baseHp": 30,
+      "image": "/assets/card/tangseng.png",
+      "skill": {
+        "skillId": "skill_fojia_wubian",
+        "skillName": "佛法无边",
+        "type": "aura",
+        "trigger": "onField",
+        "scope": "all_x_you_allies",
+        "effect": {
+          "target": "all_x_you_allies",
+          "action": "enable_attack_trigger",
+          "skillTypes": ["onKill"]
+        }
+      }
+    },
+    {
+      "id": "char_bailongma",
+      "name": "白龙马",
+      "type": "character",
+      "faction": "西游",
+      "rarity": "Rare",
+      "star": 0,
+      "baseAtk": 10,
+      "baseHp": 11,
+      "image": "/assets/card/bailongma.png",
+      "skill": {
+        "skillId": "skill_divine_blessing_trigger_slay",
+        "skillName": "如有神助",
+        "type": "trigger",
+        "trigger": "onRoundStart",
+        "scope": "sameColumn",
+        "effect": {
+          "target": "sameColumn_x_you_allies",
+          "action": "trigger_skill",
+          "skillTypeFilter": "onKill",
+          "times": 1
+        }
+      }
+    }
+  ],
+  "三国": [
+    {
+      "id": "char_liubei",
+      "name": "刘备",
+      "type": "character",
+      "faction": "三国",
+      "rarity": "Legendary",
+      "star": 0,
+      "baseAtk": 23,
+      "baseHp": 27,
+      "image": "/assets/card/liubei.png",
+      "skill": {
+        "skillId": "skill_lebusishu",
+        "skillName": "乐不思蜀",
+        "type": "aura",
+        "trigger": "onAllyAttack",
+        "scope": "attacking_ally",
+        "cantAttack": true,
+        "effect": {
+          "target": "attacking_ally",
+          "modifyType": "add",
+          "valueSource": "self_atk",
+          "percent": 100,
+          "duration": "current_attack"
+        }
+      }
+    },
+    {
+      "id": "char_guanyu",
+      "name": "关羽",
+      "type": "character",
+      "faction": "三国",
+      "rarity": "Epic",
+      "star": 0,
+      "baseAtk": 18,
+      "baseHp": 16,
+      "image": "/assets/card/guanyu.png",
+      "skill": {
+        "skillId": "skill_shenji_miaosuan",
+        "skillName": "神机妙算",
+        "type": "trigger",
+        "trigger": "onAttack",
+        "scope": "self",
+        "effect": {
+          "target": "self",
+          "modifyType": "add",
+          "valueSource": "self_atk_during_attack",
+          "percent": 50,
+          "stat": "hp"
+        }
+      }
+    },
+    {
+      "id": "char_zhugeliang",
+      "name": "诸葛亮",
+      "type": "character",
+      "faction": "三国",
+      "rarity": "Common",
+      "star": 0,
+      "baseAtk": 6,
+      "baseHp": 8,
+      "image": "/assets/card/zhugeliang.png",
+      "skill": {
+        "skillId": "skill_jugong_jincui",
+        "skillName": "鞠躬尽瘁",
+        "type": "trigger",
+        "trigger": "onAttack",
+        "scope": "self",
+        "effect": {
+          "target": "self",
+          "modifyType": "add",
+          "value": { "atk": 1, "hp": 1 }
+        }
+      }
+    },
+    {
+      "id": "char_zhangfei",
+      "name": "张飞",
+      "type": "character",
+      "faction": "三国",
+      "rarity": "Rare",
+      "star": 0,
+      "baseAtk": 11,
+      "baseHp": 13,
+      "image": "/assets/card/zhangfei.png",
+      "skill": {
+        "skillId": "skill_wanrendi",
+        "skillName": "万人敌",
+        "type": "trigger",
+        "trigger": "onAttackGained",
+        "scope": "self",
+        "cantAttack": true,
+        "effect": {
+          "target": "self",
+          "modifyType": "add",
+          "value": { "hp": 2 }
+        }
+      }
+    },
+    {
+      "id": "char_sunshangxiang",
+      "name": "孙尚香",
+      "type": "character",
+      "faction": "三国",
+      "rarity": "Common",
+      "star": 0,
+      "baseAtk": 5,
+      "baseHp": 9,
+      "image": "/assets/card/sunshangxiang.png",
+      "skill": {
+        "skillId": "skill_gongyaoji",
+        "skillName": "弓腰姬",
+        "type": "trigger",
+        "trigger": "onRoundStart",
+        "scope": "cant_attack_allies",
+        "cantAttack": true,
+        "effect": {
+          "target": "cant_attack_allies",
+          "modifyType": "add",
+          "value": { "atk": 1, "hp": 2 }
+        }
+      }
+    }
+  ],
+  "中立": [
+    {
+      "id": "char_pixiu",
+      "name": "貔貅",
+      "type": "character",
+      "faction": "中立",
+      "rarity": "Legendary",
+      "star": 0,
+      "baseAtk": 28,
+      "baseHp": 22,
+      "image": "/assets/card/pixiu.png",
+      "skill": {
+        "skillId": "skill_tunshi",
+        "skillName": "吞噬",
+        "type": "special_attack",
+        "attackMode": "remove",
+        "trigger": "onAttack",
+        "maxUses": 1,
+        "effect": {
+          "target": "attack_target",
+          "action": "remove"
+        }
+      }
+    },
+    {
+      "id": "char_heihuadi",
+      "name": "黑化帝",
+      "type": "character",
+      "faction": "中立",
+      "rarity": "Legendary",
+      "star": 0,
+      "baseAtk": 30,
+      "baseHp": 25,
+      "image": "/assets/card/heihuadi.png",
+      "skill": {
+        "skillId": "skill_anhei_tunshi",
+        "skillName": "暗黑吞噬",
+        "type": "special_attack",
+        "attackMode": "aoe_by_target_health",
+        "trigger": "onAttack",
+        "damageMultiplier": 1.0,
+        "effect": {
+          "target": "all_enemies",
+          "action": "damage",
+          "valueSource": "primary_target_health",
+          "multiplier": 1.0
+        }
+      }
+    },
+    {
+      "id": "char_nvwa",
+      "name": "女娲",
+      "type": "character",
+      "faction": "中立",
+      "rarity": "Legendary",
+      "star": 0,
+      "baseAtk": 24,
+      "baseHp": 30,
+      "image": "/assets/card/nvwa.png",
+      "skill": {
+        "skillId": "skill_tuanren_zaoren",
+        "skillName": "抟土造人",
+        "type": "trigger",
+        "trigger": "onAttack",
+        "scope": "self",
+        "effect": {
+          "target": "hand",
+          "action": "generate_random_card",
+          "count": 1,
+          "rarityProb": { "Common": 0.20, "Rare": 0.35, "Epic": 0.35, "Legendary": 0.10 }
+        }
+      }
+    }
+  ]
+    }
