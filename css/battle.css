@@ -1,0 +1,193 @@
+/* ==================== 全局 ==================== */
+body {
+    overscroll-behavior: none;
+    background: radial-gradient(circle at 20% 20%, #1a2a4a, #0a0f1a);
+    min-height: 100vh;
+    color: #f0f0f0;
+    font-family: 'Segoe UI', sans-serif;
+    overflow: hidden;
+}
+
+/* ==================== 顶部居中 ==================== */
+.top-center-info {
+    position: fixed;
+    top: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 120;
+
+    display: flex;
+    gap: 18px;
+
+    padding: 6px 18px;
+    border-radius: 20px;
+
+    background: rgba(10,18,30,0.85);
+    border: 1px solid rgba(255,215,0,0.3);
+}
+
+/* ==================== 左侧玩家 ==================== */
+.players-status-bar {
+    position: fixed;
+    top: 55px;
+    left: 8px;
+    z-index: 100;
+    width: 60px;
+    background: rgba(10, 18, 30, 0.85);
+    border-radius: 20px;
+    padding: 8px 6px;
+}
+
+.player-status-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.player-status-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.player-status-item img {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+}
+
+.player-status-item::after {
+    content: attr(data-hp);
+    font-size: 10px;
+}
+
+/* ==================== 右上角 ==================== */
+.top-right-actions {
+    position: fixed;
+    top: 8px;
+    right: 10px;
+}
+
+/* ==================== 商店 ==================== */
+.shop-area {
+    position: fixed;
+    top: 55px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 420px;
+    z-index: 90;
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    background: rgba(10, 18, 30, 0.8);
+    border-radius: 20px;
+    padding: 10px;
+}
+
+.shop-cards {
+    display: flex;
+    justify-content: space-between;
+}
+
+.shop-bottom-bar {
+    display: flex;
+    gap: 8px;
+}
+
+/* ==================== 棋盘 ==================== */
+.board-area {
+    position: fixed;
+    top: 185px;
+    bottom: 135px;
+    left: 85px;
+    right: 15px;
+}
+
+/* 分割线 */
+.board-divider {
+    position: relative;
+    margin: 6px 0 10px;
+}
+
+.board-divider::before,
+.board-divider::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 40%;
+    height: 1px;
+    background: rgba(255,255,255,0.2);
+}
+
+.board-divider::before { left: 0; }
+.board-divider::after { right: 0; }
+
+/* ==================== 准备按钮 ==================== */
+.prepare-timer-btn {
+    position: absolute;
+    right: 8%;
+    top: -30px;
+
+    width: 78px;
+    height: 78px;
+
+    border-radius: 50%;
+    background: radial-gradient(circle, #8b5cf6, #5b21b6);
+    border: 3px solid #c084fc;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    box-shadow: 0 0 18px rgba(168,85,247,0.8);
+}
+
+.prepare-num {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.prepare-text {
+    font-size: 11px;
+}
+
+/* ==================== 我方棋盘 ==================== */
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 80px);
+    gap: 6px;
+}
+
+.card-slot {
+    background: rgba(255,255,255,0.1);
+    border-radius: 8px;
+}
+
+/* ==================== 手牌 ==================== */
+.hand-area {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(10,18,30,0.7);
+    padding: 10px 14px;
+}
+
+.hand {
+    display: flex;
+    gap: 8px;
+}
+
+/* ==================== 卡牌（保留功能） ==================== */
+.card {
+    position: relative;
+    width: 70px;
+    height: 100px;
+    background: #141a2a;
+    border: 2px solid #3a4a6a;
+    border-radius: 8px;
+}
