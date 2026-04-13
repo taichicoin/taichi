@@ -1,4 +1,4 @@
-// ==================== 通用工具函数 + 真实卡池管理（降级兼容版） ====================
+// ==================== 通用工具函数 + 真实卡池管理（修复图片字段） ====================
 window.YYCardUtils = (function() {
     const config = window.YYCardConfig;
 
@@ -7,22 +7,24 @@ window.YYCardUtils = (function() {
 
     // 内置最小测试卡组（仅当 characters.json 加载失败时使用，确保商店不崩溃）
     const FALLBACK_CARDS = [
-        { cardId: 'char_test1', name: '测试步兵', type: 'character', rarity: 'Common', baseAtk: 3, baseHp: 5, icon: '/assets/default-avatar.png' },
-        { cardId: 'char_test2', name: '测试弓手', type: 'character', rarity: 'Rare', baseAtk: 5, baseHp: 4, icon: '/assets/default-avatar.png' },
-        { cardId: 'char_test3', name: '测试法师', type: 'character', rarity: 'Epic', baseAtk: 7, baseHp: 6, icon: '/assets/default-avatar.png' },
-        { cardId: 'char_test4', name: '测试骑士', type: 'character', rarity: 'Legendary', baseAtk: 10, baseHp: 10, icon: '/assets/default-avatar.png' },
+        { cardId: 'char_test1', name: '测试步兵', type: 'character', rarity: 'Common', baseAtk: 3, baseHp: 5, image: '/assets/default-avatar.png' },
+        { cardId: 'char_test2', name: '测试弓手', type: 'character', rarity: 'Rare', baseAtk: 5, baseHp: 4, image: '/assets/default-avatar.png' },
+        { cardId: 'char_test3', name: '测试法师', type: 'character', rarity: 'Epic', baseAtk: 7, baseHp: 6, image: '/assets/default-avatar.png' },
+        { cardId: 'char_test4', name: '测试骑士', type: 'character', rarity: 'Legendary', baseAtk: 10, baseHp: 10, image: '/assets/default-avatar.png' },
     ];
 
     // ===== 加载卡牌模板 =====
     async function loadCardTemplates() {
         if (templatesLoaded && cardTemplates.length > 0) return cardTemplates;
         try {
-            const response = await fetch('/data/characters.json');
+            // 注意：此处路径根据实际部署调整，如 /yycard/data/characters.json
+            const response = await fetch('/yycard/data/characters.json');
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             const data = await response.json();
             if (Array.isArray(data)) {
                 cardTemplates = data;
             } else {
+                // 兼容 faction 分组的对象格式
                 cardTemplates = Object.values(data).flat();
             }
             templatesLoaded = true;
@@ -111,6 +113,10 @@ window.YYCardUtils = (function() {
         const rarity = rollRarity(shopLevel);
         const template = drawRandomTemplateByRarity(rarity);
         if (!template) return null;
+
+        // 关键修复：优先使用 template.image，兼容旧模板的 icon
+        const imagePath = template.image || template.icon || `/assets/card/${template.cardId || template.id}.png`;
+
         return {
             instanceId: uuid(),
             cardId: template.cardId || template.id,
@@ -123,7 +129,8 @@ window.YYCardUtils = (function() {
             baseHp: template.baseHp,
             star: template.star || 0,
             price: getCardPrice(template.rarity),
-            icon: template.icon || `/assets/card/${template.cardId || template.id}.png`,
+            icon: imagePath,   // 保留 icon 字段供 battle.js 使用
+            image: imagePath,  // 同时保留 image 字段
             skill: template.skill,
             equipment: { weapon: null, items: [null, null] },
             enlightenmentCount: 0
@@ -133,7 +140,8 @@ window.YYCardUtils = (function() {
     async function generateShopCards(shopLevel) {
         await loadCardTemplates();
         const cards = [];
-        for (let i = 0; i < 3; i++) {
+        const count = config?.ECONOMY?.SHOP_CARD_COUNT || 3;
+        for (let i = 0; i < count; i++) {
             const card = generateShopCard(shopLevel);
             if (card) cards.push(card);
         }
@@ -149,22 +157,26 @@ window.YYCardUtils = (function() {
         if (commonRare.length === 0) return [];
         const shuffled = [...commonRare].sort(() => Math.random() - 0.5);
         const selected = shuffled.slice(0, 6);
-        return selected.map(t => ({
-            instanceId: uuid(),
-            cardId: t.cardId || t.id,
-            name: t.name,
-            type: t.type || 'character',
-            rarity: t.rarity,
-            atk: t.baseAtk,
-            hp: t.baseHp,
-            baseAtk: t.baseAtk,
-            baseHp: t.baseHp,
-            star: 0,
-            price: getCardPrice(t.rarity),
-            icon: t.icon || `/assets/card/${t.cardId || t.id}.png`,
-            equipment: { weapon: null, items: [null, null] },
-            enlightenmentCount: 0
-        }));
+        return selected.map(t => {
+            const imagePath = t.image || t.icon || `/assets/card/${t.cardId || t.id}.png`;
+            return {
+                instanceId: uuid(),
+                cardId: t.cardId || t.id,
+                name: t.name,
+                type: t.type || 'character',
+                rarity: t.rarity,
+                atk: t.baseAtk,
+                hp: t.baseHp,
+                baseAtk: t.baseAtk,
+                baseHp: t.baseHp,
+                star: 0,
+                price: getCardPrice(t.rarity),
+                icon: imagePath,
+                image: imagePath,
+                equipment: { weapon: null, items: [null, null] },
+                enlightenmentCount: 0
+            };
+        });
     }
 
     function getBotDeck() {
@@ -188,4 +200,4 @@ window.YYCardUtils = (function() {
     };
 })();
 
-console.log('✅ utils.js 加载完成（降级兼容版）');
+console.log('✅ utils.js 加载完成（图片字段修复版）');
