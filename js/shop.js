@@ -1,10 +1,20 @@
-// ==================== 商店系统（精简版，复用 utils 卡池，无弹窗） ====================
+// ==================== 商店系统（精简版 + 兼容 loadTemplates） ====================
 window.YYCardShop = (function() {
     const utils = window.YYCardUtils;
     const config = window.YYCardConfig;
 
     // 当前商店卡牌
     let currentShopCards = [];
+
+    // 【兼容方法】加载卡牌模板（实际委托给 utils）
+    async function loadTemplates() {
+        if (utils && utils.loadCardTemplates) {
+            return await utils.loadCardTemplates();
+        } else {
+            console.warn('⚠️ utils.loadCardTemplates 不存在，跳过加载');
+            return [];
+        }
+    }
 
     // 生成商店卡牌（直接调用 utils）
     async function generateShopCards(shopLevel) {
@@ -72,7 +82,6 @@ window.YYCardShop = (function() {
                 <div class="card-price">💰${price}</div>
             `;
 
-            // 注意：点击购买逻辑需在外部绑定，这里仅渲染
             container.appendChild(cardEl);
         });
     }
@@ -83,6 +92,7 @@ window.YYCardShop = (function() {
     }
 
     return {
+        loadTemplates,      // 新增兼容接口
         generateShopCards,
         refreshShop,
         buyCard,
@@ -91,4 +101,4 @@ window.YYCardShop = (function() {
     };
 })();
 
-console.log('✅ shop.js 加载完成（精简复用版）');
+console.log('✅ shop.js 加载完成（精简+兼容版）');
