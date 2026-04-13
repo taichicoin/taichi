@@ -1,4 +1,4 @@
-/* ==================== 对局界面样式（悠悠牌风格 + 完整匹配现有HTML） ==================== */
+/* ==================== 对局界面样式（悠悠牌风格 + 卡牌图片支持） ==================== */
 body {
     overscroll-behavior: none;
     touch-action: pan-y;
@@ -227,16 +227,55 @@ body {
 .card[data-rarity="Epic"] { border-color: #8b5cf6; }
 .card[data-rarity="Legendary"] { border-color: #f59e0b; }
 
-.card .card-name { font-weight: bold; }
-.card .card-stats { font-size: 0.65rem; display: flex; justify-content: center; gap: 6px; }
-.card .card-price { color: #f5d76e; margin-top: 2px; font-weight: bold; }
-.card.selected { border-color: #f5d76e; box-shadow: 0 0 10px #f5d76e; }
+.card .card-name { 
+    font-weight: bold; 
+    margin-top: 2px;
+}
+.card .card-stats { 
+    font-size: 0.65rem; 
+    display: flex; 
+    justify-content: center; 
+    gap: 6px; 
+}
+.card .card-price { 
+    color: #f5d76e; 
+    margin-top: 2px; 
+    font-weight: bold; 
+}
+.card.selected { 
+    border-color: #f5d76e; 
+    box-shadow: 0 0 10px #f5d76e; 
+}
 .empty-slot {
     opacity: 0.3;
     font-size: 1.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+/* ===== 新增：卡牌图片样式 ===== */
+.card-icon {
+    width: 100%;
+    height: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 4px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 4px;
+}
+.card-icon img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 4px;
+}
+.card-star {
+    color: #f5d76e;
+    font-size: 1rem;
+    line-height: 1;
+    margin-top: 2px;
 }
 
 /* 按钮通用 */
