@@ -7,8 +7,8 @@ window.YYCardConfig = {
   // 适配你的部署路径，登录页、资源路径统一收口
   BASE_PATH: '/yycard',
   LOGIN_PAGE_URL: 'https://taichicoin.xyz/yycard/signup',
-  DEFAULT_AVATAR: '/yycard/assets/default-avatar.png',
-  CARD_ICON_BASE_PATH: '/yycard/assets/card/',
+  DEFAULT_AVATAR: '/assets/default-avatar.png',
+  CARD_ICON_BASE_PATH: '/assets/card/',
 
   // ==================== 账号系统配置 ====================
   RENAME_COOLDOWN_DAYS: 365,
@@ -24,7 +24,7 @@ window.YYCardConfig = {
   INITIAL_MMR: 1000,
 
   // ==================== 对局基础配置 ====================
-  INITIAL_HEALTH: 100, // 初始血量
+  INITIAL_HEALTH: 50, // 初始血量
   HAND_MAX_COUNT: 15, // 手牌上限
   BOARD_MAX_COUNT: 6, // 棋盘最大上阵数
   MAX_SHOP_LEVEL: 5, // 商店最高等级
