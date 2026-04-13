@@ -1,39 +1,57 @@
-// ==================== 通用工具函数 + 真实卡池管理（修复图片字段 + 正确路径） ====================
+// ==================== 通用工具函数 + 真实卡池管理（强制加载真实卡牌） ====================
 window.YYCardUtils = (function() {
     const config = window.YYCardConfig;
 
     let cardTemplates = [];
     let templatesLoaded = false;
 
-    // 内置最小测试卡组（仅当 characters.json 加载失败时使用，确保商店不崩溃）
-    const FALLBACK_CARDS = [
-        { cardId: 'char_test1', name: '测试步兵', type: 'character', rarity: 'Common', baseAtk: 3, baseHp: 5, image: '/assets/default-avatar.png' },
-        { cardId: 'char_test2', name: '测试弓手', type: 'character', rarity: 'Rare', baseAtk: 5, baseHp: 4, image: '/assets/default-avatar.png' },
-        { cardId: 'char_test3', name: '测试法师', type: 'character', rarity: 'Epic', baseAtk: 7, baseHp: 6, image: '/assets/default-avatar.png' },
-        { cardId: 'char_test4', name: '测试骑士', type: 'character', rarity: 'Legendary', baseAtk: 10, baseHp: 10, image: '/assets/default-avatar.png' },
-    ];
+    // ===== 手机调试面板辅助（简单输出到屏幕） =====
+    function logToScreen(msg, isError = false) {
+        try {
+            const p = document.getElementById('mobile-debug-panel');
+            if (p) {
+                const line = document.createElement('div');
+                line.style.color = isError ? '#ff7b7b' : '#7bffb1';
+                line.textContent = `[${new Date().toLocaleTimeString()}] ` + msg;
+                p.appendChild(line);
+                p.scrollTop = p.scrollHeight;
+                while (p.children.length > 40) p.removeChild(p.firstChild);
+            }
+        } catch (e) {}
+    }
 
-    // ===== 加载卡牌模板 =====
+    // ===== 加载卡牌模板（无降级，失败即报错） =====
     async function loadCardTemplates() {
         if (templatesLoaded && cardTemplates.length > 0) return cardTemplates;
-        try {
-            // 【修正】使用根目录路径 /data/characters.json
-            const response = await fetch('/data/characters.json');
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const data = await response.json();
-            if (Array.isArray(data)) {
-                cardTemplates = data;
-            } else {
-                // 兼容 faction 分组的对象格式
-                cardTemplates = Object.values(data).flat();
-            }
-            templatesLoaded = true;
-            console.log(`✅ 卡牌模板加载完成，共 ${cardTemplates.length} 张`);
-        } catch (e) {
-            console.warn('⚠️ 加载 characters.json 失败，使用内置测试卡组:', e.message);
-            cardTemplates = FALLBACK_CARDS;
-            templatesLoaded = true;
+
+        logToScreen('🔄 正在加载卡牌模板: /data/characters.json');
+        console.log('🔄 正在加载卡牌模板...');
+
+        const response = await fetch('/data/characters.json');
+        if (!response.ok) {
+            const msg = `❌ 卡牌模板加载失败: HTTP ${response.status}`;
+            logToScreen(msg, true);
+            throw new Error(msg);
         }
+
+        const data = await response.json();
+
+        // 处理两种格式：数组 或 阵营分组对象
+        if (Array.isArray(data)) {
+            cardTemplates = data;
+        } else {
+            cardTemplates = Object.values(data).flat();
+        }
+
+        if (cardTemplates.length === 0) {
+            const msg = '❌ 卡牌模板为空，请检查 characters.json 内容';
+            logToScreen(msg, true);
+            throw new Error(msg);
+        }
+
+        templatesLoaded = true;
+        logToScreen(`✅ 成功加载 ${cardTemplates.length} 张卡牌`);
+        console.log(`✅ 卡牌模板加载完成，共 ${cardTemplates.length} 张`);
         return cardTemplates;
     }
 
@@ -107,14 +125,12 @@ window.YYCardUtils = (function() {
 
     function generateShopCard(shopLevel) {
         if (cardTemplates.length === 0) {
-            console.error('❌ 卡牌模板为空');
-            return null;
+            throw new Error('❌ 卡牌模板为空，无法生成商店卡牌');
         }
         const rarity = rollRarity(shopLevel);
         const template = drawRandomTemplateByRarity(rarity);
         if (!template) return null;
 
-        // 关键修复：优先使用 template.image，兼容旧模板的 icon
         const imagePath = template.image || template.icon || `/assets/card/${template.cardId || template.id}.png`;
 
         return {
@@ -129,8 +145,8 @@ window.YYCardUtils = (function() {
             baseHp: template.baseHp,
             star: template.star || 0,
             price: getCardPrice(template.rarity),
-            icon: imagePath,   // 保留 icon 字段供 battle.js 使用
-            image: imagePath,  // 同时保留 image 字段
+            icon: imagePath,
+            image: imagePath,
             skill: template.skill,
             equipment: { weapon: null, items: [null, null] },
             enlightenmentCount: 0
@@ -150,8 +166,7 @@ window.YYCardUtils = (function() {
 
     function getDefaultDeck() {
         if (cardTemplates.length === 0) {
-            console.error('❌ 卡池为空，无法生成初始卡组');
-            return [];
+            throw new Error('❌ 卡池为空，无法生成初始卡组');
         }
         const commonRare = cardTemplates.filter(c => c.rarity === 'Common' || c.rarity === 'Rare');
         if (commonRare.length === 0) return [];
@@ -200,4 +215,4 @@ window.YYCardUtils = (function() {
     };
 })();
 
-console.log('✅ utils.js 加载完成（路径修正为 /data/characters.json）');
+console.log('✅ utils.js 加载完成（强制真实卡牌，无降级）');
