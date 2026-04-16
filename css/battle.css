@@ -211,14 +211,14 @@ body {
 }
 .shop-cards {
     display: flex;
-    gap: 20px;
+    gap: 10px;
     justify-content: center;
     overflow-x: auto;
     padding: 4px 0;
 }
 .shop-cards .card {
-    min-width: 150px;
-    min-height: 150px;
+    min-width: 110px;
+    min-height: 110px;
     flex-shrink: 0;
 }
 
