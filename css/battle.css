@@ -393,7 +393,7 @@ body {
 /* ==================== 5. 手牌区 bottom:5px 【修复好】 ==================== */
 .hand-area {
     position: fixed;
-    bottom: 5px;
+    bottom: 0px;
     left: 0;
     right: 0;
     width: 100vw !important;
