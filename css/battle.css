@@ -404,9 +404,9 @@ body {
     padding: 10px 15px !important;
     border-top: 2px solid rgba(255,215,0,0.5);
 
-    height: 170px !important;
-    max-height: 170px !important;
-    min-height: 170px !important;
+    height: 340px !important;
+    max-height: 340px !important;
+    min-height: 340px !important;
 
     flex-shrink: 0 !important;
     flex-grow: 0 !important;
