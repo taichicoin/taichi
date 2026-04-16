@@ -466,7 +466,7 @@ body {
 .hand-area {
     position: fixed;
     /* 【调整对象：手牌区】【控制：距离屏幕底部的距离（上移幅度）】【修改规则：数值越大，手牌离底部越远，整体越靠上；数值越小，越贴底部】 */
-    bottom: 480px;
+    bottom: 170px;
     left: 0;
     right: 0;
     width: 100vw !important;
