@@ -234,7 +234,7 @@ body {
 /* 🔥 核心修改2：按钮组右对齐，实现整体往右移 */
 .shop-actions {
     display: flex;
-    gap: 60px; /* 按钮间距放大，适配放大后的尺寸 */
+    gap: 50px; /* 按钮间距放大，适配放大后的尺寸 */
     flex: 1;
     justify-content: flex-end; /* 关键：按钮组右对齐，整体往右靠 */
     margin-right: 20px; /* 额外往右微调，离倒计时更近一点 */
@@ -398,7 +398,7 @@ body {
 /* ==================== 5. 手牌区【完全不动】 ==================== */
 .hand-area {
     position: fixed;
-    bottom: 120px !important;
+    bottom: 90px !important;
     left: 0;
     right: 0;
     width: 100vw !important;
@@ -409,9 +409,9 @@ body {
     padding: 10px 15px !important;
     border-top: 2px solid rgba(255,215,0,0.5);
 
-    height: 170px !important;
-    max-height: 170px !important;
-    min-height: 170px !important;
+    height: 200px !important;
+    max-height: 200px !important;
+    min-height: 200px !important;
 
     flex-shrink: 0 !important;
     flex-grow: 0 !important;
