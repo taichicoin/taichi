@@ -792,3 +792,39 @@ body {
     box-shadow: 0 0 0 4px #ff4444 !important;
     transition: 0.15s;
 }
+/* ==================== 最终修复：棋盘上的单位卡牌强制可见 ==================== */
+/* 1. 重置可能导致棋盘卡牌隐藏的属性 */
+#my-board .card,
+#enemy-board .card,
+.board .card,
+.my-board-section .card,
+.enemy-board-section .card {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    background: #141a2a !important;  /* 实色背景，完全不透明 */
+    border: 2px solid #3a4a6a !important;
+    min-width: 80px !important;
+    min-height: 100px !important;
+}
+
+/* 2. 确保卡牌内部所有元素可见 */
+#my-board .card *,
+#enemy-board .card *,
+.board .card * {
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* 3. 特别针对卡牌图片 */
+#my-board .card-icon img,
+#enemy-board .card-icon img {
+    opacity: 1 !important;
+    background: transparent !important;
+}
+
+/* 4. 商店和手牌区保持原样（不干扰） */
+.shop-area .card,
+.hand-area .card {
+    /* 保持原样式，不做额外强制 */
+}
