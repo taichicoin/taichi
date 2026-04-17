@@ -1,0 +1,140 @@
+/* ==================== 大厅样式【最终版：严格按你要求的位置】 ==================== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    background: transparent;
+    min-height: 100dvh;
+    color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    padding: 0;
+    margin: 0;
+    overscroll-behavior: none;
+    touch-action: pan-y;
+}
+#app {
+    max-width: 500px;
+    width: 100%;
+    background: url(assets/lobby.png) no-repeat center;
+    background-size: 100% 100%;
+    min-height: 100dvh;
+    backdrop-filter: none;
+    border-radius: 0;
+    padding: 20px;
+    border: none;
+    display: flex;
+    flex-direction: column;
+}
+#lobby-view {
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+}
+
+/* ========== 1. 用户头像栏：往下挪一点，不贴死顶部 ========== */
+.header-bar { 
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    flex-shrink: 0;
+}
+.user-profile { display: flex; align-items: center; gap: 10px; }
+.avatar { width: 40px; height: 40px; border-radius: 50%; border: 2px solid #f5d76e; object-fit: cover; background: #2a3a5c; }
+.user-info { font-weight: 600; }
+.user-wallet { font-size: 0.7rem; opacity: 0.8; }
+.user-card { font-size: 0.7rem; color: #f5d76e; opacity: 0.9; }
+
+/* ========== 2. 三个功能按钮：固定在【顶部区域】，紧跟用户栏 ========== */
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    /* 关键：不往下跑，就待在上半部分 */
+    margin-bottom: auto;
+    flex-shrink: 0;
+}
+.action-buttons .btn { flex: 1; }
+
+/* ========== 3. 匹配状态行：跟着按钮走，在上半部分 ========== */
+.match-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin: 10px 0;
+    flex-shrink: 0;
+}
+#match-status {
+    flex: 1;
+    padding: 8px;
+    background: rgba(26, 30, 46, 0.8);
+    border-radius: 20px;
+    text-align: center;
+    font-size: 0.9rem;
+    display: none;
+}
+#cancel-match-btn {
+    background: #e94560;
+    padding: 8px 16px;
+    white-space: nowrap;
+    display: none;
+}
+
+/* ========== 4. 核心：开始匹配按钮，钉在【屏幕正中间】 ========== */
+.btn-primary {
+    background: linear-gradient(145deg, #f5d76e, #f0b34b); 
+    color: #0b0f1c;
+    padding: 16px; 
+    width: 100%; 
+    font-size: 1.2rem; 
+    border: none;
+    border-radius: 60px; 
+    font-weight: bold; 
+    cursor: pointer;
+
+    /* 关键：用auto把它挤到中间偏下，同时控制底部距离 */
+    margin-top: auto;
+    margin-bottom: 35vh;
+    flex-shrink: 0;
+}
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* 普通按钮 */
+.btn {
+    background: #2e3f5e; color: white; border: none; padding: 10px 16px;
+    border-radius: 40px; font-weight: 600; cursor: pointer;
+}
+.btn:hover { background: #3e5275; }
+
+/* ========== 5. 调试日志：透明背景，并且移到最底部 ========== */
+.debug-panel {
+    margin-top: auto;
+    padding: 10px; 
+    background: transparent;
+    border-radius: 10px; 
+    font-size: 0.8rem; 
+    max-height: 150px; 
+    overflow-y: auto;
+    flex-shrink: 0;
+}
+.error-msg { color: #ff7b7b; }
+.success-msg { color: #7bffb1; }
+
+/* 模态框 */
+.modal {
+    position: fixed; top: 0; left: 100%; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7); display: none; align-items: center;
+    justify-content: center; z-index: 1000;
+}
+.modal-content {
+    background: #1e2a44; padding: 24px; border-radius: 24px;
+    max-width: 380px; width: 90%; text-align: center;
+}
+.modal-buttons { display: flex; gap: 12px; margin-top: 24px; }
+input {
+    width: 100%; padding: 14px; border-radius: 40px; border: none;
+    background: #0f1a2b; color: white; font-size: 1rem;
+    text-align: center; margin: 10px 0;
+}
