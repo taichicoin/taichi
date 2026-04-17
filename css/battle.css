@@ -194,7 +194,7 @@ body {
     margin-left: 10px;
     z-index: 90;
     background: rgba(10, 18, 30, 0.1);
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(1px);
     border-radius: 20px;
     padding: 2px;
     border: 1px solid rgba(255,215,0,0.3);
@@ -734,8 +734,8 @@ body {
         min-height: calc(100% - 14px) !important;
     }
     .hand .card {
-        min-width: 60px;
-        min-height: 90px;
+        min-width: 70px;
+        min-height: 85px;
     }
     .enemy-board-section .board {
         min-height: 140px;
