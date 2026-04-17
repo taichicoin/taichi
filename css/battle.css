@@ -692,11 +692,11 @@ body {
         height: 35vh !important;
         max-height: 35vh !important;
         min-height: 35vh !important;
-        top: 0px !important;
+        top: 1px !important;
         background: rgba(10, 18, 30, 0.1) !important;
         backdrop-filter: blur(1px) !important;
         border-radius: 20px !important;
-        padding: 12px 8px !important;
+        padding: 8px 8px !important;
         overflow: visible !important;
         display: flex !important;
         flex-direction: column !important;
@@ -707,11 +707,11 @@ body {
     .shop-info {
         font-size: 0.8rem !important;
         margin: 0 !important;
-        margin-top: 30px !important; /* 原有6px+新增6px，总下移12px */
+        margin-top: 36px !important; /* 原有6px+新增6px，总下移12px */
         flex-shrink: 0 !important;
         width: 100% !important;
         justify-content: center !important; /* 改为水平居中 */
-        gap: 30px !important; /* 固定间距40px */
+        gap: 40px !important; /* 固定间距40px */
     }
 
     /* ----- 【已修改】商店卡牌 再下移3px+间距拉开1px ----- */
@@ -724,12 +724,12 @@ body {
         align-items: center !important;
         overflow-x: auto !important;
         overflow-y: visible !important;
-        padding-top: 20px !important; /* 原有14px+新增3px，总下移17px */
-        padding-bottom: 26px !important; /* 价格标签专属空间，绝对不能删 */
+        padding-top: 25px !important; /* 原有14px+新增3px，总下移17px */
+        padding-bottom: 50px !important; /* 价格标签专属空间，绝对不能删 */
     }
     .shop-cards .card {
-        min-width: 75px !important; /* 原有+10%宽度保留 */
-        min-height: 90px !important; /* 原有+10%高度保留 */
+        min-width: 70px !important; /* 原有+10%宽度保留 */
+        min-height: 85px !important; /* 原有+10%高度保留 */
         flex-shrink: 0 !important;
     }
 
@@ -741,7 +741,7 @@ body {
         align-items: center !important;
         gap: 16px !important;
         margin: 0 !important;
-        padding-top: 8px !important; /* 原有10px+新增2px，总下移12px */
+        padding-top: 6px !important; /* 原有10px+新增2px，总下移12px */
         position: relative !important;
         min-height: auto !important;
         flex-wrap: nowrap !important;
@@ -759,9 +759,9 @@ body {
     .shop-actions .btn {
         padding: 6px 12px !important; /* 原有8px 18px 缩小10% */
         margin: 0 !important;
-        font-size: 0.7rem !important; /* 原有0.8rem 缩小10% */
+        font-size: 0.65rem !important; /* 原有0.8rem 缩小10% */
         border-radius: 40px !important;
-        min-width: 63px !important; /* 原有70px 缩小10% */
+        min-width: 50px !important; /* 原有70px 缩小10% */
         font-weight: bold !important;
         background: #2e3f5e;
         color: white;
@@ -778,8 +778,8 @@ body {
         right: auto !important;
         bottom: auto !important;
         transform: none !important;
-        width: 40px !important;
-        height: 40px !important;
+        width: 42px !important;
+        height: 42px !important;
         border-radius: 50% !important;
         background: radial-gradient(circle, #7a3a9a, #4a1a6a);
         border: 2px solid #b878d8;
