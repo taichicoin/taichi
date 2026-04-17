@@ -438,7 +438,7 @@ body {
     display: flex;
     gap: 6px;
     overflow-x: auto;
-    padding-bottom: 6px;
+    padding-bottom: 12px;
     -webkit-overflow-scrolling: touch;
     justify-content: flex-start;
     width: 100% !important;
