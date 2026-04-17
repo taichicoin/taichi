@@ -681,9 +681,9 @@ body {
         transform: translateX(-50%) !important;
         width: calc(100% - 20px) !important;
         max-width: 500px !important;
-        max-height: 40vh !important;
+        max-height: 60vh !important;
         top: 20px !important;
-        background: rgba(10, 18, 30, 0.9) !important;
+        background: rgba(10, 18, 30, 0.2) !important;
         backdrop-filter: blur(12px) !important;
         border-radius: 20px !important;
         padding: 1px !important;
@@ -695,7 +695,7 @@ body {
         justify-content: center !important;
         align-items: center !important;
         gap: 16px !important;
-        margin-top: 22px !important;
+        margin-top: 32px !important;
         position: relative !important;
         min-height: auto !important;
         flex-wrap: nowrap !important;
@@ -784,9 +784,9 @@ body {
     /* ----- 手牌区缩小 ----- */
     .hand-area {
         bottom: 0px !important;
-        height: 150px !important;
-        max-height: 150px !important;
-        min-height: 150px !important;
+        height: 110px !important;
+        max-height: 110px !important;
+        min-height: 110px !important;
         padding: 1px 2px !important;
         z-index: 85 !important;
     }
