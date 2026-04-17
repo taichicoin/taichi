@@ -834,3 +834,50 @@ body {
     box-shadow: 0 0 0 4px #ff4444 !important;
     transition: 0.15s;
 }
+/* ========== 终极强制：所有卡片完全不透明，内容可见 ========== */
+/* 1. 所有卡片容器强制背景色 */
+.card,
+.shop-area .card,
+.hand .card,
+.enemy-board-section .card,
+.my-board-section .card,
+.card-slot > .card,
+[class*="card"]:not(.empty-slot) {
+    background: #1e2a3a !important;   /* 深色实底，完全不透明 */
+    background-color: #1e2a3a !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* 2. 卡片内部图片容器背景也强制不透明，防止透出棋盘 */
+.card-icon,
+.card-icon img,
+.card-icon * {
+    background: #1e2a3a !important;
+    opacity: 1 !important;
+}
+
+/* 3. 卡片文字强制可见（防止被设成透明） */
+.card-name,
+.card-stats,
+.card-atk,
+.card-hp,
+.card-price,
+.card-star {
+    color: white !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* 4. 商店和手牌容器保持透明（只让卡片不透明） */
+.shop-area,
+.hand-area {
+    background: transparent !important;
+    backdrop-filter: none !important;
+}
+
+/* 5. 确保卡片上的图片正常显示（不透明背景上的图片） */
+.card-icon img {
+    object-fit: cover;
+    background: transparent !important; /* 图片自身背景透明，但父级已不透明 */
+    }
