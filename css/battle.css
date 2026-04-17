@@ -705,13 +705,13 @@ body {
 
     /* ----- 【已修改】经验&金币 居中+间距40px+再下移6px ----- */
     .shop-info {
-        font-size: 0.7rem !important;
+        font-size: 0.8rem !important;
         margin: 0 !important;
         margin-top: 30px !important; /* 原有6px+新增6px，总下移12px */
         flex-shrink: 0 !important;
         width: 100% !important;
         justify-content: center !important; /* 改为水平居中 */
-        gap: 20px !important; /* 固定间距40px */
+        gap: 30px !important; /* 固定间距40px */
     }
 
     /* ----- 【已修改】商店卡牌 再下移3px+间距拉开1px ----- */
@@ -741,7 +741,7 @@ body {
         align-items: center !important;
         gap: 16px !important;
         margin: 0 !important;
-        padding-top: 12px !important; /* 原有10px+新增2px，总下移12px */
+        padding-top: 8px !important; /* 原有10px+新增2px，总下移12px */
         position: relative !important;
         min-height: auto !important;
         flex-wrap: nowrap !important;
@@ -757,9 +757,9 @@ body {
     }
     /* ----- 【已修改】刷新&升级按钮 整体缩小10% ----- */
     .shop-actions .btn {
-        padding: 7px 16px !important; /* 原有8px 18px 缩小10% */
+        padding: 6px 12px !important; /* 原有8px 18px 缩小10% */
         margin: 0 !important;
-        font-size: 0.72rem !important; /* 原有0.8rem 缩小10% */
+        font-size: 0.7rem !important; /* 原有0.8rem 缩小10% */
         border-radius: 40px !important;
         min-width: 63px !important; /* 原有70px 缩小10% */
         font-weight: bold !important;
@@ -798,7 +798,7 @@ body {
 
     /* ----- 棋盘区域适配：原有布局保留 ----- */
     :not(.battle-view-mode) .board-area {
-        top: 2550px;
+        top: 250px;
         left: 50px;
         right: 20px;
         width: calc(100% - 80px);
