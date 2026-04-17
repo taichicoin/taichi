@@ -681,13 +681,13 @@ body {
         transform: translateX(-50%) !important;
         width: calc(100% - 20px) !important;
         max-width: 500px !important;
-        max-height: 60vh !important;
-        top: 20px !important;
-        background: rgba(10, 18, 30, 0.2) !important;
+        top: 10px !important;
+        background: rgba(10, 18, 30, 0.1) !important;
         backdrop-filter: blur(1px) !important;
         border-radius: 20px !important;
         padding: 1px !important;
-        overflow-y: auto !important;
+        overflow: visible !important;
+
     }
     .shop-bottom-bar {
         display: flex !important;
@@ -695,7 +695,7 @@ body {
         justify-content: center !important;
         align-items: center !important;
         gap: 16px !important;
-        margin-top: 42px !important;
+        margin-top: 12px !important;
         position: relative !important;
         min-height: auto !important;
         flex-wrap: nowrap !important;
