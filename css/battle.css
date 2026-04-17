@@ -33,7 +33,7 @@ body {
     padding-top: 1px;
 
     /* ========== 新增：全局大背景 assets/battlebg.png ========== */
-    background-image: url("assets/battlebg.png");
+    background-image: url("/assets/battlebg.png");
     background-size: cover;       /* 铺满全屏 */
     background-position: center;  /* 居中对齐 */
     background-repeat: no-repeat;
