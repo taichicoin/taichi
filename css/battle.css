@@ -193,7 +193,7 @@ body {
     max-width: 900px;
     margin-left: 10px;
     z-index: 90;
-    background: rgba(10, 18, 30, 0.8);
+    background: rgba(10, 18, 30, 0.1);
     backdrop-filter: blur(8px);
     border-radius: 20px;
     padding: 2px;
