@@ -688,15 +688,15 @@ body {
         left: 50% !important;
         transform: translateX(-50%) !important;
         width: calc(100% - 20px) !important;
-        max-width: 550px !important;
+        max-width: 540px !important;
         height: 35vh !important;
         max-height: 35vh !important;
         min-height: 35vh !important;
         top: 1px !important;
-        background: rgba(10, 18, 30, 0.1) !important;
+        background: rgba(10, 18, 30, 0.2) !important;
         backdrop-filter: blur(1px) !important;
         border-radius: 20px !important;
-        padding: 8px 8px !important;
+        padding: 4px 4px !important;
         overflow: visible !important;
         display: flex !important;
         flex-direction: column !important;
@@ -711,7 +711,7 @@ body {
         flex-shrink: 0 !important;
         width: 100% !important;
         justify-content: center !important; /* 改为水平居中 */
-        gap: 40px !important; /* 固定间距40px */
+        gap: 50px !important; /* 固定间距40px */
     }
 
     /* ----- 【已修改】商店卡牌 再下移3px+间距拉开1px ----- */
@@ -728,8 +728,8 @@ body {
         padding-bottom: 50px !important; /* 价格标签专属空间，绝对不能删 */
     }
     .shop-cards .card {
-        min-width: 68px !important; /* 原有+10%宽度保留 */
-        min-height: 80px !important; /* 原有+10%高度保留 */
+        min-width: 75px !important; /* 原有+10%宽度保留 */
+        min-height: 85px !important; /* 原有+10%高度保留 */
         flex-shrink: 0 !important;
     }
 
@@ -836,15 +836,15 @@ body {
         min-height: calc(100% - 14px) !important;
     }
     .hand .card {
-        min-width: 68px;
-        min-height: 80px;
+        min-width: 75px;
+        min-height: 85px;
     }
 
     /* ----- 左侧玩家状态栏适配：原有布局保留 ----- */
     :not(.battle-view-mode) .players-status-bar {
         left: 1px;
-        width: 40px;
-        padding: 6px 8px;
+        width: 45px;
+        padding: 20px 25px;
     }
     .player-status-item img {
         width: 22px;
