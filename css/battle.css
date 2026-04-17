@@ -698,7 +698,6 @@ body {
         justify-content: center !important;
         align-items: center !important;
         gap: 16px !important;
-        margin-top: 12px !important;
         position: relative !important;
         min-height: auto !important;
         flex-wrap: nowrap !important;
@@ -731,7 +730,6 @@ body {
         transform: none !important;
         width: 48px !important;
         height: 48px !important;
-        margin: 0 !important;
         border-radius: 50% !important;
         background: radial-gradient(circle, #7a3a9a, #4a1a6a);
         border: 2px solid #b878d8;
