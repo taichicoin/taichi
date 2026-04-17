@@ -407,7 +407,7 @@ body {
     width: 100vw !important;
     z-index: 85 !important;
     background: rgba(10, 18, 30, 0.1);
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(1px);
     border-radius: 16px 16px 0 0;
     padding: 10px 15px !important;
     border-top: 2px solid rgba(255,215,0,0.5);
