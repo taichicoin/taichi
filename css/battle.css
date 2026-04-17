@@ -652,7 +652,7 @@ body {
     }
     /* ✅ 平板端手牌区修复：贴底部，给足高度，层级正确 */
     .hand-area {
-        bottom: 80 !important; /* 贴底部，不浪费空间 */
+        bottom: 0 !important; /* 贴底部，不浪费空间 */
         height: 200px !important;
         max-height: 200px !important;
         min-height: 200px !important;
@@ -728,8 +728,8 @@ body {
     .hand-area {
         bottom: 0px !important; /* 关键：紧贴屏幕最底部，消除120px空白浪费 */
         height: 150px !important; /* 给足高度，完全展开 */
-        max-height: 1500px !important;
-        min-height: 1500px !important;
+        max-height: 150px !important;
+        min-height: 150px !important;
         padding: 1px 2px !important;
         z-index: 85 !important; /* 层级低于棋盘区，绝对不遮挡 */
     }
