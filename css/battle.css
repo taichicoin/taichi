@@ -646,10 +646,10 @@ body {
     }
     .hand-area {
         bottom: 0 !important;
-        height: 200px !important;
-        max-height: 200px !important;
-        min-height: 200px !important;
-        padding: px 3px !important;
+        height: 150px !important;
+        max-height: 150px !important;
+        min-height: 150px !important;
+        padding: 1px 3px !important;
         z-index: 80 !important;
     }
     .hand {
@@ -684,7 +684,7 @@ body {
         max-height: 60vh !important;
         top: 20px !important;
         background: rgba(10, 18, 30, 0.2) !important;
-        backdrop-filter: blur(12px) !important;
+        backdrop-filter: blur(1px) !important;
         border-radius: 20px !important;
         padding: 1px !important;
         overflow-y: auto !important;
@@ -695,7 +695,7 @@ body {
         justify-content: center !important;
         align-items: center !important;
         gap: 16px !important;
-        margin-top: 32px !important;
+        margin-top: 42px !important;
         position: relative !important;
         min-height: auto !important;
         flex-wrap: nowrap !important;
@@ -703,7 +703,7 @@ body {
     .shop-actions {
         display: flex !important;
         flex-direction: row !important;
-        gap: 16px !important;
+        gap: 20px !important;
         margin: 0 !important;
         flex: none !important;
     }
