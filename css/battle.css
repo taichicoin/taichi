@@ -406,7 +406,7 @@ body {
     right: 0;
     width: 100vw !important;
     z-index: 85 !important;
-    background: rgba(10, 18, 30, 0.9);
+    background: rgba(10, 18, 30, 0.1);
     backdrop-filter: blur(8px);
     border-radius: 16px 16px 0 0;
     padding: 10px 15px !important;
@@ -450,8 +450,8 @@ body {
     align-items: center;
 }
 .hand .card {
-    min-width: 140px;
-    min-height: 150px;
+    min-width: 100px;
+    min-height: 110px;
     flex-shrink: 0;
 }
 
@@ -705,7 +705,7 @@ body {
         width: calc(100% - 80px);
     }
     .shop-cards .card {
-        min-width: 70px;
+        min-width: 80px;
     }
     .shop-bottom-bar {
         align-items: flex-end;
@@ -734,8 +734,8 @@ body {
         min-height: calc(100% - 14px) !important;
     }
     .hand .card {
-        min-width: 100px;
-        min-height: 140px;
+        min-width: 80px;
+        min-height: 110px;
     }
     .enemy-board-section .board {
         min-height: 140px;
