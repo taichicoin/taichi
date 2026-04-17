@@ -447,12 +447,12 @@ body {
     max-height: calc(100% - 26px) !important;
     min-height: calc(100% - 26px) !important;
     flex-shrink: 0 !important;
+    align-items: center;
 }
 .hand .card {
-    min-width: 160px;
-    min-height: 160px;
+    min-width: 140px;
+    min-height: 150px;
     flex-shrink: 0;
-    height: 100% !important;
 }
 
 /* ==================== 卡牌样式 ==================== */
