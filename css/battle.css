@@ -707,29 +707,29 @@ body {
     .shop-info {
         font-size: 0.7rem !important;
         margin: 0 !important;
-        margin-top: 12px !important; /* 原有6px+新增6px，总下移12px */
+        margin-top: 30px !important; /* 原有6px+新增6px，总下移12px */
         flex-shrink: 0 !important;
         width: 100% !important;
         justify-content: center !important; /* 改为水平居中 */
-        gap: 40px !important; /* 固定间距40px */
+        gap: 20px !important; /* 固定间距40px */
     }
 
     /* ----- 【已修改】商店卡牌 再下移3px+间距拉开1px ----- */
     .shop-cards {
         flex-grow: 1 !important;
         flex-shrink: 1 !important;
-        gap: 7px !important; /* 原有6px+新增1px，间距拉开1px */
+        gap: 8px !important; /* 原有6px+新增1px，间距拉开1px */
         display: flex !important;
         justify-content: center !important;
         align-items: center !important;
         overflow-x: auto !important;
         overflow-y: visible !important;
-        padding-top: 17px !important; /* 原有14px+新增3px，总下移17px */
+        padding-top: 20px !important; /* 原有14px+新增3px，总下移17px */
         padding-bottom: 26px !important; /* 价格标签专属空间，绝对不能删 */
     }
     .shop-cards .card {
-        min-width: 77px !important; /* 原有+10%宽度保留 */
-        min-height: 94px !important; /* 原有+10%高度保留 */
+        min-width: 75px !important; /* 原有+10%宽度保留 */
+        min-height: 90px !important; /* 原有+10%高度保留 */
         flex-shrink: 0 !important;
     }
 
@@ -778,8 +778,8 @@ body {
         right: auto !important;
         bottom: auto !important;
         transform: none !important;
-        width: 48px !important;
-        height: 48px !important;
+        width: 40px !important;
+        height: 40px !important;
         border-radius: 50% !important;
         background: radial-gradient(circle, #7a3a9a, #4a1a6a);
         border: 2px solid #b878d8;
@@ -798,8 +798,8 @@ body {
 
     /* ----- 棋盘区域适配：原有布局保留 ----- */
     :not(.battle-view-mode) .board-area {
-        top: 260px;
-        left: 60px;
+        top: 2550px;
+        left: 50px;
         right: 20px;
         width: calc(100% - 80px);
         bottom: 110px;
@@ -824,9 +824,9 @@ body {
     /* ----- 手牌区适配：原有布局保留 ----- */
     .hand-area {
         bottom: 0px !important;
-        height: 110px !important;
-        max-height: 110px !important;
-        min-height: 110px !important;
+        height: 113px !important;
+        max-height: 113px !important;
+        min-height: 113px !important;
         padding: 1px 2px !important;
         z-index: 85 !important;
     }
@@ -842,8 +842,8 @@ body {
 
     /* ----- 左侧玩家状态栏适配：原有布局保留 ----- */
     :not(.battle-view-mode) .players-status-bar {
-        left: 8px;
-        width: 50px;
+        left: 1px;
+        width: 40px;
         padding: 6px 8px;
     }
     .player-status-item img {
