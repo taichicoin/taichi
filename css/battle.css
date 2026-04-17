@@ -799,7 +799,7 @@ body {
     /* ----- 棋盘区域适配：原有布局保留 ----- */
     :not(.battle-view-mode) .board-area {
         top: 255px;
-        left: 40px;
+        left: 35px;
         right: 20px;
         width: calc(100% - 80px);
         bottom: 110px;
