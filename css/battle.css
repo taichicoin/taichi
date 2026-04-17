@@ -652,10 +652,10 @@ body {
     }
     /* ✅ 平板端手牌区修复：贴底部，给足高度，层级正确 */
     .hand-area {
-        bottom: 0 !important; /* 贴底部，不浪费空间 */
-        height: 250px !important;
-        max-height: 250px !important;
-        min-height: 250px !important;
+        bottom: 80 !important; /* 贴底部，不浪费空间 */
+        height: 200px !important;
+        max-height: 200px !important;
+        min-height: 200px !important;
         padding: 15px 20px !important;
         z-index: 80 !important;
     }
@@ -726,7 +726,7 @@ body {
     }
     /* ✅ 手机端手牌区核心修复：贴底部，不浪费空间，不遮挡 */
     .hand-area {
-        bottom: 0px !important; /* 关键：紧贴屏幕最底部，消除120px空白浪费 */
+        bottom: 80px !important; /* 关键：紧贴屏幕最底部，消除120px空白浪费 */
         height: 200px !important; /* 给足高度，完全展开 */
         max-height: 200px !important;
         min-height: 200px !important;
@@ -739,8 +739,8 @@ body {
         min-height: calc(100% - 14px) !important;
     }
     .hand .card {
-        min-width: 60px;
-        min-height: 100px;
+        min-width: 35px;
+        min-height: 60px;
     }
     .enemy-board-section .board {
         min-height: 140px;
