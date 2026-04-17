@@ -35,7 +35,7 @@ body {
     padding-top: 1px;
 
     /* ========== 核心修复：背景图完整显示，不歪不缺 ========== */
-    background-image: url("assets/battlebg.png");
+    background-image: url("/assets/battlebg.png");
     background-size: 100% 100%; /* 修复：强制宽高100%铺满屏幕，不裁剪任何部分 */
     background-position: left center; /* 修复：左边缘对齐屏幕最左，保证左侧九尾狐完整显示，不再往右歪 */
     background-repeat: no-repeat;
