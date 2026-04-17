@@ -686,13 +686,13 @@ body {
         left: 50% !important;
         transform: translateX(-50%) !important;
         width: calc(100% - 20px) !important;
-        max-width: 500px !important;
-        max-height: 40vh !important;
+        max-width: 600px !important;
+        max-height: 50vh !important;
         top: 60px !important;
-        background: rgba(10, 18, 30, 0.9) !important;
+        background: rgba(10, 18, 30, 0.2) !important;
         backdrop-filter: blur(12px) !important;
         border-radius: 20px !important;
-        padding: 12px !important;
+        padding: 1px !important;
         overflow-y: auto !important;
     }
 
