@@ -792,3 +792,14 @@ body {
     box-shadow: 0 0 0 4px #ff4444 !important;
     transition: 0.15s;
 }
+/* 手牌区容器 */
+.hand-area {
+    background: rgba(10, 18, 30, 0.85);
+    backdrop-filter: blur(8px);
+}
+
+/* 手牌区内的卡片背景改为半透明 */
+.hand-area .card {
+    background: rgba(20, 26, 42, 0.7);
+    border-color: rgba(255, 215, 0, 0.4);
+}
