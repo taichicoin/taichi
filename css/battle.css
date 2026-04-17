@@ -716,20 +716,20 @@ body {
     }
     .shop-actions {
         gap: 30px;
-        justify-content: flex-end;
+        justify-content: flex-center;
         margin-right: 10px;
     }
     .shop-actions .btn {
-        padding: 3px 7.5px; /* 放大50% */
-        font-size: 0.6rem; /* 放大50%，适配手机屏幕 */
+        padding: 5px9px; /* 放大50% */
+        font-size: 0.7rem; /* 放大50%，适配手机屏幕 */
         border-radius: 8px;
     }
     /* ✅ 手机端手牌区核心修复：贴底部，不浪费空间，不遮挡 */
     .hand-area {
         bottom: 0px !important; /* 关键：紧贴屏幕最底部，消除120px空白浪费 */
-        height: 280px !important; /* 给足高度，完全展开 */
-        max-height: 280px !important;
-        min-height: 280px !important;
+        height: 100px !important; /* 给足高度，完全展开 */
+        max-height: 100px !important;
+        min-height: 100px !important;
         padding: 1px 2px !important;
         z-index: 85 !important; /* 层级低于棋盘区，绝对不遮挡 */
     }
