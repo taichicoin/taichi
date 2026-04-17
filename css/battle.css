@@ -655,7 +655,7 @@ body {
         height: 200px !important;
         max-height: 200px !important;
         min-height: 200px !important;
-        padding: 15px 20px !important;
+        padding: px 3px !important;
         z-index: 80 !important;
     }
     .hand {
