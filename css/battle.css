@@ -609,6 +609,7 @@ body {
 /* ==================== 移动端适配 ==================== */
 @media (max-width: 768px) {
     .shop-area {
+        max-height: calc(100dvh - 60px - 200px);
         width: calc(100% - 50px);
         max-width: 750px;
         margin-left: 20px;
@@ -679,6 +680,7 @@ body {
 }
 @media (max-width: 480px) {
     .shop-area {
+        height: 300px; 
         width: calc(100% - 40px);
         margin-left: 15px;
     }
