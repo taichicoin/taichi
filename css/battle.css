@@ -842,3 +842,10 @@ body {
     box-shadow: 0 0 0 4px #ff4444 !important;
     transition: 0.15s;
 }
+/* 手牌区 & 商店区 → 完全透明，和准备区“我的卡组”一样 */
+/* 手牌区背景与准备区我方棋盘一致 */
+.hand-area,
+.shop-area {
+    background: rgba(0, 0, 0, 0.2) !important;
+    backdrop-filter: none !important;
+}
