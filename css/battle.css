@@ -681,9 +681,9 @@ body {
         transform: translateX(-50%) !important;
         width: calc(100% - 20px) !important;
         max-width: 500px !important;
-        height: 30vh !important;
-        max-height: 30vh !important;
-        min-height: 30vh !important;
+        height: 35vh !important;
+        max-height: 35vh !important;
+        min-height: 35vh !important;
         top: 0px !important;
         background: rgba(10, 18, 30, 0.1) !important;
         backdrop-filter: blur(1px) !important;
