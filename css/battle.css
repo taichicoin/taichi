@@ -814,7 +814,7 @@ body {
         min-height: 250px;
     }
     :not(.battle-view-mode) .my-board-section .board {
-        min-height: 240px;
+        min-height: 235px;
     }
     .battle-view-mode .my-board-section .board {
         gap: 12px;
