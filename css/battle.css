@@ -806,7 +806,7 @@ body {
     }
     .battle-view-mode .board-area {
         top: 50px;
-        left: 70px;
+        left: 20px;
         right: 10px;
         width: calc(100% - 80px);
     }
