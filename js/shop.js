@@ -21,7 +21,7 @@ window.YYCardShop = (function() {
     };
 
     // 后端刷新函数 URL（请替换为你的实际 Edge Function 地址）
-    const REFRESH_SHOP_FUNCTION_URL = 'https://你的项目ID.supabase.co/functions/v1/refresh-shop';
+    const REFRESH_SHOP_FUNCTION_URL = 'https://sznjaotjoljaiawbvfro.supabase.co/functions/v1/refresh-shop';
 
     // 调试面板
     function initDebugPanel() {
