@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no, viewport-fit=cover">
+    <title>YY Card · 游戏大厅</title>
+    <!-- Supabase SDK 稳定加载【终极修复版：CDN优先级排序+加载状态强校验+错误兜底】 -->
+    <script>
+        // 全局初始化状态锁
+        window.supabaseLoaded = false;
+        window.supabaseInitPromise = null;
+    </script>
+    <!-- 主CDN：jsDelivr（最稳定，优先加载） -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js" 
+        onload="window.supabaseLoaded = (typeof supabase !== 'undefined'); console.log('✅ 主CDN Supabase加载成功');" 
+        onerror="console.warn('⚠️ 主CDN加载失败，切换备用CDN'); this.onerror=null; this.src='https://unpkg.com/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js';">
+    </script>
+    <script>
+        // 终极兜底加载+强校验逻辑
+        (function() {
+            let retryCount = 0;
+            const maxRetry = 3;
+            const checkInterval = 300;
+
+            window.supabaseInitPromise = new Promise((resolve, reject) => {
+                function checkSupabase() {
+                    // 核心校验：必须同时满足脚本加载完成+supabase对象挂载
+                    if (window.supabaseLoaded && typeof supabase !== 'undefined' && supabase.createClient) {
+                        console.log('✅ Supabase SDK 最终校验通过，对象已挂载');
+                        resolve(supabase);
+                        return;
+                    }
+
+                    // 重试次数用尽，终极兜底
+                    if (retryCount >= maxRetry) {
+                        console.error('❌ 全部CDN加载失败，Supabase SDK不可用');
+                        alert('核心游戏SDK加载失败，请检查网络后刷新页面重试');
+                        reject(new Error('Supabase SDK 加载失败'));
+                        return;
+                    }
+
+                    // 重试逻辑
+                    retryCount++;
+                    console.warn(`⚠️ Supabase加载重试 ${retryCount}/${maxRetry}`);
+                    
+                    // 兜底CDN：cdnjs
+                    const script = document.createElement('script');
+                    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/supabase-js/2.45.0/supabase.min.js';
+                    script.onload = () => {
+                        window.supabaseLoaded = (typeof supabase !== 'undefined');
+                        if (window.supabaseLoaded) {
+                            console.log('✅ 兜底CDN Supabase加载成功');
+                            resolve(supabase);
+                        } else {
+                            setTimeout(checkSupabase, checkInterval);
+                        }
+                    };
+                    script.onerror = () => setTimeout(checkSupabase, checkInterval);
+                    document.head.appendChild(script);
+                }
+
+                // 首次校验
+                setTimeout(checkSupabase, checkInterval);
+            });
+        })();
+    </script>
+
+    <!-- 样式文件加载 -->
+    <link rel="stylesheet" href="/css/lobby.css">
+    <link rel="stylesheet" href="/css/battle.css">
+    <style>
+        /* 全局基础样式，仅保留和battle.css无冲突的核心规则 */
+        * {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            user-select: none;
+        }
+        img {
+            pointer-events: none;
+            draggable: false;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal.show {
+            display: flex;
+        }
+        .modal-content {
+            background: #1a1a2e;
+            padding: 20px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            border: 1px solid #f5d76e;
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: flex-end;
+        }
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            background: #2a2a4e;
+            color: white;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background: #f5d76e;
+            color: #1a1a2e;
+            font-weight: bold;
+            padding: 12px 24px;
+            font-size: 16px;
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        .debug-panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-height: 100px;
+            overflow-y: auto;
+            background: rgba(0,0,0,0.8);
+            color: #0f0;
+            font-size: 10px;
+            padding: 4px;
+            z-index: 99999;
+            font-family: monospace;
+        }
+        #match-status, #cancel-match-btn {
+            display: none;
+        }
+        /* 隐藏仅用于JS同步的隐藏元素 */
+        #round-num, #my-health {
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
+            opacity: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <!-- ===== 大厅视图 ===== -->
+    <div id="lobby-view">
+        <!-- 顶部固定区 -->
+        <div class="top-section">
+            <div class="header-bar">
+                <div class="user-profile">
+                    <img id="lobby-avatar" class="avatar" src="" alt="avatar" onerror="this.src='/assets/default-avatar.png'">
+                    <div class="user-info">
+                        <div id="lobby-username">未设置ID</div>
+                        <div id="lobby-wallet" class="user-wallet">未绑定钱包</div>
+                        <div id="lobby-card-count" class="user-card">改名卡：0张</div>
+                    </div>
+                </div>
+                <button class="btn" id="logout-btn">登出</button>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn" id="set-username-btn">设置游戏ID</button>
+                <button class="btn" id="bind-wallet-btn">绑定钱包</button>
+                <button class="btn" id="change-avatar-btn">修改头像</button>
+            </div>
+
+            <div class="match-row">
+                <div id="match-status"></div>
+                <button class="btn" id="cancel-match-btn">取消匹配</button>
+            </div>
+        </div>
+
+        <div class="spacer">
+            <button class="btn-primary" id="start-match-btn" disabled>请先设置游戏ID</button>
+        </div>
+
+        <div id="debug-panel" class="debug-panel"></div>
+    </div>
+
+    <!-- ===== 对战视图 ===== -->
+    <div id="battle-view" style="display:none;">
+        <!-- JS同步用隐藏元素 -->
+        <span id="round-num">1</span>
+        <span id="my-health">100</span>
+
+        <!-- 顶部回合&血量信息 -->
+        <div class="top-center-info prepare-only">
+            <span>🔄 回合 <span id="round-num-top">1</span></span>
+            <span>❤️ <span id="my-health-top">100</span></span>
+        </div>
+
+        <!-- 顶部操作按钮 -->
+        <div class="top-right-actions">
+            <button class="btn" id="leave-battle-btn">🚪 退出</button>
+            <button class="btn" id="settings-btn">⚙️</button>
+        </div>
+        <div class="top-left-actions">
+            <button class="btn" id="leave-battle-btn-battle">🚪 退出</button>
+        </div>
+
+        <!-- 左侧玩家状态列表 -->
+        <div class="players-status-bar">
+            <div id="player-status-list" class="player-status-list"></div>
+        </div>
+
+        <!-- 商店区域：准备阶段专属 -->
+        <div class="shop-area prepare-only">
+            <div class="shop-info">
+                <span>🏪 Lv.<span id="shop-level">1</span></span>
+                <span>💰 <span id="my-gold">5</span></span>
+            </div>
+            <div id="shop-container" class="shop-cards"></div>
+            <div class="shop-bottom-bar">
+                <div class="shop-actions">
+                    <button class="btn" id="refresh-shop-btn">🔄 刷新</button>
+                    <button class="btn btn-primary" id="buy-exp-btn">📈 升级</button>
+                </div>
+                <div class="prepare-timer-btn">
+                    <div class="prepare-num" id="phase-timer">25</div>
+                    <div class="prepare-text">倒计时</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 棋盘区域 -->
+        <div class="board-area">
+            <!-- 敌方棋盘：战斗阶段专属 -->
+            <div class="enemy-board-section battle-only">
+                <div class="board-label">敌方</div>
+                <div id="enemy-board" class="board"></div>
+            </div>
+            <!-- 分割线 -->
+            <div class="battle-divider">
+                <span class="prepare-only">VS</span>
+                <span class="battle-only">⚔️ 楚河汉界 ⚔️</span>
+            </div>
+            <!-- 战斗阶段计时器 -->
+            <div class="battle-timer battle-only" id="phase-timer-battle">00:00</div>
+            <!-- 我方棋盘 -->
+            <div class="my-board-section">
+                <div class="board-label prepare-only">我方准备区</div>
+                <div class="board-label battle-only">我方</div>
+                <div id="my-board" class="board"></div>
+            </div>
+        </div>
+
+        <!-- 手牌区域：准备阶段专属 -->
+        <div class="hand-area prepare-only">
+            <div class="hand-label">手牌 (<span id="hand-count">0</span>/15)</div>
+            <div id="hand-container" class="hand"></div>
+        </div>
+    </div>
+</div>
+
+<!-- 头像上传模态框 -->
+<div id="avatar-modal" class="modal">
+    <div class="modal-content">
+        <h3>更换头像</h3>
+        <p id="cooldown-warning" style="color:#ff7b7b;"></p>
+        <input type="file" id="avatar-file-input" accept="image/png,image/jpeg,image/webp">
+        <div id="upload-status"></div>
+        <div class="modal-buttons">
+            <button class="btn btn-primary" id="upload-avatar-btn">上传</button>
+            <button class="btn" id="cancel-avatar-btn">取消</button>
+        </div>
+    </div>
+</div>
+
+<!-- ========== 脚本加载【严格依赖顺序，确保前置模块先加载】 ========== -->
+<script src="/js/config.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/combat.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/profile-ui.js"></script>
+<script src="/js/matchmaking.js"></script>
+<script src="/js/battle.js"></script>
+<script src="/js/shop.js"></script>
+
+<script>
+    // ==================== 回合&血量实时同步【修复版：防空值+无侵入】 ====================
+    document.addEventListener('DOMContentLoaded', async () => {
+        // 等待Supabase SDK完全加载就绪
+        await window.supabaseInitPromise;
+        console.log('✅ DOM加载完成，Supabase SDK就绪');
+
+        // 回合数同步
+        const roundNumTop = document.getElementById('round-num-top');
+        const originalRoundNum = document.getElementById('round-num');
+        if (originalRoundNum && roundNumTop) {
+            const roundObserver = new MutationObserver(() => {
+                roundNumTop.textContent = originalRoundNum.textContent || '1';
+            });
+            roundObserver.observe(originalRoundNum, { childList: true, characterData: true, subtree: true });
+        }
+
+        // 血量同步
+        const myHealthTop = document.getElementById('my-health-top');
+        const originalMyHealth = document.getElementById('my-health');
+        if (originalMyHealth && myHealthTop) {
+            const healthObserver = new MutationObserver(() => {
+                myHealthTop.textContent = originalMyHealth.textContent || '100';
+            });
+            healthObserver.observe(originalMyHealth, { childList: true, characterData: true, subtree: true });
+        }
+
+        // 战斗阶段退出按钮同步绑定
+        const leaveBattleBtn = document.getElementById('leave-battle-btn');
+        const leaveBattleBtnBattle = document.getElementById('leave-battle-btn-battle');
+        if (leaveBattleBtn && leaveBattleBtnBattle) {
+            leaveBattleBtnBattle.onclick = leaveBattleBtn.onclick;
+        }
+
+        // 启动主应用初始化
+        window.initApp?.();
+    });
+
+    // ==================== 对局重连检测【修复版：状态强校验+防重复执行】 ====================
+    async function checkReconnect() {
+        const auth = window.YYCardAuth;
+        const uid = auth?.currentUser?.id;
+        if (!uid) return;
+
+        console.log('🔍 检测进行中的对局...');
+        // 查询玩家所在房间
+        const { data: myRoomPlayer, error: roomPlayerError } = await supabase
+            .from('room_players')
+            .select('room_id, is_bot')
+            .eq('player_id', uid)
+            .maybeSingle();
+        
+        if (roomPlayerError || !myRoomPlayer) {
+            console.log('✅ 无进行中的对局');
+            return;
+        }
+
+        const roomId = myRoomPlayer.room_id;
+        // 查询房间状态
+        const { data: room, error: roomError } = await supabase
+            .from('rooms')
+            .select('status')
+            .eq('id', roomId)
+            .single();
+        
+        if (roomError || !room) return;
+
+        // 战斗中对局重连
+        if (room.status === 'battle') {
+            const shouldReconnect = confirm('检测到您有一场进行中的对局，是否重新连接？\n\n点击「确定」重连，点击「取消」放弃对局');
+            if (shouldReconnect) {
+                auth.log('🔄 玩家确认重连对局');
+                document.getElementById('lobby-view').style.display = 'none';
+                document.getElementById('battle-view').style.display = 'block';
+                window.YYCardMatchmaking?.setCurrentRoom?.(roomId);
+                window.YYCardBattle?.enterBattle?.(roomId);
+            } else {
+                auth.log('🚫 玩家放弃重连，清理房间记录');
+                await window.YYCardMatchmaking?.leaveAndClean?.();
+            }
+        }
+        // 等待中匹配恢复
+        else if (room.status === 'waiting') {
+            auth.log('🔄 恢复等待中的匹配');
+            window.YYCardMatchmaking?.setCurrentRoom?.(roomId);
+            const startMatchBtn = document.getElementById('start-match-btn');
+            if (startMatchBtn) {
+                startMatchBtn.disabled = true;
+                startMatchBtn.textContent = '⏳ 匹配中...';
+            }
+            document.getElementById('match-status').style.display = 'block';
+            document.getElementById('cancel-match-btn').style.display = 'inline-block';
+        }
+    }
+
+    // ==================== 主应用初始化【修复版：依赖强校验+错误兜底】 ====================
+    window.initApp = async function() {
+        console.log('🚀 开始初始化主应用');
+        // 等待Supabase就绪
+        await window.supabaseInitPromise;
+
+        // 校验核心模块加载
+        const requiredModules = [
+            'YYCardConfig', 'YYCardUtils', 'YYCardCombat', 
+            'YYCardAuth', 'YYCardProfileUI', 'YYCardMatchmaking', 
+            'YYCardBattle', 'YYCardShop'
+        ];
+        const missingModules = requiredModules.filter(module => typeof window[module] === 'undefined');
+        if (missingModules.length > 0) {
+            console.error('❌ 核心模块加载失败:', missingModules);
+            alert(`游戏模块加载失败：${missingModules.join(', ')}\n请刷新页面重试`);
+            return;
+        }
+
+        // 加载卡牌模板
+        try {
+            await window.YYCardUtils.loadCardTemplates();
+            console.log('✅ 卡牌模板加载完成');
+        } catch (e) {
+            console.error('❌ 卡牌模板加载失败', e);
+            alert('卡牌资源加载失败，请刷新页面重试');
+            return;
+        }
+
+        // 初始化认证模块
+        const auth = window.YYCardAuth;
+        const authSuccess = await auth.init();
+        if (!authSuccess) {
+            alert('登录状态失效，请重新登录');
+            window.location.href = window.YYCardConfig?.LOGIN_PAGE_URL || '/login.html';
+            return;
+        }
+
+        // 初始化UI和事件绑定
+        const profileUI = window.YYCardProfileUI;
+        const matchmaking = window.YYCardMatchmaking;
+        profileUI.update();
+        profileUI.bindEvents();
+
+        // 匹配按钮事件
+        const startMatchBtn = document.getElementById('start-match-btn');
+        const cancelMatchBtn = document.getElementById('cancel-match-btn');
+        const logoutBtn = document.getElementById('logout-btn');
+
+        if (startMatchBtn) {
+            startMatchBtn.onclick = () => {
+                if (matchmaking?.start) matchmaking.start();
+                else auth.log('❌ 匹配模块未加载', true);
+            };
+        }
+        if (cancelMatchBtn) {
+            cancelMatchBtn.onclick = () => {
+                if (matchmaking?.cancel) matchmaking.cancel();
+            };
+        }
+        if (logoutBtn) {
+            logoutBtn.onclick = async () => {
+                auth.log('🔚 玩家登出');
+                await matchmaking?.leaveAndClean?.();
+                await auth.signOut();
+                window.location.href = window.YYCardConfig?.LOGIN_PAGE_URL || '/login.html';
+            };
+        }
+
+        // 页面关闭清理逻辑
+        window.addEventListener('beforeunload', (e) => {
+            const uid = auth.currentUser?.id;
+            if (!uid) return;
+
+            const isInBattle = document.getElementById('battle-view').style.display === 'block';
+            const isMatching = cancelMatchBtn && cancelMatchBtn.style.display === 'inline-block';
+
+            // 非战斗/非匹配状态，清理房间记录
+            if (!isInBattle && !isMatching) {
+                fetch(`${window.YYCardConfig.SUPABASE_URL}/rest/v1/room_players?player_id=eq.${uid}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'apikey': window.YYCardConfig.SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${auth.currentSession?.access_token}`,
+                        'Content-Type': 'application/json',
+                        'Prefer': 'return=minimal'
+                    },
+                    keepalive: true
+                }).catch(err => console.warn('页面关闭清理失败:', err));
+            }
+        });
+
+        // 执行重连检测
+        await checkReconnect();
+        auth.log('✅ 大厅初始化完成');
+    };
+</script>
+</body>
+</html>
