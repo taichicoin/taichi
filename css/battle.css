@@ -699,7 +699,7 @@ body.battle-view-mode .my-board-section .board {
         left: 50% !important;
         transform: translateX(-50%) !important;
         width: calc(100% - 20px) !important;
-        max-width: 540px !important;
+        max-width: 538px !important;
         height: 35vh !important;
         max-height: 35vh !important;
         min-height: 35vh !important;
@@ -731,7 +731,7 @@ body.battle-view-mode .my-board-section .board {
         align-items: center !important;
         overflow-x: auto !important;
         overflow-y: visible !important;
-        padding-top: 25px !important;
+        padding-top: 28px !important;
         padding-bottom: 50px !important;
     }
     .shop-cards .card {
