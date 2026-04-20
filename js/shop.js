@@ -1028,7 +1028,6 @@ window.YYCardShop = (function() {
         cacheDoms();
         bindUIEvents();
         refreshAllUI();
-        log('✅ 商店交互模块已启动（乐观更新，无弹回）');
     }
 
     return {
@@ -1041,4 +1040,3 @@ window.YYCardShop = (function() {
     };
 })();
 
-console.log('✅ shop.js 加载完成（乐观更新版本，无弹回）');
