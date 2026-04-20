@@ -1,0 +1,254 @@
+// ==================== 匹配系统【无弹窗 + 预加载卡牌 + 健壮初始化】 ====================
+window.YYCardMatchmaking = (function() {
+    const supabase = window.supabase;
+    const auth = window.YYCardAuth;
+    const utils = window.YYCardUtils;
+    const config = window.YYCardConfig;
+
+    let currentRoom = null;
+    let roomSubscription = null;
+    let matchmakingTimer = null;
+    let isMatching = false;
+
+    function log(msg, isError = false) {
+        if (auth && typeof auth.log === 'function') auth.log(msg, isError);
+        else console.log(`[匹配系统] ${msg}`);
+    }
+
+    function updateStatus(text, show = true) {
+        const el = document.getElementById('match-status');
+        if (el) { el.style.display = show ? 'block' : 'none'; el.textContent = text; }
+    }
+
+    function resetUI() {
+        isMatching = false;
+        const startBtn = document.getElementById('start-match-btn');
+        if (startBtn) {
+            const hasUsername = auth?.currentProfile?.username;
+            startBtn.disabled = !hasUsername;
+            startBtn.textContent = hasUsername ? '⚡ 开始匹配' : '请先设置游戏ID';
+        }
+        updateStatus('', false);
+        const cancelBtn = document.getElementById('cancel-match-btn');
+        if (cancelBtn) cancelBtn.style.display = 'none';
+        if (matchmakingTimer) { clearTimeout(matchmakingTimer); matchmakingTimer = null; }
+    }
+
+    function cleanup() {
+        if (roomSubscription) { roomSubscription.unsubscribe(); roomSubscription = null; log('✅ 旧房间订阅已清理'); }
+        if (matchmakingTimer) { clearTimeout(matchmakingTimer); matchmakingTimer = null; }
+        isMatching = false;
+    }
+
+    async function cleanPlayerResidualRooms(uid) {
+        if (!uid) return;
+        log(`🧹 正在清理玩家 ${uid.slice(0,8)} 的残留房间...`);
+        const { data: myRooms } = await supabase.from('room_players').select('room_id').eq('player_id', uid);
+        const roomIds = [...new Set(myRooms?.map(r => r.room_id) || [])];
+        if (roomIds.length > 0) {
+            await supabase.from('room_players').delete().eq('player_id', uid);
+            log(`✅ 玩家 ${roomIds.length} 条房间记录已删除`);
+        }
+        for (const roomId of roomIds) await cleanRoomIfEmpty(roomId);
+        log(`✅ 残留房间清理完成`);
+    }
+
+    async function cleanRoomIfEmpty(roomId) {
+        const { data: realPlayers } = await supabase.from('room_players').select('player_id').eq('room_id', roomId).eq('is_bot', false);
+        if (!realPlayers || realPlayers.length === 0) {
+            log(`🧹 房间 ${roomId.slice(0,8)} 已无真人，执行彻底清理...`);
+            await supabase.from('game_states').delete().eq('room_id', roomId);
+            await supabase.from('room_players').delete().eq('room_id', roomId);
+            await supabase.from('rooms').delete().eq('id', roomId);
+            log(`✅ 房间 ${roomId.slice(0,8)} 已彻底删除`);
+        } else {
+            log(`👥 房间 ${roomId.slice(0,8)} 仍有 ${realPlayers.length} 名真人，保留房间`);
+        }
+    }
+
+    async function start() {
+        if (isMatching) { log('⚠️ 匹配已在进行中，请勿重复点击'); return; }
+        const profile = auth?.currentProfile;
+        if (!profile?.username) { 
+            if (window.YYCardShop?.toast) window.YYCardShop.toast('请先设置游戏ID', true);
+            else alert('请先设置游戏ID');
+            return; 
+        }
+        // 预加载卡牌模板
+        if (utils && typeof utils.loadCardTemplates === 'function') {
+            try {
+                await utils.loadCardTemplates();
+                log('✅ 卡牌模板预加载成功');
+            } catch (e) {
+                log(`❌ 卡牌模板预加载失败: ${e.message}`, true);
+                if (window.YYCardShop?.toast) window.YYCardShop.toast('卡牌数据加载失败，请刷新页面', true);
+                return;
+            }
+        } else {
+            log('❌ utils 未加载或缺少 loadCardTemplates', true);
+            return;
+        }
+        isMatching = true;
+        log('🔍 开始匹配...');
+        const startBtn = document.getElementById('start-match-btn');
+        startBtn.disabled = true; startBtn.textContent = '⏳ 匹配中...';
+        updateStatus('正在寻找对手...', true);
+        const cancelBtn = document.getElementById('cancel-match-btn');
+        cancelBtn.style.display = 'inline-block';
+        const uid = auth?.currentUser?.id;
+        if (uid) await cleanPlayerResidualRooms(uid);
+        const myMmr = profile.mmr || config.INITIAL_MMR;
+        const maxPlayers = config.MAX_PLAYERS_PER_ROOM || 8;
+        if (matchmakingTimer) clearTimeout(matchmakingTimer);
+        matchmakingTimer = setTimeout(() => handleTimeout(), config.MATCHMAKING_TIMEOUT_MS || 15000);
+        try {
+            let { data: waitingRooms } = await supabase
+                .from('rooms')
+                .select('*')
+                .eq('status', 'waiting')
+                .order('created_at', { ascending: true })
+                .limit(1);
+            let room = waitingRooms?.[0];
+            if (!room) {
+                const { data: newRoom, error: createError } = await supabase
+                    .from('rooms')
+                    .insert({ status: 'waiting', max_players: maxPlayers, created_at: new Date().toISOString() })
+                    .select('*')
+                    .single();
+                if (createError) throw createError;
+                room = newRoom;
+                log(`✅ 创建新房间: ${room.id.slice(0,8)}`);
+            } else {
+                log(`✅ 加入现有房间: ${room.id.slice(0,8)}`);
+            }
+            const { data: existing } = await supabase
+                .from('room_players')
+                .select('*')
+                .eq('room_id', room.id)
+                .eq('player_id', uid)
+                .maybeSingle();
+            if (existing) { log('⚠️ 已在房间中，恢复订阅'); currentRoom = room; subscribeToRoom(room.id); return; }
+            const { error: joinError } = await supabase.from('room_players').insert({
+                room_id: room.id, player_id: uid, mmr_at_join: myMmr,
+                health: config.INITIAL_HEALTH || 100, is_bot: false, is_ready: false, joined_at: new Date().toISOString()
+            });
+            if (joinError) throw joinError;
+            currentRoom = room;
+            subscribeToRoom(room.id);
+        } catch (err) {
+            log(`❌ 匹配失败: ${err.message}`, true);
+            resetUI();
+        }
+    }
+
+    async function cancel() {
+        log('🛑 玩家取消匹配');
+        cleanup();
+        const uid = auth?.currentUser?.id;
+        if (uid) await cleanPlayerResidualRooms(uid);
+        currentRoom = null;
+        resetUI();
+    }
+
+    async function leaveAndClean() {
+        log('🚪 主动退出，执行全量清理...');
+        cleanup();
+        const uid = auth?.currentUser?.id;
+        if (uid) await cleanPlayerResidualRooms(uid);
+        currentRoom = null;
+        resetUI();
+    }
+
+    async function handleTimeout() {
+        if (!currentRoom || !isMatching) { log('⚠️ 超时触发时无有效匹配状态，忽略'); return; }
+        log('⏰ 匹配超时，开始填充人机...');
+        const maxPlayers = config.MAX_PLAYERS_PER_ROOM || 8;
+        const { data: existingPlayers } = await supabase.from('room_players').select('player_id').eq('room_id', currentRoom.id);
+        const existingIds = existingPlayers?.map(p => p.player_id) || [];
+        const neededBots = maxPlayers - existingIds.length;
+        log(`📊 当前房间人数: ${existingIds.length}，需要填充 ${neededBots} 个人机`);
+        if (neededBots <= 0) { await checkRoomFull(currentRoom.id); return; }
+        const { data: allBots, error: botError } = await supabase.from('profiles').select('id').eq('is_bot', true).limit(200);
+        if (botError || !allBots || allBots.length === 0) { log('❌ 数据库中没有预制人机，无法填充', true); resetUI(); return; }
+        const availableBots = allBots.map(b => b.id).filter(id => !existingIds.includes(id)).slice(0, neededBots);
+        if (availableBots.length < neededBots) { log(`❌ 可用人机不足，需要 ${neededBots}，实际 ${availableBots.length}`, true); resetUI(); return; }
+        const botInserts = availableBots.map(botId => ({
+            room_id: currentRoom.id, player_id: botId, mmr_at_join: 1000,
+            health: config.INITIAL_HEALTH || 100, is_bot: true, is_ready: true, joined_at: new Date().toISOString()
+        }));
+        const { error: insertError } = await supabase.from('room_players').insert(botInserts);
+        if (insertError) { log(`❌ 人机插入失败: ${insertError.message}`, true); resetUI(); return; }
+        log(`✅ 已添加 ${availableBots.length} 个人机，等待数据库同步...`);
+        await new Promise(resolve => setTimeout(resolve, 500));
+        await checkRoomFull(currentRoom.id);
+    }
+
+    function subscribeToRoom(roomId) {
+        if (roomSubscription) roomSubscription.unsubscribe();
+        log(`📡 开始订阅房间: ${roomId.slice(0,8)}`);
+        roomSubscription = supabase
+            .channel(`room:${roomId}`)
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'room_players', filter: `room_id=eq.${roomId}` }, () => checkRoomFull(roomId))
+            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'rooms', filter: `id=eq.${roomId}` }, (payload) => {
+                if (payload.new.status === 'battle') { cleanup(); window.YYCardBattle?.enterBattle?.(roomId); }
+            })
+            .subscribe((status) => { if (status === 'SUBSCRIBED') { log(`✅ 房间订阅成功`); checkRoomFull(roomId); } });
+    }
+
+    async function checkRoomFull(roomId) {
+        const maxPlayers = config.MAX_PLAYERS_PER_ROOM || 8;
+        const { data: players } = await supabase.from('room_players').select('*').eq('room_id', roomId);
+        const count = players?.length || 0;
+        updateStatus(`匹配中... ${count}/${maxPlayers}`);
+        if (count >= maxPlayers) {
+            clearTimeout(matchmakingTimer);
+            const { data: room } = await supabase.from('rooms').select('status').eq('id', roomId).single();
+            if (room && room.status === 'waiting') {
+                log('📝 房间满员，更新状态为battle并初始化游戏');
+                await supabase.from('rooms').update({ status: 'battle' }).eq('id', roomId);
+                cleanup();
+                await initializeGame(roomId, players);
+            } else if (room && room.status === 'battle') {
+                log('⚠️ 房间已是battle状态，直接进入对战');
+                cleanup();
+                window.YYCardBattle?.enterBattle?.(roomId);
+            }
+        }
+    }
+
+    async function initializeGame(roomId, players) {
+        const { data: existing } = await supabase.from('game_states').select('state').eq('room_id', roomId).maybeSingle();
+        if (existing) { log('⚠️ 游戏状态已存在，跳过初始化，直接进入对战'); window.YYCardBattle?.enterBattle?.(roomId); return; }
+        // 确保卡牌模板已加载
+        if (utils && typeof utils.loadCardTemplates === 'function') {
+            try { await utils.loadCardTemplates(); } catch (e) { log(`❌ 卡牌模板加载失败: ${e.message}`, true); if (window.YYCardShop?.toast) window.YYCardShop.toast('游戏初始化失败：卡牌数据错误', true); resetUI(); return; }
+        }
+        const now = new Date().toISOString();
+        const state = { round: 1, phase: 'prepare', gameStartTime: now, phaseStartTime: now, battlePairs: [], players: {} };
+        for (const p of players) {
+            const isBot = p.is_bot;
+            let deck = [];
+            try { deck = isBot ? utils.getBotDeck() : utils.getDefaultDeck(); } catch (e) { log(`⚠️ 玩家${p.player_id.slice(0,8)}卡组生成失败: ${e.message}`, true); deck = []; }
+            let shopCards = [];
+            try { shopCards = await utils.generateShopCards(1); if (!Array.isArray(shopCards)) shopCards = []; } catch (e) { log(`⚠️ 玩家${p.player_id.slice(0,8)}商店卡牌生成失败: ${e.message}`, true); shopCards = []; }
+            state.players[p.player_id] = {
+                health: config.INITIAL_HEALTH || 100, gold: 5, exp: 0, shopLevel: 1,
+                board: deck.slice(0, 3).concat(new Array(3).fill(null)).slice(0, 6),
+                hand: deck.slice(3, 6).concat(new Array(12).fill(null)).slice(0, config.HAND_MAX_COUNT || 15),
+                shopCards: shopCards, isBot: isBot, isReady: false, isEliminated: false
+            };
+        }
+        const { error } = await supabase.from('game_states').upsert({ room_id: roomId, state: state }, { onConflict: 'room_id' });
+        if (error) { log(`❌ 游戏状态写入失败: ${error.message}`, true); if (window.YYCardShop?.toast) window.YYCardShop.toast('游戏初始化失败，请重试', true); resetUI(); return; }
+        log('🎉 游戏初始化完成，进入对战！');
+        window.YYCardBattle?.enterBattle?.(roomId);
+        resetUI();
+    }
+
+    function setCurrentRoom(roomId) { cleanup(); currentRoom = { id: roomId }; subscribeToRoom(roomId); log(`✅ 当前房间已设置: ${roomId.slice(0,8)}`); }
+    function getCurrentRoomId() { return currentRoom?.id || null; }
+
+    return { start, cancel, setCurrentRoom, subscribeToRoom, leaveAndClean, getCurrentRoomId, currentRoom: () => currentRoom };
+})();
+
+console.log('✅ matchmaking.js 加载完成（无弹窗 + 预加载卡牌 + 健壮初始化）');
