@@ -1024,5 +1024,3 @@ window.YYCardShop = (function() {
         toast
     };
 })();
-
-console.log('✅ shop.js 加载完成（乐观更新版本，无弹回）');
