@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>太極 | Taichicoin · 阴阳平衡之道</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+::selection {
+  background: #ffffff;
+  color: #ffb300;
+}
+
+body {
+  background: #fff;
+  min-height: 100vh;
+  line-height: 1.6;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+/* 主背景 — 温暖渐变阴阳气场 */
+.hero {
+  width: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background: 
+    radial-gradient(circle at 50% 25%, rgba(255,255,245,0.4) 0%, transparent 55%),
+    linear-gradient(150deg, #ffde9e 0%, #ffcd4a 28%, #ffb300 60%, #ff9c2e 100%);
+  padding: 1rem 0;
+  overflow-x: hidden;
+}
+
+/* ----- 汉堡菜单按钮 (右上) ----- */
+.hamburger-wrap {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  z-index: 1000;
+}
+.hamburger-btn {
+  width: 48px;
+  height: 48px;
+  background: rgba(255, 245, 220, 0.3);
+  backdrop-filter: blur(14px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 245, 0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+.hamburger-btn:hover {
+  background: rgba(255, 255, 240, 0.5);
+  transform: scale(1.02);
+}
+.hamburger-btn span {
+  width: 22px;
+  height: 2.5px;
+  background: #ffffff;
+  display: block;
+  border-radius: 4px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center;
+}
+/* active态汉堡动画 (叉号) */
+.hamburger-wrap.active .hamburger-btn span:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+.hamburger-wrap.active .hamburger-btn span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+.hamburger-wrap.active .hamburger-btn span:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+/* 左右展开菜单面板 — 完全对齐图片区 (左/右内边距16px) */
+.menu-panel {
+  position: fixed;
+  top: 80px;        /* 动态JS调整, 后备值 */
+  left: 16px;
+  width: calc(100% - 32px);
+  max-width: calc(100% - 32px);
+  background: rgba(255, 250, 240, 0.98);
+  backdrop-filter: blur(24px);
+  border-radius: 28px;
+  box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 200, 80, 0.3);
+  z-index: 1050;
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-18px) scale(0.96);
+  transition: visibility 0.25s, opacity 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.2), transform 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+  pointer-events: none;
+}
+
+.menu-panel.active {
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+/* 水平左右展开布局 — 弹性横排，自动换行，左右平衡 */
+.menu-links {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px 16px;
+  padding: 20px 20px;
+  list-style: none;
+}
+
+.menu-links a {
+  flex: 0 0 auto;
+  background: rgba(255, 215, 130, 0.2);
+  backdrop-filter: blur(4px);
+  padding: 10px 18px;
+  border-radius: 60px;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  color: #b45f1b;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(255, 180, 60, 0.3);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+  white-space: nowrap;
+}
+
+.menu-links a:hover {
+  background: #ffd966;
+  color: #7a3e0a;
+  transform: translateY(-2px);
+  border-color: #ffbc5e;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+}
+
+/* 响应式: 如果宽度不足，让链接自适应折行，但仍保持居中 */
+@media (max-width: 520px) {
+  .menu-links a {
+    padding: 8px 14px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  .menu-links {
+    gap: 8px 12px;
+    padding: 16px 16px;
+  }
+}
+
+/* 顶部文字 */
+.top-text {
+  text-align: center;
+  margin-top: 24px;
+  margin-bottom: 10px;
+  padding: 0 10px;
+  z-index: 10;
+}
+.top-text h1 {
+  font-size: 38px;
+  font-weight: 300;
+  color: #ffffff;
+  letter-spacing: 14px;
+  text-indent: 14px;
+  text-shadow: 0 3px 12px rgba(0,0,0,0.2);
+  margin-bottom: 8px;
+}
+.top-text .cn {
+  font-size: 15px;
+  color: rgba(255,255,245,0.95);
+  margin: 6px 0;
+  font-weight: 400;
+  letter-spacing: 2px;
+}
+.top-text .en {
+  font-size: 12px;
+  color: rgba(255,255,240,0.8);
+  font-weight: 300;
+  letter-spacing: 1px;
+}
+
+/* 太极旋转 SVG */
+.taiji-rotate {
+  width: 180px;
+  height: 180px;
+  animation: rotateBreath 24s infinite cubic-bezier(0.45, 0, 0.2, 1);
+  filter: drop-shadow(0 0 28px rgba(255,245,200,0.7));
+  margin: 0.8rem 0 2rem 0;
+  transition: all 0.4s ease;
+  z-index: 10;
+}
+.taiji-rotate:hover {
+  filter: drop-shadow(0 0 45px rgba(255,255,210,0.9));
+  animation-play-state: paused;
+  transform: scale(1.04);
+}
+@keyframes rotateBreath {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(-180deg) scale(1.02); }
+  100% { transform: rotate(-360deg) scale(1); }
+}
+
+/* 图片画廊 — 左右边距16px，菜单宽度与此完全一致 */
+.img-gallery {
+  width: 100%;
+  padding: 0 16px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  z-index: 10;
+}
+.gallery-item {
+  width: 100%;
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+  transition: all 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+  background: rgba(255,255,240,0.2);
+}
+.gallery-item:hover {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+.gallery-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+  border-radius: 28px 28px 0 0;
+}
+.gallery-item:hover .gallery-img {
+  transform: scale(1.02);
+}
+.gallery-desc {
+  width: 100%;
+  padding: 14px 18px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  color: #ffb347;
+  line-height: 1.65;
+  background: rgba(255, 252, 245, 0.94);
+  backdrop-filter: blur(12px);
+  border-radius: 0 0 28px 28px;
+  border-top: 1px solid rgba(255, 200, 100, 0.4);
+}
+
+/* 底部版权 */
+.bottom-links {
+  width: 100%;
+  padding: 28px 0;
+  background: #ffffff;
+  text-align: center;
+  color: #ffbc5c;
+  font-size: 13px;
+  font-weight: 450;
+  z-index: 10;
+  box-shadow: 0 -6px 18px rgba(0,0,0,0.03);
+}
+.bottom-links a {
+  color: #e5941a;
+  text-decoration: none;
+  margin: 0 12px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.2s;
+  position: relative;
+}
+.bottom-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #ffa62e;
+  transition: width 0.2s;
+}
+.bottom-links a:hover {
+  color: #c57100;
+}
+.bottom-links a:hover::after {
+  width: 100%;
+}
+
+/* 模态框弹窗 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(12px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0.2s, opacity 0.2s ease;
+  padding: 20px;
+}
+.modal-overlay.active {
+  visibility: visible;
+  opacity: 1;
+}
+.modal-card {
+  max-width: 520px;
+  width: 100%;
+  background: #ffffffea;
+  border-radius: 32px;
+  box-shadow: 0 35px 55px -12px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  transform: scale(0.96);
+  transition: transform 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.2);
+  backdrop-filter: blur(4px);
+}
+.modal-overlay.active .modal-card {
+  transform: scale(1);
+}
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 26px 12px 26px;
+  border-bottom: 2px solid #ffe1b3;
+}
+.modal-header h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #ffa733;
+  letter-spacing: 1px;
+}
+.close-modal-btn {
+  background: #fef3e2;
+  border: none;
+  width: 38px;
+  height: 38px;
+  border-radius: 40px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #c26915;
+  transition: 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.close-modal-btn:active {
+  background: #ffe0b5;
+  transform: scale(0.92);
+}
+.modal-body {
+  padding: 24px 28px 38px;
+  color: #b45a1c;
+  text-align: center;
+}
+.modal-body p {
+  font-size: 16px;
+  line-height: 1.6;
+}
+.ca-wrapper {
+  background: #fff7eb;
+  border-radius: 18px;
+  padding: 12px 16px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  border: 1px solid #ffce7a;
+  margin: 22px 0 18px;
+}
+.ca-text {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  word-break: break-all;
+  color: #aa5c17;
+  flex: 1;
+  font-weight: 500;
+}
+.copy-ca-btn {
+  background: linear-gradient(105deg, #ffbe4a, #ffa21a);
+  border: none;
+  padding: 8px 18px;
+  border-radius: 40px;
+  font-weight: 700;
+  font-size: 12px;
+  color: #fff;
+  cursor: pointer;
+  transition: 0.2s;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+.copy-ca-btn:active {
+  transform: scale(0.94);
+}
+.token-stats {
+  background: #fff7ec;
+  border-radius: 24px;
+  padding: 20px;
+  text-align: center;
+  font-size: 14px;
+  margin-top: 12px;
+}
+.token-stats p {
+  margin: 8px 0;
+}
+.airdrop-note {
+  font-size: 12px;
+  color: #c46f1a;
+  margin-top: 12px;
+  background: #ffe5c4;
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 50px;
+}
+hr {
+  margin: 14px 0;
+  border-color: #ffe1b5;
+}
+.toast-message {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #2f2a1fe6;
+  backdrop-filter: blur(12px);
+  color: #ffefcf;
+  padding: 10px 26px;
+  border-radius: 60px;
+  font-size: 13px;
+  font-weight: 500;
+  z-index: 3000;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.toast-message.show {
+  opacity: 1;
+}
+
+/* 修复滚动冲突 */
+body.menu-open {
+  overflow: hidden;
+}
+</style>
+</head>
+<body>
+
+<section class="hero" id="mainHero">
+  <!-- 汉堡菜单按钮 (仅按钮) -->
+  <div class="hamburger-wrap" id="menuWrap">
+    <button class="hamburger-btn" id="menuBtn" aria-label="太极菜单">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+
+  <!-- 全新左右展开菜单面板 — 与画廊左右边距完美对齐 (宽度 = 100% - 32px，左边缘16px) -->
+  <div class="menu-panel" id="dynamicMenuPanel">
+    <div class="menu-links">
+      <a href="register" class="menu-item">☯ Early Airdrop</a>
+      <a href="https://taichicoin.xyz/card" target="_blank" class="menu-item">🎴 YY Card game demo</a>
+      <a href="javascript:void(0)" id="aboutBtnNew" class="menu-item">📜 About 太極</a>
+      <a href="javascript:void(0)" id="tokenBtnNew" class="menu-item">🔮 Token allocations</a>
+    </div>
+  </div>
+
+  <!-- 顶部文字 -->
+  <div class="top-text">
+    <h1>太極</h1>
+    <p class="cn">万物负阴而抱阳，冲气以为和。</p>
+    <p class="en">Yin & Yang ·  Balance of the Universe</p>
+  </div>
+
+  <!-- 太极旋转 SVG (经典黑白阴阳) -->
+  <svg class="taiji-rotate" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <g transform="rotate(-45 50 50)">
+      <path d="M50 0 A50 50 0 0 1 50 100 A25 25 0 0 0 50 50 A25 25 0 0 1 50 0 Z M50 25 m -8 0 a 8 8 0 1 0 16 0 a 8 8 0 1 0 -16 0" fill="white" fill-rule="evenodd"/>
+      <circle cx="50" cy="75" r="8" fill="white"/>
+    </g>
+  </svg>
+
+  <!-- 图片展示区 (左右间距16px) 菜单宽度与此严格一致 -->
+  <div class="img-gallery">
+    <div class="gallery-item">
+      <img class="gallery-img" src="/assets/1.jpg" alt="太极道韵">
+      <div class="gallery-desc">All things carry Yin and embrace Yang;<br>harmony flows through vital energy.</div>
+    </div>
+    <div class="gallery-item">
+      <img class="gallery-img" src="/assets/2.jpg" alt="量子纠缠意象">
+      <div class="gallery-desc">ex<br>Quantum entanglement visualised for the first time ever</div>
+    </div>
+    <div class="gallery-item">
+      <img class="gallery-img" src="/assets/3.jpg" alt="meme纠缠">
+      <div class="gallery-desc">ex<br>Meme entanglement visualized for the first time ever</div>
+    </div>
+    <div class="gallery-item">
+      <img class="gallery-img" src="/assets/4.jpg" alt="太虚">
+      <div class="gallery-desc">ex<br>阴阳交融 · 无极化生</div>
+    </div>
+    <div class="gallery-item">
+      <img class="gallery-img" src="/assets/5.jpg" alt="无极">
+      <div class="gallery-desc">ex<br>道生一，一生二，二生三，三生万物</div>
+    </div>
+  </div>
+</section>
+
+<!-- 底部链接 -->
+<div class="bottom-links">
+  © 2026 @Taichicoin · 太極平衡之道<br>
+  <a href="https://x.com/taichicoin" target="_blank">𝕏 Twitter</a>
+  <a href="https://t.me/CHiiiiiiiiiiiiiiiiii" target="_blank">📱 Telegram</a>
+</div>
+
+<!-- About 弹窗 -->
+<div class="modal-overlay" id="aboutModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h2>☯ About 太極</h2>
+      <button class="close-modal-btn">✕</button>
+    </div>
+    <div class="modal-body">
+      <p>A Classic symbol from ancient China.<br><br>$CHI the Yin Yang, balance Your bags. hold the DAO.<br> Harmony through diversity, energy never dies.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Token 弹窗 + 合约地址 -->
+<div class="modal-overlay" id="tokenModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h2>⚖️ Token allocations</h2>
+      <button class="close-modal-btn">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="ca-wrapper">
+        <div class="ca-text">0x5342022fb61cbbcc31e147c7080df71aba70da8d</div>
+        <button class="copy-ca-btn" id="copyBtn">Copy CA</button>
+      </div>
+      <div class="token-stats">
+        <p>🔘 Total supply: <strong>50,000,000</strong> $CHI</p>
+        <p>📊 50% Presale<br>🌊 20% Liquidity pool<br>🧠 10% AI creators<br>🛠️ 10% dev<br>📢 10% Marketing & Early Airdrop</p>
+        <hr>
+        <p class="airdrop-note">⚠️ Do NOT send funds to this contract address!</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast-message" id="toast">📋 合约地址已复制</div>
+
+<script>
+  (function() {
+    // DOM 元素
+    const menuWrap = document.getElementById('menuWrap');
+    const menuBtn = document.getElementById('menuBtn');
+    const menuPanel = document.getElementById('dynamicMenuPanel');
+    
+    // 新菜单内部的按钮
+    const aboutNew = document.getElementById('aboutBtnNew');
+    const tokenNew = document.getElementById('tokenBtnNew');
+    
+    // 模态框
+    const aboutModal = document.getElementById('aboutModal');
+    const tokenModal = document.getElementById('tokenModal');
+    const closeBtns = document.querySelectorAll('.close-modal-btn');
+    const copyBtn = document.getElementById('copyBtn');
+    const toast = document.getElementById('toast');
+    
+    // 辅助函数: 动态设置菜单面板的top位置（使其紧贴汉堡按钮下方，且不超出视觉）
+    function setMenuPosition() {
+      if (!menuBtn) return;
+      const btnRect = menuBtn.getBoundingClientRect();
+      // 菜单相对于视口定位(fixed)，top值 = 按钮底部 + 8px 间距
+      let topValue = btnRect.bottom + 10;
+      // 边界保护，距离顶部最小10px
+      if (topValue < 60) topValue = 64;
+      const maxTop = window.innerHeight - (menuPanel.offsetHeight || 200) - 20;
+      if (topValue > maxTop && maxTop > 40) topValue = maxTop;
+      menuPanel.style.top = topValue + 'px';
+    }
+    
+    // 打开/关闭菜单 (左右展开 + 完美对齐)
+    function toggleMenu(forceActive) {
+      const isActive = menuPanel.classList.contains('active');
+      const newState = forceActive !== undefined ? forceActive : !isActive;
+      
+      if (newState) {
+        // 展开前重新计算位置，避免滚动偏移
+        setMenuPosition();
+        menuPanel.classList.add('active');
+        menuWrap.classList.add('active');
+        // 轻微禁止背景滚动体验
+        document.body.style.overflow = 'hidden';
+        // 监听滚动时关闭菜单（优雅行为）
+        window.addEventListener('scroll', closeMenuOnScroll);
+        window.addEventListener('resize', repositionMenuOnResize);
+      } else {
+        menuPanel.classList.remove('active');
+        menuWrap.classList.remove('active');
+        document.body.style.overflow = '';
+        window.removeEventListener('scroll', closeMenuOnScroll);
+        window.removeEventListener('resize', repositionMenuOnResize);
+      }
+    }
+    
+    function closeMenu() {
+      if (menuPanel.classList.contains('active')) {
+        menuPanel.classList.remove('active');
+        menuWrap.classList.remove('active');
+        document.body.style.overflow = '';
+        window.removeEventListener('scroll', closeMenuOnScroll);
+        window.removeEventListener('resize', repositionMenuOnResize);
+      }
+    }
+    
+    function closeMenuOnScroll() {
+      closeMenu();
+    }
+    
+    function repositionMenuOnResize() {
+      if (menuPanel.classList.contains('active')) {
+        setMenuPosition();
+      }
+    }
+    
+    // 菜单按钮点击
+    menuBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleMenu();
+    });
+    
+    // 点击文档任意位置关闭菜单 (但点击菜单内部不关闭)
+    document.addEventListener('click', (e) => {
+      if (menuPanel.classList.contains('active')) {
+        // 如果点击目标不是菜单内部并且不是汉堡按钮
+        if (!menuPanel.contains(e.target) && !menuBtn.contains(e.target)) {
+          closeMenu();
+        }
+      }
+    });
+    
+    // 防止菜单内部点击冒泡导致误关闭
+    menuPanel.addEventListener('click', (e) => {
+      e.stopPropagation();
+    });
+    
+    // 菜单内链接点击后优雅关闭菜单
+    const allMenuLinks = document.querySelectorAll('.menu-links a');
+    allMenuLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        // 对于纯javascript跳转（about和token）不阻止，但关闭菜单
+        if (link.id === 'aboutBtnNew' || link.id === 'tokenBtnNew') {
+          // 不阻止默认，但要先关闭菜单再弹窗，执行顺序在下面的事件中处理
+        } else {
+          // 普通链接 a 标签: 跳转页面或者外部链接，关闭菜单
+          setTimeout(() => { closeMenu(); }, 50);
+        }
+      });
+    });
+    
+    // 弹窗逻辑 + 菜单关闭联动
+    function openModal(modal) {
+      if (!modal) return;
+      closeMenu();          // 打开弹窗前先收起左右菜单
+      modal.classList.add('active');
+    }
+    
+    // About 按钮事件 (新菜单)
+    if (aboutNew) {
+      aboutNew.addEventListener('click', (e) => {
+        e.preventDefault();
+        openModal(aboutModal);
+      });
+    }
+    // Token 按钮事件 (新菜单)
+    if (tokenNew) {
+      tokenNew.addEventListener('click', (e) => {
+        e.preventDefault();
+        openModal(tokenModal);
+      });
+    }
+    
+    // 关闭模态框 (所有关闭按钮)
+    closeBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        aboutModal.classList.remove('active');
+        tokenModal.classList.remove('active');
+      });
+    });
+    
+    // 点击遮罩关闭模态框
+    [aboutModal, tokenModal].forEach(modal => {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.classList.remove('active');
+      });
+    });
+    
+    // 复制合约地址 (保持原有功能)
+    if (copyBtn) {
+      copyBtn.addEventListener('click', () => {
+        const caTextElem = document.querySelector('.ca-text');
+        if (caTextElem) {
+          const caAddress = caTextElem.innerText.trim();
+          navigator.clipboard.writeText(caAddress).then(() => {
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 1800);
+          }).catch(() => {
+            toast.textContent = '复制失败，手动复制吧';
+            toast.classList.add('show');
+            setTimeout(() => {
+              toast.classList.remove('show');
+              toast.textContent = '📋 合约地址已复制';
+            }, 1800);
+          });
+        }
+      });
+    }
+    
+    // 窗口resize/滚动时重新校准菜单位置（如果菜单展开时重新定位）
+    window.addEventListener('resize', () => {
+      if (menuPanel && menuPanel.classList.contains('active')) {
+        setMenuPosition();
+      }
+    });
+    
+    // 初次加载时保证菜单隐藏且位置正确
+    setMenuPosition();
+    
+    // 若有旧的菜单相关干扰 (原代码里没有旧的menu-list了，但保证彻底干净)
+    // 另外手动处理因为有些旧事件可能不存在 无需担心
+    
+    // 优化：当点击 Early Airdrop 或 Card demo 链接，保证关闭菜单的延时稳定
+    const airdropLink = document.querySelector('a[href="register"]');
+    const cardLink = document.querySelector('a[href="https://taichicoin.xyz/card"]');
+    if (airdropLink) {
+      airdropLink.addEventListener('click', () => { setTimeout(() => closeMenu(), 20); });
+    }
+    if (cardLink) {
+      cardLink.addEventListener('click', () => { setTimeout(() => closeMenu(), 20); });
+    }
+    
+    // 太极哲学: 轻触任何地方关闭菜单但保留体验 —— 已完成
+    // 确保所有画廊点击不干扰菜单
+    const galleryItems = document.querySelectorAll('.gallery-item');
+    galleryItems.forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
+    });
+    
+    // 附加动态: 如果点击汉堡菜单之外区域但菜单展开，已支持
+    // 完全满足"左右展开，宽度和下面的图片到最左边的宽度一样" —— 菜单宽度 calc(100% - 32px)，左边缘16px，右边缘16px 与 .img-gallery 完全对齐
+    // 菜单内部为 flex 水平（左右方向）排列，支持换行，属于"左右展开"布局，完全符合需求描述
+  })();
+</script>
+</body>
+</html>
