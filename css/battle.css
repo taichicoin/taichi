@@ -925,3 +925,14 @@ body:has(#battle-view[style*="display: block"]) #app {
     background-position: center;
     background-repeat: no-repeat;
 }
+/* 战斗动画所需样式 */
+@keyframes damageFloat {
+    0% { opacity: 1; transform: translate(-50%, 0); }
+    100% { opacity: 0; transform: translate(-50%, -40px); }
+}
+.card {
+    will-change: transform;
+}
+.card-slot .card {
+    transition: transform 0.15s ease-out;
+}
