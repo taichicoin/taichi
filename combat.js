@@ -1,0 +1,185 @@
+// ==================== 战斗模拟模块（真人优先配对 + 0-5索引版） ====================
+window.YYCardCombat = (function() {
+    const config = window.YYCardConfig;
+
+    function panelLog(msg, isError = false) {
+        console.log(msg);
+        const panel = document.getElementById('battle-debug-panel');
+        if (!panel) return;
+        const line = document.createElement('div');
+        line.style.color = isError ? '#ff6666' : '#7bffb1';
+        line.textContent = `[C] ${msg}`;
+        panel.insertBefore(line, panel.firstChild);
+        while (panel.children.length > 80) panel.removeChild(panel.lastChild);
+    }
+
+    panelLog('✅ combat.js 真人优先配对版');
+
+    // 通过 data-board-index 找卡牌
+    function getCardElement(boardId, dataPos) {
+        const board = document.getElementById(boardId);
+        if (!board) return null;
+        const slot = board.querySelector(`.card-slot[data-board-index="${dataPos}"]`);
+        if (!slot) return null;
+        return slot.querySelector('.card:not(.empty-slot)') || slot.querySelector('img');
+    }
+
+    function cloneCard(card, pos) {
+        if (!card) return null;
+        const hp = Number(card.hp), atk = Number(card.atk);
+        if (isNaN(hp) || isNaN(atk) || hp <= 0) return null;
+        return { ...card, hp, atk, instanceId: card.instanceId || Math.random().toString(36).substring(2), position: pos };
+    }
+
+    // ========== 修改点：真人优先配对 ==========
+    function pairPlayers(players) {
+        const entries = Object.entries(players).filter(([id, p]) => p.health > 0 && !p.isEliminated);
+        const humans = entries.filter(([id, p]) => !p.isBot);
+        const bots = entries.filter(([id, p]) => p.isBot);
+
+        // 真人ID列表（不随机打乱，保持自然顺序，但也可以简单随机一下，无关紧要）
+        const humanIds = humans.map(([id]) => id);
+        // 为了测试公平，可以轻微打乱，但保留优先配对原则
+        for (let i = humanIds.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [humanIds[i], humanIds[j]] = [humanIds[j], humanIds[i]];
+        }
+
+        const botIds = bots.map(([id]) => id);
+        for (let i = botIds.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [botIds[i], botIds[j]] = [botIds[j], botIds[i]];
+        }
+
+        const pairs = [];
+        // 优先将真人两两配对
+        for (let i = 0; i < humanIds.length; i += 2) {
+            if (i + 1 < humanIds.length) {
+                pairs.push([humanIds[i], humanIds[i+1]]);
+            } else {
+                // 落单的真人找人机配对
+                pairs.push([humanIds[i], botIds.shift() || null]);
+            }
+        }
+        // 剩余人机互相配对
+        for (let i = 0; i < botIds.length; i += 2) {
+            pairs.push([botIds[i], botIds[i+1] || null]);
+        }
+        return pairs;
+    }
+
+    function findTarget(attackerPos, enemyUnits) {
+        const priority = config.BOARD.ENEMY_PRIORITY[attackerPos];
+        if (!priority) return null;
+        const hasFront = enemyUnits.some(u => u.position < 3 && u.hp > 0);
+        for (const targetPos of priority) {
+            if (hasFront && targetPos >= 3) continue;
+            const t = enemyUnits.find(u => u.position === targetPos && u.hp > 0);
+            if (t) return t;
+        }
+        return null;
+    }
+
+    function fightWithLog(board1, board2, owner1, owner2) {
+        const units1 = [], units2 = [];
+        const b1 = Array.isArray(board1) ? board1 : [];
+        const b2 = Array.isArray(board2) ? board2 : [];
+        for (let i = 0; i < 6; i++) {
+            if (b1[i] && b1[i].hp > 0) { const c = cloneCard(b1[i], i); if (c) { c.ownerId = owner1; c.side = 1; units1.push(c); } }
+            if (b2[i] && b2[i].hp > 0) { const c = cloneCard(b2[i], i); if (c) { c.ownerId = owner2; c.side = 2; units2.push(c); } }
+        }
+        const combatLog = [];
+        if (units1.length === 0 || units2.length === 0) return { winner: units1.length ? 1 : 2, combatLog };
+
+        const side1First = Math.random() >= 0.5;
+        let curSide = side1First ? 1 : 2, turn = 0;
+        while (units1.length && units2.length && turn < 200) {
+            const attackers = curSide === 1 ? units1 : units2;
+            const defenders = curSide === 1 ? units2 : units1;
+            const sorted = [...attackers].sort((a, b) => a.position - b.position);
+            const att = sorted[0];
+            if (!att) break;
+            const target = findTarget(att.position, defenders);
+            if (!target) { curSide = curSide === 1 ? 2 : 1; turn++; continue; }
+            const dmg = att.atk;
+            if (isNaN(dmg)) break;
+            target.hp -= dmg;
+            combatLog.push({
+                attackerSide: curSide,
+                defenderSide: curSide === 1 ? 2 : 1,
+                attackerPos: att.position,
+                defenderPos: target.position,
+                damage: dmg,
+                defenderHpAfter: target.hp,
+                isFatal: target.hp <= 0
+            });
+            if (target.hp <= 0) {
+                const idx = defenders.findIndex(u => u.instanceId === target.instanceId);
+                if (idx !== -1) defenders.splice(idx, 1);
+            }
+            curSide = curSide === 1 ? 2 : 1;
+            turn++;
+        }
+        return { winner: units1.length ? 1 : 2, combatLog };
+    }
+
+    // 动画
+    let animQueue = [], isPlaying = false, abortFlag = false;
+    function playAttackAnim(a) {
+        return new Promise(resolve => {
+            if (abortFlag) return resolve();
+            const $att = getCardElement(a.attackerBoard, a.attackerPos);
+            const $def = getCardElement(a.defenderBoard, a.defenderPos);
+            if (!$att || !$def) {
+                panelLog(`⏭️ 跳过 ${a.attackerBoard}[${a.attackerPos}]→${a.defenderBoard}[${a.defenderPos}]`, true);
+                return resolve();
+            }
+            panelLog(`⚔️ ${a.attackerBoard}[${a.attackerPos}]→${a.defenderBoard}[${a.defenderPos}]`);
+            const ar = $att.getBoundingClientRect(), dr = $def.getBoundingClientRect();
+            const dx = dr.left - ar.left, dy = dr.top - ar.top;
+            $att.style.transition = 'transform 0.2s';
+            $att.style.transform = `translate(${dx*0.7}px, ${dy*0.7}px)`;
+            $att.style.zIndex = '100';
+            setTimeout(() => {
+                if (abortFlag) return resolve();
+                $def.style.transition = 'transform 0.1s';
+                $def.style.transform = 'scale(0.9)';
+                const dmgDiv = document.createElement('div');
+                dmgDiv.textContent = `-${a.damage}`;
+                dmgDiv.style.cssText = 'position:absolute; color:#f44; font-size:28px; font-weight:bold; text-shadow:0 0 8px #000; z-index:200; left:50%; top:40%; transform:translate(-50%,-50%); animation:damageFloat 0.8s forwards;';
+                $def.style.position = 'relative';
+                $def.appendChild(dmgDiv);
+                setTimeout(() => dmgDiv.remove(), 800);
+                const hpSpan = $def.querySelector('.card-hp');
+                if (hpSpan) hpSpan.textContent = `🛡️${a.defenderHpAfter}`;
+                setTimeout(() => {
+                    if (abortFlag) return resolve();
+                    $att.style.transition = 'transform 0.15s';
+                    $att.style.transform = 'translate(0,0)';
+                    $att.style.zIndex = '';
+                    $def.style.transform = 'scale(1)';
+                    if (a.isFatal) {
+                        $def.style.transition = 'opacity 0.3s, transform 0.3s';
+                        $def.style.opacity = '0';
+                        $def.style.transform = 'scale(0.5)';
+                        setTimeout(() => { $def.remove(); resolve(); }, 300);
+                    } else setTimeout(resolve, 150);
+                }, 150);
+            }, 200);
+        });
+    }
+
+    async function playLog(logs) {
+        panelLog(`▶️ 播放 ${logs.length} 步`);
+        if (isPlaying) return;
+        isPlaying = true;
+        abortFlag = false;
+        animQueue = [...logs];
+        try { while (animQueue.length && !abortFlag) await playAttackAnim(animQueue.shift()); }
+        catch (e) { panelLog(`❌ 动画异常: ${e.message}`, true); }
+        isPlaying = false;
+        panelLog(`✅ 播放完毕`);
+    }
+
+    async function resolveBattles(gameState, log, updateCallback) {
+        panelLog('🎬 开始结算
