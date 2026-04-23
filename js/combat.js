@@ -487,7 +487,7 @@ window.YYCardCombat = (function() {
             panelLog(`✨ 播放技能增益动画 (${buffEvents.length} 个)`);
             for (const ev of buffEvents) {
                 await playBuffAnim(ev);
-                await new Promise(r => setTimeout(r, 150));
+                await new Promise(r => setTimeout(r, 100));
             }
             if (window.YYCardShop?.refreshAllUI) {
                 window.YYCardShop.refreshAllUI();
