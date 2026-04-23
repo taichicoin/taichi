@@ -936,3 +936,9 @@ body:has(#battle-view[style*="display: block"]) #app {
 .card-slot .card {
     transition: transform 0.15s ease-out;
 }
+.card-inspect-popup .inspect-header { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+.card-inspect-popup .inspect-header img { width:48px; height:48px; border-radius:8px; }
+.card-inspect-popup .rarity-tag, .card-inspect-popup .faction-tag { font-size:12px; padding:2px 8px; border-radius:4px; background:#444; margin-right:4px; }
+.card-inspect-popup .inspect-stats { display:flex; gap:16px; margin-bottom:10px; }
+.card-inspect-popup .inspect-skill { background:rgba(255,255,255,0.1); border-radius:8px; padding:10px; }
+.card-inspect-popup .skill-title { color:#ffd966; font-weight:bold; margin-bottom:4px; }
