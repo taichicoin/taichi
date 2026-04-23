@@ -81,7 +81,7 @@ body {
     backdrop-filter: blur(0px);
     padding: 4px 6px;
     font-size: 0.7rem;
-    border: 1px solid rgba(255,215,0,0.1);
+    border: 1px solid rgba(255,215,0,0);
     color: white;
     font-weight: bold;
 }
@@ -693,7 +693,7 @@ body {
         max-height: 35vh !important;
         min-height: 35vh !important;
         top: 1px !important;
-        background: rgba(10, 18, 30, 0.2) !important;
+        background: rgba(10, 18, 30, 0.3) !important;
         backdrop-filter: blur(1px) !important;
         border-radius: 20px !important;
         padding: 4px 4px !important;
@@ -805,28 +805,28 @@ body {
         bottom: 110px;
     }
     .battle-view-mode .board-area {
-        top: 50px;
+        top: 30px;
         left: 20px;
-        right: 10px;
+        right: 40px;
         width: calc(100% - 80px);
     }
     .enemy-board-section .board {
-        min-height: 250px;
+        min-height: 235px;
     }
     :not(.battle-view-mode) .my-board-section .board {
-        min-height: 235px;
+        min-height: 230px;
     }
     .battle-view-mode .my-board-section .board {
         gap: 12px;
-        min-height: 250px;
+        min-height: 230px;
     }
 
     /* ----- 手牌区适配：原有布局保留 ----- */
     .hand-area {
         bottom: 0px !important;
-        height: 113px !important;
-        max-height: 113px !important;
-        min-height: 113px !important;
+        height: 115px !important;
+        max-height: 115px !important;
+        min-height: 115px !important;
         padding: 1px 2px !important;
         z-index: 85 !important;
     }
