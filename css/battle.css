@@ -800,7 +800,7 @@ body {
     :not(.battle-view-mode) .board-area {
         top: 245px;
         left: 35px;
-        right: 50px;
+        right: 40px;
         width: calc(100% - 80px);
         bottom: 110px;
     }
