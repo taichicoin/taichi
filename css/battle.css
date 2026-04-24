@@ -800,14 +800,14 @@ body {
     :not(.battle-view-mode) .board-area {
         top: 245px;
         left: 35px;
-        right: 40px;
+        right: 45px;
         width: calc(100% - 80px);
         bottom: 110px;
     }
     .battle-view-mode .board-area {
         top: 30px;
         left: 20px;
-        right: 40px;
+        right: 30px;
         width: calc(100% - 80px);
     }
     .enemy-board-section .board {
