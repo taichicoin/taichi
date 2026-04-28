@@ -574,7 +574,7 @@ window.YYCardMatchmaking = (function() {
 
                 state.players[p.player_id] = {
                     health: config.INITIAL_HEALTH || 100,
-                    gold: 5,
+                    gold: 500000,
                     exp: 0,
                     shopLevel: 1,
                     board: deck.slice(0, 3).concat(new Array(3).fill(null)).slice(0, 6),
