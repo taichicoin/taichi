@@ -632,3 +632,13 @@ window.YYCardMatchmaking = (function() {
 })();
 
 console.log('✅ matchmaking.js 加载完成（终极修复版，解决卡匹配/不补人机/不进游戏问题）');
+const clickSound = new Audio("/assets/mp3/wodedaodun.mp3");
+clickSound.volume = 0.5;
+
+document.addEventListener("click", function(e){
+    if(e.target.id === "start-match-btn"){
+        clickSound.currentTime = 0;
+        clickSound.play().catch(()=>{});
+    }
+});
+
