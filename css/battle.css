@@ -706,6 +706,11 @@ body {
         padding: 4px 4px !important;
         margin: 0 !important;
     }
+    /* 价格标签与卡牌底部分开一点 */
+.shop-area .card .card-price {
+    bottom: -28px !important;  
+    /* 原值-22px，增大到-30px，往下挪8px */
+    }
 
     /* ----- 经验&金币 ----- */
     .shop-info {
