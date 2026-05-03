@@ -728,7 +728,7 @@ body {
         overflow-x: auto !important;
         overflow-y: visible !important;
         padding-top: 1px !important;
-        padding-bottom: 0 !important;
+        padding-bottom: 40px !important;
         min-height: 0 !important;
         height: auto !important;
         align-self: stretch !important;
@@ -737,7 +737,7 @@ body {
     }
 
     .shop-cards .card {
-        min-width: 85px !important;
+        min-width: 80px !important;
         min-height: 110px !important;
         max-height: 110px !important;
         flex-shrink: 0 !important;
@@ -752,7 +752,7 @@ body {
         align-items: center !important;
         gap: 16px !important;
         margin: 0 !important;
-        padding-top: 6px !important;
+        padding-top: 0px !important;
         position: relative !important;
         min-height: auto !important;
         flex-wrap: nowrap !important;
