@@ -374,11 +374,7 @@ body {
     flex-shrink: 0;
 }
 .board-label {
-    font-size: 0.6rem;
-    opacity: 0.6;
-    margin-bottom: 1px;
-    text-align: left;
-    padding-left: 1px;
+    display: none !important;   
 }
 :not(.battle-view-mode) .my-board-section .board {
     display: grid;
