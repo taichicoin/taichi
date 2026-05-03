@@ -737,7 +737,7 @@ body {
     }
 
     .shop-cards .card {
-        min-width: 75px !important;
+        min-width: 85px !important;
         min-height: 110px !important;
         max-height: 110px !important;
         flex-shrink: 0 !important;
