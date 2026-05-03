@@ -818,11 +818,11 @@ body {
 
     /* ----- 棋盘区域 ----- */
     :not(.battle-view-mode) .board-area {
-        top: 265px;
-        left: 41px;
-        right: 49px;
+        top: 268px;
+        left: 42px;
+        right: 51px;
         width: calc(100% - 80px);
-        bottom: 116px;
+        bottom: 118px;
     }
 
     .battle-view-mode .board-area {
