@@ -818,11 +818,11 @@ body {
 
     /* ----- 棋盘区域 ----- */
     :not(.battle-view-mode) .board-area {
-        top: 268px;
+        top: 275px;
         left: 42px;
         right: 51px;
         width: calc(100% - 80px);
-        bottom: 118px;
+        bottom: 120px;
     }
 
     .battle-view-mode .board-area {
@@ -837,9 +837,9 @@ body {
     }
 
     :not(.battle-view-mode) .my-board-section .board {
-        min-height: 180px;
-        column-gap: 8px;
-        row-gap: 18px;
+        min-height: 170px;
+        column-gap: 10px;
+        row-gap: 20px;
     }
 
     .battle-view-mode .my-board-section .board {
