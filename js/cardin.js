@@ -142,12 +142,12 @@ window.YYCardInspector = (function() {
             right: '0',
             maxHeight: '90vh',
             overflowY: 'auto',
-            background: 'rgba(20,30,50,0.6)',
+            background: 'rgba(20,30,50,0.8)',
             color: '#fff',
             borderRadius: '0 0 16px 16px',
             padding: '12px 12%',   // 左右内边距改为12%
             zIndex: '100002',
-            boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.6)',
             border: '1px solid #ffd966',
             backdropFilter: 'blur(8px)',
             fontFamily: 'sans-serif'
