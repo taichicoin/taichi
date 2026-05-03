@@ -726,8 +726,8 @@ body {
         align-items: center !important;
         overflow-x: auto !important;
         overflow-y: visible !important;
-        padding-top: 25px !important; /* 原有14px+新增3px，总下移17px */
-        padding-bottom: 50px !important; /* 价格标签专属空间，绝对不能删 */
+        padding-top: 1px !important; /* 原有14px+新增3px，总下移17px */
+        padding-bottom: 1px !important; /* 价格标签专属空间，绝对不能删 */
     }
     .shop-cards .card {
         min-width: 75px !important; /* 原有+10%宽度保留 */
