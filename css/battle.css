@@ -724,12 +724,15 @@ body {
         gap: 10px !important;
         display: flex !important;
         justify-content: center !important;
-        align-items: center !important;
+        align-items: stretch !important;
         overflow-x: auto !important;
         overflow-y: visible !important;
         padding-top: 1px !important;
         padding-bottom: 0 !important;
         min-height: 0 !important;
+        height: auto !important;
+        align-self: stretch !important;
+        
     }
 
     .shop-cards .card {
