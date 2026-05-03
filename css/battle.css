@@ -837,9 +837,9 @@ body {
     }
 
     :not(.battle-view-mode) .my-board-section .board {
-        min-height: 190px;
+        min-height: 180px;
         column-gap: 8px;
-        row-gap: 15px;
+        row-gap: 18px;
     }
 
     .battle-view-mode .my-board-section .board {
