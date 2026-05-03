@@ -833,9 +833,10 @@ body {
     }
 
     :not(.battle-view-mode) .my-board-section .board {
-        min-height: 100px;
+        min-height: 0px;
         column-gap: 10px;
         row-gap: 10px;
+        grid-template-rows: repeat(2, 80px);
     }
 
     .battle-view-mode .my-board-section .board {
