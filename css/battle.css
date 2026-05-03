@@ -742,9 +742,9 @@ body {
     }
 
     .shop-cards .card {
-        min-width: 80px !important;
-        min-height: 110px !important;
-        max-height: 110px !important;
+        min-width: 76px !important;
+        min-height: 90px !important;
+        max-height: 90px !important;
         flex-shrink: 0 !important;
         align-self: center !important;
     }
