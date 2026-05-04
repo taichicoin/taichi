@@ -767,8 +767,8 @@ body {
         gap: 20px !important;
         margin: 0 !important;
         flex: none !important;
-        margin-left: 18px !important;   /* 右移更多（数字越大越靠右） */
-margin-top: -8px !important;    /* 上移（负值越大越往上） */
+        margin-left: 15px !important;   /* 右移更多（数字越大越靠右） */
+        margin-top: -5px !important;    /* 上移（负值越大越往上） */
     }
 
     .shop-actions .btn {
@@ -792,11 +792,11 @@ margin-top: -8px !important;    /* 上移（负值越大越往上） */
     .prepare-timer-btn {
         position: absolute !important;
         bottom: -36px !important;
-        right: 36px !important;
+        right: 38px !important;
         z-index: 100 !important;
         transform: none !important;
-        width: 42px !important;
-        height: 42px !important;
+        width: 40px !important;
+        height: 40px !important;
         border-radius: 50% !important;
         background: radial-gradient(circle, #7a3a9a, #4a1a6a);
         border: 2px solid #b878d8;
