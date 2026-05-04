@@ -764,7 +764,7 @@ body {
     .shop-actions {
         display: flex !important;
         flex-direction: row !important;
-        gap: 10px !important;
+        gap: -60px !important;
         margin: 0 !important;
         flex: none !important;
         position: absolute !important;
@@ -773,8 +773,7 @@ body {
         bottom: 8px !important;
         z-index: 10 !important;
     }
-    .shop-actions .btn-primary { order: 1 !important; }
-    .shop-actions .btn:not(.btn-primary) { order: 2 !important; }
+    
 
     .shop-actions .btn {
         padding: 6px 12px !important;
