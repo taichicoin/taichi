@@ -814,7 +814,7 @@ body {
 
     /* ----- 棋盘区域 ----- */
     :not(.battle-view-mode) .board-area {
-        top: 275px;
+        top: 273px;
         left: 45px;
         right: 53px;
         width: calc(100% - 80px);
