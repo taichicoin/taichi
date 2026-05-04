@@ -816,7 +816,7 @@ body {
         left: 45px;
         right: 53px;
         width: calc(100% - 80px);
-        bottom: 115px;
+        bottom: 110px;
     }
 
     .battle-view-mode .board-area {
@@ -834,13 +834,13 @@ body {
     :not(.battle-view-mode) .my-board-section .board {
         min-height: 0px;
         column-gap: 10px;
-        row-gap: 10px;
-        grid-template-rows: repeat(2, 90px);
+        row-gap: 14px;
+        grid-template-rows: repeat(2, 85px);
     }
 
     /* ✅ 修复：让卡牌真正缩小（独立于 .board 之外生效） */
     :not(.battle-view-mode) .my-board-section .card {
-        min-height: 90px !important;
+        min-height: 82px !important;
     }
 
     .battle-view-mode .my-board-section .board {
