@@ -763,8 +763,8 @@ body {
 
     .shop-actions {
         display: flex !important;
-        flex-direction: row !important;
-        gap: -150px !important;
+        flex-direction: row-reverse !important;
+        gap: 100px !important;
         margin: 0 !important;
         flex: none !important;
         position: absolute !important;
