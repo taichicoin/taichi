@@ -768,7 +768,7 @@ body {
         margin: 0 !important;
         flex: none !important;
         margin-left: 20px !important;
-        transform: translate(10px, -3px);
+        transform: translate(6px, -5px);
     }
 
     .shop-actions .btn {
@@ -792,7 +792,7 @@ body {
     .prepare-timer-btn {
         position: absolute !important;
         bottom: -36px !important;
-        right: 20px !important;
+        right: 36px !important;
         z-index: 100 !important;
         transform: none !important;
         width: 42px !important;
