@@ -999,3 +999,7 @@ body:has(#battle-view[style*="display: block"]) #app {
 :not(.battle-view-mode) .battle-divider {
     display: none !important;
 }
+/* 隐藏） */
+.hand-label {
+    display: none !important;
+}
