@@ -874,7 +874,7 @@ body {
     }
 
     .hand .card {
-        min-width: 75px;
+        min-width: 78px;
         min-height: 90px;
         flex-shrink: 0;
     }
