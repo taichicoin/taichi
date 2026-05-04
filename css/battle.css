@@ -794,7 +794,7 @@ body {
     .prepare-timer-btn {
         position: absolute !important;
         bottom: -36px !important;
-        right: 48px !important;
+        right: 45px !important;
         z-index: 100 !important;
         transform: none !important;
         width: 40px !important;
