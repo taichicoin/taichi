@@ -814,7 +814,7 @@ body {
     :not(.battle-view-mode) .board-area {
         top: 326px;
         left: 42px;
-        right: 54px;
+        right: 53.5px;
         width: calc(100% - 86px);
         bottom: 105px;
     }
@@ -833,7 +833,7 @@ body {
     /* ✅ 修复：棋盘网格行高 */
     :not(.battle-view-mode) .my-board-section .board {
         min-height: 0px;
-        column-gap: 12.5px;
+        column-gap: 12.7px;
         row-gap: 8px;
         grid-template-rows: repeat(2, 91px);
     }
