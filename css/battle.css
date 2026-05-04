@@ -1008,3 +1008,11 @@ body:has(#battle-view[style*="display: block"]) #app {
 .hand-area {
     border-top: none !important;
 }
+/* 手牌区全透明，只保留卡牌 */
+.hand-area {
+    background: transparent !important;
+    backdrop-filter: none !important;
+    border-top: none !important;        /* 去掉顶部黄线 */
+    border-radius: 0 !important;        /* 去掉圆角 */
+    box-shadow: none !important;        /* 去掉阴影（如果有） */
+}
