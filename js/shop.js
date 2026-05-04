@@ -665,12 +665,14 @@ window.YYCardShop = (function() {
         const clientY = e.clientY;
         const clone = element.cloneNode(true);
         clone.classList.add('card-drag-clone');
-        clone.style.width = element.offsetWidth + 'px';
-        clone.style.height = element.offsetHeight + 'px';
+        const rect = element.getBoundingClientRect();
+        clone.style.width = rect.width + 'px';
+        clone.style.height = rect.height + 'px';
+        clone.style.boxSizing = 'border-box';
         clone.style.cssText += `
             position: fixed; z-index: 99999;
-            left: ${clientX - element.offsetWidth / 2}px;
-            top: ${clientY - element.offsetHeight / 2}px;
+            left: ${clientX - rect.width / 2}px;
+            top: ${clientY - rect.height / 2}px;
             opacity: 0.85; transform: scale(1);
             box-shadow: 0 8px 20px rgba(0,0,0,0.5);
             pointer-events: none; transition: none;
