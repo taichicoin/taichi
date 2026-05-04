@@ -671,7 +671,7 @@ window.YYCardShop = (function() {
             position: fixed; z-index: 99999;
             left: ${clientX - element.offsetWidth / 2}px;
             top: ${clientY - element.offsetHeight / 2}px;
-            opacity: 0.85; transform: scale(1.05);
+            opacity: 0.85; transform: scale(1);
             box-shadow: 0 8px 20px rgba(0,0,0,0.5);
             pointer-events: none; transition: none;
             will-change: left, top;
