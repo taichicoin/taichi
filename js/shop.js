@@ -669,6 +669,7 @@ window.YYCardShop = (function() {
         clone.style.width = rect.width + 'px';
         clone.style.height = rect.height + 'px';
         clone.style.boxSizing = 'border-box';
+        clone.style.minHeight = rect.height + 'px';
         clone.style.cssText += `
             position: fixed; z-index: 99999;
             left: ${clientX - rect.width / 2}px;
