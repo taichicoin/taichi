@@ -812,7 +812,7 @@ body {
 
     /* ----- 棋盘区域 ----- */
     :not(.battle-view-mode) .board-area {
-        top: 295px;
+        top: 297px;
         left: 45px;
         right: 53px;
         width: calc(100% - 84px);
@@ -833,14 +833,14 @@ body {
     /* ✅ 修复：棋盘网格行高 */
     :not(.battle-view-mode) .my-board-section .board {
         min-height: 0px;
-        column-gap: 11px;
-        row-gap: 14px;
-        grid-template-rows: repeat(2, 90px);
+        column-gap: 12px;
+        row-gap: 13px;
+        grid-template-rows: repeat(2, 91px);
     }
 
     /* ✅ 修复：让卡牌真正缩小（独立于 .board 之外生效） */
     :not(.battle-view-mode) .my-board-section .card {
-        min-height: 88px !important;
+        min-height: 90px !important;
     }
 
     .battle-view-mode .my-board-section .board {
