@@ -1016,3 +1016,16 @@ body:has(#battle-view[style*="display: block"]) #app {
     border-radius: 0 !important;        /* 去掉圆角 */
     box-shadow: none !important;        /* 去掉阴影（如果有） */
 }
+/* 商店卡牌名字透明+下移，价格跟着下移 */
+.shop-area .card .card-name {
+    background: transparent !important;
+    top: auto !important;
+    bottom: -18px !important;
+    text-shadow: 0 0 4px #000 !important;
+}
+.shop-area .card .card-price {
+    bottom: -34px !important;
+}
+.shop-cards {
+    padding-bottom: 45px !important;
+}
