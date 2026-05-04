@@ -813,7 +813,7 @@ body {
     /* ----- 棋盘区域 ----- */
     :not(.battle-view-mode) .board-area {
         top: 316px;
-        left: 45px;
+        left: 48px;
         right: 53px;
         width: calc(100% - 84px);
         bottom: 105px;
@@ -834,7 +834,7 @@ body {
     :not(.battle-view-mode) .my-board-section .board {
         min-height: 0px;
         column-gap: 12px;
-        row-gap: 13px;
+        row-gap: 11px;
         grid-template-rows: repeat(2, 91px);
     }
 
