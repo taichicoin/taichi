@@ -836,10 +836,10 @@ body {
         min-height: 0px;
         column-gap: 10px;
         row-gap: 10px;
-        grid-template-rows: repeat(2, 90px);
+        grid-template-rows: repeat(2, 70px);
         /* 让手机端准备阶段棋盘里的卡牌可以缩小 */
 :not(.battle-view-mode) .my-board-section .card {
-    min-height: 80px !important;    
+    min-height: 70px !important;    
     }
 
     .battle-view-mode .my-board-section .board {
