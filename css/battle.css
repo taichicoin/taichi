@@ -1029,12 +1029,12 @@ body:has(#battle-view[style*="display: block"]) #app {
 .shop-area .card .card-name {
     background: transparent !important;
     top: auto !important;
-    bottom: -19px !important;
+    bottom: -22px !important;
     text-shadow: 0 0 4px #000 !important;
 }
 .shop-area .card .card-price {
-    bottom: -35px !important;
+    bottom: -38px !important;
 }
 .shop-cards {
-    padding-bottom: 47px !important;
+    padding-bottom: 50px !important;
 }
