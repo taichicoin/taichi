@@ -995,3 +995,7 @@ body:has(#battle-view[style*="display: block"]) #app {
 .hand-area .card-name {
     display: none !important;
 }
+/* 隐藏准备阶段的分界线 */
+:not(.battle-view-mode) .battle-divider {
+    display: none !important;
+}
