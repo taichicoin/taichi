@@ -757,6 +757,8 @@ body {
         flex-wrap: nowrap !important;
         flex-shrink: 0 !important;
         background: transparent !important;
+        overflow: visible !important;
+position: relative !important;
     }
 
     .shop-actions {
@@ -787,9 +789,10 @@ body {
 
     /* 倒计时按钮 */
     .prepare-timer-btn {
-        position: relative !important;
-        right: auto !important;
-        bottom: auto !important;
+        position: absolute !important;
+        bottom: -50px !important;
+        right: 10px !important;
+        z-index: 100 !important;
         transform: none !important;
         width: 42px !important;
         height: 42px !important;
