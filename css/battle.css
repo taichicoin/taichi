@@ -736,9 +736,9 @@ body {
     }
 
     .shop-cards .card {
-        min-width: 70px !important;
-        min-height: 80px !important;
-        max-height: 80px !important;
+        min-width: 75px !important;
+        min-height: 90px !important;
+        max-height: 90px !important;
         flex-shrink: 0 !important;
         align-self: center !important;
     }
@@ -867,6 +867,7 @@ body {
     .hand .card {
         min-width: 75px;
         min-height: 85px;
+        flex-shrink: 0;
     }
 
     /* ----- 左侧玩家状态栏 ----- */
@@ -1002,4 +1003,8 @@ body:has(#battle-view[style*="display: block"]) #app {
 /* 隐藏） */
 .hand-label {
     display: none !important;
+}
+/* 隐藏手牌区域顶部的黄线 */
+.hand-area {
+    border-top: none !important;
 }
