@@ -767,8 +767,8 @@ body {
         gap: 20px !important;
         margin: 0 !important;
         flex: none !important;
-        margin-left: 15px !important;   /* 右移更多（数字越大越靠右） */
-        margin-top: -5px !important;    /* 上移（负值越大越往上） */
+        margin-left: 11px !important;   /* 右移更多（数字越大越靠右） */
+        margin-top: -8px !important;    /* 上移（负值越大越往上） */
     }
 
     .shop-actions .btn {
