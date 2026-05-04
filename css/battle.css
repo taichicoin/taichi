@@ -790,8 +790,8 @@ body {
     /* 倒计时按钮 */
     .prepare-timer-btn {
         position: absolute !important;
-        bottom: -50px !important;
-        right: 10px !important;
+        bottom: -36px !important;
+        right: 20px !important;
         z-index: 100 !important;
         transform: none !important;
         width: 42px !important;
