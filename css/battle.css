@@ -693,7 +693,7 @@ body {
         min-height: 40vh !important;
         max-height: 55vh !important;
         height: auto !important;
-        overflow-y: auto !important;
+        overflow: visible !important;
 
         top: 1px !important;
         background: rgba(10, 18, 30, 0.3) !important;
@@ -758,7 +758,7 @@ body {
         flex-shrink: 0 !important;
         background: transparent !important;
         overflow: visible !important;
-position: relative !important;
+        position: relative !important;
     }
 
     .shop-actions {
@@ -804,8 +804,6 @@ position: relative !important;
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
-        top: 20px !important;
-        margin-left: 15px !important;
     }
 
     .prepare-num {
