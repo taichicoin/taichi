@@ -989,3 +989,8 @@ body:has(#battle-view[style*="display: block"]) #app {
 .my-board-section > label {
     display: none !important;
 }
+/* 隐藏我方和敌方棋盘上卡牌的名字与背景条（保留商店/手牌） */
+.my-board-section .card-name,
+.enemy-board-section .card-name {
+    display: none !important;
+}
