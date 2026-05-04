@@ -764,13 +764,13 @@ body {
     .shop-actions {
         display: flex !important;
         flex-direction: row !important;
-        gap: 15px !important;
+        gap: 10px !important;
         margin: 0 !important;
         flex: none !important;
         position: absolute !important;
         left: 50% !important;
         transform: translateX(-50%);
-        bottom: 5px !important;
+        bottom: 8px !important;
     }
     .shop-actions .btn-primary { order: 1 !important; }
     .shop-actions .btn:not(.btn-primary) { order: 2 !important; }
