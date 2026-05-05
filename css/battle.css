@@ -301,8 +301,8 @@ body {
 }
 /* ✅ 修正：桌面端战斗模式 取消棋盘联动，改为相对定位 */
 .battle-view-mode .board-area {
-    top: 60px;
-    height: 420px;
+    top: 30px;
+    height: 450px;
     left: 60px;
     right: 30px;
     width: calc(100% - 100px);
@@ -889,14 +889,14 @@ body {
     /* ✅ 修正：手机端敌方棋盘 独立定位 */
     .battle-view-mode .enemy-board-section {
         position: absolute;
-        top: 50px;
+        top: 30px;
         left: 0;
         right: 0;
     }
     /* ✅ 修正：手机端我方棋盘 独立定位 */
     .battle-view-mode .my-board-section {
         position: absolute;
-        bottom: 6px;
+        bottom: 10px;
         left: 0;
         right: 0;
     }
