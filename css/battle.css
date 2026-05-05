@@ -896,7 +896,7 @@ body {
     /* ✅ 修正：手机端我方棋盘 独立定位 */
     .battle-view-mode .my-board-section {
         position: absolute;
-        bottom: 200px;
+        bottom: 60px;
         left: 0;
         right: 0;
     }
