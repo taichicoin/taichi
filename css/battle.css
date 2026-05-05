@@ -829,11 +829,11 @@ body {
     }
 
     .battle-view-mode .board-area {
-        top: 40px;
+        top: 55px;
         left: 20px;
         right: 25px;
         width: calc(100% - 80px);
-        row-gap: 30px !important;
+        row-gap: 15px !important;
     }
 
     .enemy-board-section .board {
