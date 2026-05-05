@@ -889,14 +889,14 @@ body {
     /* ✅ 修正：手机端敌方棋盘 独立定位 */
     .battle-view-mode .enemy-board-section {
         position: absolute;
-        top: 0;
+        top: 50px;
         left: 0;
         right: 0;
     }
     /* ✅ 修正：手机端我方棋盘 独立定位 */
     .battle-view-mode .my-board-section {
         position: absolute;
-        bottom: 5;
+        bottom: 5px;
         left: 0;
         right: 0;
     }
