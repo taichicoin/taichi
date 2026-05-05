@@ -833,6 +833,10 @@ body {
         left: 20px;
         right: 25px;
         width: calc(100% - 80px);
+        position: relative;
+        display: block;
+        justify-content: initial;
+
     }
 
     .enemy-board-section .board {
@@ -856,6 +860,20 @@ body {
         gap: 13px;
         min-height: 190px;
     }
+    .battle-view-mode .enemy-board-section {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+} 
+.battle-view-mode .my-board-section {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+
 
     /* ----- 手牌区 ----- */
     .hand-area {
@@ -1037,4 +1055,27 @@ body:has(#battle-view[style*="display: block"]) #app {
 }
 .shop-cards {
     padding-bottom: 50px !important;
+}
+/* 战斗模式分界线&计时器独立定位，避免错位 */
+.battle-view-mode .battle-divider {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: 0;
+}
+.battle-view-mode .battle-timer {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(50% + 20px);
+    margin: 0;
+}
+/* 手机端同步适配分界线 */
+@media (max-width: 480px) {
+    .battle-view-mode .battle-divider {
+        top: 50%;
+        transform: translateY(-50%);
+    }
 }
