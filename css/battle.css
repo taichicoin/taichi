@@ -302,7 +302,7 @@ body {
 /* ✅ 修正：桌面端战斗模式 取消棋盘联动，改为相对定位 */
 .battle-view-mode .board-area {
     top: 60px;
-    bottom: 400px;
+    height: 420px;
     left: 60px;
     right: 30px;
     width: calc(100% - 100px);
@@ -896,7 +896,7 @@ body {
     /* ✅ 修正：手机端我方棋盘 独立定位 */
     .battle-view-mode .my-board-section {
         position: absolute;
-        bottom: 60px;
+        bottom: 6px;
         left: 0;
         right: 0;
     }
@@ -1106,7 +1106,7 @@ body:has(#battle-view[style*="display: block"]) #app {
 /* 手机端同步适配分界线 */
 @media (max-width: 480px) {
     .battle-view-mode .battle-divider {
-        top: 50%;
+        top: 210px;
         transform: translateY(-50%);
     }
 }
