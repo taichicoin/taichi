@@ -862,13 +862,13 @@ body {
     }
     .battle-view-mode .enemy-board-section {
     position: absolute;
-    top: 0;
+    top: 20px;
     left: 0;
     right: 0;
 } 
 .battle-view-mode .my-board-section {
     position: absolute;
-    bottom: 0;
+    bottom: 100px;
     left: 0;
     right: 0;
 }
