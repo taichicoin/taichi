@@ -839,6 +839,14 @@ body {
     .enemy-board-section .board {
         min-height: 180px;
     }
+    .battle-view-mode .enemy-board-section {
+        position: relative !important;
+        top: -10px !important;
+    }
+    .battle-view-mode .my-board-section {
+        position: relative !important;
+        top: 10px !important;
+    }
 
     /* ✅ 修复：棋盘网格行高 */
     :not(.battle-view-mode) .my-board-section .board {
