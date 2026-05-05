@@ -829,14 +829,14 @@ body {
     }
 
     .battle-view-mode .board-area {
-        top: 20px;
+        top: 40px;
         left: 20px;
         right: 25px;
         width: calc(100% - 80px);
     }
 
     .enemy-board-section .board {
-        min-height: 220px;
+        min-height: 200px;
     }
 
     /* ✅ 修复：棋盘网格行高 */
@@ -854,7 +854,7 @@ body {
 
     .battle-view-mode .my-board-section .board {
         gap: 13px;
-        min-height: 230px;
+        min-height: 190px;
     }
 
     /* ----- 手牌区 ----- */
