@@ -302,9 +302,9 @@ body {
 /* ✅ 修正：桌面端战斗模式 取消棋盘联动，改为相对定位 */
 .battle-view-mode .board-area {
     top: 30px;
-    height: 450px;
-    left: 60px;
-    right: 30px;
+    height: 560px;
+    left: 10px;
+    right: 10px;
     width: calc(100% - 100px);
     /* 核心修改：取消联动布局 */
     position: relative;
@@ -860,7 +860,7 @@ body {
 
     /* ✅ 修正：手机端战斗模式 取消联动 */
     .battle-view-mode .board-area {
-        top: 40px;
+        top: 30px;
         left: 20px;
         right: 25px;
         width: calc(100% - 80px);
