@@ -833,10 +833,11 @@ body {
         left: 20px;
         right: 25px;
         width: calc(100% - 80px);
+        row-gap: 30px !important;
     }
 
     .enemy-board-section .board {
-        min-height: 190px;
+        min-height: 180px;
     }
 
     /* ✅ 修复：棋盘网格行高 */
