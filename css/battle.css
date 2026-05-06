@@ -254,10 +254,10 @@ body {
     gap: 5px;
     margin: 0;
     flex: none;
-    position: absolute;
+    position: fixed;
     left: 50%;
     transform: translateX(-50%);
-    bottom: 0px;
+    bottom: 3px;
     z-index: 10;
 }
 
