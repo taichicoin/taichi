@@ -246,6 +246,11 @@ body {
     background: transparent;
     overflow: visible;
     min-height: 1px !important;
+    pointer-events: none;
+}
+.shop-bottom-bar .btn,
+.shop-bottom-bar .prepare-timer-btn {
+    pointer-events: auto;
 }
 
 .shop-actions {
@@ -257,7 +262,7 @@ body {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    bottom: 10px;          /* 距离商店底部的距离，越大越往上 */
+    bottom: 15px;          /* 距离商店底部的距离，越大越往上 */
     z-index: 10;
 }
 
@@ -280,7 +285,7 @@ body {
 
 .prepare-timer-btn {
     position: absolute;
-    bottom: -30px;         /* 距离商店底部的距离，负值往下跑 */
+    bottom: -28px;         /* 距离商店底部的距离，负值往下跑 */
     right: 45px;
     z-index: 100;
     width: 40px;
