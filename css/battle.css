@@ -256,7 +256,7 @@ body {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    bottom: 8px;
+    bottom: 0px;
     z-index: 10;
 }
 
@@ -279,7 +279,7 @@ body {
 
 .prepare-timer-btn {
     position: absolute;
-    bottom: -56px;
+    bottom: -70px;
     right: 45px;
     z-index: 100;
     transform: none;
