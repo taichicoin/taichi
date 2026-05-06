@@ -244,6 +244,8 @@ body {
     flex-shrink: 0;
     background: transparent;
     overflow: visible;
+    min-height: 50px !important;
+    bottom: -10px !important;
 }
 
 .shop-actions {
