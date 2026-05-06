@@ -245,6 +245,7 @@ body {
     background: transparent;
     overflow: visible;
     min-height: 30px !important;
+    position: relative;
 }
 
 .shop-actions {
