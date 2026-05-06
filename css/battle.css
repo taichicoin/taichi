@@ -221,6 +221,7 @@ body {
     height: auto;
     align-self: stretch;
     z-index: 5;
+    margin-top: 50px;
 }
 
 .shop-cards .card {
