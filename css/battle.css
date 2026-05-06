@@ -244,7 +244,7 @@ body {
     flex-shrink: 0;
     background: transparent;
     overflow: visible;
-    min-height: 30px !important;
+    min-height: 1px !important;
     position: relative;
 }
 
@@ -280,7 +280,7 @@ body {
 
 .prepare-timer-btn {
     position: absolute;
-    bottom: -70px;
+    bottom: -80px;
     right: 45px;
     z-index: 100;
     transform: none;
