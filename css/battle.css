@@ -245,7 +245,6 @@ body {
     background: transparent;
     overflow: visible;
     min-height: 50px !important;
-    bottom: -10px !important;
 }
 
 .shop-actions {
@@ -280,7 +279,7 @@ body {
 
 .prepare-timer-btn {
     position: absolute;
-    bottom: -36px;
+    bottom: -56px;
     right: 45px;
     z-index: 100;
     transform: none;
