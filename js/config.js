@@ -60,7 +60,7 @@ window.YYCardConfig = {
       Common: { buy: 1, sell: 1 },
       Rare: { buy: 2, sell: 2 },
       Epic: { buy: 3, sell: 3 },
-      Legendary: { buy: 5, sell: 4 }
+      Legendary: { buy: 4, sell: 4 }
     },
     SHOP_LEVEL_EXP: {
       1: 0,
