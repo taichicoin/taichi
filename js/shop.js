@@ -1374,5 +1374,6 @@ window.YYCardShop = (function() {
         toast,
         setPhase,
         updateTimerDisplay
+        get isRefreshing() { return isRefreshingShop; } 
     };
 })();
