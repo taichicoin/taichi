@@ -1373,7 +1373,7 @@ window.YYCardShop = (function() {
         handleUnequip,
         toast,
         setPhase,
-        updateTimerDisplay
+        updateTimerDisplay,
         get isRefreshing() { return isRefreshingShop; }  // ★ 暴露刷新状态
     };
 })();
