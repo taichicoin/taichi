@@ -277,6 +277,19 @@ body {
     color: white;
     white-space: nowrap;
 }
+.shop-actions .btn {
+    position: relative;          /* 让伪元素相对按钮定位 */
+}
+
+.shop-actions .btn::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    bottom: -2px;
+    left: -2px;
+    /* 这层透明区域会捕捉点击，但视觉上完全看不到 */
+}
 
 .shop-actions .btn-primary {
     background: linear-gradient(145deg, #f5d76e, #f0b34b);
