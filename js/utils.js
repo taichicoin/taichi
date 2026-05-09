@@ -98,7 +98,7 @@ window.YYCardUtils = (function() {
 
     function rollRarity(shopLevel) {
         const probTable = config?.SHOP_RARITY_PROBABILITY || {
-            1: { Common: 0.75, Rare: 0.25, Epic: 0, Legendary: 0 },
+            1: { Common: 1, Rare: 0, Epic: 0, Legendary: 0 },
             2: { Common: 0.60, Rare: 0.35, Epic: 0.05, Legendary: 0 },
             3: { Common: 0.45, Rare: 0.40, Epic: 0.14, Legendary: 0.01 },
             4: { Common: 0.30, Rare: 0.40, Epic: 0.25, Legendary: 0.05 },
