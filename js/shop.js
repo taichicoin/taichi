@@ -1374,6 +1374,6 @@ window.YYCardShop = (function() {
         toast,
         setPhase,
         updateTimerDisplay
-        get isRefreshing() { return isRefreshingShop; } 
+        get isRefreshing() { return isRefreshingShop; }  // ★ 暴露刷新状态
     };
 })();
