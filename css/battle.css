@@ -256,7 +256,7 @@ body {
 .shop-actions {
     display: flex;
     flex-direction: row-reverse;
-    gap: 5px;
+    gap: 7px;
     margin: 0;
     flex: none;
     position: absolute;
