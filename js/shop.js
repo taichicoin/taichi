@@ -1387,7 +1387,7 @@ window.YYCardShop = (function() {
                 if (result.data.updatedPlayer) {
                     mergeUpdatedPlayer(my, result.data.updatedPlayer);
                     updateUIAfterSuccess(result.data.updatedPlayer);
-                    _emit('pickup');   // 等待后端成功后也播放音效（逻辑上也是翻页了）
+                    _emit('refresh');   // 等待后端成功后也播放音效（逻辑上也是翻页了）
                 }
             } catch (err) {
                 if (mySeq === refreshSeq) toast('网络异常', true);
