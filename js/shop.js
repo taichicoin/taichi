@@ -1303,7 +1303,7 @@ window.YYCardShop = (function() {
         if (isBusy) return;
 
         // ★ 防连点：250ms 内只响应一次（可根据实际网速改为 300）
-        if (Date.now() - lastRefreshTime < 250) return;
+        if (Date.now() - lastRefreshTime < 300) return;
         lastRefreshTime = Date.now();
 
         if (isRefreshingShop) return;
