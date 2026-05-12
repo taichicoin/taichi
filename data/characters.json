@@ -49,7 +49,7 @@
   },
   {
     "card_id": "char_heihuadi",
-    "name": "黑化帝",
+    "name": "黑化弟",
     "star": 0,
     "type": "character",
     "faction": "中立",
@@ -57,7 +57,7 @@
     "base_atk": 30,
     "base_hp": 25,
     "image": "/assets/card/heihuadi.png",
-    "skill": "{\"skillName\":\"暗黑吞噬\",\"skill_describe\":\"攻击时，对敌方全体造成伤害，数值等于攻击目标当前生命值的100%（一星200%）\"}"
+    "skill": "{\"skillName\":\"暗黑吞噬\",\"skill_describe\":\"没有黑化的感觉！\"}"
   },
   {
     "card_id": "char_huangdi",
