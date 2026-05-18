@@ -673,3 +673,26 @@ body:has(#battle-view[style*="display: block"]) #app {
 .card-inspect-popup .inspect-stats { display:flex; gap:16px; margin-bottom:10px; flex-wrap:wrap; }
 .card-inspect-popup .inspect-skill { background:rgba(255,255,255,0.1); border-radius:8px; padding:10px; }
 .card-inspect-popup .skill-title { color:#ffd966; font-weight:bold; margin-bottom:4px; }
+/* ==================== 护盾光圈 ==================== */
+.card-shield {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: transparent;
+    border: 2px solid #ff8800;
+    box-shadow: 0 0 6px #ff8800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+}
+
+.card-shield span {
+    color: #fff;
+    font-size: 11px;
+    font-weight: bold;
+    text-shadow: 0 0 3px #000;
+}
