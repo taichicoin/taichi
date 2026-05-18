@@ -22,7 +22,7 @@ window.YYCardBattle = (function() {
     function getPrepareDuration(round) { return 27 + (round - 1) * 10; }
     function getBattleDuration(round)  { return 30 + (round - 1) * 5; }
 
-    const SETTLEMENT_URL = 'https://sznjaotjoljaiawbvfro.supabase.co/functions/v1/settlement';
+    const SETTLEMENT_URL = 'https://iogmpkwmkqsmmdkzggtk.supabase.co/functions/v1/settlement';
 
     function safeRefreshUI() {
         if (document.querySelector('.card-drag-clone')) return;
