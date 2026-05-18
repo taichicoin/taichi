@@ -467,6 +467,7 @@ window.YYCardShop = (function() {
             <div class="card-stats"><span class="card-atk">${atkDisplay}</span><span class="card-hp">${hpDisplay}</span></div>
             ${priceHtml}
             ${card.star > 0 ? '<div class="card-star">★</div>' : ''}
+            ${card.shield > 0 ? `<div class="card-shield"><span>${card.shield}</span></div>` : ''}
         `;
         d.querySelector('img').draggable = false;
         return d;
