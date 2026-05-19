@@ -456,8 +456,8 @@ window.YYCardShop = (function() {
         d.setAttribute('data-card-type', cardType);
         const imgPath = card.image || card.icon || `/assets/card/${card.cardId || card.id || 'default'}.png`;
         const price = (config.ECONOMY?.CARD_PRICE?.[card.rarity]?.buy) || 1;
-        const atkDisplay = isBoard ? `${card.atk}` : `⚔️${card.atk}`;
-        const hpDisplay = isBoard ? `${card.hp}` : `🛡️${card.hp}`;
+        const atkDisplay = isBoard ? `${card.atk}` : `${card.atk}`;
+        const hpDisplay = isBoard ? `${card.hp}` : `${card.hp}`;
         const priceHtml = cardType === 'shop' 
             ? `<div class="card-price">💰${price}</div>` 
             : '';
