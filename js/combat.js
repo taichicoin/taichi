@@ -129,11 +129,11 @@ window.YYCardCombat = (function() {
 
         if (atkEl && atkGain !== undefined && atkGain !== 0) {
             const cur = parseInt(atkEl.textContent.replace(/\D/g, ''), 10) || 0;
-            atkEl.textContent = `⚔️${cur + atkGain}`;
+            atkEl.textContent = `${cur + atkGain}`;
         }
         if (hpEl && hpGain !== undefined && hpGain !== 0) {
             const cur = parseInt(hpEl.textContent.replace(/\D/g, ''), 10) || 0;
-            hpEl.textContent = `🛡️${cur + hpGain}`;
+            hpEl.textContent = `${cur + hpGain}`;
         }
 
         // 护盾层数变化
@@ -237,7 +237,7 @@ window.YYCardCombat = (function() {
                     if (hpSpan) {
                         // ★★★ 修复：显示总生命值 = 永久生命 + 临时生命 ★★★
                         const totalHp = a.defenderHpAfter + (a.defenderTempHp || 0);
-                        hpSpan.textContent = `🛡️${totalHp}`;
+                        hpSpan.textContent = `${totalHp}`;
                     }
                     setTimeout(() => {
                         if (abortFlag) return resolve();
