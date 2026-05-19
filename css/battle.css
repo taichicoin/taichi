@@ -461,7 +461,7 @@ body {
     border-top: none;
     box-shadow: none;
 }
-.battle-view-mode .hand-area { display: none !important; }
+/* .battle-view-mode .hand-area { display: none !important; } */
 
 .hand-label { display: none !important; }
 
