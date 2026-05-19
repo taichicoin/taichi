@@ -45,7 +45,7 @@
     "base_atk": 18,
     "base_hp": 16,
     "image": "/assets/card/guanyu.png",
-    "skill": "{\"skillName\":\"神机妙算\",\"skill_describe\":\"攻击后，永久获得本次攻击时自身攻击力50%的生命值（一星100%）\"}"
+    "skill": "{\"skillName\":\"青龙偃月\",\"skill_describe\":\"攻击后，永久获得本次攻击时自身攻击力50%的生命值（一星100%）\"}"
   },
   {
     "card_id": "char_heihuadi",
