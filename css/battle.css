@@ -696,3 +696,12 @@ body:has(#battle-view[style*="display: block"]) #app {
     font-weight: bold;
     text-shadow: 0 0 3px #000;
 }
+/* ========== 隐藏棋盘主容器背景与边框 ========== */
+.my-board-section,
+.enemy-board-section {
+  background: transparent !important;   /* 去掉半透明背景 */
+  border-radius: 0 !important;         /* 去掉圆角 */
+  padding: 0 !important;               /* 去掉内边距，让格子贴边 */
+  box-shadow: none !important;         /* 去掉阴影 */
+  border: none !important;             /* 去掉边框 */
+}
