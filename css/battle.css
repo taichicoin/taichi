@@ -213,7 +213,7 @@ body {
     gap: 10px;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: center;;
     overflow-x: auto;
     overflow-y: visible;
     padding: 1px 0 40px 0;
@@ -380,7 +380,7 @@ body {
 }
 .battle-view-mode .my-board-section {
     position: relative;
-    top: 10px;
+    top: -30px;
 }
 :not(.battle-view-mode) .my-board-section .board {
     display: grid;
