@@ -733,11 +733,8 @@ body:has(#battle-view[style*="display: block"]) #app {
     height: 100%;
     background: linear-gradient(90deg, #ff8800, #f5d76e);
     border-radius: 2px;
-    transition: left 0.3s linear;      /* ★ 动画改为控制 left */
     position: absolute;
-    left: 0;                           /* ★ 初始从左边开始 */
     top: 0;
-    width: 100%;                       /* ★ 始终撑满凹槽 */
 }
 
 #skip-battle-btn {
@@ -746,7 +743,7 @@ body:has(#battle-view[style*="display: block"]) #app {
     color: #f5d76e;
     border: 1px solid rgba(245, 215, 110, 0.5);
     border-radius: 6px;
-    padding: 4px 14px;
+    padding: 4px 4px;
     font-size: 0.7rem;
     font-weight: bold;
     cursor: pointer;
