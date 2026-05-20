@@ -316,7 +316,10 @@ window.YYCardBattle = (function() {
             if (progressWrapper) progressWrapper.style.display = 'flex';
             if (progressBar) {
                 const pct = total > 0 ? Math.max(0, Math.min(100, (remaining / total) * 100)) : 0;
-                progressBar.style.width = pct + '%';
+                // ★ 从右往左流逝：控制 left 而不是 width
+                const remainingPct = total > 0 ? Math.max(0, Math.min(100, (remaining / total) * 100)) : 0;
+                progressBar.style.left = (100 - remainingPct) + '%';
+                progressBar.style.width = '100%';
             }
             if (skipBtn) skipBtn.style.display = 'block';
         } else {
