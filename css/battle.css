@@ -714,16 +714,18 @@ body:has(#battle-view[style*="display: block"]) #app {
 /* ==================== 战斗进度条 & 跳过按钮 ==================== */
 #battle-progress-wrapper {
     display: none;  /* 默认隐藏，战斗阶段由 JS 控制显示 */
+    background: transparent !important;  /* 父容器纯透明 */
+    padding: 0;
 }
 
 #battle-progress-track {
     width: 80%;
     height: 4px;
-    background: rgba(255,255,255,0.1);
+    background: rgba(255, 255, 255, 0.1);  /* 凹槽半透明 */
     border-radius: 2px;
     position: relative;
     overflow: hidden;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
     margin: 0 auto;
 }
 
@@ -733,31 +735,31 @@ body:has(#battle-view[style*="display: block"]) #app {
     border-radius: 2px;
     transition: width 0.3s linear;
     position: absolute;
-    right: 0;
+    right: 0;      /* ★ 固定在右侧 */
     top: 0;
-    width: 100%;  /* 初始满格 */
+    width: 100%;   /* 初始满格，随时间减少 width 实现从右往左流逝 */
 }
 
 #skip-battle-btn {
     display: none;  /* 默认隐藏，战斗阶段由 JS 控制显示 */
-    background: rgba(20, 28, 48, 0.9);
+    background: rgba(20, 28, 48, 0.7);  /* 按钮背景半透明 */
     color: #f5d76e;
-    border: 1px solid #f5d76e;
+    border: 1px solid rgba(245, 215, 110, 0.5);
     border-radius: 6px;
-    padding: 4px 12px;
+    padding: 4px 14px;
     font-size: 0.7rem;
     font-weight: bold;
     cursor: pointer;
     backdrop-filter: blur(4px);
     margin-top: 6px;
+    white-space: nowrap;
 }
 
 #skip-battle-btn:active {
     transform: translateY(1px);
-    box-shadow: 0 1px 0 #121927;
 }
 
 #skip-battle-btn:disabled {
-    opacity: 0.6;
+    opacity: 0.5;
     cursor: not-allowed;
 }
