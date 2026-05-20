@@ -380,7 +380,7 @@ body {
 }
 .battle-view-mode .my-board-section {
     position: relative;
-    top: -48px;
+    top: -44px;
 }
 :not(.battle-view-mode) .my-board-section .board {
     display: grid;
