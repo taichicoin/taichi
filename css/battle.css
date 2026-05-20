@@ -711,3 +711,53 @@ body:has(#battle-view[style*="display: block"]) #app {
   height: 100px;      /* 卡牌高度 */
   min-height: 100px;  /* 覆盖全局 min-height:110px */
 }
+/* ==================== 战斗进度条 & 跳过按钮 ==================== */
+#battle-progress-wrapper {
+    display: none;  /* 默认隐藏，战斗阶段由 JS 控制显示 */
+}
+
+#battle-progress-track {
+    width: 80%;
+    height: 4px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+    margin: 0 auto;
+}
+
+#battle-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #ff8800, #f5d76e);
+    border-radius: 2px;
+    transition: width 0.3s linear;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 100%;  /* 初始满格 */
+}
+
+#skip-battle-btn {
+    display: none;  /* 默认隐藏，战斗阶段由 JS 控制显示 */
+    background: rgba(20, 28, 48, 0.9);
+    color: #f5d76e;
+    border: 1px solid #f5d76e;
+    border-radius: 6px;
+    padding: 4px 12px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    cursor: pointer;
+    backdrop-filter: blur(4px);
+    margin-top: 6px;
+}
+
+#skip-battle-btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 1px 0 #121927;
+}
+
+#skip-battle-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
