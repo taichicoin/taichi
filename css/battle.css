@@ -705,3 +705,9 @@ body:has(#battle-view[style*="display: block"]) #app {
   box-shadow: none !important;         /* 去掉阴影 */
   border: none !important;             /* 去掉边框 */
 }
+/* ========== 战斗阶段 - 敌方卡牌尺寸 ========== */
+.battle-view-mode .enemy-board-section .card {
+  width: 80px;        /* 卡牌宽度，可按需调整 */
+  height: 100px;      /* 卡牌高度 */
+  min-height: 100px;  /* 覆盖全局 min-height:110px */
+}
