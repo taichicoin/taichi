@@ -713,15 +713,15 @@ body:has(#battle-view[style*="display: block"]) #app {
 }
 /* ==================== 战斗进度条 & 跳过按钮 ==================== */
 #battle-progress-wrapper {
-    display: none;  /* 默认隐藏，战斗阶段由 JS 控制显示 */
-    background: transparent !important;  /* 父容器纯透明 */
+    display: none;
+    background: transparent !important;
     padding: 0;
 }
 
 #battle-progress-track {
     width: 80%;
     height: 4px;
-    background: rgba(255, 255, 255, 0.1);  /* 凹槽半透明 */
+    background: rgba(255, 255, 255, 0.1);
     border-radius: 2px;
     position: relative;
     overflow: hidden;
@@ -735,14 +735,15 @@ body:has(#battle-view[style*="display: block"]) #app {
     border-radius: 2px;
     transition: width 0.3s linear;
     position: absolute;
-    right: 0;      /* ★ 固定在右侧 */
+    right: 0 !important;   /* ★ 强制固定在右侧 */
+    left: auto !important; /* ★ 防止被覆盖成 left: 0 */
     top: 0;
-    width: 100%;   /* 初始满格，随时间减少 width 实现从右往左流逝 */
+    width: 100%;
 }
 
 #skip-battle-btn {
-    display: none;  /* 默认隐藏，战斗阶段由 JS 控制显示 */
-    background: rgba(20, 28, 48, 0.7);  /* 按钮背景半透明 */
+    display: none;
+    background: rgba(20, 28, 48, 0.7);
     color: #f5d76e;
     border: 1px solid rgba(245, 215, 110, 0.5);
     border-radius: 6px;
