@@ -360,7 +360,7 @@ body {
     display: block;
     z-index: 85;
     position: relative;
-    top: -10px;
+    top: 10px;
 }
 .enemy-board-section .board {
     display: grid;
@@ -380,7 +380,7 @@ body {
 }
 .battle-view-mode .my-board-section {
     position: relative;
-    top: -44px;
+    top: -40px;
 }
 :not(.battle-view-mode) .my-board-section .board {
     display: grid;
@@ -733,12 +733,11 @@ body:has(#battle-view[style*="display: block"]) #app {
     height: 100%;
     background: linear-gradient(90deg, #ff8800, #f5d76e);
     border-radius: 2px;
-    transition: width 0.3s linear;
+    transition: left 0.3s linear;      /* ★ 动画改为控制 left */
     position: absolute;
-    right: 0 !important;   /* ★ 强制固定在右侧 */
-    left: auto !important; /* ★ 防止被覆盖成 left: 0 */
+    left: 0;                           /* ★ 初始从左边开始 */
     top: 0;
-    width: 100%;
+    width: 100%;                       /* ★ 始终撑满凹槽 */
 }
 
 #skip-battle-btn {
