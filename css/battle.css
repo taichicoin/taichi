@@ -735,6 +735,10 @@ body:has(#battle-view[style*="display: block"]) #app {
     border-radius: 2px;
     position: absolute;
     top: 0;
+    left: 0;
+    width: 100%;                         /* 始终撑满 */
+    transform-origin: right center;      /* ★ 锚定在右侧中心 */
+    transition: transform 0.3s linear;   /* ★ 平滑动画 */
 }
 
 #skip-battle-btn {
@@ -743,12 +747,12 @@ body:has(#battle-view[style*="display: block"]) #app {
     color: #f5d76e;
     border: 1px solid rgba(245, 215, 110, 0.5);
     border-radius: 6px;
-    padding: 4px 4px;
+    padding: 2px 2px;
     font-size: 0.7rem;
     font-weight: bold;
     cursor: pointer;
     backdrop-filter: blur(4px);
-    margin-top: 6px;
+    margin-top: 3px;
     white-space: nowrap;
 }
 
