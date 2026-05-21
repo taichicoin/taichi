@@ -393,7 +393,7 @@ body {
     margin: 0 auto;
 }
 :not(.battle-view-mode) .my-board-section .card {
-    min-height: 90px !important;
+    min-height: 93px !important;
 }
 .battle-view-mode .my-board-section .board {
     display: grid;
