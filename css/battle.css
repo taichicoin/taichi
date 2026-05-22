@@ -100,7 +100,7 @@ body {
 /* ==================== 左侧玩家头像列表 ==================== */
 .players-status-bar {
     position: fixed;
-    top: 0.3vh;
+    top: 0vh;
     left: 0vw;
     z-index: 99;
     width: 12vw;
