@@ -158,8 +158,8 @@ body {
 /* 等级：右上角 */
 .player-level {
     position: absolute;
-    top: -0.5vh;
-    right: -0.5vw;
+    top: -0.1vh;
+    right: -0.1vw;
     background: #1a2a4a;
     border: 1px solid #f5d76e;
     border-radius: 50%;
@@ -186,7 +186,7 @@ body {
     font-size: 1.8vw;
     font-weight: bold;
     color: #ff4d4d;
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0);
     padding: 0.2vh 0;
     border-radius: 0 0 1vmin 1vmin;
     z-index: 2;
