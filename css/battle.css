@@ -381,7 +381,7 @@ body {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(2, 1fr);
-    gap: 2.6vw;
+    gap: 4vw;
     flex: 1;
     min-height: 0;
 }
@@ -456,7 +456,7 @@ body {
 .hand-label {
     display: block !important;
     position: absolute;
-    top: -2vh;                 /* 负值往上移，改数字调上下 */
+    top: -3.5vh;                 /* 负值往上移，改数字调上下 */
     left: 1vw;
     font-size: clamp(0.5rem, 1vw, 0.5rem);
     color: #f5d76e;
@@ -464,7 +464,7 @@ body {
     background: rgba(10, 15, 30, 0.7);
     padding: 0.3vh 2vw;
     border-radius: 1vmin;
-    z-index: 100;
+    z-index: 110;
     pointer-events: none;      /* 点击穿透，不挡卡牌 */
     white-space: nowrap;
 }
