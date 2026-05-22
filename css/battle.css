@@ -396,7 +396,7 @@ body {
 
 /* 强制格子保持竖版比例（2:3），防止棋盘区域过扁时卡牌变形 */
 .card-slot {
-    aspect-ratio: 2 / 3;
+    aspect-ratio: 3 / 4;
 }
 
 .battle-divider {
