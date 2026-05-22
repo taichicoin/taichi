@@ -143,7 +143,7 @@ body {
     max-height: 100%;
     flex-shrink: 0;
     /* 底部白线 */
-    border-bottom: 0.3vh solid #ffffff;
+    border-bottom: 0.2vh solid #ffffff;
 }
 
 /* 方形头像图片：直角 */
@@ -160,8 +160,8 @@ body {
 /* 等级：左上角（圆形） */
 .player-level {
     position: absolute;
-    top: -0.1vh;
-    left: -0.1vw;
+    top: 0.1vh;
+    left: 0.1vw;
     background: #1a2a4a;
     border: 1px solid #f5d76e;
     border-radius: 50%;
@@ -182,9 +182,9 @@ body {
 .hp-text {
     position: absolute;
     bottom: 0vh !important;
-    right: 0vw !important;
-    width: 45%;                     /* 梯形整体宽度，可调 */
-    height: 38%;                    /* 梯形整体高度，可调 */
+    right: 0.1vw !important;
+    width: 41%;                     /* 梯形整体宽度，可调 */
+    height: 35%;                    /* 梯形整体高度，可调 */
     display: flex;
     align-items: flex-end;          /* 文字紧贴底部 */
     justify-content: flex-end;      /* 文字紧贴右侧 */
@@ -195,7 +195,7 @@ body {
     text-align: right;
     /* 梯形切割：上边左侧从 40% 处开始（斜边），右侧 100% 直角 */
     clip-path: polygon(
-        32% 0%,      /* 左上角，数值越大斜边越靠右，梯形越小 */
+        30% 0%,      /* 左上角，数值越大斜边越靠右，梯形越小 */
         100% 0%,     /* 右上角，直角 */
         100% 100%,   /* 右下角，直角 */
         0% 100%      /* 左下角，直角（底部全宽） */
