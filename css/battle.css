@@ -181,21 +181,21 @@ body {
 /* 血量数字：右下角白色梯形（直角靠右，斜边在左） */
 .hp-text {
     position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 50%;                     /* 梯形整体宽度，可调 */
-    height: 40%;                    /* 梯形整体高度，可调 */
+    bottom: 0vh !important;
+    right: 0vw !important;
+    width: 45%;                     /* 梯形整体宽度，可调 */
+    height: 38%;                    /* 梯形整体高度，可调 */
     display: flex;
     align-items: flex-end;          /* 文字紧贴底部 */
     justify-content: flex-end;      /* 文字紧贴右侧 */
     padding: 0 0vw 0vh 0;      /* 右、下留微量边距让文字不切边 */
-    font-size: 2.8vw;
+    font-size: 2.6vw;
     font-weight: bold;
     color: #1a1a2e;
     text-align: right;
     /* 梯形切割：上边左侧从 40% 处开始（斜边），右侧 100% 直角 */
     clip-path: polygon(
-        35% 0%,      /* 左上角，数值越大斜边越靠右，梯形越小 */
+        32% 0%,      /* 左上角，数值越大斜边越靠右，梯形越小 */
         100% 0%,     /* 右上角，直角 */
         100% 100%,   /* 右下角，直角 */
         0% 100%      /* 左下角，直角（底部全宽） */
