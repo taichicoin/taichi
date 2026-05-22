@@ -179,14 +179,14 @@ body {
 /* 血量数字：右下角白色三角形 */
 .hp-text {
     position: absolute;
-    bottom: 0;
-    right: 0;
+    bottom: 0 !important;
+    right: 0 !important;
     width: 50%;
     height: 45%;
     display: flex;
     align-items: flex-end;
     justify-content: flex-end;
-    padding: 0 1vw 0.5vh 0;
+    padding: 0 1vw 0vh 0;
     font-size: 2.8vw;
     font-weight: bold;
     color: #1a1a2e;
