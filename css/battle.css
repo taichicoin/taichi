@@ -103,18 +103,18 @@ body {
     top: 0.2vh;
     left: 0vw;
     z-index: 99;
-    width: 10.8vw;
+    width: 10.5vw;
     background: rgba(10, 18, 30, 0);
     backdrop-filter: blur(8px);
     border-radius: 0;
     padding: 0.2vh 0.1vw;
     border: 1px solid rgba(255, 215, 0, 0);
     box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-    height: 43.7vh;
+    height: 43.5vh;
     overflow-y: auto;
 }
 .battle-view-mode .players-status-bar {
-    width: 10.8vw;
+    width: 10.5vw;
     left: 0vw;
 }
 
@@ -180,7 +180,7 @@ body {
 .hp-text {
     position: absolute;
     bottom: 0vh !important;
-    right: 0vm !important;
+    right: 0vw !important;
     width: 60%;
     height: 55%;
     display: flex;
