@@ -318,15 +318,15 @@ body {
     flex-direction: column;
     z-index: 85;
     top: 48.5vh;
-    left: 7.8vw;
+    left: 8vw;
     width: 82vw;
-    height: 28vh;
+    height: 26vh;
     justify-content: flex-start;
 }
 
 .battle-view-mode .board-area {
     top: 8vh;
-    height: 65vh;
+    height: 60vh;
     justify-content: space-between;
 }
 
@@ -369,7 +369,7 @@ body {
     display: grid;
     grid-template-columns: 21.5vw 21.5vw 21.5vw;
     grid-template-rows: repeat(2, 1fr);
-    row-gap: 2.8vw;
+    row-gap: 3vw;
     column-gap: 3vw;  
     justify-content: center;
     min-height: 0;
