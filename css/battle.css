@@ -722,7 +722,7 @@ body:has(#battle-view[style*="display: block"]) #app {
 }
 
 #battle-progress-track {
-    width: 100%;
+    width: 120%;
     height: 4px;
     background: rgba(255, 255, 255, 0.1);
     border-radius: 2px;
