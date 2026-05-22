@@ -211,12 +211,12 @@ body {
     min-height: 0;
     height: auto;
     z-index: 5;
-    margin-top: 13vh;
+    margin-top: 10vh;
 }
 
 .shop-cards .card {
-    width: 23.5vw;
-    height: 26vw;
+    width: 23.6vw;
+    height: 28vw;
     flex-shrink: 0;
     align-self: center;
 }
@@ -318,8 +318,8 @@ body {
     flex-direction: column;
     z-index: 85;
     top: 48.5vh;
-    left: 7vw;
-    width: 80vw;
+    left: 7.8vw;
+    width: 82vw;
     height: 28vh;
     justify-content: flex-start;
 }
@@ -441,7 +441,7 @@ body {
     left: 0.1vw;
     width: 98vw;
     z-index: 85;
-    height: 14vh;
+    height: 14.5vh;
     overflow-x: auto;
     overflow-y: hidden;
     display: block;
