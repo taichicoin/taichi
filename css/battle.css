@@ -342,8 +342,8 @@ body {
 }
 .battle-view-mode .board-area {
     top: 55px;
-    left: 20px;
-    right: 25px;
+    left: 40px;
+    right: 22px;
     width: calc(100% - 80px);
     justify-content: space-between;
 }
