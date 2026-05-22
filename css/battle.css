@@ -483,16 +483,16 @@ body {
 /* 手牌标签 - 彻底独立，不占手牌区空间 */
 .hand-label {
     position: fixed;
-    bottom: 15.2vh;
-    left: 1.2vw;
+    bottom: 14.5vh;
+    left: 1vw;
     z-index: 110;
     display: block !important;
     font-size: clamp(0.8rem, 2vw, 1.2rem);
     color: #f5d76e;
     font-weight: bold;
     background: rgba(10, 15, 30, 0.8);
-    padding: 0.5vh 3vw;
-    border-radius: 1.5vmin;
+    padding: 0.2vh 2.8vw;
+    border-radius: 1.1vmin;
     pointer-events: none;
     white-space: nowrap;
     text-shadow: 0 0 4px #000;
