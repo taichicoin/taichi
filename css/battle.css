@@ -318,9 +318,9 @@ body {
     flex-direction: column;
     z-index: 85;
     top: 48.5vh;
-    left: 2vw;
-    width: 90vw;
-    height: 30vh;
+    left: 4vw;
+    width: 80vw;
+    height: 28vh;
     justify-content: flex-start;
 }
 
