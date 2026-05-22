@@ -104,11 +104,11 @@ body {
     left: 0vw;
     z-index: 99;
     width: 11.5vw;
-    background: rgba(10, 18, 30, 0.85);
+    background: rgba(10, 18, 30, 0);
     backdrop-filter: blur(8px);
     border-radius: 3vmin;
     padding: 0.2vh 0.1vw;
-    border: 1px solid rgba(255, 215, 0, 0.3);
+    border: 1px solid rgba(255, 215, 0, 0);
     box-shadow: 0 4px 10px rgba(0,0,0,0.5);
     height: 44vh;
     overflow-y: auto;
