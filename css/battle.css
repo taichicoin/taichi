@@ -317,7 +317,7 @@ body {
     display: flex;
     flex-direction: column;
     z-index: 85;
-    top: 50vh;
+    top: 48.5vh;
     left: 2vw;
     width: 90vw;
     height: 30vh;
@@ -439,9 +439,9 @@ body {
     position: fixed;
     bottom: 0;
     left: 2vw;
-    width: 96vw;
+    width: 100vw;
     z-index: 85;
-    height: 18vh;
+    height: 16vh;
     overflow-x: auto;
     overflow-y: hidden;
     display: block;
@@ -452,7 +452,7 @@ body {
     box-shadow: none;
 }
 
-.hand-label { display: none !important; }
+#.hand-label { display: none !important; }#
 
 .hand {
     display: flex;
@@ -467,8 +467,8 @@ body {
 }
 
 .hand .card {
-    width: 16vw;
-    height: 22vw;
+    width: 18vw;
+    height: 23vw;
     flex-shrink: 0;
 }
 
