@@ -81,7 +81,7 @@
     "base_atk": 22,
     "base_hp": 25,
     "image": "/assets/card/jiangziya.png",
-    "skill": "{\"skillName\":\"封神刷新\",\"skill_describe\":\"刷新商店时，随机一名友方永久获得攻击力和生命值，数值等于商店所有卡牌攻击力与生命值总和的100%（一星200%）\"}"
+    "skill": "{\"skillName\":\"封神\",\"skill_describe\":\"点将时，随机一名友方获得点将台中随机角色卡牌的100%的永久属性 \"}"
   },
   {
     "card_id": "char_jingwei",
@@ -153,7 +153,7 @@
     "base_atk": 24,
     "base_hp": 30,
     "image": "/assets/card/nvwa.png",
-    "skill": "{\"skillName\":\"抟土造人\",\"skill_describe\":\"攻击后，随机获得1张零星卡牌，稀有度概率同5级商店（一星2张）\"}"
+    "skill": "{\"skillName\":\"抟土造人\",\"skill_describe\":\"攻击后，随机获得1张零星卡牌（一星2张）\"}"
   },
   {
     "card_id": "char_pangu",
@@ -177,7 +177,7 @@
     "base_atk": 28,
     "base_hp": 22,
     "image": "/assets/card/pixiu.png",
-    "skill": "{\"skillName\":\"吞噬\",\"skill_describe\":\"攻击时，直接移除目标，无视护盾、减伤和遗言，每局限1次（一星2次）\"}"
+    "skill": "{\"skillName\":\"吞噬\",\"skill_describe\":\"攻击时移除目标，每局触发1次 \"}"
   },
   {
     "card_id": "char_qiongqi",
@@ -189,7 +189,7 @@
     "base_atk": 9,
     "base_hp": 12,
     "image": "/assets/card/qiongqi.png",
-    "skill": "{\"skillName\":\"惩善扬恶\",\"skill_describe\":\"每当友方触发悟道效果时，触发者和穷奇各永久+1攻击/+2生命（一星+2/+4）\"}"
+    "skill": "{\"skillName\":\"惩善扬恶\",\"skill_describe\":\"友方触发悟道效果时，触发者和穷奇各永久+1攻击/+2生命（一星+2/+4）\"}"
   },
   {
     "card_id": "char_shawujing",
@@ -273,7 +273,7 @@
     "base_atk": 20,
     "base_hp": 30,
     "image": "/assets/card/tangseng.png",
-    "skill": "{\"skillName\":\"佛法无边\",\"skill_describe\":\"在场时，所有西游友方攻击时即可触发自身的击杀效果（无需击杀敌人）\"}"
+    "skill": "{\"skillName\":\"佛法无边\",\"skill_describe\":\"西游友方攻击时触发其自身的击杀效果 \"}"
   },
   {
     "card_id": "char_yandi",
