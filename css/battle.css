@@ -442,7 +442,7 @@ body {
     left: 0.1vw;
     width: 98vw;
     z-index: 85;
-    height: 14.5vh;
+    height: 15.4vh;
     overflow-x: auto;
     overflow-y: hidden;          /* 不用 visible，标签已经独立 */
     display: block;
@@ -463,7 +463,7 @@ body {
     font-size: clamp(0.8rem, 2.2vw, 1.2rem);
     color: #f5d76e;
     font-weight: bold;
-    background: rgba(10, 15, 30, 0.85);
+    background: rgba(10, 15, 30, 0.8);
     padding: 0.5vh 3vw;
     border-radius: 1.5vmin;
     pointer-events: none;           /* 不挡操作 */
