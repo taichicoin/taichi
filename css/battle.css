@@ -318,7 +318,7 @@ body {
     flex-direction: column;
     z-index: 85;
     top: 48.5vh;
-    left: 8.5vw;
+    left: 8.6vw;
     width: 82vw;
     height: 26vh;
     justify-content: flex-start;
@@ -369,7 +369,7 @@ body {
     display: grid;
     grid-template-columns: 21.5vw 21.5vw 21.5vw;
     grid-template-rows: repeat(2, 1fr);
-    row-gap: 3.8vw;
+    row-gap: 4vw;
     column-gap: 3vw;  
     justify-content: center;
     min-height: 0;
