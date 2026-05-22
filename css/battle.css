@@ -1,0 +1,193 @@
+/* ==================== 全屏百分比独立控制版 ==================== */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+    width: 100vw; height: 100dvh; overflow: hidden;
+    background: #000; /* 底色，实际会被 battle-view 背景覆盖 */
+}
+
+body {
+    overscroll-behavior: none; touch-action: pan-y;
+    color: #f0f0f0; font-family: 'Segoe UI', Roboto, sans-serif;
+}
+
+#battle-view {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1000;
+    background-image: url("/assets/battlebg.png");
+    background-size: cover; background-position: center;
+}
+
+/* ---------- 顶部信息 ---------- */
+.top-center-info {
+    position: fixed; top: 1vh; left: 50vw; transform: translateX(-50%);
+    z-index: 999; display: flex; align-items: center; gap: 2vw;
+    font-weight: bold; font-size: 2vw; color: #f5d76e;
+    background: rgba(10,15,30,0.85); padding: 0.8vh 2vw; border-radius: 1vw;
+}
+
+.top-right-actions {
+    position: fixed; top: 1vh; right: 2vw; z-index: 999; display: flex; gap: 1vw;
+}
+.top-right-actions .btn {
+    padding: 1vh 2vw; font-size: 1.8vw; background: rgba(20,28,48,0.8);
+    color: white; border: none; border-radius: 1vw; cursor: pointer;
+}
+
+/* ---------- 左侧玩家列表 ---------- */
+.players-status-bar {
+    position: fixed; top: 12vh; left: 1vw; width: 10vw; height: 40vh;
+    z-index: 99; background: rgba(10,18,30,0.85); border-radius: 2vw;
+    padding: 2vh 0.5vw; display: flex; flex-direction: column; align-items: center; gap: 1.5vh;
+    overflow-y: auto;
+}
+.player-status-item img {
+    width: 5vw; height: 5vw; border-radius: 50%; border: 1px solid #f5d76e;
+}
+.player-status-item .player-level {
+    width: 3.5vw; height: 3.5vw; font-size: 1.8vw; background: #1a2a4a;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+}
+
+/* ---------- 商店区域 ---------- */
+.shop-area {
+    position: fixed; top: 0; left: 2vw; width: 96vw; height: 35vh; z-index: 90;
+    background: rgba(10,18,30,0.3); border-radius: 2vw;
+    display: flex; flex-direction: column; align-items: center; gap: 1vh;
+    padding: 2vh 0;
+}
+.shop-info { font-size: 2vw; color: #f5d76e; }
+
+.shop-cards {
+    display: flex; justify-content: center; align-items: center; gap: 2vw;
+    height: 25vh; /* 给商店卡片一个固定高度区域 */
+    overflow-x: auto; padding: 0 2vw;
+}
+.shop-cards .card {
+    width: 18vw;          /* 商店卡片宽度 = 18% 屏幕宽度 */
+    height: 24vw;         /* 商店卡片高度 = 24% 屏幕宽度 (注意, 高度也可以用vw保持比例) */
+    flex-shrink: 0;
+}
+
+.shop-actions {
+    position: absolute; bottom: 3vh; display: flex; gap: 2vw;
+}
+.shop-actions .btn {
+    padding: 1vh 4vw; font-size: 2vw; background: #ffd700; color: #1a1a2e;
+    border: none; border-radius: 0; font-weight: bold;
+}
+
+.prepare-timer-btn {
+    position: absolute; bottom: -4vh; right: 8vw;
+    width: 10vw; height: 10vw; border-radius: 50%;
+    background: radial-gradient(circle, #7a3a9a, #4a1a6a);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+
+/* ---------- 棋盘区域 ---------- */
+.board-area {
+    position: fixed; top: 37vh; left: 2vw; width: 96vw; height: 40vh; z-index: 85;
+    display: flex; flex-direction: column; justify-content: flex-start;
+}
+
+.my-board-section, .enemy-board-section {
+    width: 100%; height: 100%;  /* 这两个容器占满board-area, 但只是容器, 不影响内部卡牌尺寸 */
+    position: relative;
+    background: transparent;
+}
+
+/* 直接控制棋盘格子的大小 (3x2) */
+.board {
+    display: grid;
+    grid-template-columns: 28vw 28vw 28vw;   /* 每个格子宽度 = 28% 屏幕宽 */
+    grid-template-rows: 18vh 18vh;           /* 每个格子高度 = 18% 屏幕高 */
+    gap: 1.5vw;
+    justify-content: center;
+    margin-top: 1vh;
+}
+
+/* 卡牌尺寸 = 格子内部完全填充, 但格子大小已经用vw/vh固定, 所以卡牌就用100% */
+.my-board-section .card,
+.enemy-board-section .card {
+    width: 100%;
+    height: 100%;
+}
+
+/* 手牌区域 */
+.hand-area {
+    position: fixed; bottom: 0; left: 2vw; width: 96vw; height: 15vh; z-index: 85;
+    overflow-x: auto; overflow-y: hidden;
+    display: flex; align-items: center; padding-left: 2vw;
+}
+.hand {
+    display: flex; gap: 2vw; height: 100%; align-items: center;
+}
+.hand .card {
+    width: 16vw;          /* 手牌卡片宽度 */
+    height: 22vw;         /* 手牌卡片高度 (比商店略小) */
+    flex-shrink: 0;
+}
+
+/* ---------- 卡牌基础样式 ---------- */
+.card {
+    position: relative; background: #141a2a; border: 2px solid #3a4a6a;
+    border-radius: 1vw; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+.card-icon { position: absolute; top:0; left:0; width:100%; height:100%; }
+.card-icon img { width:100%; height:100%; object-fit:cover; }
+.card-name {
+    position: absolute; top:0; width:100%; text-align:center; font-weight:bold;
+    background: rgba(0,0,0,0.6); color:white; padding:0.5vh 0; font-size:1.6vw;
+}
+.card-stats {
+    position: absolute; bottom:1vh; width:100%; display:flex; justify-content:space-between;
+    padding:0 1vw; color:white; font-weight:bold; font-size:1.8vw;
+}
+.card-atk { color:#ff3333; } .card-hp { color:#33cc33; }
+.card-price {
+    position: absolute; bottom:-4vh; width:100%; text-align:center;
+    color:#f5d76e; font-weight:bold; font-size:1.6vw;
+}
+.card-star { position:absolute; top:0.5vh; right:1vw; color:#f5d76e; font-size:2vw; }
+.card.selected { border-color:#f5d76e; box-shadow:0 0 2vw #f5d76e; }
+.empty-slot { opacity:0.3; background:#1a1a2e; }
+
+/* 隐藏不需要的label */
+.board-label, .hand-label { display:none; }
+
+/* ---------- 进度条 ---------- */
+#battle-progress-wrapper {
+    position: fixed; left: 10vw; right: 10vw; top: 73vh; z-index: 100;
+    display: none; flex-direction: column; align-items: center; gap: 1vh;
+}
+#battle-progress-track {
+    width: 100%; height: 0.6vh; background: rgba(255,255,255,0.1);
+    border-radius: 0.3vh; overflow: hidden;
+}
+#battle-progress-bar {
+    height: 100%; background: linear-gradient(90deg, #ff8800, #f5d76e);
+    width: 100%; transform-origin: right center; transition: transform 0.3s linear;
+}
+#skip-battle-btn {
+    padding: 0.5vh 2vw; font-size: 1.6vw; background: rgba(20,28,48,0.7);
+    color: #f5d76e; border: 1px solid rgba(245,215,110,0.5); border-radius: 1vw;
+}
+
+/* 通用按钮 */
+.btn {
+    background: #2e3f5e; color: white; border: none; padding: 1vh 3vw;
+    border-radius: 1vw; font-weight: 600; font-size: 1.8vw;
+}
+
+/* 阶段显示 */
+.prepare-only { display: block; } .battle-only { display: none; }
+.battle-view-mode .prepare-only { display: none !important; }
+.battle-view-mode .battle-only { display: block !important; }
+
+/* 防拖拽 */
+.card, .card *, .hand-area, .hand-area * { user-select: none; -webkit-user-select: none; }
+img { -webkit-user-drag: none; pointer-events: none; }
+
+/* 全屏强制 */
+body:has(#battle-view[style*="display: block"]) #app {
+    max-width: none; padding: 0; margin: 0; width: 100%; height: 100%;
+}
