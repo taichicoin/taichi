@@ -110,7 +110,7 @@ body {
     padding: 0.2vh 0.1vw;
     border: 1px solid rgba(255, 215, 0, 0.3);
     box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-    height: 42.5vh;
+    height: 44vh;
     overflow-y: auto;
 }
 .battle-view-mode .players-status-bar {
@@ -139,7 +139,7 @@ body {
 .avatar-container {
     position: relative;
     width: 100%;
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 10 / 9;
     max-height: 100%;
     flex-shrink: 0;
 }
@@ -183,9 +183,9 @@ body {
     left: 0;
     right: 0;
     text-align: center;
-    font-size: 2.2vw;
+    font-size: 2.8vw;
     font-weight: bold;
-    color: 33cc33;
+    color: #33cc33 !important;
     background: rgba(0, 0, 0, 0);
     padding: 0.2vh 0;
     border-radius: 0 0 1vmin 1vmin;
