@@ -745,15 +745,15 @@ body:has(#battle-view[style*="display: block"]) #app {
 /* ==================== 战斗进度条 & 跳过按钮 ==================== */
 #battle-progress-wrapper {
     position: fixed;
-    left: 3vw;
-    right: 3vw !important;
+    left: 2.5vw;
+    right: 2.5vw !important;
     top: 44vh;
     z-index: 100;
     display: none;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 0.5vh !important;
+    gap: 0.1vh !important;
     background: transparent !important;
     padding: 0;
     box-sizing: border-box;
@@ -761,8 +761,8 @@ body:has(#battle-view[style*="display: block"]) #app {
 }
 
 #battle-progress-track {
-    width: 90%;
-    max-width: 90%;
+    width: 91%;
+    max-width: 91%;
     height: 0.8vh;
     background: rgba(255, 255, 255, 0.1);
     border-radius: 0.4vh;
@@ -793,12 +793,12 @@ body:has(#battle-view[style*="display: block"]) #app {
     color: #f5d76e;
     border: 1px solid rgba(245, 215, 110, 0.5);
     border-radius: 1vmin;
-    padding: 0.5vh 0.8vw;
-    font-size: clamp(0.6rem, 1.5vw, 0.8rem);
+    padding: 0.1vh 0.1vw;
+    font-size: clamp(0.6rem, 1.5vw, 0.7rem);
     font-weight: bold;
     cursor: pointer;
     backdrop-filter: blur(4px);
-    margin-top: 0.5vh;
+    margin-top: 0.4vh;
     white-space: nowrap;
     max-width: 100%;
     box-sizing: border-box;
