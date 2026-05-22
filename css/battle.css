@@ -100,14 +100,14 @@ body {
 /* ==================== 左侧玩家头像列表 ==================== */
 .players-status-bar {
     position: fixed;
-    top: 0vh;
+    top: 0.2vh;
     left: 0vw;
     z-index: 99;
     width: 12vw;
     background: rgba(10, 18, 30, 0.85);
     backdrop-filter: blur(8px);
     border-radius: 3vmin;
-    padding: 2vh 1vw;
+    padding: 0.2vh 0.1vw;
     border: 1px solid rgba(255, 215, 0, 0.3);
     box-shadow: 0 4px 10px rgba(0,0,0,0.5);
     height: 42.5vh;
