@@ -746,4 +746,3 @@ window.YYCardBattle = (function() {
         fetchGameState
     };
 })();
-啊，改一下给完整版不要省略
