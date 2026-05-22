@@ -256,7 +256,7 @@ body {
 }
 
 .shop-actions .btn {
-    padding: 1.2vh 5vw;
+    padding: 0.8vh 5vw;
     margin: 0;
     font-size: clamp(0.6rem, 1.8vw, 0.9rem);
     border-radius: 0;
