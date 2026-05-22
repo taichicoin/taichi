@@ -343,7 +343,7 @@ body {
     z-index: 85;
     flex: 1;
     margin-bottom: 1vh;
-    transform: scale(0.65);
+    transform: scale(0.7);
     transform-origin: top center; 
 }
 .enemy-board-section .board {
