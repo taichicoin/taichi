@@ -369,7 +369,8 @@ body {
     display: grid;
     grid-template-columns: 21.5vw 21.5vw 21.5vw;
     grid-template-rows: repeat(2, 1fr);
-    gap: 1.8vw;
+    row-gap: 2.8vw;
+    column-gap: 3vw;  
     justify-content: center;
     min-height: 0;
     max-width: 100%;
