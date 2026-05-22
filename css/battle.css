@@ -427,13 +427,7 @@ body {
     display: block;
 }
 
-.board-label,
-.enemy-board-section .board-label,
-.my-board-section .board-label,
-.enemy-board-section > label,
-.my-board-section > label {
-    display: none !important;
-}
+
 
 /* ==================== 手牌区 ==================== */
 .hand-area {
@@ -456,8 +450,8 @@ body {
 /* 手牌标签 - 彻底独立，不占手牌区空间 */
 .hand-label {
     position: fixed;                /* 相对于屏幕 */
-    bottom: 16vh;                   /* 手牌区高度14.5vh + 1.5vh间距，浮在手牌区上方 */
-    left: 2vw;
+    bottom: 15.7vh;                   /* 手牌区高度14.5vh + 1.5vh间距，浮在手牌区上方 */
+    left: 1.7vw;
     z-index: 110;
     display: block !important;
     font-size: clamp(0.8rem, 2.2vw, 1.2rem);
