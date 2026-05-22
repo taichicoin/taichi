@@ -367,7 +367,7 @@ body {
 /* ★ 准备阶段棋盘：每列宽度直接写死 25vw，3列共75vw，留出边距 */
 :not(.battle-view-mode) .my-board-section .board {
     display: grid;
-    grid-template-columns: 21vw 21vw 21vw;
+    grid-template-columns: 21.5vw 21.5vw 21.5vw;
     grid-template-rows: repeat(2, 1fr);
     gap: 2vw;
     justify-content: center;
