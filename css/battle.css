@@ -174,7 +174,7 @@ body {
     top: 0;
     left: 2vw;
     width: 100vw;
-    height: 38vh;
+    height: 42vh;
     z-index: 90;
     display: flex;
     flex-direction: column;
@@ -215,7 +215,7 @@ body {
 }
 
 .shop-cards .card {
-    width: 18vw;
+    width: 22vw;
     height: 24vw;
     flex-shrink: 0;
     align-self: center;
@@ -317,7 +317,7 @@ body {
     display: flex;
     flex-direction: column;
     z-index: 85;
-    top: 40vh;
+    top: 44vh;
     left: 2vw;
     width: 90vw;
     height: 30vh;
