@@ -317,7 +317,7 @@ body {
     display: flex;
     flex-direction: column;
     z-index: 85;
-    top: 48vh;
+    top: 50vh;
     left: 2vw;
     width: 90vw;
     height: 30vh;
@@ -396,7 +396,7 @@ body {
 
 /* 强制格子保持竖版比例（2:3），防止棋盘区域过扁时卡牌变形 */
 .card-slot {
-    aspect-ratio: 3 / 4;
+    aspect-ratio: 9 / 11;
 }
 
 .battle-divider {
@@ -441,7 +441,7 @@ body {
     left: 2vw;
     width: 96vw;
     z-index: 85;
-    height: 15vh;
+    height: 18vh;
     overflow-x: auto;
     overflow-y: hidden;
     display: block;
