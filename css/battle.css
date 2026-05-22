@@ -325,7 +325,7 @@ body {
 }
 
 .battle-view-mode .board-area {
-    top: 8vh;
+    top: 16vh;
     height: 60vh;
     justify-content: space-between;
 }
@@ -704,13 +704,13 @@ body:has(#battle-view[style*="display: block"]) #app {
     position: fixed;
     left: 4vw;
     right: 4vw;
-    top: 45vh;
+    top: 43vh;
     z-index: 100;
     display: none;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 1vh;
+    gap: 0.5vh;
     background: transparent !important;
     padding: 0;
 }
