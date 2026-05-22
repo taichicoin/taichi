@@ -369,7 +369,7 @@ body {
     display: grid;
     grid-template-columns: 21.5vw 21.5vw 21.5vw;
     grid-template-rows: repeat(2, 1fr);
-    row-gap: 4vw;
+    row-gap: 4.3vw;
     column-gap: 3vw;  
     justify-content: center;
     min-height: 0;
