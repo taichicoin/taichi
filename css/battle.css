@@ -163,8 +163,8 @@ body {
     background: #1a2a4a;
     border: 1px solid #f5d76e;
     border-radius: 50%;
-    width: 3.5vw;
-    height: 3.5vw;
+    width: 4.5vw;
+    height: 4.5vw;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -179,8 +179,8 @@ body {
 /* 血量数字：右下角白色三角形（文字强制靠右贴底） */
 .hp-text {
     position: absolute;
-    bottom: 0;
-    right: 0;
+    bottom: 0vh !important;
+    right: 0vm !important;
     width: 55%;
     height: 48%;
     display: flex;
