@@ -211,12 +211,12 @@ body {
     min-height: 0;
     height: auto;
     z-index: 5;
-    margin-top: 8vh;
+    margin-top: 13vh;
 }
 
 .shop-cards .card {
-    width: 22vw;
-    height: 24vw;
+    width: 23.5vw;
+    height: 26vw;
     flex-shrink: 0;
     align-self: center;
 }
@@ -318,7 +318,7 @@ body {
     flex-direction: column;
     z-index: 85;
     top: 48.5vh;
-    left: 4.5vw;
+    left: 7vw;
     width: 80vw;
     height: 28vh;
     justify-content: flex-start;
@@ -439,9 +439,9 @@ body {
     position: fixed;
     bottom: 0;
     left: 2vw;
-    width: 96vw;
+    width: 98vw;
     z-index: 85;
-    height: 16vh;
+    height: 14vh;
     overflow-x: auto;
     overflow-y: hidden;
     display: block;
@@ -453,7 +453,7 @@ body {
 }
 
 /* 手牌标签正常隐藏 */
-.hand-label { display: none !important; }
+.hand-label { display: non !important; }
 
 .hand {
     display: flex;
