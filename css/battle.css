@@ -733,7 +733,6 @@ body:has(#battle-view[style*="display: block"]) #app {
 #battle-progress-wrapper {
     position: fixed;
     left: 3vw !important;
-    right: 2.5vw;
     top: 45vh;
     z-index: 100;
     display: none;
