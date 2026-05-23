@@ -238,7 +238,7 @@ body {
     font-weight: bold;
     font-size: clamp(0.8rem, 2vw, 1.2rem);
     color: #f5d76e;
-    margin-top: 8vh;
+    margin-top: 5vh;
     flex-shrink: 0;
 }
 
