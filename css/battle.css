@@ -749,8 +749,8 @@ body:has(#battle-view[style*="display: block"]) #app {
 /* ==================== 战斗进度条 & 跳过按钮 ==================== */
 #battle-progress-wrapper {
     position: fixed;
-    left: 2vw;
-    right: 2vw !important;
+    left: 3vw !important;
+    right: 2.5vw !important;
     top: 44vh;
     z-index: 100;
     display: none;
