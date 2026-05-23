@@ -748,8 +748,8 @@ body:has(#battle-view[style*="display: block"]) #app {
 }
 
 #battle-progress-track {
-    width: 89%;
-    max-width: 89%;
+    width: 93%;
+    max-width: 93%;
     height: 0.8vh;
     background: rgba(255, 255, 255, 0.1);
     border-radius: 0.4vh;
