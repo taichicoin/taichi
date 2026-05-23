@@ -374,7 +374,7 @@ body {
 
 .battle-view-mode .board-area {
     top: 13vh;
-    height: 68vh;
+    height: 66vh;
     justify-content: space-between;
 }
 
@@ -744,7 +744,7 @@ body:has(#battle-view[style*="display: block"]) #app {
     padding: 0;
     box-sizing: border-box;
     margin-top: 4vh;    /* 增大这个值，敌方棋盘上移，拉开距离 */
-    margin-bottom: 4vh; /* 增大这个值，我方棋盘下移 */
+    margin-bottom: 3vh; /* 增大这个值，我方棋盘下移 */
 }
 
 #battle-progress-track {
