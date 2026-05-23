@@ -392,14 +392,14 @@ body {
     z-index: 85;
     flex: 1;
     margin-bottom: 1vh;
-    transform: scale(0.78);
+    transform: scale(0.85);
     transform-origin: top center; 
 }
 .enemy-board-section .board {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(2, 1fr);
-    gap: 3vw;
+    gap: 5vw;
     flex: 1;
     min-height: 0;
 }
@@ -433,7 +433,7 @@ body {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(2, 1fr);
-    gap: 4vw;
+    gap: 5vw;
     flex: 1;
     min-height: 0;
 }
@@ -616,7 +616,7 @@ body {
 
 .card-star {
     position: absolute;
-    top: 0.5vh; right: 1vw;
+    top: 0.5vh; left: 1vw;
     z-index: 2;
     color: #f5d76e;
     font-size: clamp(0.8rem, 2.5vw, 1.2rem);
@@ -752,8 +752,8 @@ body:has(#battle-view[style*="display: block"]) #app {
 #battle-progress-wrapper {
     position: fixed;
     left: 3vw !important;
-    right: 2.5vw !important;
-    top: 44vh;
+    right: 2.5vw 
+    top: 45vh;
     z-index: 100;
     display: none;
     flex-direction: column;
