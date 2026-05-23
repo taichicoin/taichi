@@ -183,7 +183,7 @@ body {
     position: absolute;
     bottom: 0vh !important;
     right: 0.2vw !important;
-    width: 42%;                     /* 梯形整体宽度，可调 */
+    width: 43%;                     /* 梯形整体宽度，可调 */
     height: 36%;                    /* 梯形整体高度，可调 */
     display: flex;
     align-items: flex-end;          /* 文字紧贴底部 */
