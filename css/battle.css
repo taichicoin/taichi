@@ -234,11 +234,11 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 6vw;
+    gap: 5vw;
     font-weight: bold;
     font-size: clamp(0.8rem, 2vw, 1.2rem);
     color: #f5d76e;
-    margin-top: 16vh;
+    margin-top: 8vh;
     flex-shrink: 0;
 }
 
