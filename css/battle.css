@@ -401,7 +401,7 @@ body {
     flex-shrink: 0;
     display: flex;
     flex-direction: column;
-    flex: 1;
+    flex: 0 0 auto;
 }
 
 /* ★ 所有棋盘统一：固定列宽 21.5vw，间隙相同，宽高比 27/34 */
