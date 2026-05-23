@@ -231,6 +231,10 @@ body {
 .battle-view-mode .shop-area { display: none !important; }
 
 .shop-info {
+    position: absolute;      /* 飘起来，不占空间 */
+    top: 5vh;                /* 离屏幕顶部 8% 的高度，想下调就加大这个值 */
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -238,8 +242,8 @@ body {
     font-weight: bold;
     font-size: clamp(0.8rem, 2vw, 1.2rem);
     color: #f5d76e;
-    margin-top: 5vh;
-    flex-shrink: 0;
+    z-index: 10;             /* 确保在卡牌上面 */
+    white-space: nowrap;
 }
 
 .shop-cards {
