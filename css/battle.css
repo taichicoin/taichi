@@ -373,8 +373,8 @@ body {
 }
 
 .battle-view-mode .board-area {
-    top: 15vh;
-    height: 60vh;
+    top: 13vh;
+    height: 68vh;
     justify-content: space-between;
 }
 
