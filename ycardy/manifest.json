@@ -1,0 +1,16 @@
+{
+  "name": "YY Card",
+  "short_name": "YYCard",
+  "start_url": "/ycardy/",
+  "scope": "/ycardy/",
+  "display": "standalone",
+  "theme_color": "#1e293b",
+  "background_color": "#0f172a",
+  "icons": [
+    {
+      "src": "/assets/default-avatar.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
