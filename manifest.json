@@ -1,8 +1,8 @@
 {
   "name": "YY Card",
   "short_name": "YYCard",
-  "start_url": "/ycardy/",
-  "scope": "/ycardy/",
+  "start_url": "/ycardy.html",
+  "scope": "/",
   "display": "standalone",
   "theme_color": "#1e293b",
   "background_color": "#0f172a",
