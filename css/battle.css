@@ -386,6 +386,7 @@ body {
     padding: 0;
     display: none;
     flex-shrink: 0;
+    margin-left: 9vw !important;
 }
 .battle-view-mode .enemy-board-section {
     display: flex;
@@ -393,6 +394,7 @@ body {
     z-index: 85;
     flex: 1;
     margin-bottom: 1vh;
+    margin-left: 9vw !important;
 }
 
 .my-board-section {
@@ -404,6 +406,7 @@ body {
     display: flex;
     flex-direction: column;
     flex: 0 0 auto;
+    margin-left: 9vw !important;
 }
 
 /* ★ 所有棋盘统一：固定列宽 21.5vw，间隙相同，宽高比 27/34 */
