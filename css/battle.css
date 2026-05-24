@@ -264,7 +264,7 @@ body {
     width: 23.6vw;
     height: 29.1vw;
     flex-shrink: 0;
-    left: 9.5vw !important;
+    left: 9vw !important;
     align-self: center;
 }
 
@@ -375,7 +375,7 @@ body {
 
 .battle-view-mode .board-area {
     top: 13vh;
-    left: 9.5vw;
+    left: 9vw;
     height: 66vh;
     justify-content: space-between;
 }
