@@ -367,7 +367,7 @@ body {
     flex-direction: column;
     z-index: 85;
     top: 48.5vh;
-    left: 9vw;
+    left: 9vw !important;
     width: 82vw;
     height: 26vh;
     justify-content: flex-start;
@@ -375,7 +375,7 @@ body {
 
 .battle-view-mode .board-area {
     top: 13vh;
-    left: 9vw;
+    left: 9vw !important;
     height: 66vh;
     justify-content: space-between;
 }
@@ -411,7 +411,7 @@ body {
 .battle-view-mode .my-board-section .board,
 .battle-view-mode .enemy-board-section .board {
     display: grid;
-    grid-template-columns: 21.4vw 21.4vw 21.4vw;
+    grid-template-columns: 21.8vw 21.8vw 21.8vw;
     grid-template-rows: repeat(2, 1fr);
     row-gap: 3.4vw;
     column-gap: 3vw;
