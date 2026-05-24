@@ -101,9 +101,9 @@ body {
 .players-status-bar {
     position: fixed;
     top: 0.2vh;
-    left: 0vw;
+    left: 0.2vw;
     z-index: 99;
-    width: 10.2vw;
+    width: 10vw;
     background: rgba(10, 18, 30, 0);
     backdrop-filter: blur(8px);
     border-radius: 0;
@@ -114,7 +114,7 @@ body {
     overflow-y: auto;
 }
 .battle-view-mode .players-status-bar {
-    width: 10.2vw;
+    width: 10vw;
     left: 0vw;
 }
 
