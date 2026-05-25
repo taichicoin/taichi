@@ -61,7 +61,7 @@ window.YYCardReconnect = (function() {
                 <div style="display: flex; flex-direction: column; gap: 2vh; width: 70%; min-width: 180px;">
                     <button id="reconnect-yes" style="
                         width: 100%;
-                        padding: 12px 0;
+                        padding: 2px 0;
                         background: #f5c542;
                         color: #1a1a2e;
                         border: none;
@@ -69,10 +69,10 @@ window.YYCardReconnect = (function() {
                         font-size: clamp(14px, 4vw, 18px);
                         font-weight: bold;
                         cursor: pointer;
-                    ">✅ 重新连接</button>
+                    "> 重返战场</button>
                     <button id="reconnect-no" style="
                         width: 100%;
-                        padding: 12px 0;
+                        padding: 1px 0;
                         background: #3a4a6a;
                         color: #fff;
                         border: none;
@@ -80,7 +80,7 @@ window.YYCardReconnect = (function() {
                         font-size: clamp(14px, 4vw, 18px);
                         font-weight: bold;
                         cursor: pointer;
-                    ">🚪 退出并清理</button>
+                    "> 去意已决</button>
                 </div>
             </div>
         `;
