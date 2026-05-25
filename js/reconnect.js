@@ -25,8 +25,8 @@ window.YYCardReconnect = (function() {
         const popup = document.createElement('div');
         popup.style.cssText = `
             position: fixed;
-            top: 8%;
-            bottom: 8%;
+            top: 18%;
+            bottom: 18%;
             left: 6%;
             right: 6%;
             background: url('/assets/recobg.png') no-repeat center center;
