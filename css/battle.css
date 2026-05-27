@@ -527,7 +527,7 @@ body {
 .card {
     position: relative;
     background: #141a2a;
-    border: 2px solid #3a4a6a;
+    border: 3px solid #3a4a6a;
     border-radius: 1.5vmin;
     padding: 0;
     overflow: visible;
