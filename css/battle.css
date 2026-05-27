@@ -804,3 +804,38 @@ body:has(#battle-view[style*="display: block"]) #app {
     opacity: 0.5;
     cursor: not-allowed;
 }
+/* 战斗阶段：显示金币/等级栏，隐藏商店卡片和按钮 */
+.battle-view-mode .shop-area {
+    display: block !important;
+    height: auto;                /* 高度由内容撑开 */
+    background: transparent;
+    backdrop-filter: none;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    pointer-events: none;        /* 不让容器阻挡拖拽 */
+}
+
+.battle-view-mode .shop-cards,
+.battle-view-mode .shop-bottom-bar,
+.battle-view-mode .shop-actions,
+.battle-view-mode .prepare-timer-btn {
+    display: none !important;   /* 只隐藏卡牌、按钮、倒计时 */
+}
+
+.battle-view-mode .shop-info {
+    position: fixed;             /* 改为固定定位，方便控制位置 */
+    top: 5.5vh;                    /* 与顶部信息栏对齐，可自行调 */
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5vw;
+    font-weight: bold;
+    font-size: clamp(0.8rem, 2vw, 1.2rem);
+    color: #f5d76e;
+    z-index: 110;                /* 高于棋盘和进度条 */
+    pointer-events: none;        /* 不阻挡操作 */
+    white-space: nowrap;
+}
