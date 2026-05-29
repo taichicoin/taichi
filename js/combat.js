@@ -22,7 +22,7 @@ window.YYCardCombat = (function() {
         const header = document.createElement('div');
         header.style.cssText = 'display:flex; justify-content:space-between; align-items:center; gap:8px;';
         const title = document.createElement('span');
-        title.textContent = '🐵 动画调试';
+        title.textContent = '👀 动画调试';
         title.style.cssText = 'font-weight:bold; color:#ff0; text-shadow: 0 0 3px #000;';
         header.appendChild(title);
         const btnGroup = document.createElement('div');
@@ -211,7 +211,7 @@ window.YYCardCombat = (function() {
 
             if (totalAtkGain > 0 || totalHpGain > 0) {
                 const text = `+${totalAtkGain}/+${totalHpGain}`;
-                floatingText(el, `⬆️ ${text}`, '#7bffb1', 500);
+                floatingText(el, ` ${text}`, '#7bffb1', 500);
             }
             // 立即返回，让调用方控制并发
             resolve();
@@ -536,7 +536,7 @@ window.YYCardCombat = (function() {
                         const totalHpGain = (step.hpGain || 0) + (step.tempHpGain || 0);
                         const shieldGain = step.tempShieldGain || 0;
                         updateCardStats(el, totalAtkGain, totalHpGain, shieldGain);
-                        const text = totalAtkGain || totalHpGain ? `⬆️ +${totalAtkGain}/+${totalHpGain}` : (shieldGain ? `🛡️ +${shieldGain}` : '');
+                        const text = totalAtkGain || totalHpGain ? ` +${totalAtkGain}/+${totalHpGain}` : (shieldGain ? `🛡️ +${shieldGain}` : '');
                         if (text) floatingText(el, text, '#7bffb1', 500);
                     }
                 });
