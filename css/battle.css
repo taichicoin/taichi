@@ -470,7 +470,7 @@ body {
     position: fixed;
     bottom: 0;
     left: 0.1vw;
-    width: 98vw;
+    width: 100vw;
     z-index: 85;
     height: 15.4vh;
     overflow-x: auto;
@@ -525,7 +525,7 @@ body {
 .card {
     position: relative;
     background: #141a2a;
-    border: 2px solid #3a4a6a;   /* 边框宽度可调，1px更细，3px更粗 */
+    border: 3px solid #3a4a6a;   /* 边框宽度可调，1px更细，3px更粗 */
     border-radius: 1.5vmin;
     padding: 0;
     overflow: visible;
@@ -566,14 +566,14 @@ body {
 
 .card-stats {
     position: absolute;
-    bottom: 1vh; left: 0; right: 0;
+    bottom: 0.1vh; left: 0; right: 0;
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    padding: 0 2vw;
+    padding: 0 0.1vw;
     z-index: 2;
     color: white;
-    text-shadow: 0 0 4px black, 0 0 2px black;
+    text-shadow: 0 0 1px black, 0 0 1px black;
     font-size: clamp(0.8rem, 2vw, 1.1rem);
     font-weight: bold;
     pointer-events: none;
@@ -603,7 +603,7 @@ body {
     top: 0.5vh; left: 1vw;
     z-index: 2;
     color: #f5d76e;
-    font-size: clamp(0.8rem, 2.5vw, 1.2rem);
+    font-size: clamp(0.8rem, 2.8vw, 1.2rem);
     text-shadow: 0 0 4px black;
 }
 .card.selected {
