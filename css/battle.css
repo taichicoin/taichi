@@ -525,7 +525,7 @@ body {
 .card {
     position: relative;
     background: #141a2a;
-    border: 3px solid #3a4a6a;   /* 边框宽度可调，1px更细，3px更粗 */
+    border: 4px solid #3a4a6a;   /* 边框宽度可调，1px更细，3px更粗 */
     border-radius: 1.5vmin;
     padding: 0;
     overflow: visible;
