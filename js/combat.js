@@ -211,7 +211,7 @@ window.YYCardCombat = (function() {
 
             if (totalAtkGain > 0 || totalHpGain > 0) {
                 const text = `+${totalAtkGain}/+${totalHpGain}`;
-                floatingText(el, `⬆️ ${text}`, '#7bffb1', 1200);
+                floatingText(el, ` ${text}`, '#7bffb1', 1200);
             }
             setTimeout(resolve, 300);
         });
