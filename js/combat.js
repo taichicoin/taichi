@@ -189,7 +189,7 @@ window.YYCardCombat = (function() {
                     shieldEl.className = 'card-shield';
                     shieldEl.style.cssText = `
                         position: absolute; top: -0.5vh; right: -1vw;
-                        width: 5vw; height: 5vw; border-radius: 50%;
+                        width: 5vw; height: 5vw; border-radius: 20%;
                         background: transparent; border: 2px solid #ff8800;
                         box-shadow: 0 0 1vh #ff8800;
                         display: flex; align-items: center; justify-content: center;
@@ -209,7 +209,7 @@ window.YYCardCombat = (function() {
             }
 
             if (totalAtkGain > 0 || totalHpGain > 0) {
-                const text = `+${totalAtkGain}/+${totalHpGain}`;
+                const text = `+${totalAtkGain}+${totalHpGain}`;
                 floatingText(el, ` ${text}`, '#7bffb1', 1200);
             }
             setTimeout(resolve, 300);
