@@ -319,6 +319,7 @@ window.YYCardShop = (function() {
             if (isValidCard(card)) {
                 const el = createCardElement(card, 'hand');
                 el.setAttribute('data-hand-index', i);
+                el.setAttribute('data-instance-id', c.instanceId || '');
                 el.setAttribute('data-card-type', 'hand');
                 // ★ 保存 instanceId 到 DOM，供 consumable.js 使用
                 el.setAttribute('data-instance-id', card.instanceId || '');
