@@ -498,6 +498,7 @@ window.YYCardShop = (function() {
                 const el = createCardElement(c, isSelf ? 'board' : 'enemy', isSelf);
                 if (isSelf) {
                     el.setAttribute('data-board-index', i);
+                    el.setAttribute('data-instance-id', c.instanceId || '');
                     el.setAttribute('data-card-type', 'board');
                     el.addEventListener('pointerdown', (e) => onDragStart(e, 'board', c, i, el));
                 } else {
