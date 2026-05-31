@@ -30,16 +30,16 @@ window.YYCardBattle = (function() {
     let battleAnimationLock = false;
 
     const GLOBAL_USER_ID = '00000000-0000-0000-0000-000000000000';
-    const BUFFER_DURATION = 3;
-    const MAX_INCREASE_ROUND = 18;
+    const BUFFER_DURATION = 4;
+    const MAX_INCREASE_ROUND = 20;
 
     function getPrepareDuration(round) {
         const effectiveRound = Math.min(round, MAX_INCREASE_ROUND);
-        return 27 + (effectiveRound - 1) * 8;
+        return 27 + (effectiveRound - 1) * 7;
     }
     function getBattleDuration(round) {
         const effectiveRound = Math.min(round, MAX_INCREASE_ROUND);
-        return 30 + (effectiveRound - 1) * 6;
+        return 30 + (effectiveRound - 1) * 7;
     }
 
     const GSETTLEMENT_URL = 'https://iogmpkwmkqsmmdkzggtk.supabase.co/functions/v1/gsettlement';
