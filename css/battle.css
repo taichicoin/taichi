@@ -253,11 +253,11 @@ body {
     align-items: center;
     overflow-x: auto;
     overflow-y: visible;
-    padding: 0 0 5vh 0;
+    padding: 0 0 1vh 0;
     min-height: 0;
     height: auto;
     z-index: 5;
-    margin-top: 11.5vh;
+    margin-top: 12.5vh;
 }
 
 .shop-cards .card {
@@ -414,7 +414,7 @@ body {
 .battle-view-mode .my-board-section .board,
 .battle-view-mode .enemy-board-section .board {
     display: grid;
-    grid-template-columns: 21.8vw 21.8vw 21.8vw;
+    grid-template-columns: 22vw 22vw 22vw;
     grid-template-rows: repeat(2, 1fr);
     row-gap: 3.4vw;
     column-gap: 3vw;
