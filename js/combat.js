@@ -55,7 +55,7 @@ window.YYCardCombat = (function() {
                 loader.load(modelUrl, resolve, undefined, reject);
             });
             _swordGLB = gltf.scene;
-            _swordGLB.scale.set(0.3, 0.3, 0.3);    // 可调整大小
+            _swordGLB.scale.set(0.05, 0.05, 0.05);    // 可调整大小
             _swordGLB.rotation.set(0, 0, 0);        // 朝向待定，运行时可能需要微调
 
             _3DReady = true;
