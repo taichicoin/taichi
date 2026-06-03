@@ -90,7 +90,7 @@ window.YYCardCombat = (function() {
 
             weapon.position.copy(start);
             weapon.lookAt(end);
-weapon.rotateX(Math.PI / 2);   // ← 加这行，让剑尖指向飞行方向
+            weapon.rotateZ(Math.PI / 2);   // ★ 让剑身宽面朝向屏幕
 
             _scene.add(weapon);
 
