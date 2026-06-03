@@ -55,7 +55,7 @@ window.YYCardCombat = (function() {
                 loader.load(modelUrl, resolve, undefined, reject);
             });
             _swordGLB = gltf.scene;
-            _swordGLB.scale.set(0.01, 0.01, 0.01);    // 可调整大小
+            _swordGLB.scale.set(0.02, 0.02, 0.02);    // 可调整大小
             _swordGLB.rotation.set(0, 0, 0);        // 朝向待定，运行时可能需要微调
 
             _3DReady = true;
@@ -89,12 +89,12 @@ window.YYCardCombat = (function() {
             const end = domToWorld(defEl);
 
             weapon.position.copy(start);
-            weapon.lookAt(end);    // 武器朝向目标
-            // 若模型方向歪斜，可在此添加旋转修正，例如： weapon.rotateX(Math.PI/2);
+            weapon.lookAt(end);
+weapon.rotateX(Math.PI / 2);   // ← 加这行，让剑尖指向飞行方向
 
             _scene.add(weapon);
 
-            const duration = 400;   // 飞行时长（毫秒）
+            const duration = 500;   // 飞行时长（毫秒）
             const startTime = performance.now();
 
             function fly(now) {
