@@ -31,13 +31,13 @@ body {
     height: 100vh !important;
     z-index: 1000;
     overflow: hidden;
-    /* 备用背景：深蓝→藏青渐变（哑光金属质感） */
-    background: linear-gradient(145deg, #14253d 0%, #0a1220 100%);
-    /* 主背景图片（优先显示） */
-    background-image: url("/assets/battlebg.png");
-    background-size: 100% 100%;
-    background-position: center;
-    background-repeat: no-repeat;
+    /* 多背景：先图片，后渐变（图片失效时渐变生效） */
+    background-image: url("/assets/battlebg.png"), linear-gradient(145deg, #14253d 0%, #0a1220 100%);
+    background-size: 100% 100%, cover;
+    background-position: center, center;
+    background-repeat: no-repeat, no-repeat;
+    /* 后备纯色（极少情况） */
+    background-color: #0a1220;
 }
 
 /* ==================== 顶部信息区 ==================== */
