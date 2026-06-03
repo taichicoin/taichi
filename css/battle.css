@@ -31,14 +31,15 @@ body {
     height: 100vh !important;
     z-index: 1000;
     overflow: hidden;
-    /* 多背景：先图片，后渐变（图片失效时渐变生效） */
-    background-image: url("/assets/battlebg.png"), linear-gradient(145deg, #14253d 0%, #0a1220 100%);
-    background-size: 100% 100%, cover;
+    /* 上层背景图 + 下层复刻原图蓝调渐变兜底 */
+    background-image: url("/assets/battlebg.png"), linear-gradient(to bottom, #556888 0%, #6A7FA3 50%, #4E6080 100%);
+    background-size: 100% 100%, 100% 100%;
     background-position: center, center;
     background-repeat: no-repeat, no-repeat;
-    /* 后备纯色（极少情况） */
-    background-color: #0a1220;
+    /* 兜底主色：原图中间灰雾靛蓝 */
+    background-color: #627697;
 }
+
 
 /* ==================== 顶部信息区 ==================== */
 .top-center-info {
