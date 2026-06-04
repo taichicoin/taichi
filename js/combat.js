@@ -88,7 +88,7 @@ window.YYCardCombat = (function() {
         // 构建旋转矩阵：局部X = right, 局部Y = tip, 局部Z = face
         const rotMat = new THREE.Matrix4().makeBasis(rightAxis, tipAxis, faceAxis);
         weapon.quaternion.setFromRotationMatrix(rotMat);
-        weapon.rotateOnWorldAxis(new THREE.Vector3(0, 0, 1), -0.5);
+        weapon.rotateOnWorldAxis(new THREE.Vector3(0, 0, 1), -2);
 
         _scene.add(weapon);
         return weapon;
