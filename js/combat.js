@@ -108,7 +108,7 @@ window.YYCardCombat = (function() {
             const rotMat = new THREE.Matrix4().makeBasis(rightDir, flyDir, camDir);
             weapon.quaternion.setFromRotationMatrix(rotMat);
 
-            const duration = 400;
+            const duration = 300;
             const startTime = performance.now();
             let done = false;
 
