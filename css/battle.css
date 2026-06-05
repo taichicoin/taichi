@@ -117,7 +117,6 @@ body {
     left: 0.3vw;
     z-index: 99;
     width: 9.8vw;
-    backdrop-filter: blur(8px);
     border-radius: 0;
     padding: 0.2vh 0.1vw;
     border: 1px solid rgba(255, 215, 0, 0);
@@ -233,7 +232,6 @@ body {
     flex-direction: column;
     gap: 1vh;
     overflow: visible;
-    backdrop-filter: blur(1px);
     border-radius: 3vmin;
     padding: 1vh 2vw;
 }
