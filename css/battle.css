@@ -313,8 +313,8 @@ body {
 }
 
 .shop-actions .btn {
-    padding: 0.7vh 4vw;
-    min-width: 15vw; 
+    padding: 0.6vh 4vw;
+    min-width: 18vw; 
     white-space: nowrap; 
     margin: 0;
     font-size: clamp(0.6rem, 1.6vw, 0.9rem);
