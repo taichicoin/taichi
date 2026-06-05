@@ -14,7 +14,7 @@ window.YYCardSounds = (function() {
     function preload() {
         Object.entries(SOUND_FILES).forEach(([key, url]) => {
             const audio = new Audio(url);
-            audio.volume = 0.8;
+            audio.volume = 1;
             audio.preload = 'auto';
             cache[key] = audio;
         });
