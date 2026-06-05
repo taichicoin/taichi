@@ -298,13 +298,13 @@ body {
 .shop-actions {
     display: flex;
     flex-direction: row-reverse;
-    gap: 3vw;
+    gap: 7vw;
     margin: 0;
     flex: none;
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    bottom: 3.3vh;
+    bottom: 3.4vh;
     z-index: 10;
     background: transparent;
     border-radius: 0;
