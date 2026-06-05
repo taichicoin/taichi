@@ -50,7 +50,7 @@ window.YYCardCombat = (function() {
                 loader.load(modelUrl, resolve, undefined, reject);
             });
             _swordGLB = gltf.scene;
-            _swordGLB.scale.set(0.01, 0.01, 0.01);
+            _swordGLB.scale.set(0.1, 0.1, 0.1);
 
             _3DReady = true;
             debugLog('⚔️ 3D 武器系统就绪');
