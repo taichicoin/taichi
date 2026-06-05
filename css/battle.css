@@ -27,6 +27,7 @@ body {
 }
 #battle-view{
     background:
+        url("/assets/battlebg.png");
         radial-gradient(
             ellipse at center,
             rgba(255,255,255,0.18) 0%,
@@ -41,7 +42,7 @@ body {
             rgba(72,90,121,0.95)
         ),
 
-        url("/assets/battlebg.png");
+     
 
     background-size: cover;
     background-position: center;
