@@ -58,7 +58,7 @@ window.YYCardCombat = (function() {
             const box = new THREE.Box3().setFromObject(_swordGLB);
             const size = new THREE.Vector3();
             box.getSize(size);
-            const targetHeight = 0.1;   // 你可以在 0.1 ~ 0.5 之间调整
+            const targetHeight = 0.04;   // 你可以在 0.1 ~ 0.5 之间调整
             const scaleFactor = targetHeight / (size.y || 1);
             _swordGLB.scale.set(scaleFactor, scaleFactor, scaleFactor);
 
