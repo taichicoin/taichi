@@ -11,7 +11,7 @@ window.YYCardCombat = (function() {
     let _scene, _camera, _renderer;
 
     // ★ 剑尖方向补偿角度（弧度），绕世界Z轴旋转，正值顺时针，负值逆时针
-    const SWORD_Z_OFFSET = 1.9;   // 根据实际效果调整
+    const SWORD_Z_OFFSET = 1.2;   // 根据实际效果调整
 
     async function init3D() {
         if (_3DReady) return;
