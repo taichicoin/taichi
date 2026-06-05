@@ -298,7 +298,7 @@ body {
 .shop-actions {
     display: flex;
     flex-direction: row-reverse;
-    gap: 7vw;
+    gap: 14vw;
     margin: 0;
     flex: none;
     position: absolute;
