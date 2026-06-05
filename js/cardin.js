@@ -150,7 +150,7 @@ window.YYCardInspector = (function() {
 
             // 装备区域 HTML
             const equipmentHtml = `
-                <div style="font-weight:bold; margin-bottom:4px;">🛡️ 装备</div>
+                <div style="font-weight:bold; margin-bottom:4px;"> 装备</div>
                 ${renderSlot('weapon', weapon, '武器')}
                 ${renderSlot('item1', item1, '道具①')}
                 ${renderSlot('item2', item2, '道具②')}
@@ -182,8 +182,8 @@ window.YYCardInspector = (function() {
                     </div>
                 </div>
                 <div class="inspect-stats">
-                    <span>⚔️ 攻击 ${atk}</span>
-                    <span>🛡️ 生命 ${hp}</span>
+                    <span> 攻击 ${atk}</span>
+                    <span> 生命 ${hp}</span>
                     ${!isOwn ? '<span style="color:#ffd966;">👁️ 敌方</span>' : ''}
                 </div>
                 ${skillInfo ? `
