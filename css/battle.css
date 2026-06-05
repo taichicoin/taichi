@@ -121,7 +121,7 @@ body {
     padding: 0vh 0.1vw;
     border: 1px solid rgba(255, 215, 0, 0);
     box-shadow: 0 4px 10px rgba(0,0,0,0);
-    height: 43vh;
+    height: 42vh;
     overflow-y: auto;
 }
 .battle-view-mode .players-status-bar {
@@ -298,13 +298,13 @@ body {
 .shop-actions {
     display: flex;
     flex-direction: row-reverse;
-    gap: 17vw;
+    gap: 15vw;
     margin: 0;
     flex: none;
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    bottom: 3.6vh;
+    bottom: 3.9vh;
     z-index: 10;
     background: transparent;
     border-radius: 0;
