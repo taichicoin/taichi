@@ -11,7 +11,7 @@ window.YYCardCombat = (function() {
     let _scene, _camera, _renderer;
 
     // ★ 剑尖方向补偿角度（弧度），绕世界Z轴旋转，正值顺时针，负值逆时针
-    const SWORD_Z_OFFSET = 1.9;   // 根据实际效果调整
+    const SWORD_Z_OFFSET = -1.9;   // 根据实际效果调整
 
     async function init3D() {
         if (_3DReady) return;
@@ -58,7 +58,7 @@ window.YYCardCombat = (function() {
             const box = new THREE.Box3().setFromObject(_swordGLB);
             const size = new THREE.Vector3();
             box.getSize(size);
-            const targetHeight = 0.04;   // 你可以在 0.1 ~ 0.5 之间调整
+            const targetHeight = 0.03;   // 你可以在 0.1 ~ 0.5 之间调整
             const scaleFactor = targetHeight / (size.y || 1);
             _swordGLB.scale.set(scaleFactor, scaleFactor, scaleFactor);
 
