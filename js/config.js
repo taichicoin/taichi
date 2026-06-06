@@ -2,7 +2,7 @@
 window.YYCardConfig = {
   // ==================== 核心项目配置 ====================
   SUPABASE_URL: 'https://iogmpkwmkqsmmdkzggtk.supabase.co',
-  SUPABASE_ANON_KEY: 'sb_publishable_lQfsnLy-SiTNI6PQ-67f0A_fs1vFTLk',
+  SUPABASE_ANON_KEY: 'sb_publishable_1bva7rUXiEuVALlbklyW9w_ZqqCLfvQ',
   BASE_PATH: '/ycardy',
   LOGIN_PAGE_URL: 'https://taichicoin.xyz/ycardy/signup',
   DEFAULT_AVATAR: '/assets/default-avatar.png',
