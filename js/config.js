@@ -1,7 +1,7 @@
 // ==================== YY Card 全局配置总纲（0-5索引版）====================
 window.YYCardConfig = {
   // ==================== 核心项目配置 ====================
-  SUPABASE_URL: 'https://iogmpkwmkqsmmdkzggtk.supabase.co',
+  SUPABASE_URL: 'https://kvflbfdqyehtlfmigaxa.supabase.co',
   SUPABASE_ANON_KEY: 'sb_publishable_1bva7rUXiEuVALlbklyW9w_ZqqCLfvQ',
   BASE_PATH: '/ycardy',
   LOGIN_PAGE_URL: 'https://taichicoin.xyz/ycardy/signup',
