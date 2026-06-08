@@ -64,8 +64,6 @@ window.YYCardBattle = (function() {
         return 30 + (effectiveRound - 1) * 7;
     }
 
-    const GSETTLEMENT_URL = 'https://kvflbfdqyehtlfmigaxa.supabase.co/functions/v1/gsettlement';
-    const PSETTLEMENT_URL = 'https://kvflbfdqyehtlfmigaxa.supabase.co/functions/v1/psettlement';
     const SETTLE_BATTLE_URL = 'https://kvflbfdqyehtlfmigaxa.supabase.co/functions/v1/settle-battle';
 
     function resetRoundFlags(startSec) {
