@@ -213,7 +213,7 @@
     "base_atk": 16,
     "base_hp": 14,
     "image": "/assets/card/shun.png",
-    "skill": "{\"skillName\":\"孝感动天\",\"skill_describe\":\"每当友方触发“如有神助”技能时，自身永久+3+4（+6/+8）\"}"
+    "skill": "{\"skillName\":\"孝感动天\",\"skill_describe\":\"如有神助，获得自身攻击力100%的生命值（200%）\"}"
   },
   {
     "card_id": "char_sudaji",
@@ -297,7 +297,7 @@
     "base_atk": 5,
     "base_hp": 8,
     "image": "/assets/card/yao.png",
-    "skill": "{\"skillName\":\"尧天舜日\",\"skill_describe\":\"回合开始时，自身生命值增加，数值等于自身攻击力的50%（一星100%）\"}"
+    "skill": "{\"skillName\":\"尧天舜日\",\"skill_describe\":\"友方如有神助触发是自身永久+4+4（+8+8）\"}"
   },
   {
     "card_id": "char_yinglong",
