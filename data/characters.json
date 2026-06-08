@@ -33,7 +33,7 @@
     "base_atk": 13,
     "base_hp": 15,
     "image": "/assets/card/bifang.png",
-    "skill": "{\"skillName\":\"衔火授法\",\"skill_describe\":\"回合开始时，获得1张随机消耗卡（一星2张）\"}"
+    "skill": "{\"skillName\":\"衔火授法\",\"skill_describe\":\"悟道，获得1张消耗卡（2张）\"}"
   },
   {
     "card_id": "char_guanyu",
@@ -69,7 +69,7 @@
     "base_atk": 28,
     "base_hp": 22,
     "image": "/assets/card/huangdi.png",
-    "skill": "{\"skillName\":\"人文初祖\",\"skill_describe\":\"所有友方的“如有神助”技能触发次数+1（一星+2）\"}"
+    "skill": "{\"skillName\":\"人文初祖\",\"skill_describe\":\"友方的“如有神助”触发次数+2（+3）\"}"
   },
   {
     "card_id": "char_jiangziya",
@@ -141,7 +141,7 @@
     "base_atk": 14,
     "base_hp": 16,
     "image": "/assets/card/ninetailedfox.png",
-    "skill": "{\"skillName\":\"如有神助\",\"skill_describe\":\"如有神助，触发同排友方的悟道效果1次（2次）\"}"
+    "skill": "{\"skillName\":\"如有神助\",\"skill_describe\":\"触发同排友方的悟道效果1次（2次）\"}"
   },
   {
     "card_id": "char_nvwa",
@@ -160,7 +160,7 @@
     "name": "盘古",
     "star": 0,
     "type": "character",
-    "faction": "圣王遗泽",
+    "faction": "如有神助",
     "rarity": "Legendary",
     "base_atk": 30,
     "base_hp": 28,
@@ -177,7 +177,7 @@
     "base_atk": 28,
     "base_hp": 22,
     "image": "/assets/card/pixiu.png",
-    "skill": "{\"skillName\":\"吞噬\",\"skill_describe\":\"攻击时移除目标，每局触发1次（2次） \"}"
+    "skill": "{\"skillName\":\"吞噬\",\"skill_describe\":\"攻击前移除目标，每局触发1次（2次） \"}"
   },
   {
     "card_id": "char_qiongqi",
@@ -208,7 +208,7 @@
     "name": "舜",
     "star": 0,
     "type": "character",
-    "faction": "圣王遗泽",
+    "faction": "如有神助",
     "rarity": "Epic",
     "base_atk": 16,
     "base_hp": 14,
@@ -292,7 +292,7 @@
     "name": "尧",
     "star": 0,
     "type": "character",
-    "faction": "圣王遗泽",
+    "faction": "如有神助",
     "rarity": "Common",
     "base_atk": 5,
     "base_hp": 8,
@@ -316,12 +316,12 @@
     "name": "禹",
     "star": 0,
     "type": "character",
-    "faction": "圣王遗泽",
+    "faction": "如有神助",
     "rarity": "Legendary",
     "base_atk": 25,
     "base_hp": 30,
     "image": "/assets/card/yu.png",
-    "skill": "{\"skillName\":\"如有神助\",\"skill_describe\":\"如有神助，随机一名友方获得禹50%的数值（100%）\"}"
+    "skill": "{\"skillName\":\"如有神助\",\"skill_describe\":\"随机一名友方获得禹50%的数值（100%）\"}"
   },
   {
     "card_id": "char_yuanshi",
