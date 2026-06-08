@@ -285,7 +285,7 @@
     "base_atk": 15,
     "base_hp": 20,
     "image": "/assets/card/yandi.png",
-    "skill": "{\"skillName\":\"神农尝百草\",\"skill_describe\":\"如有神助，随机2友方获得1层护盾（4人）\"}"
+    "skill": "{\"skillName\":\"神农尝百草\",\"skill_describe\":\"如有神助，使2名友方获得1护盾（4人）\"}"
   },
   {
     "card_id": "char_yao",
@@ -369,7 +369,7 @@
     "base_atk": 6,
     "base_hp": 8,
     "image": "/assets/card/zhugeliang.png",
-    "skill": "{\"skillName\":\"鞠躬尽瘁\",\"skill_describe\":\"每次攻击时，自身永久+1攻击/+1生命（一星+2/+2）\"}"
+    "skill": "{\"skillName\":\"鞠躬尽瘁\",\"skill_describe\":\"攻击时，自身永久+2+2（+3+3）\"}"
   },
   {
     "card_id": "char_pepe",
