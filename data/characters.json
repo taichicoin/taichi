@@ -9,7 +9,7 @@
     "base_atk": 10,
     "base_hp": 11,
     "image": "/assets/card/bailongma.png",
-    "skill": "{\"skillName\":\"如有神助\",\"skill_describe\":\"回合开始时，触发同列西游友方的击杀效果技能1次（一星2次）\"}"
+    "skill": "{\"skillName\":\"如有神助\",\"skill_describe\":\"触发同列另一名友方的击杀效果、技能1次（2次）\"}"
   },
   {
     "card_id": "char_baize",
@@ -21,7 +21,7 @@
     "base_atk": 24,
     "base_hp": 26,
     "image": "/assets/card/baize.png",
-    "skill": "{\"skillName\":\"惊雷\",\"skill_describe\":\"每当友方触发悟道效果时，自身永久+2攻击/+5生命（一星+4/+10）\"}"
+    "skill": "{\"skillName\":\"惊雷\",\"skill_describe\":\"友方悟道效果触发时，自身永久+2+5（+4/+10）\"}"
   },
   {
     "card_id": "char_bifang",
@@ -33,7 +33,7 @@
     "base_atk": 13,
     "base_hp": 15,
     "image": "/assets/card/bifang.png",
-    "skill": "{\"skillName\":\"衔火授法\",\"skill_describe\":\"回合开始时，获得1张随机神火符，品质与悟道层数相关（一星2张）\"}"
+    "skill": "{\"skillName\":\"衔火授法\",\"skill_describe\":\"回合开始时，获得1张随机消耗卡（一星2张）\"}"
   },
   {
     "card_id": "char_guanyu",
@@ -45,7 +45,7 @@
     "base_atk": 18,
     "base_hp": 16,
     "image": "/assets/card/guanyu.png",
-    "skill": "{\"skillName\":\"青龙偃月\",\"skill_describe\":\"攻击后，永久获得本次攻击时自身攻击力50%的生命值（一星100%）\"}"
+    "skill": "{\"skillName\":\"青龙偃月\",\"skill_describe\":\"攻击后，获得自身攻击力50%的生命值（100%）\"}"
   },
   {
     "card_id": "char_heihuadi",
@@ -57,19 +57,19 @@
     "base_atk": 30,
     "base_hp": 25,
     "image": "/assets/card/heihuadi.png",
-    "skill": "{\"skillName\":\"暗黑吞噬\",\"skill_describe\":\"没有黑化的感觉！\"}"
+    "skill": "{\"skillName\":\"暗黑吞噬\",\"skill_describe\":\"没有黑化的感觉！（就像没有黑化一样！）\"}"
   },
   {
     "card_id": "char_huangdi",
     "name": "黄帝",
     "star": 0,
     "type": "character",
-    "faction": "圣王遗泽",
+    "faction": "如有神助",
     "rarity": "Legendary",
     "base_atk": 28,
     "base_hp": 22,
     "image": "/assets/card/huangdi.png",
-    "skill": "{\"skillName\":\"人文初祖\",\"skill_describe\":\"在场时，所有友方的“如有神助”技能触发次数+1（一星+2）\"}"
+    "skill": "{\"skillName\":\"人文初祖\",\"skill_describe\":\"所有友方的“如有神助”技能触发次数+1（一星+2）\"}"
   },
   {
     "card_id": "char_jiangziya",
@@ -81,7 +81,7 @@
     "base_atk": 22,
     "base_hp": 25,
     "image": "/assets/card/jiangziya.png",
-    "skill": "{\"skillName\":\"封神\",\"skill_describe\":\"点将时，随机一名友方获得点将台中随机角色卡牌的100%的永久属性 \"}"
+    "skill": "{\"skillName\":\"封神\",\"skill_describe\":\"点将时，一名友方获得点将台中随机角色卡牌的100%的永久属性（200%） \"}"
   },
   {
     "card_id": "char_jingwei",
@@ -93,7 +93,7 @@
     "base_atk": 22,
     "base_hp": 28,
     "image": "/assets/card/jingwei.png",
-    "skill": "{\"skillName\":\"衔石填海\",\"skill_describe\":\"回合开始时，全体友方永久+(1+悟道层数)攻击力和生命值（首次1，后续递增）\"}"
+    "skill": "{\"skillName\":\"衔石填海\",\"skill_describe\":\"悟道，全体友方永久+1+1随自身悟道次数递增（2×，+1+1）\"}"
   },
   {
     "card_id": "char_liubei",
@@ -105,7 +105,7 @@
     "base_atk": 23,
     "base_hp": 27,
     "image": "/assets/card/liubei.png",
-    "skill": "{\"skillName\":\"乐不思蜀\",\"skill_describe\":\"自身无法攻击。友方攻击时，本次攻击额外获得刘备100%的攻击力（一星200%）\"}"
+    "skill": "{\"skillName\":\"乐不思蜀\",\"skill_describe\":\"自身无法攻击。友方攻击前，获得刘备100%的攻击力（200%）\"}"
   },
   {
     "card_id": "char_luoyu",
@@ -129,7 +129,7 @@
     "base_atk": 14,
     "base_hp": 18,
     "image": "/assets/card/nezha.png",
-    "skill": "{\"skillName\":\"三坛海会\",\"skill_describe\":\"使用消耗牌时，商店所有卡牌攻击力+1、生命+3（一星+2/+6）\"}"
+    "skill": "{\"skillName\":\"三坛海会\",\"skill_describe\":\"使用消耗卡时，点仙台所有卡牌攻击力+2+2（+4/+4）\"}"
   },
   {
     "card_id": "char_ninetailedfox",
@@ -141,7 +141,7 @@
     "base_atk": 14,
     "base_hp": 16,
     "image": "/assets/card/ninetailedfox.png",
-    "skill": "{\"skillName\":\"如有神助\",\"skill_describe\":\"回合开始时，触发同排友方的悟道效果1次（一星2次）\"}"
+    "skill": "{\"skillName\":\"如有神助\",\"skill_describe\":\"如有神助，触发同排友方的悟道效果1次（2次）\"}"
   },
   {
     "card_id": "char_nvwa",
@@ -153,7 +153,7 @@
     "base_atk": 24,
     "base_hp": 30,
     "image": "/assets/card/nvwa.png",
-    "skill": "{\"skillName\":\"抟土造人\",\"skill_describe\":\"攻击后，随机获得1张零星卡牌（一星2张）\"}"
+    "skill": "{\"skillName\":\"抟土造人\",\"skill_describe\":\"同排友方攻击后，获得1张角色牌（2张）\"}"
   },
   {
     "card_id": "char_pangu",
@@ -165,7 +165,7 @@
     "base_atk": 30,
     "base_hp": 28,
     "image": "/assets/card/pangu.png",
-    "skill": "{\"skillName\":\"开天辟地\",\"skill_describe\":\"攻击时，触发同排所有友方“如有神助”技能1次（一星2次）\"}"
+    "skill": "{\"skillName\":\"开天辟地\",\"skill_describe\":\"攻击前，触发同排友方“如有神助”1次（2次）\"}"
   },
   {
     "card_id": "char_pixiu",
@@ -177,7 +177,7 @@
     "base_atk": 28,
     "base_hp": 22,
     "image": "/assets/card/pixiu.png",
-    "skill": "{\"skillName\":\"吞噬\",\"skill_describe\":\"攻击时移除目标，每局触发1次 \"}"
+    "skill": "{\"skillName\":\"吞噬\",\"skill_describe\":\"攻击时移除目标，每局触发1次（2次） \"}"
   },
   {
     "card_id": "char_qiongqi",
@@ -201,7 +201,7 @@
     "base_atk": 15,
     "base_hp": 17,
     "image": "/assets/card/shawujing.png",
-    "skill": "{\"skillName\":\"慈悲为怀\",\"skill_describe\":\"攻击时，若唐僧在场，获得1张随机神火符，品质与全局斩妖除魔层数相关（一星2张）\"}"
+    "skill": "{\"skillName\":\"慈悲为怀\",\"skill_describe\":\"击杀后获得1张消耗卡（2张）\"}"
   },
   {
     "card_id": "char_shun",
@@ -213,7 +213,7 @@
     "base_atk": 16,
     "base_hp": 14,
     "image": "/assets/card/shun.png",
-    "skill": "{\"skillName\":\"孝感动天\",\"skill_describe\":\"每当友方触发“如有神助”技能时，自身永久+3攻击/+4生命（一星+6/+8）\"}"
+    "skill": "{\"skillName\":\"孝感动天\",\"skill_describe\":\"每当友方触发“如有神助”技能时，自身永久+3+4（+6/+8）\"}"
   },
   {
     "card_id": "char_sudaji",
@@ -225,7 +225,7 @@
     "base_atk": 20,
     "base_hp": 28,
     "image": "/assets/card/sudaji.png",
-    "skill": "{\"skillName\":\"狐媚惑主\",\"skill_describe\":\"回合开始时，随机吸收商店中一张卡牌100%的攻击力和生命值，加到自身（一星200%）\"}"
+    "skill": "{\"skillName\":\"狐媚惑主\",\"skill_describe\":\"悟道，吸收点仙台中随机一张卡牌100%的数值，加到自身（200%）\"}"
   },
   {
     "card_id": "char_sunshangxiang",
@@ -237,7 +237,7 @@
     "base_atk": 5,
     "base_hp": 9,
     "image": "/assets/card/sunshangxiang.png",
-    "skill": "{\"skillName\":\"弓腰姬\",\"skill_describe\":\"自身无法攻击。回合开始时，所有无法攻击的友方永久+1攻击/+2生命（一星+2/+4）\"}"
+    "skill": "{\"skillName\":\"弓腰姬\",\"skill_describe\":\"无法攻击。悟道，所有无法攻击的友方永久+1+2（+2/+4）\"}"
   },
   {
     "card_id": "char_sunwukong",
@@ -249,7 +249,7 @@
     "base_atk": 26,
     "base_hp": 24,
     "image": "/assets/card/sunwukong.png",
-    "skill": "{\"skillName\":\"齐天大圣\",\"skill_describe\":\"攻击时，若唐僧在场，随机一名友方永久获得攻击力和生命值，数值等于全局斩妖除魔层数×1（一星×2），触发1次（一星2次）\"}"
+    "skill": "{\"skillName\":\"齐天大圣\",\"skill_describe\":\"击杀，随机一名友方获+1+1（2×，1+1）随本局击杀次数递增\"}"
   },
   {
     "card_id": "char_taishang",
@@ -261,7 +261,7 @@
     "base_atk": 12,
     "base_hp": 15,
     "image": "/assets/card/taishang.png",
-    "skill": "{\"skillName\":\"八卦炼丹\",\"skill_describe\":\"回合开始时，商店卡牌永久获得攻击力+1×悟道层数、生命+2×悟道层数（一星翻倍）\"}"
+    "skill": "{\"skillName\":\"八卦炼丹\",\"skill_describe\":\"悟道，本局点仙台中角色牌永久+2+2（+3+3）\"}"
   },
   {
     "card_id": "char_tangseng",
@@ -273,7 +273,7 @@
     "base_atk": 20,
     "base_hp": 30,
     "image": "/assets/card/tangseng.png",
-    "skill": "{\"skillName\":\"佛法无边\",\"skill_describe\":\"西游友方攻击时触发其自身的击杀效果 \"}"
+    "skill": "{\"skillName\":\"佛法无边\",\"skill_describe\":\"所有友方攻击时，触发友方击杀效果1次（2次） \"}"
   },
   {
     "card_id": "char_yandi",
@@ -285,7 +285,7 @@
     "base_atk": 15,
     "base_hp": 20,
     "image": "/assets/card/yandi.png",
-    "skill": "{\"skillName\":\"神农尝百草\",\"skill_describe\":\"回合开始时，随机2名友方获得1层护盾（一星4名）\"}"
+    "skill": "{\"skillName\":\"神农尝百草\",\"skill_describe\":\"如有神助，随机2友方获得1层护盾（4人）\"}"
   },
   {
     "card_id": "char_yao",
@@ -309,7 +309,7 @@
     "base_atk": 6,
     "base_hp": 7,
     "image": "/assets/card/yinglong.png",
-    "skill": "{\"skillName\":\"兴云布雨\",\"skill_describe\":\"回合开始时，同排友方永久+(1+悟道层数)攻击力和生命值\"}"
+    "skill": "{\"skillName\":\"兴云布雨\",\"skill_describe\":\"悟道，同排友方永久+2+2(+4+4）\"}"
   },
   {
     "card_id": "char_yu",
@@ -321,7 +321,7 @@
     "base_atk": 25,
     "base_hp": 30,
     "image": "/assets/card/yu.png",
-    "skill": "{\"skillName\":\"如有神助\",\"skill_describe\":\"回合开始时，随机一名友方永久获得禹50%的攻击力和生命值（一星100%）\"}"
+    "skill": "{\"skillName\":\"如有神助\",\"skill_describe\":\"如有神助，随机一名友方获得禹50%的数值（100%）\"}"
   },
   {
     "card_id": "char_yuanshi",
@@ -333,7 +333,7 @@
     "base_atk": 4,
     "base_hp": 6,
     "image": "/assets/card/yuanshi.png",
-    "skill": "{\"skillName\":\"大道无形\",\"skill_describe\":\"在场时，商店中所有卡牌攻击力+3、生命+3（一星+6/+6）\"}"
+    "skill": "{\"skillName\":\"大道无形\",\"skill_describe\":\"点仙台中角色牌+4+4（+6/+6）\"}"
   },
   {
     "card_id": "char_zhangfei",
@@ -345,7 +345,7 @@
     "base_atk": 11,
     "base_hp": 13,
     "image": "/assets/card/zhangfei.png",
-    "skill": "{\"skillName\":\"万人敌\",\"skill_describe\":\"自身无法攻击。每当有友方攻击力增加时，自身永久+2生命（一星+4）\"}"
+    "skill": "{\"skillName\":\"万人敌\",\"skill_describe\":\"无法攻击。每当友方攻击力增加时，自身永久+2生命（一星+4）\"}"
   },
   {
     "card_id": "char_zhubajie",
@@ -357,7 +357,7 @@
     "base_atk": 7,
     "base_hp": 10,
     "image": "/assets/card/zhubajie.png",
-    "skill": "{\"skillName\":\"饕餮之躯\",\"skill_describe\":\"攻击时，若唐僧在场，自身永久+2攻击/+4生命（一星+4/+8）\"}"
+    "skill": "{\"skillName\":\"饕餮之躯\",\"skill_describe\":\"击杀，自身永久+2+4（+4/+8）\"}"
   },
   {
     "card_id": "char_zhugeliang",
@@ -525,7 +525,7 @@
     "base_atk": 14,
     "base_hp": 18,
     "image": "/assets/card/huatuo.png",
-    "skill": "{\"skillName\":\"济世回春\",\"skill_describe\":\"友方失去护盾时，全体友方永久+4攻击/+4生命（一星+8/+8）\"}"
+    "skill": "{\"skillName\":\"济世回春\",\"skill_describe\":\"友方失去每1个护盾，全体友方永久+4+4（+8/+8）\"}"
   },
   {
     "card_id": "char_caocao",
@@ -537,7 +537,7 @@
     "base_atk": 23,
     "base_hp": 27,
     "image": "/assets/card/caocao.png",
-    "skill": "{\"skillName\":\"枭雄遗令\",\"skill_describe\":\"遗言，对全体友方造成1点伤害，并使其获得一层临时护盾\"}"
+    "skill": "{\"skillName\":\"枭雄遗令\",\"skill_describe\":\"遗言，对全体友方造成1点伤害，并使其获得一层护盾\"}"
   },
   {
     "card_id": "char_xiadun",
