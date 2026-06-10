@@ -27,7 +27,7 @@ body {
 }
 #battle-view{
     background:
-        url("/assets/battlebg.png");
+        url("/assets/battlebg.png"),
         radial-gradient(
             ellipse at center,
             rgba(255,255,255,0.18) 0%,
