@@ -66,7 +66,7 @@ body {
     background: rgba(10, 15, 30, 0.85);
     padding: 0.6vh 2vw;
     border-radius: 2vmin;
-    backdrop-filter: blur(4px);
+    backdrop-filter: blur(0px);
 }
 
 .top-right-actions {
@@ -114,9 +114,9 @@ body {
 .players-status-bar {
     position: fixed;
     top: 0vh;
-    left: 0.4vw;
+    left: 0.8vw;
     z-index: 99;
-    width: 9.8vw;
+    width: 9.2vw;
     border-radius: 0;
     padding: 0vh 0.1vw;
     border: 1px solid rgba(255, 215, 0, 0);
@@ -125,8 +125,8 @@ body {
     overflow-y: auto;
 }
 .battle-view-mode .players-status-bar {
-    width: 9.8vw;
-    left: 0.3vw;
+    width: 9.2vw;
+    left: 0.8vw;
 }
 
 .player-status-list {
