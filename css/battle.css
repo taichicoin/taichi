@@ -829,9 +829,6 @@ body:has(#battle-view[style*="display: block"]) #app {
     100% { opacity: 0; transform: translate(-50%, -40px); }
 }
 
-.card { will-change: transform; }
-.card-slot .card { transition: transform 0.15s ease-out; }
-
 /* 卡牌查看弹窗样式（保留基础样式，弹窗由 JS 生成） */
 .card-inspect-popup .inspect-header { display:flex; align-items:center; gap:3vw; margin-bottom:2vh; }
 .card-inspect-popup .inspect-header img { width:12vw; height:12vw; border-radius:2vmin; }
