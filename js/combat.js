@@ -77,7 +77,7 @@ window.YYCardCombat = (function() {
                 const daggerBox = new THREE.Box3().setFromObject(_daggerGLB);
                 const daggerSize = new THREE.Vector3();
                 daggerBox.getSize(daggerSize);
-                const daggerTargetHeight = 0.02;
+                const daggerTargetHeight = 0.03;
                 const daggerScale = daggerTargetHeight / (daggerSize.y || 1);
                 _daggerGLB.scale.set(daggerScale, daggerScale, daggerScale);
                 debugLog('⚔️ 3D 武器系统就绪 (剑 + 匕首)');
@@ -770,7 +770,7 @@ window.YYCardCombat = (function() {
         }
 
         for (const { el } of elements) {
-            const text = `+${atkGain}/+${hpGain}`;
+            const text = `+${atkGain}+${hpGain}`;
             floatingText(el, ` ${text}`, '#7bffb1', 1200);
         }
 
