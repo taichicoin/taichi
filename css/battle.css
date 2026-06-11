@@ -918,3 +918,6 @@ body:has(#battle-view[style*="display: block"]) #app {
     pointer-events: none;
     white-space: nowrap;
 }
+.hand .card .card-frame {
+    overflow: hidden;
+}
