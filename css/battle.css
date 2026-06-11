@@ -645,8 +645,8 @@ body {
 .card-stats {
     position: absolute;
     bottom: 0.1vh;
-    left: 2%;
-    right: 2%;
+    left: 3%;
+    right: 3%;
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
