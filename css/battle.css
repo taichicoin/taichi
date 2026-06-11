@@ -529,6 +529,7 @@ body {
     height: 26vw;
     flex-shrink: 0;
     margin-top: 3vh;
+    background: #141a2a; 
 }
 
 /* ==================== 卡牌样式（圆角星级边框版） ==================== */
