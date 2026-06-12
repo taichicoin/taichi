@@ -239,15 +239,15 @@ body {
 
 .shop-info {
     position: absolute;
-    top: 1.5vh;
-    left: 5%;
+    top: 1.8vh;
+    left: 4%;
     transform: translateX(-50%);
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 5vw;
+    gap: 3vw;
     font-weight: bold;
-    font-size: clamp(1.2rem, 2.5vw, 1.4rem);
+    font-size: clamp(1rem, 2vw, 1rem);
     color: #f5d76e;
     z-index: 10;
     white-space: nowrap;
@@ -266,12 +266,12 @@ body {
     min-height: 0;
     height: auto;
     z-index: 5;
-    margin-top: 13vh;
+    margin-top: 13.5vh;
 }
 
 .shop-cards .card {
-    width: 25vw;
-    height: 30vw;
+    width: 24.8vw;
+    height: 29.7vw;
     flex-shrink: 0;
     left: 6vw !important;
     align-self: center;
