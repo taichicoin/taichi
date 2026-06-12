@@ -247,7 +247,7 @@ body {
     align-items: center;
     gap: 5vw;
     font-weight: bold;
-    font-size: clamp(0.8rem, 2vw, 1.2rem);
+    font-size: clamp(1.2rem, 2.5vw, 1.4rem);
     color: #f5d76e;
     z-index: 10;
     white-space: nowrap;
@@ -760,13 +760,13 @@ body:has(#battle-view[style*="display: block"]) #app {
     background: transparent !important;
     padding: 0;
     box-sizing: border-box;
-    margin-top: 4vh;
-    margin-bottom: 3vh;
+    margin-top: 2.5vh;
+    margin-bottom: 2.5vh;
 }
 
 #battle-progress-track {
-    width: 93%;
-    max-width: 93%;
+    width: 92%;
+    max-width: 92%;
     height: 0.8vh;
     background: rgba(255, 255, 255, 0.1);
     border-radius: 0.4vh;
@@ -838,15 +838,15 @@ body:has(#battle-view[style*="display: block"]) #app {
 
 .battle-view-mode .shop-info {
     position: fixed;
-    top: 5.5vh;
-    left: 50%;
+    top: 1.5vh;
+    left: 5%;
     transform: translateX(-50%);
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 6vw;
     font-weight: bold;
-    font-size: clamp(1rem, 2vw, 1.5rem);
+    font-size: clamp(1.2rem, 2.5vw, 1.4rem);
     color: #f5d76e;
     z-index: 110;
     pointer-events: none;
