@@ -377,7 +377,7 @@ body {
     display: flex;
     flex-direction: column;
     z-index: 85;
-    top: 48.5vh;
+    top: 49vh;
     left: 6vw !important;
     width: 82vw;
     height: 26vh;
@@ -397,6 +397,7 @@ body {
     padding: 0;
     display: none;
     flex-shrink: 0;
+    margin-top: 1.5vh;
     margin-left: 8.8vw !important;
 }
 .battle-view-mode .enemy-board-section {
