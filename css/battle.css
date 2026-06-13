@@ -224,7 +224,7 @@ body {
 .shop-area {
     position: fixed;
     top: 0;
-    left: 0.1vw;
+    left: 0vw;
     width: 100vw;
     height: 43.5vh;
     z-index: 90;
@@ -240,14 +240,14 @@ body {
 .shop-info {
     position: absolute;
     top: 1.8vh;
-    left: 4%;
+    left: 5%;
     transform: translateX(-50%);
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 3vw;
+    gap: 1vw;
     font-weight: bold;
-    font-size: clamp(1rem, 2vw, 1rem);
+    font-size: clamp(0.8rem, 2vw, 0.8rem);
     color: #f5d76e;
     z-index: 10;
     white-space: nowrap;
@@ -273,7 +273,7 @@ body {
     width: 24.8vw;
     height: 29.7vw;
     flex-shrink: 0;
-    left: 6vw !important;
+    left: 5.5vw !important;
     align-self: center;
 }
 
@@ -378,7 +378,7 @@ body {
     flex-direction: column;
     z-index: 85;
     top: 48.5vh;
-    left: 8.8vw !important;
+    left: 6.2vw !important;
     width: 82vw;
     height: 26vh;
     justify-content: flex-start;
@@ -386,7 +386,7 @@ body {
 
 .battle-view-mode .board-area {
     top: 13vh;
-    left: 8.8vw !important;
+    left: 6.2vw !important;
     height: 66vh;
     justify-content: space-between;
 }
