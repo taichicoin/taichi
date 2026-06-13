@@ -378,7 +378,7 @@ body {
     flex-direction: column;
     z-index: 85;
     top: 48.5vh;
-    left: 6.2vw !important;
+    left: 6vw !important;
     width: 82vw;
     height: 26vh;
     justify-content: flex-start;
@@ -387,7 +387,7 @@ body {
 .battle-view-mode .board-area {
     top: 13vh;
     left: 6.2vw !important;
-    height: 66vh;
+    height: 64vh;
     justify-content: space-between;
 }
 
@@ -404,7 +404,7 @@ body {
     flex-direction: column;
     z-index: 85;
     flex: 1;
-    margin-bottom: 1vh;
+    margin-bottom: 1.5vh;
     margin-left: 8.8vw !important;
 }
 
