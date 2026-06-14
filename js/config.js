@@ -32,14 +32,14 @@ window.YYCardConfig = {
     PREPARE: {
       ROUND1: 27,
       BASE: 27,
-      INCREMENT: 10
+      INCREMENT: 7
     },
     BATTLE: {
       ROUND1: 30,
       BASE: 30,
       INCREMENT: 5
     },
-    BUFFER: 3
+    BUFFER: 4
   },
 
   // ==================== 经济系统数值 ====================
@@ -164,6 +164,6 @@ window.YYCardConfig = {
 
   window.supabase = window.supabaseClient;
 
-  console.log('✅ config.js 加载完成 (0-5索引版)');
+  console.log('✅ ');
   console.log('📦 部署路径：', window.YYCardConfig.BASE_PATH);
 })();
