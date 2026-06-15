@@ -140,7 +140,7 @@
     "rarity": "Epic",
     "base_atk": 14,
     "base_hp": 16,
-    "image": "/assets/card/ninetailedfox.png",
+    "image": "/assets/card/jwf.png",
     "skill": "{\"skillName\":\"如有神助\",\"skill_describe\":\"触发同排友方的悟道效果1次（2次）\"}"
   },
   {
