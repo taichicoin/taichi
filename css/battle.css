@@ -265,7 +265,7 @@ body {
     padding: 0 0 10vh 0;
     min-height: 0;
     height: auto;
-    z-index: 5;
+    z-index: 11;
     margin-top: 13.5vh;
 }
 
@@ -343,10 +343,10 @@ body {
 .prepare-timer-btn {
     position: absolute;
     bottom: -4vh;
-    right: 9vw;
+    right: 9.5vw;
     z-index: 100;
-    width: 13vw;
-    height: 13vw;
+    width: 12.8vw;
+    height: 12.8vw;
     border-radius: 50%;
     background: radial-gradient(circle, #7a3a9a, #4a1a6a);
     border: 3px solid #b878d8;
