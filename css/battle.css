@@ -232,7 +232,7 @@ body {
     flex-direction: column;
     gap: 1vh;
     overflow: visible;
-    border-radius: 3vmin;
+    border-radius: 1vmin;
     padding: 1vh 2vw;
 }
 .battle-view-mode .shop-area { display: none !important; }
