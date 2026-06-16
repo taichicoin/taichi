@@ -7,6 +7,14 @@
     "name": "我的刀盾",
     "image": "/assets/card/daodun.png"
   },
+  "char_bnncat": {
+    "name": "bananacat",
+    "image": "/assets/card/bnncat.png"
+  },
+  "char_shib": {
+    "name": "shib",
+    "image": "/assets/card/shib.png"
+  },
   "char_jiangziya": {
     "name": "姜子牙",
     "image": "/assets/card/jiangziya.png"
