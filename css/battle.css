@@ -116,7 +116,7 @@ body {
     top: 4vh !important;
     left: 0.8vw;
     z-index: 99;
-    width: 9.2vw;
+    width: 9.1vw;
     border-radius: 0;
     padding: 0vh 0.1vw;
     border: 1px solid rgba(255, 215, 0, 0);
@@ -125,7 +125,7 @@ body {
     overflow-y: auto;
 }
 .battle-view-mode .players-status-bar {
-    width: 9.2vw;
+    width: 9.1vw;
     left: 0.8vw;
 }
 
@@ -298,13 +298,13 @@ body {
 .shop-actions {
     display: flex;
     flex-direction: row-reverse;
-    gap: 15vw;
+    gap: 11vw;
     margin: 0;
     flex: none;
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    bottom: 3.9vh;
+    bottom: 3.5vh;
     z-index: 10;
     background: transparent;
     border-radius: 0;
@@ -314,7 +314,7 @@ body {
 
 .shop-actions .btn {
     padding: 0.6vh 4vw;
-    min-width: 18vw; 
+    min-width: 17vw; 
     white-space: nowrap; 
     margin: 0;
     font-size: clamp(0.6rem, 1.6vw, 0.9rem);
@@ -347,7 +347,7 @@ body {
     z-index: 100;
     width: 12.8vw;
     height: 12.8vw;
-    border-radius: 50%;
+    border-radius: 48%;
     background: radial-gradient(circle, #7a3a9a, #4a1a6a);
     border: 3px solid #b878d8;
     display: flex;
