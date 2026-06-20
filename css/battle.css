@@ -484,7 +484,7 @@ body {
     left: 0.1vw;
     width: 100vw;
     z-index: 85;
-    height: 15.4vh;
+    height: 16vh;
     overflow-x: auto;
     overflow-y: hidden;
     display: block;
@@ -527,9 +527,9 @@ body {
 
 .hand .card {
     width: 23vw;
-    height: 26vw;
+    height: 26.5vw;
     flex-shrink: 0;
-    margin-top: 3vh;
+    margin-top: 2vh;
 }
 
 /* ==================== 卡牌样式 ==================== */
