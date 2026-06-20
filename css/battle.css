@@ -360,7 +360,7 @@ body {
     z-index: 100;
     width: 12.8vw;
     height: 12.8vw;
-    border-radius: 40%;
+    border-radius: 55%;
     background: radial-gradient(circle, rgba(192,192,192,0.2), rgba(80,80,80,0.3));
     border: 3px solid rgba(192,192,192,0.5);
     display: flex;
