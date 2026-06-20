@@ -87,14 +87,14 @@ body {
 /* ★ 改动：按钮改为固定定位，完全基于视口百分比 */
 .btn-primary {
     position: fixed;           /* 相对于视口定位 */
-    top: 55vh;                /* 垂直居中偏下（可调） */
+    top: 90vh;                /* 垂直居中偏下（可调） */
     left: 50vw;               /* 水平居中 */
     transform: translate(-50%, -50%);
     width: min(80vw, 400px);  /* 宽度视口自适应 */
     padding: 16px;
     font-size: clamp(1rem, 2.5vw, 1.2rem);
     border: none;
-    border-radius: 60px;
+    border-radius: 50px;
     font-weight: bold;
     cursor: pointer;
     z-index: 50;              /* 高于普通内容，低于模态框 */
