@@ -234,8 +234,21 @@ body {
     overflow: visible;
     border-radius: 3vmin;
     padding: 1vh 2vw;
+    /* ★ 银白色边框 + 半透明白色背景 */
+    border: 4px solid rgba(192, 192, 192, 0.6);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 25px rgba(192, 192, 192, 0.1);
 }
-.battle-view-mode .shop-area { display: none !important; }
+.battle-view-mode .shop-area {
+    display: block !important;
+    height: auto;
+    background: transparent;
+    backdrop-filter: none;
+    border: none !important;      /* ★ 去除边框 */
+    box-shadow: none !important;  /* ★ 去除阴影 */
+    padding: 0;
+    pointer-events: none;
+}
 
 .shop-info {
     position: absolute;
