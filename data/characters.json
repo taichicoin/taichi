@@ -108,6 +108,18 @@
     "skill": "{\"skillName\":\"乐不思蜀\",\"skill_describe\":\"自身无法攻击。友方攻击前，获得刘备100%的攻击力（200%）\"}"
   },
   {
+    "card_id": "char_lvbu",
+    "name": "吕布",
+    "star": 0,
+    "type": "character",
+    "faction": "中立",
+    "rarity": "Legendary",
+    "base_atk": 23,
+    "base_hp": 27,
+    "image": "/assets/card/lvbu.png",
+    "skill": "{\"skillName\":\"认贼作父\",\"skill_describe\":\"可以和其他任意角色合成，自身无法合成 \"}"
+  },
+  {
     "card_id": "char_luoyu",
     "name": "蠃鱼",
     "star": 0,
