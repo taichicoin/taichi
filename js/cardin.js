@@ -194,7 +194,7 @@ window.YYCardInspector = (function() {
                         ${!isOwn ? '<div style="color:#ffd966; font-size:12px;">👁️ 敌方卡牌</div>' : ''}
                     </div>
                     ${skillInfo ? `
-                    <div class="inspect-skill" style="background:rgba(255,255,255,0.08); border-radius:8px; padding:8px; margin-top:8px; flex:1; overflow-y:auto;">
+                    <div class="inspect-skill" style="background:rgba(255,255,255,0.08); border-radius:8px; padding:4px; margin-top:4px; flex:1; overflow-y:auto;">
                         <div style="font-weight:bold; color:#ffd966; font-size:13px;">✨ ${skillInfo.name}</div>
                         <div style="font-size:${skillFontSize}; color:#ddd; line-height:1.3;">${skillInfo.desc}</div>
                     </div>` : `
@@ -264,7 +264,7 @@ window.YYCardInspector = (function() {
             position: 'fixed', top: '0', left: '0', right: '0',
             maxHeight: '90vh', overflowY: 'auto',
             background: 'rgba(20,30,50,0.95)', backdropFilter: 'blur(8px)',
-            borderRadius: '0 0 16px 16px', padding: '5% 10%',   // ★ 左右内边距改为 20%
+            borderRadius: '0 0 16px 16px', padding: '10% 10%',   // ★ 左右内边距改为 20%
             zIndex: '100002', boxShadow: '0 8px 24px rgba(0,0,0,0.6)',
             border: 'none'
         });
