@@ -71,7 +71,7 @@ body {
 
 .top-right-actions {
     position: fixed;
-    top: 1vh;
+    top: 2vh;
     right: 1vw;
     z-index: 999;
     display: flex;
@@ -92,7 +92,7 @@ body {
 .top-right-actions .btn-exit {
     background: rgba(20, 28, 48, 0.2);
     backdrop-filter: blur(0px);
-    padding: 0.8vh 2vw;
+    padding: 0.4vh 1.5vw;
     font-size: clamp(0.7rem, 1.5vw, 0.9rem);
     border: 1px solid rgba(255,215,0,0.2);
     color: white;
@@ -113,15 +113,15 @@ body {
 /* ==================== 左侧玩家头像列表 ==================== */
 .players-status-bar {
     position: fixed;
-    top: 4vh !important;
-    left: 0.8vw;
+    top: 5vh !important;
+    left: 2vw;
     z-index: 99;
     width: 9.1vw;
     border-radius: 0;
     padding: 0vh 0.1vw;
     border: 1px solid rgba(255, 215, 0, 0);
     box-shadow: 0 4px 10px rgba(0,0,0,0);
-    height: 38vh;
+    height: 37vh;
     overflow-y: auto;
 }
 .battle-view-mode .players-status-bar {
@@ -252,15 +252,15 @@ body {
 
 .shop-info {
     position: absolute;
-    top: 1.8vh;
-    left: 5%;
+    top: 3vh;
+    left: 6%;
     transform: translateX(-50%);
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 1vw;
     font-weight: bold;
-    font-size: clamp(0.8rem, 2vw, 0.8rem);
+    font-size: clamp(0.75rem, 1.8vw, 0.75rem);
     color: #f5d76e;
     z-index: 10;
     white-space: nowrap;
