@@ -189,7 +189,7 @@ window.YYCardInspector = (function() {
                             <span style="font-size: clamp(1rem, 4vw, 1.5rem); font-weight: bold; word-break: break-all;">${name}</span>
                             <span style="background:#444; padding:2px 8px; border-radius:8px; font-size:2.5vw;">${rarity}</span>
                             <span style="background:#444; padding:2px 8px; border-radius:8px; font-size:2.5vw;">${faction}</span>
-                            ${chi > 0 ? `<span style="display:inline-block; border:1px solid #ffd700; border-radius:10px; padding:0 6px; font-size:11px; color:#ffd700;">⚡${chi}</span>` : ''}
+                            ${chi > 0 ? `<span style="display:inline-block; border:1px solid #ffd700; border-radius:10px; padding:0 6px; font-size:11px; color:#ffd700;">Chi${chi}</span>` : ''}
                         </div>
                         ${!isOwn ? '<div style="color:#ffd966; font-size:12px;">👁️ 敌方卡牌</div>' : ''}
                     </div>
