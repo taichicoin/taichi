@@ -264,7 +264,7 @@ window.YYCardInspector = (function() {
             position: 'fixed', top: '0', left: '0', right: '0',
             maxHeight: '90vh', overflowY: 'auto',
             background: 'rgba(20,30,50,0.95)', backdropFilter: 'blur(8px)',
-            borderRadius: '0 0 16px 16px', padding: '12px 20%',   // ★ 左右内边距改为 20%
+            borderRadius: '0 0 16px 16px', padding: '5% 10%',   // ★ 左右内边距改为 20%
             zIndex: '100002', boxShadow: '0 8px 24px rgba(0,0,0,0.6)',
             border: 'none'
         });
