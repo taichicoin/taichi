@@ -113,7 +113,7 @@ body {
 /* ==================== 左侧玩家头像列表 ==================== */
 .players-status-bar {
     position: fixed;
-    top: 5vh !important;
+    top: 6vh !important;
     left: 2vw;
     z-index: 99;
     width: 9.1vw;
@@ -121,7 +121,7 @@ body {
     padding: 0vh 0.1vw;
     border: 1px solid rgba(255, 215, 0, 0);
     box-shadow: 0 4px 10px rgba(0,0,0,0);
-    height: 37vh;
+    height: 36vh;
     overflow-y: auto;
 }
 .battle-view-mode .players-status-bar {
@@ -226,7 +226,7 @@ body {
     top: 0;
     left: 0vw;
     width: 100vw;
-    height: 43.5vh;
+    height: 44vh;
     z-index: 90;
     display: flex;
     flex-direction: column;
@@ -252,15 +252,15 @@ body {
 
 .shop-info {
     position: absolute;
-    top: 3vh;
-    left: 6%;
+    top: 4vh;
+    left: 8%;
     transform: translateX(-50%);
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 1vw;
     font-weight: bold;
-    font-size: clamp(0.75rem, 1.8vw, 0.75rem);
+    font-size: clamp(0.8rem, 2vw, 0.8rem);
     color: #f5d76e;
     z-index: 10;
     white-space: nowrap;
@@ -279,14 +279,14 @@ body {
     min-height: 0;
     height: auto;
     z-index: 11;
-    margin-top: 13.5vh;
+    margin-top: 14vh;
 }
 
 .shop-cards .card {
     width: 24.8vw;
     height: 29.7vw;
     flex-shrink: 0;
-    left: 5.5vw !important;
+    left: 5.8vw !important;
     align-self: center;
 }
 
@@ -391,14 +391,14 @@ body {
     flex-direction: column;
     z-index: 85;
     top: 49vh;
-    left: 6vw !important;
+    left: 5.5vw !important;
     width: 82vw;
     height: 26vh;
     justify-content: flex-start;
 }
 
 .battle-view-mode .board-area {
-    top: 13vh;
+    top: 13.5vh;
     left: 6.2vw !important;
     height: 64vh;
     justify-content: space-between;
@@ -410,7 +410,7 @@ body {
     padding: 0;
     display: none;
     flex-shrink: 0;
-    margin-top: 1.5vh;
+    margin-top: 1.6vh;
     margin-left: 8.8vw !important;
 }
 .battle-view-mode .enemy-board-section {
@@ -540,7 +540,7 @@ body {
 
 .hand .card {
     width: 23vw;
-    height: 26.5vw;
+    height: 27vw;
     flex-shrink: 0;
     margin-top: 2vh;
 }
