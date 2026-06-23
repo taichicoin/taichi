@@ -1,0 +1,851 @@
+/* ==================== 对局界面（全百分比独立控制版） ==================== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    width: 100vw;
+    height: 100dvh;
+    max-width: 100vw;
+    max-height: 100dvh;
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+
+body {
+    overscroll-behavior: none;
+    touch-action: pan-y;
+    color: #f0f0f0;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+#battle-view{
+    filter: saturate(0.85) contrast(0.95);
+}
+#battle-view{
+    background:
+        url("/assets/battlebg.png"),
+        radial-gradient(
+            ellipse at center,
+            rgba(255,255,255,0.18) 0%,
+            rgba(255,255,255,0.08) 35%,
+            rgba(255,255,255,0) 70%
+        ),
+
+        linear-gradient(
+            to bottom,
+            rgba(126,147,182,0.95),
+            rgba(100,121,157,0.95),
+            rgba(72,90,121,0.95)
+        ),
+
+     
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+
+/* ==================== 顶部信息区 ==================== */
+.top-center-info {
+    position: fixed;
+    top: 4vh;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    gap: 2vw;
+    font-weight: bold;
+    font-size: clamp(1rem, 2.5vw, 1.4rem);
+    color: #f5d76e;
+    background: rgba(10, 15, 30, 0.2);
+    padding: 0.6vh 2vw;
+    border-radius: 2vmin;
+    backdrop-filter: blur(0px);
+}
+
+.top-right-actions {
+    position: fixed;
+    top: 2vh;
+    right: 1vw;
+    z-index: 999;
+    display: flex;
+    gap: 2vw;
+    align-items: center;
+}
+.top-right-actions .btn-setting {
+    background: transparent !important;
+    backdrop-filter: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 1vh 2vw;
+    font-size: clamp(0.9rem, 2vw, 1.2rem);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+.top-right-actions .btn-exit {
+    background: rgba(20, 28, 48, 0.2);
+    backdrop-filter: blur(0px);
+    padding: 0.4vh 1.5vw;
+    font-size: clamp(0.7rem, 1.5vw, 0.9rem);
+    border: 1px solid rgba(255,215,0,0.2);
+    color: white;
+    font-weight: bold;
+}
+
+.top-left-actions { display: none; }
+.battle-view-mode .top-left-actions {
+    display: flex;
+    position: fixed;
+    top: 2vh;
+    left: 3vw;
+    z-index: 999;
+    gap: 2vw;
+}
+.battle-view-mode .top-right-actions { display: none; }
+
+/* ==================== 左侧玩家头像列表 ==================== */
+.players-status-bar {
+    position: fixed;
+    top: 6vh !important;
+    left: 2vw;
+    z-index: 99;
+    width: 9.1vw;
+    border-radius: 0;
+    padding: 0vh 0.1vw;
+    border: 1px solid rgba(255, 215, 0, 0);
+    box-shadow: 0 4px 10px rgba(0,0,0,0);
+    height: 36vh;
+    overflow-y: auto;
+}
+.battle-view-mode .players-status-bar {
+    width: 9.1vw;
+    left: 0.8vw;
+}
+
+.player-status-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1vh !important;
+    width: 100%;
+    height: 100%;
+}
+
+.player-status-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 100%;
+    flex: 1;
+}
+
+/* ===== 头像容器：方形头像 + 等级左上角 + 血量数字右下角白色梯形 ===== */
+.avatar-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    max-height: 100%;
+    flex-shrink: 0;
+    border-bottom: 0.3vh solid #ffffff;
+}
+
+/* 方形头像图片：直角 */
+.avatar-container img {
+    display: block !important;
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+    border: 1px solid #f5d76e;
+    background: #2a3a5c;
+    object-fit: cover;
+}
+
+/* 等级：左上角（圆形） */
+.player-level {
+    position: absolute;
+    top: 0.1vh;
+    left: 0.1vw;
+    background: #1a2a4a;
+    border: 1px solid #f5d76e;
+    border-radius: 50%;
+    width: 4.2vw;
+    height: 4.2vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8vw;
+    font-weight: bold;
+    color: #f5d76e;
+    z-index: 2;
+    padding: 0;
+    line-height: 1;
+}
+
+/* 血量数字：右下角白色梯形 */
+.hp-text {
+    position: absolute;
+    bottom: 0vh !important;
+    right: 0.2vw !important;
+    width: 43%;
+    height: 36%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    padding: 0 0vw 0vh 0;
+    font-size: 3vw;
+    font-weight: bold;
+    color: #1a1a2e;
+    text-align: right;
+    clip-path: polygon(
+        28% 0%,
+        100% 0%,
+        100% 100%,
+        0% 100%
+    );
+    background: #ffffff;
+    z-index: 2;
+    line-height: 1;
+    text-shadow: none;
+}
+
+/* 删除旧样式 */
+.player-status-item > img { display: none !important; }
+.player-status-item > .hp-bar { display: none !important; }
+.player-status-item > .hp-fill { display: none !important; }
+
+/* ==================== 商店区域 ==================== */
+.shop-area {
+    position: fixed;
+    top: 0;
+    left: 0vw;
+    width: 100vw;
+    height: 44vh;
+    z-index: 90;
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+    overflow: visible;
+    border-radius: 3vmin;
+    padding: 1vh 2vw;
+    /* ★ 银白色边框 + 半透明白色背景 */
+    border: 4px solid rgba(192, 192, 192, 0.6);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 25px rgba(192, 192, 192, 0.1);
+}
+.battle-view-mode .shop-area {
+    display: block !important;
+    height: auto;
+    background: transparent;
+    backdrop-filter: none;
+    border: none !important;      /* ★ 去除边框 */
+    box-shadow: none !important;  /* ★ 去除阴影 */
+    padding: 0;
+    pointer-events: none;
+}
+
+.shop-info {
+    position: absolute;
+    top: 4vh;
+    left: 8%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1vw;
+    font-weight: bold;
+    font-size: clamp(0.8rem, 2vw, 0.8rem);
+    color: #f5d76e;
+    z-index: 10;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+.shop-cards {
+    flex: 1;
+    gap: 2.4vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-x: auto;
+    overflow-y: visible;
+    padding: 0 0 10vh 0;
+    min-height: 0;
+    height: auto;
+    z-index: 11;
+    margin-top: 14vh;
+}
+
+.shop-cards .card {
+    width: 24.8vw;
+    height: 29.7vw;
+    flex-shrink: 0;
+    left: 5.8vw !important;
+    align-self: center;
+}
+
+.shop-bottom-bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 3.3vw;
+    margin: 0;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+    background: transparent;
+    overflow: visible;
+    pointer-events: none;
+}
+.shop-bottom-bar .btn,
+.shop-bottom-bar .prepare-timer-btn {
+    pointer-events: auto;
+}
+
+.shop-actions {
+    display: flex;
+    flex-direction: row-reverse;
+    gap: 6vw;
+    margin: 0;
+    flex: none;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 3vh;
+    z-index: 10;
+    background: transparent;
+    border-radius: 0;
+    padding: 0;
+    pointer-events: none;
+}
+
+.shop-actions .btn {
+    padding: 0.6vh 4vw;
+    min-width: 17vw; 
+    white-space: nowrap; 
+    margin: 0;
+    font-size: clamp(0.6rem, 1.6vw, 0.9rem);
+    border-radius: 0;
+    min-width: 15vw;
+    font-weight: bold;
+    background: #ffd700;
+    color: #1a1a2e;
+    white-space: nowrap;
+    position: relative;
+    pointer-events: auto;
+}
+.shop-actions .btn::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    bottom: -2px;
+    left: -2px;
+}
+.shop-actions .btn-primary {
+    background: #ffd700;
+    color: #1a1a2e;
+}
+
+.prepare-timer-btn {
+    position: absolute;
+    bottom: -4vh;
+    right: 9.5vw;
+    z-index: 100;
+    width: 12.8vw;
+    height: 12.8vw;
+    border-radius: 55%;
+    background: radial-gradient(circle, rgba(192,192,192,0.2), rgba(80,80,80,0.3));
+    border: 3px solid rgba(192,192,192,0.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.prepare-num {
+    font-size: clamp(0.9rem, 2vw, 1.1rem);
+    font-weight: bold;
+    color: #c0c0c0;
+    line-height: 1;
+}
+
+.prepare-text {
+    font-size: clamp(0.4rem, 1.2vw, 0.7rem);
+    color: #c0c0c0;
+    font-weight: 600;
+    line-height: 1;
+    margin-top: 0.5vh;
+}
+
+/* ==================== 棋盘区域 ==================== */
+.board-area {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    z-index: 85;
+    top: 49.5vh;
+    left: 5.5vw !important;
+    width: 82vw;
+    height: 26vh;
+    justify-content: flex-start;
+}
+
+.battle-view-mode .board-area {
+    top: 13.5vh;
+    left: 6.2vw !important;
+    height: 64vh;
+    justify-content: space-between;
+}
+
+.enemy-board-section {
+    background: transparent;
+    border-radius: 0;
+    padding: 0;
+    display: none;
+    flex-shrink: 0;
+    margin-top: 1.6vh;
+    margin-left: 8.8vw !important;
+}
+.battle-view-mode .enemy-board-section {
+    display: flex;
+    flex-direction: column;
+    z-index: 85;
+    flex: 1;
+    margin-bottom: 1.5vh;
+    margin-left: 8.8vw !important;
+}
+
+.my-board-section {
+    background: transparent;
+    border-radius: 0;
+    padding: 0;
+    margin-top: 0;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 auto;
+    margin-left: 9vw !important;
+}
+
+/* ★ 所有棋盘统一：固定列宽 21.5vw，间隙相同，宽高比 27/34 */
+:not(.battle-view-mode) .my-board-section .board,
+.battle-view-mode .my-board-section .board,
+.battle-view-mode .enemy-board-section .board {
+    display: grid;
+    grid-template-columns: 22vw 22vw 22vw;
+    grid-template-rows: repeat(2, 1fr);
+    row-gap: 3.4vw;
+    column-gap: 3vw;
+    justify-content: center;
+    min-height: 0;
+    max-width: 100%;
+    margin: 0 auto;
+    flex: 1;
+}
+
+/* 棋盘卡牌填满格子 */
+.my-board-section .card,
+.enemy-board-section .card {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+}
+
+/* 格子强制宽高比 */
+.card-slot {
+    aspect-ratio: 27 / 34;
+}
+
+.battle-divider {
+    text-align: center;
+    margin: 1vh 0;
+    color: #f5d76e;
+    font-weight: bold;
+    text-shadow: 0 0 1vh #000;
+    letter-spacing: 2vw;
+    font-size: clamp(0.8rem, 2vw, 1.2rem);
+    width: 100%;
+    flex-shrink: 0;
+    z-index: 80;
+    display: none;
+    position: relative;
+    line-height: 1;
+}
+:not(.battle-view-mode) .battle-divider { display: none !important; }
+
+.battle-timer {
+    text-align: center;
+    font-size: clamp(0.8rem, 2vw, 1.1rem);
+    color: #e94560;
+    margin-top: -1vh;
+    margin-bottom: 1vh;
+    z-index: 80;
+    display: block;
+}
+
+/* ==================== 手牌区 ==================== */
+.hand-area {
+    position: fixed;
+    bottom: 0;
+    left: 0.1vw;
+    width: 100vw;
+    z-index: 85;
+    height: 16vh;
+    overflow-x: auto;
+    overflow-y: hidden;
+    display: block;
+    background: transparent;
+    backdrop-filter: none;
+    border-radius: 0;
+    border-top: none;
+    box-shadow: none;
+}
+
+.hand {
+    display: flex;
+    gap: 0;                    /* 间距由 JS 动态控制 */
+    overflow-x: auto;
+    padding-bottom: 2vh;
+    -webkit-overflow-scrolling: touch;
+    justify-content: flex-start;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+
+.hand .card {
+    width: 23vw;
+    height: 27vw;
+    flex-shrink: 0;
+    margin-top: 2vh;
+}
+
+/* ==================== 卡牌样式 ==================== */
+.card-slot { cursor: pointer; }
+.card {
+    position: relative;
+    background: #141a2a;
+    border: 4px solid #3a4a6a;   /* 边框宽度可调，1px更细，3px更粗 */
+    border-radius: 1.5vmin;
+    padding: 0;
+    overflow: visible;
+    transition: all 0.15s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+.card[data-rarity="Common"] { border-color: #94a3b8; }
+.card[data-rarity="Rare"] { border-color: #22c55e; }
+.card[data-rarity="Epic"] { border-color: #8b5cf6; }
+.card[data-rarity="Legendary"] { border-color: #f59e0b; }
+
+/* 星级边框颜色（覆盖稀有度颜色） */
+.card[data-star="0"] { border-color: #c0c0c0; }  /* 零星：淡银色 */
+.card[data-star="1"],
+.card[data-star="2"],
+.card[data-star="3"],
+.card[data-star="4"],
+.card[data-star="5"] { border-color: #f59e0b; }  /* 一星及以上：橙黄色 */
+
+.card-icon {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 0;
+    border-radius: 1.5vmin;
+    overflow: hidden;
+}
+.card-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.card-name {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    z-index: 1;
+    text-align: center;
+    font-weight: bold;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    padding: 0.5vh 0;
+    margin: 0;
+    border-radius: 1.5vmin 1.5vmin 0 0;
+    font-size: clamp(0.6rem, 1.5vw, 0.9rem);
+}
+
+.card-stats {
+    position: absolute;
+    bottom: 0.1vh; left: 0; right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 0 0.1vw;
+    z-index: 2;
+    color: white;
+    text-shadow: 0 0 1px black, 0 0 1px black;
+    font-size: clamp(0.8rem, 2vw, 1.1rem);
+    font-weight: bold;
+    pointer-events: none;
+}
+.card-atk { color: #ff3333; }
+.card-hp { color: #33cc33; }
+
+.card-price {
+    position: absolute;
+    bottom: -5vh;
+    left: 0; right: 0;
+    text-align: center;
+    color: #f5d76e;
+    font-weight: bold;
+    background: transparent;
+    z-index: 10;
+    font-size: clamp(0.6rem, 1.8vw, 0.9rem);
+    display: none;
+}
+.shop-area .shop-cards .card .card-price {
+    display: block !important;
+    bottom: -5vh !important;
+}
+
+/* 删除 card-star 元素相关样式（JS 不再生成该元素） */
+/* .card-star 已移除 */
+
+.card.selected {
+    border-color: #f5d76e;
+    box-shadow: 0 0 2vmin #f5d76e;
+}
+.empty-slot {
+    opacity: 0.3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #1a1a2e;
+    min-height: auto;
+}
+
+/* 商店卡牌名字透明+下移 */
+.shop-area .card .card-name {
+    background: transparent !important;
+    top: auto !important;
+    bottom: -3vh !important;
+    text-shadow: 0 0 4px #000 !important;
+}
+
+/* 隐藏棋盘+手牌卡牌名字 */
+.my-board-section .card-name,
+.enemy-board-section .card-name,
+.hand-area .card-name {
+    display: none !important;
+}
+
+/* ==================== 通用按钮 ==================== */
+.btn {
+    background: #2e3f5e;
+    color: white;
+    border: none;
+    padding: 1vh 3vw;
+    border-radius: 1.5vmin;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    box-shadow: 0 2px 0 #121927;
+    font-size: clamp(0.7rem, 1.8vw, 1rem);
+}
+.btn:active { transform: translateY(1px); box-shadow: 0 1px 0 #121927; }
+.btn-primary {
+    background: linear-gradient(145deg, #f5d76e, #f0b34b);
+    color: #0b0f1c;
+    box-shadow: 0 2px 0 #a05f20;
+}
+
+/* ==================== 阶段显示 ==================== */
+.prepare-only { display: block; }
+.battle-only { display: none; }
+.battle-view-mode .prepare-only { display: none !important; }
+.battle-view-mode .battle-only { display: block !important; }
+
+/* ==================== 防拖拽/选择 ==================== */
+.card, .card *, .hand-area, .hand-area *,
+.shop-area, .shop-area *, .board-area, .board-area *,
+.player-status-item, .player-status-item * {
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    user-select: none !important;
+}
+img {
+    -webkit-user-drag: none !important;
+    user-drag: none !important;
+    pointer-events: none;
+}
+body { user-select: none; }
+
+.shop-area.drop-target {
+    box-shadow: 0 0 0 4px #ff4444 !important;
+    transition: 0.15s;
+}
+
+/* ========== 全屏强制 ========== */
+body:has(#battle-view[style*="display: block"]) #app {
+    max-width: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: none !important;
+    min-height: 100% !important;
+    width: 100% !important;
+    height: 100% !important;
+    position: relative !important;
+}
+
+@keyframes damageFloat {
+    0% { opacity: 1; transform: translate(-50%, 0); }
+    100% { opacity: 0; transform: translate(-50%, -40px); }
+}
+
+.card { will-change: transform; }
+.card-slot .card { transition: transform 0.15s ease-out; }
+
+/* 卡牌查看弹窗样式 */
+.card-inspect-popup .inspect-header { display:flex; align-items:center; gap:3vw; margin-bottom:2vh; }
+.card-inspect-popup .inspect-header img { width:12vw; height:12vw; border-radius:2vmin; }
+.card-inspect-popup .rarity-tag, .card-inspect-popup .faction-tag { font-size:2.5vw; padding:0.5vh 2vw; border-radius:1vmin; background:#444; margin-right:1vw; }
+.card-inspect-popup .inspect-stats { display:flex; gap:4vw; margin-bottom:2vh; flex-wrap:wrap; }
+.card-inspect-popup .inspect-skill { background:rgba(255,255,255,0.1); border-radius:2vmin; padding:2vh; }
+.card-inspect-popup .skill-title { color:#ffd966; font-weight:bold; margin-bottom:1vh; }
+
+/* ==================== 护盾光圈 ==================== */
+.card-shield {
+    position: absolute;
+    top: -0.5vh;
+    right: -1vw;
+    width: 5vw;
+    height: 5vw;
+    border-radius: 50%;
+    background: transparent;
+    border: 2px solid #ff8800;
+    box-shadow: 0 0 1vh #ff8800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+}
+
+.card-shield span {
+    color: #fff;
+    font-size: 2.5vw;
+    font-weight: bold;
+    text-shadow: 0 0 3px #000;
+}
+
+/* ==================== 战斗进度条 & 跳过按钮 ==================== */
+#battle-progress-wrapper {
+    position: fixed;
+    left: 3vw !important;
+    top: 45vh;
+    z-index: 100;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.1vh !important;
+    background: transparent !important;
+    padding: 0;
+    box-sizing: border-box;
+    margin-top: 2.5vh;
+    margin-bottom: 2.5vh;
+}
+
+#battle-progress-track {
+    width: 92%;
+    max-width: 92%;
+    height: 0.8vh;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 0.4vh;
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+    margin: 0;
+    box-sizing: border-box;
+}
+
+#battle-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #ff8800, #f5d76e);
+    border-radius: 0.4vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    max-width: 100%;
+    transform-origin: right center;
+    transition: transform 0.2s linear;
+    box-sizing: border-box;
+}
+
+#skip-battle-btn {
+    display: none;
+    background: rgba(20, 28, 48, 0.7);
+    color: #f5d76e;
+    border: 1px solid rgba(245, 215, 110, 0.5);
+    border-radius: 1vmin;
+    padding: 0.1vh 0.1vw;
+    font-size: clamp(0.6rem, 1.5vw, 0.7rem);
+    font-weight: bold;
+    cursor: pointer;
+    backdrop-filter: blur(4px);
+    margin-top: 0.3vh;
+    white-space: nowrap;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+#skip-battle-btn:active {
+    transform: translateY(1px);
+}
+
+#skip-battle-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* 战斗阶段：显示金币/等级栏，隐藏商店卡片和按钮 */
+.battle-view-mode .shop-area {
+    display: block !important;
+    height: auto;
+    background: transparent;
+    backdrop-filter: none;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    pointer-events: none;
+}
+
+.battle-view-mode .shop-cards,
+.battle-view-mode .shop-bottom-bar,
+.battle-view-mode .shop-actions,
+.battle-view-mode .prepare-timer-btn {
+    display: none !important;
+}
+
+.battle-view-mode .shop-info {
+    position: fixed;
+    top: 1.5vh;
+    left: 5%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6vw;
+    font-weight: bold;
+    font-size: clamp(1.2rem, 2.5vw, 1.4rem);
+    color: #f5d76e;
+    z-index: 110;
+    pointer-events: none;
+    white-space: nowrap;
+}
