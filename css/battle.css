@@ -113,7 +113,7 @@ body {
 /* ==================== 左侧玩家头像列表 ==================== */
 .players-status-bar {
     position: fixed;
-    top: 6vh !important;
+    top: 7vh !important;
     left: 2vw;
     z-index: 99;
     width: 9.1vw;
@@ -121,7 +121,7 @@ body {
     padding: 0vh 0.1vw;
     border: 1px solid rgba(255, 215, 0, 0);
     box-shadow: 0 4px 10px rgba(0,0,0,0);
-    height: 36vh;
+    height: 35.5vh;
     overflow-y: auto;
 }
 .battle-view-mode .players-status-bar {
@@ -226,7 +226,7 @@ body {
     top: 0;
     left: 0vw;
     width: 100vw;
-    height: 44vh;
+    height: 44.5vh;
     z-index: 90;
     display: flex;
     flex-direction: column;
@@ -398,9 +398,9 @@ body {
 }
 
 .battle-view-mode .board-area {
-    top: 13.5vh;
+    top: 13.8vh;
     left: 6.2vw !important;
-    height: 64vh;
+    height: 63vh;
     justify-content: space-between;
 }
 
