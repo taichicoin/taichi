@@ -279,12 +279,12 @@ body {
     min-height: 0;
     height: auto;
     z-index: 11;
-    margin-top: 14vh;
+    margin-top: 15vh;
 }
 
 .shop-cards .card {
     width: 24.8vw;
-    height: 29.7vw;
+    height: 30vw;
     flex-shrink: 0;
     left: 5.8vw !important;
     align-self: center;
@@ -330,7 +330,7 @@ body {
     min-width: 17vw; 
     white-space: nowrap; 
     margin: 0;
-    font-size: clamp(0.6rem, 1.6vw, 0.9rem);
+    font-size: clamp(0.7rem, 1.7vw, 0.9rem);
     border-radius: 0;
     min-width: 15vw;
     font-weight: bold;
