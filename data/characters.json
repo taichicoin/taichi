@@ -549,7 +549,7 @@
     "base_atk": 23,
     "base_hp": 27,
     "image": "/assets/card/caocao.png",
-    "skill": "{\"skillName\":\"枭雄遗令\",\"skill_describe\":\"遗言，对全体友方造成1点伤害，并使其获得一层护盾\"}"
+    "skill": "{\"skillName\":\"铁锁横江\",\"skill_describe\":\"遗言，对全体友方造成1点伤害，并使其获得一层护盾\"}"
   },
   {
     "card_id": "char_xiadun",
