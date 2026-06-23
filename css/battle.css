@@ -497,7 +497,7 @@ body {
     left: 0.1vw;
     width: 100vw;
     z-index: 85;
-    height: 16vh;
+    height: 18vh;
     overflow-x: auto;
     overflow-y: hidden;
     display: block;
@@ -508,22 +508,6 @@ body {
     box-shadow: none;
 }
 
-.hand-label {
-    position: fixed;
-    bottom: 14.5vh;
-    left: 1vw;
-    z-index: 110;
-    display: block !important;
-    font-size: clamp(0.8rem, 2vw, 1.2rem);
-    color: #f5d76e;
-    font-weight: bold;
-    background: rgba(10, 15, 30, 0.8);
-    padding: 0.2vh 2.8vw;
-    border-radius: 1.1vmin;
-    pointer-events: none;
-    white-space: nowrap;
-    text-shadow: 0 0 4px #000;
-}
 
 .hand {
     display: flex;
@@ -542,7 +526,7 @@ body {
     width: 23vw;
     height: 27vw;
     flex-shrink: 0;
-    margin-top: 2vh;
+    margin-top: 4vh;
 }
 
 /* ==================== 卡牌样式 ==================== */
