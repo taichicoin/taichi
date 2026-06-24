@@ -860,3 +860,10 @@ body:has(#battle-view[style*="display: block"]) #app {
     border-radius: 0 !important;
     overflow: visible !important;
 }
+.card, .card[data-rarity], .card[data-star] {
+    border: none !important;
+    border-width: 0 !important;
+    border-color: transparent !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
