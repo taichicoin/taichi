@@ -79,7 +79,7 @@ window.YYCardShopRefresh = (function() {
         const my = getGameState()?.players?.[getCurrentUserId()];
         if (!my) return;
         const free = my.freeRefresh || 0;
-        btn.textContent = free > 0 ? ' 刷新 (0💰)' : ' 刷新 (1💰)';
+        btn.textContent = free > 0 ? ' 刷新 0💰' : ' 刷新 1💰';
     }
 
     // ========== 动画系统（保持不变） ==========
