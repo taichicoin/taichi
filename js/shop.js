@@ -514,7 +514,7 @@ window.YYCardShop = (function() {
         ['buy-exp-btn', 'buy-exp-btn-bottom'].forEach(id => {
             const btn = document.getElementById(id);
             if (btn) {
-                btn.textContent = isMaxLevel ? '📈 已满级' : `📈 升级 (${expNeeded}💰)`;
+                btn.textContent = isMaxLevel ? ' 已满级' : ` 升级 (${expNeeded}💰)`;
                 btn.disabled = shouldDisable || (expNeeded > my.gold);
                 btn.style.pointerEvents = shouldDisable ? 'none' : 'auto';
                 btn.style.opacity = shouldDisable ? '0.6' : '1';
