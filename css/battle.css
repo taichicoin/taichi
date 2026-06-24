@@ -853,3 +853,10 @@ body:has(#battle-view[style*="display: block"]) #app {
     pointer-events: none;
     white-space: nowrap;
 }
+.card-slot {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    overflow: visible !important;
+}
