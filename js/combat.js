@@ -94,7 +94,7 @@ window.YYCardCombat = (function() {
             const swordBox = new THREE.Box3().setFromObject(_swordGLB);
             const swordSize = new THREE.Vector3();
             swordBox.getSize(swordSize);
-            const swordTargetHeight = 0.02;
+            const swordTargetHeight = 0.002;
             const swordScale = swordTargetHeight / (swordSize.y || 1);
             _swordGLB.scale.set(swordScale, swordScale, swordScale);
 
