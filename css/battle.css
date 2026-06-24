@@ -226,7 +226,7 @@ body {
     top: 0;
     left: 0vw;
     width: 100vw;
-    height: 44.5vh;
+    height: 45vh;
     z-index: 90;
     display: flex;
     flex-direction: column;
@@ -390,7 +390,7 @@ body {
     display: flex;
     flex-direction: column;
     z-index: 85;
-    top: 49.5vh;
+    top: 50vh;
     left: 5.5vw !important;
     width: 82vw;
     height: 26vh;
