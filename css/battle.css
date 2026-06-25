@@ -726,7 +726,7 @@ body:has(#battle-view[style*="display: block"]) #app {
 .card-shield {
     position: absolute;
     top: 0.3vh;
-    right: 1.5vw;
+    right: 2vw;
     width: 6vw;
     height: 6vw;
     border-radius: 50%;
