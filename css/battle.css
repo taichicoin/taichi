@@ -493,10 +493,10 @@ body {
 .hand-area {
     position: fixed;
     bottom: 0;
-    left: 0.1vw;
+    left: 2vw;
     width: 100vw;
     z-index: 85;
-    height: 18vh;
+    height: 20vh;
     overflow-x: auto;
     overflow-y: hidden;
     display: block;
