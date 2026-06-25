@@ -731,8 +731,8 @@ body:has(#battle-view[style*="display: block"]) #app {
     height: 5vw;
     border-radius: 50%;
     background: transparent;
-    border: 2px solid #ff8800;
-    box-shadow: 0 0 1vh #ff8800;
+    border: 2px solid #00bfff;
+    box-shadow: 0 0 3vh #ff8800;
     display: flex;
     align-items: center;
     justify-content: center;
