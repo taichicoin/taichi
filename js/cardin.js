@@ -142,7 +142,7 @@ window.YYCardInspector = (function() {
             const shield = currentCard.shield || 0;
             return `
                 <div class="card" data-rarity="${currentCard.rarity || 'Common'}" data-star="${currentCard.star || 0}" style="width:23.6vw; height:29.1vw; flex-shrink:0; margin:0; position:relative; overflow:visible;">
-                    <div class="card-icon" style="position:absolute; top:0; left:0; width:100%; height:100%; overflow:hidden; display:flex; align-items:center; justify-content:center;">
+                    <div class="card-icon" style="position:absolute; top:0; left:0; width:106%; height:106%; overflow:hidden; display:flex; align-items:center; justify-content:center;">
                         <img src="${imgPath}" alt="${d.name}" onerror="this.src='/assets/default-avatar.png'" style="width:100%; height:100%; object-fit: contain; display:block; border:none;">
                     </div>
                     <div class="card-stats"><span class="card-atk">${atk}</span><span class="card-hp">${hp}</span></div>
