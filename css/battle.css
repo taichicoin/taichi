@@ -273,8 +273,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow-x: auto;
-    overflow-y: visible;
+    overflow: visible;
     padding: 0 0 10vh 0;
     min-height: 0;
     height: auto;
