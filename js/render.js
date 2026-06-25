@@ -133,8 +133,8 @@ window.YYCardRender = (function() {
             display: block;
             border: none;
             position: relative;
-            top: -10%;
-            left: -10%;
+            top: 0%;
+            left: 0%;
         `;
         iconDiv.appendChild(img);
         d.appendChild(iconDiv);
