@@ -725,8 +725,8 @@ body:has(#battle-view[style*="display: block"]) #app {
 /* ==================== 护盾光圈 ==================== */
 .card-shield {
     position: absolute;
-    top: -0.5vh;
-    right: -1vw;
+    top: 0.5vh;
+    right: 1.5vw;
     width: 5vw;
     height: 5vw;
     border-radius: 50%;
