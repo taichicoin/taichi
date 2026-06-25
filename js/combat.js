@@ -706,7 +706,9 @@ window.YYCardCombat = (function() {
                 await new Promise(r => setTimeout(r, 100));
                 attEl.innerHTML = `
                     <div class="card-frame"></div>
-                    <div class="card-icon"><img src="${weaponImage}" alt="武器" onerror="this.src='/assets/default_weapon.png'" style="width:100%;height:100%;object-fit:cover;"></div>
+                    <div class="card-icon" style="overflow:visible; display:flex; align-items:center; justify-content:center;">
+                        <img src="${weaponImage}" alt="武器" onerror="this.src='/assets/default_weapon.png'" style="width:100%;height:100%;object-fit:contain; display:block; border:none;">
+                    </div>
                     <div class="card-name" style="color:#ddd;">武器</div>
                     <div class="card-stats"><span class="card-atk">?</span><span class="card-hp">?</span></div>
                 `;
