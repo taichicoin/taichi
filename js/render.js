@@ -127,8 +127,8 @@ window.YYCardRender = (function() {
         img.onerror = () => img.src = '/assets/default-avatar.png';
         img.draggable = false;
         img.style.cssText = `
-            width: 120%;
-            height: 120%;
+            width: 110%;
+            height: 110%;
             object-fit: contain;     /* 保持比例，不拉伸变形 */
             display: block;
             border: none;
