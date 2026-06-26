@@ -38,7 +38,7 @@ window.YYCardShopRender = (function() {
             /* 攻防数值容器 */
             .card[data-card-type="shop"] .card-stats {
                 position: absolute !important;
-                top: 67% !important;
+                top: 65% !important;
                 left: 0 !important;
                 width: 100% !important;
                 height: 0 !important;
@@ -49,8 +49,8 @@ window.YYCardShopRender = (function() {
             /* 攻击力：红色，左侧 */
             .card[data-card-type="shop"] .card-atk {
                 position: absolute;
-                left: 7%;
-                top: 67%;
+                left: 6%;
+                top: 65%;
                 transform: translateY(-50%);
                 color: #ff4d4d;          /* 红色 */
                 font-weight: bold;
@@ -61,8 +61,8 @@ window.YYCardShopRender = (function() {
             /* 生命值：绿色，右侧 */
             .card[data-card-type="shop"] .card-hp {
                 position: absolute;
-                right: 7%;
-                top: 67%;
+                right: 6%;
+                top: 65%;
                 transform: translateY(-50%);
                 color: #4dff4d;          /* 绿色 */
                 font-weight: bold;
@@ -73,9 +73,9 @@ window.YYCardShopRender = (function() {
             /* 技能描述面板 */
             .card-skill-desc {
                 position: absolute;
-                bottom: 0;
-                left: 2%;
-                width: 95%;
+                bottom: -2%;
+                left: 3%;
+                width: 93%;
                 height: 30%;
                 background: rgba(0, 0, 0, 0.75);
                 color: #fff;
@@ -106,10 +106,15 @@ window.YYCardShopRender = (function() {
     // 根据文本长度动态计算字号（使长文本缩小，短文本放大）
     function calcSkillFontSize(text) {
         const len = text.length;
-        if (len <= 10) return '0.8em';
-        if (len <= 20) return '0.7em';
-        if (len <= 30) return '0.6em';
-        if (len <= 40) return '0.55em';
+        if (len <= 5) return '0.8em';
+        if (len <= 6) return '0.75em';
+        if (len <= 7) return '0.7em';
+        if (len <= 8) return '0.65em';
+        if (len <= 9) return '0.65em';
+        if (len <= 10) return '0.65em';
+        if (len <= 15) return '0.5em';
+        if (len <= 20) return '0.5em';
+        if (len <= 25) return '0.4em';
         return '0.5em';
     }
 
