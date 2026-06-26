@@ -74,8 +74,8 @@ window.YYCardShopRender = (function() {
             .card-skill-desc {
                 position: absolute;
                 bottom: -3%;
-                left: 4%;
-                width: 91%;
+                left: 5%;
+                width: 90%;
                 height: 30%;
                 background: rgba(0, 0, 0, 0.75);
                 color: #fff;
@@ -112,9 +112,9 @@ window.YYCardShopRender = (function() {
         if (len <= 8) return '0.65em';
         if (len <= 9) return '0.65em';
         if (len <= 10) return '0.65em';
-        if (len <= 15) return '0.55em';
+        if (len <= 15) return '0.6em';
         if (len <= 20) return '0.55em';
-        if (len <= 25) return '0.45em';
+        if (len <= 25) return '0.5em';
         return '0.5em';
     }
 
