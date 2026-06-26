@@ -4,28 +4,28 @@
     "type": "character",
     "faction": "西游",
     "rarity": "Rare",
-    "skill": "{\"skillName\":\"如有神助\",\"skill_describe\":\"触发同列另一名友方的击杀效果、技能1次（2次）\"}"
+    "skill": "{\"skillName\":\"如有神助\",\"skill_describe\":\"触发同列另一名友方的击杀效果1次 \"}"
   },
   {
     "card_id": "char_baize",
     "type": "character",
     "faction": "山海经",
     "rarity": "Legendary",
-    "skill": "{\"skillName\":\"惊雷\",\"skill_describe\":\"友方悟道效果触发时，自身永久+2+5（+4/+10）\"}"
+    "skill": "{\"skillName\":\"惊雷\",\"skill_describe\":\"友方悟道效果触发时，自身永久+2+5 \"}"
   },
   {
     "card_id": "char_bifang",
     "type": "character",
     "faction": "山海经",
     "rarity": "Epic",
-    "skill": "{\"skillName\":\"衔火授法\",\"skill_describe\":\"悟道，获得1张消耗卡（2张）\"}"
+    "skill": "{\"skillName\":\"衔火授法\",\"skill_describe\":\"悟道，获得1张消耗卡 \"}"
   },
   {
     "card_id": "char_guanyu",
     "type": "character",
     "faction": "三国",
     "rarity": "Epic",
-    "skill": "{\"skillName\":\"青龙偃月\",\"skill_describe\":\"攻击后，获得自身攻击力50%的生命值（100%）\"}"
+    "skill": "{\"skillName\":\"青龙偃月\",\"skill_describe\":\"攻击后，获得自身攻击力50%的生命值 \"}"
   },
   {
     "card_id": "char_heihuadi",
@@ -39,7 +39,7 @@
     "type": "character",
     "faction": "如有神助",
     "rarity": "Legendary",
-    "skill": "{\"skillName\":\"人文初祖\",\"skill_describe\":\"友方的“如有神助”触发次数+2（+3）\"}"
+    "skill": "{\"skillName\":\"人文初祖\",\"skill_describe\":\"友方的“如有神助”触发次数+2 \"}"
   },
   {
     "card_id": "char_jiangziya",
