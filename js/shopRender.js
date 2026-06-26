@@ -73,9 +73,9 @@ window.YYCardShopRender = (function() {
             /* 技能描述面板 */
             .card-skill-desc {
                 position: absolute;
-                bottom: -2%;
-                left: 3%;
-                width: 93%;
+                bottom: -3%;
+                left: 4%;
+                width: 91%;
                 height: 30%;
                 background: rgba(0, 0, 0, 0.75);
                 color: #fff;
@@ -112,9 +112,9 @@ window.YYCardShopRender = (function() {
         if (len <= 8) return '0.65em';
         if (len <= 9) return '0.65em';
         if (len <= 10) return '0.65em';
-        if (len <= 15) return '0.5em';
-        if (len <= 20) return '0.5em';
-        if (len <= 25) return '0.4em';
+        if (len <= 15) return '0.55em';
+        if (len <= 20) return '0.55em';
+        if (len <= 25) return '0.45em';
         return '0.5em';
     }
 
