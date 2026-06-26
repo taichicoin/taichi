@@ -46,7 +46,7 @@
     "type": "character",
     "faction": "封神榜",
     "rarity": "Legendary",
-    "skill": "{\"skillName\":\"封神\",\"skill_describe\":\"点将时，一名友方获得点将台中随机角色卡牌的100%的永久属性 \"}"
+    "skill": "{\"skillName\":\"封神\",\"skill_describe\":\"点将时，一名友方获得点将台随机角色100%的属性 \"}"
   },
   {
     "card_id": "char_jingwei",
