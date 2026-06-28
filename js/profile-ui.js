@@ -1,0 +1,358 @@
+// ========== 大厅UI交互（强制设置用户名版，透明按钮菜单） ==========
+window.YYCardProfileUI = {
+    _dropdown: null,
+    _currentModal: null,
+    _fileInput: null,
+    _avatarClickTarget: null, // 覆盖在头像上的透明按钮
+
+    _injectStyles() {
+        if (document.getElementById('profile-ui-advanced-styles')) return;
+        const s = document.createElement('style');
+        s.id = 'profile-ui-advanced-styles';
+        s.textContent = `
+            /* 头像不可点击，防止下载 */
+            #lobby-avatar {
+                pointer-events: none !important;
+            }
+            /* 覆盖层样式 */
+            #avatar-click-target {
+                position: absolute;
+                cursor: pointer;
+                z-index: 10;
+                background: transparent;
+                border-radius: 50%;
+            }
+            .yy-modal-overlay {
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px);
+                z-index: 99999; display: flex; align-items: center; justify-content: center;
+            }
+            .yy-modal-box {
+                background: #1a1a1e; border-radius: 0px !important;
+                padding: 28px 32px; width: 86%; max-width: 380px;
+                box-shadow: 0 16px 48px rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.06);
+                text-align: left; color: #f5f5f7; position: relative;
+            }
+            .yy-modal-title { font-size: 1.1rem; font-weight: 600; letter-spacing: 1px; border-bottom: 1px solid rgba(255,255,255,0.06); padding-bottom: 14px; margin-bottom: 20px; display: flex; justify-content: space-between; }
+            .yy-modal-sub { font-size: 0.9rem; color: #8e8e93; margin-bottom: 16px; }
+            .yy-input { width: 100%; box-sizing: border-box; background: #2c2c2e; border: 1px solid rgba(255,255,255,0.08); padding: 14px 16px; color: white; font-size: 1rem; border-radius: 0px !important; outline: none; margin-bottom: 20px; }
+            .yy-input:focus { border-color: #f0ad4e; background: #333336; }
+            .yy-input::placeholder { color: #636366; }
+            .yy-actions { display: flex; gap: 12px; }
+            .yy-btn-main { flex: 1; background: #f0ad4e; border: none; padding: 14px 0; font-weight: 700; color: #1c1c1e; cursor: pointer; border-radius: 0px !important; transition: 0.2s; }
+            .yy-btn-main:disabled { background: #3a3a3c; color: #636366; cursor: not-allowed; }
+            .yy-btn-sec { flex: 0.5; background: transparent; border: 1px solid rgba(255,255,255,0.1); padding: 14px 0; color: #8e8e93; cursor: pointer; border-radius: 0px !important; }
+            .yy-btn-sec:active { background: #2c2c2e; }
+            .yy-dropdown-overlay { position: fixed; z-index: 99998; top:0; left:0; width:100%; height:100%; background: transparent; }
+            .yy-dropdown-box {
+                position: absolute; background: #1c1c1e; border: 1px solid rgba(255,255,255,0.06);
+                box-shadow: 0 8px 24px rgba(0,0,0,0.6); border-radius: 0px !important;
+                min-width: 150px; display: flex; flex-direction: column; padding: 6px 0;
+            }
+            .yy-dropdown-item {
+                display: flex; justify-content: space-between; align-items: center;
+                padding: 12px 20px; color: #e5e5ea; font-size: 0.9rem; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.03);
+            }
+            .yy-dropdown-item:last-child { border-bottom: none; color: #ff453a; }
+            .yy-dropdown-item:hover { background: #2c2c2e; }
+        `;
+        document.head.appendChild(s);
+    },
+
+    update() {
+        const profile = window.YYCardAuth.currentProfile;
+        const user = window.YYCardAuth.currentUser;
+        if (!profile) return;
+
+        const avatarSrc = profile.avatar_url || user?.user_metadata?.avatar_url || window.YYCardConfig.DEFAULT_AVATAR;
+        const avatarImg = document.getElementById('lobby-avatar');
+        if(avatarImg) avatarImg.src = avatarSrc;
+
+        document.getElementById('lobby-username').textContent = profile.username || profile.display_name || user.email || '未设置ID';
+        document.getElementById('lobby-wallet').textContent = profile.wallet_address ? window.YYCardUtils.formatAddress(profile.wallet_address) : '未绑定钱包';
+        document.getElementById('lobby-card-count').textContent = `改名卡：${profile.rename_card_count || 0}张`;
+
+        const btn = document.getElementById('start-match-btn');
+        btn.disabled = !profile.username;
+        btn.textContent = profile.username ? '⚡ 开始匹配' : '请先设置游戏ID';
+
+        // 强制设置用户名
+        if (!profile.username && !this._currentModal) {
+            this._showUsernameModal({ isFirstTime: true });
+        }
+
+        // 更新透明按钮的位置和大小
+        this._updateAvatarClickTarget();
+    },
+
+    bindEvents() {
+        this._injectStyles();
+        this._createAvatarClickTarget();
+    },
+
+    // 创建覆盖在头像上的透明可点击层
+    _createAvatarClickTarget() {
+        const avatarImg = document.getElementById('lobby-avatar');
+        if (!avatarImg) return;
+        if (document.getElementById('avatar-click-target')) return;
+        const parent = avatarImg.parentNode;
+        if (parent) {
+            parent.style.position = 'relative';
+        }
+        const target = document.createElement('div');
+        target.id = 'avatar-click-target';
+        target.style.cssText = 'position: absolute; cursor: pointer; z-index: 10; background: transparent; border-radius: 50%;';
+        if (parent) {
+            parent.appendChild(target);
+        } else {
+            avatarImg.insertAdjacentElement('afterend', target);
+        }
+        this._avatarClickTarget = target;
+        target.onclick = (e) => {
+            e.stopPropagation();
+            this._toggleDropdown(avatarImg);
+        };
+        this._updateAvatarClickTarget();
+    },
+
+    // 更新透明按钮位置和尺寸，使其与头像完全重叠
+    _updateAvatarClickTarget() {
+        const target = this._avatarClickTarget || document.getElementById('avatar-click-target');
+        const avatarImg = document.getElementById('lobby-avatar');
+        if (!target || !avatarImg) return;
+        const parent = avatarImg.parentNode;
+        if (parent && !parent.style.position) {
+            parent.style.position = 'relative';
+        }
+        target.style.left = avatarImg.offsetLeft + 'px';
+        target.style.top = avatarImg.offsetTop + 'px';
+        target.style.width = avatarImg.offsetWidth + 'px';
+        target.style.height = avatarImg.offsetHeight + 'px';
+    },
+
+    _toggleDropdown(avatarEl) {
+        if (this._dropdown) {
+            this._dropdown.remove();
+            this._dropdown = null;
+            return;
+        }
+        const overlay = document.createElement('div');
+        overlay.className = 'yy-dropdown-overlay';
+        overlay.onclick = () => { overlay.remove(); this._dropdown = null; };
+
+        const box = document.createElement('div');
+        box.className = 'yy-dropdown-box';
+        const rect = avatarEl.getBoundingClientRect();
+        box.style.top = (rect.bottom + 8) + 'px';
+        box.style.left = (rect.left - 20) + 'px';
+
+        // 根据是否在 Telegram 中决定是否显示“登出”项
+        const isTelegram = window.Telegram?.WebApp?.initData;
+        const items = [
+            { action: 'change-username', label: '🔤 修改游戏ID' },
+            { action: 'bind-wallet', label: '💳 绑定钱包' },
+            { action: 'change-avatar', label: '🖼️ 修改头像' }
+        ];
+        if (!isTelegram) {
+            items.push({ action: 'logout', label: '🚪 登出' });
+        }
+
+        box.innerHTML = items.map(item =>
+            `<div class="yy-dropdown-item" data-action="${item.action}">${item.label}</div>`
+        ).join('');
+        
+        overlay.appendChild(box);
+        document.body.appendChild(overlay);
+        this._dropdown = overlay;
+
+        box.querySelector('[data-action="change-username"]').onclick = () => { this._showUsernameModal({ isFirstTime: false }); overlay.remove(); this._dropdown = null; };
+        box.querySelector('[data-action="bind-wallet"]').onclick = () => { this._showBindWalletModal(); overlay.remove(); this._dropdown = null; };
+        box.querySelector('[data-action="change-avatar"]').onclick = () => { this._onChangeAvatar(); overlay.remove(); this._dropdown = null; };
+
+        if (!isTelegram) {
+            box.querySelector('[data-action="logout"]').onclick = async () => {
+                overlay.remove();
+                this._dropdown = null;
+                const auth = window.YYCardAuth;
+                const matchmaking = window.YYCardMatchmaking;
+                auth.log('🔚 正在登出...');
+                if (matchmaking?.leaveAndClean) await matchmaking.leaveAndClean();
+                await auth.signOut();
+                window.location.href = window.YYCardConfig.LOGIN_PAGE_URL;
+            };
+        }
+    },
+
+    _showUsernameModal({ isFirstTime = false }) {
+        if (this._currentModal) return;
+        const profile = window.YYCardAuth.currentProfile;
+        const utils = window.YYCardUtils;
+        const config = window.YYCardConfig;
+        const supabase = window.supabase;
+        const auth = window.YYCardAuth;
+
+        const cooldown = utils.calculateCooldown(profile?.username_last_modified, config.RENAME_COOLDOWN_DAYS);
+        const hasCard = (profile?.rename_card_count || 0) >= 1;
+        let subtitle = '请输入 1-7 位小写字母或数字';
+        let canChange = true;
+        let needCard = false;
+
+        if (isFirstTime) {
+            subtitle = '🔔 首次登录，请设置您的专属游戏ID';
+        } else {
+            if (!cooldown.canChange && !hasCard) {
+                canChange = false;
+                subtitle = `修改冷却中（剩余 ${cooldown.remainingDays} 天），暂无改名卡`;
+            } else if (!cooldown.canChange && hasCard) {
+                needCard = true;
+                subtitle = `冷却中（剩余 ${cooldown.remainingDays} 天），本次将消耗 1 张改名卡`;
+            } else {
+                subtitle = '修改后将重置冷却时间为 1 年';
+            }
+        }
+
+        const modal = document.createElement('div');
+        modal.className = 'yy-modal-overlay';
+        modal.innerHTML = `
+            <div class="yy-modal-box">
+                <div class="yy-modal-title">
+                    <span>${isFirstTime ? '🆔 创建ID' : '🆔 修改ID'}</span>
+                    <span style="cursor:pointer;color:#8e8e93;font-size:1rem;" id="modal-username-close-alt">✕</span>
+                </div>
+                <div class="yy-modal-sub">${subtitle}</div>
+                <input class="yy-input" id="username-input" type="text" placeholder="输入1-7位小写字母或数字" maxlength="7" ${!canChange ? 'disabled' : ''}>
+                <div class="yy-actions">
+                    <button class="yy-btn-main" id="modal-username-save" ${!canChange ? 'disabled' : ''}>${isFirstTime ? '确认创建' : '确认修改'}</button>
+                    <button class="yy-btn-sec" id="modal-username-close">${isFirstTime ? '退出游戏' : '关闭'}</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        this._currentModal = modal;
+
+        const closeHandler = () => {
+            modal.remove();
+            this._currentModal = null;
+            if (isFirstTime && !profile.username) {
+                auth.signOut();
+            }
+        };
+
+        document.getElementById('modal-username-close').onclick = closeHandler;
+        document.getElementById('modal-username-close-alt').onclick = closeHandler;
+
+        document.getElementById('modal-username-save').onclick = async () => {
+            const nameInput = document.getElementById('username-input');
+            const name = nameInput.value.trim();
+            if (!name) { alert('请输入游戏ID'); return; }
+            if (!utils.isValidUsername(name)) { alert('格式错误，必须是1-7位小写字母或数字'); return; }
+
+            const btn = document.getElementById('modal-username-save');
+            btn.disabled = true; btn.textContent = '提交中...';
+
+            const updateData = { username: name, username_last_modified: new Date().toISOString() };
+            if (needCard) { updateData.rename_card_count = (profile.rename_card_count || 0) - 1; }
+
+            const { error } = await supabase.from('profiles').update(updateData).eq('id', auth.currentUser.id);
+            if (error) {
+                alert('设置失败: ' + error.message);
+                btn.disabled = false;
+                btn.textContent = isFirstTime ? '确认创建' : '确认修改';
+                return;
+            }
+
+            const { data } = await supabase.from('profiles').select('*').eq('id', auth.currentUser.id).single();
+            auth.currentProfile = data;
+            modal.remove();
+            this._currentModal = null;
+            this.update();
+        };
+    },
+
+    _showBindWalletModal() {
+        if (this._currentModal) return;
+        const modal = document.createElement('div');
+        modal.className = 'yy-modal-overlay';
+        modal.innerHTML = `
+            <div class="yy-modal-box">
+                <div class="yy-modal-title">
+                    <span>💳 绑定钱包</span>
+                    <span style="cursor:pointer;color:#8e8e93;font-size:1rem;" id="modal-wallet-close-alt">✕</span>
+                </div>
+                <div class="yy-modal-sub">请输入以太坊钱包地址 (0x开头，42位)</div>
+                <input class="yy-input" id="wallet-input" type="text" placeholder="0x...">
+                <div class="yy-actions">
+                    <button class="yy-btn-main" id="modal-wallet-save">确认绑定</button>
+                    <button class="yy-btn-sec" id="modal-wallet-close">关闭</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        this._currentModal = modal;
+
+        const closeModal = () => { modal.remove(); this._currentModal = null; };
+        document.getElementById('modal-wallet-close').onclick = closeModal;
+        document.getElementById('modal-wallet-close-alt').onclick = closeModal;
+
+        document.getElementById('modal-wallet-save').onclick = async () => {
+            const addr = document.getElementById('wallet-input').value.trim();
+            if (!addr) { alert('请输入钱包地址'); return; }
+            if (!window.YYCardUtils.isValidEthAddress(addr)) { alert('无效的以太坊地址'); return; }
+            
+            const btn = document.getElementById('modal-wallet-save');
+            btn.disabled = true; btn.textContent = '绑定中...';
+            const success = await this._updateProfileField('wallet_address', addr, '钱包已绑定');
+            btn.disabled = false; btn.textContent = '确认绑定';
+            if (success) closeModal();
+        };
+    },
+
+    _onChangeAvatar() {
+        if(!this._fileInput) {
+            this._fileInput = document.createElement('input');
+            this._fileInput.type = 'file';
+            this._fileInput.accept = 'image/*';
+            this._fileInput.style.display = 'none';
+            document.body.appendChild(this._fileInput);
+            this._fileInput.onchange = (e) => this._uploadAvatar(e.target.files[0]);
+        }
+        this._fileInput.click();
+    },
+
+    async _uploadAvatar(file) {
+        if (!file) return;
+        const auth = window.YYCardAuth;
+        const supabase = window.supabase;
+        const utils = window.YYCardUtils;
+        const config = window.YYCardConfig;
+
+        const cooldown = utils.calculateCooldown(auth.currentProfile?.avatar_last_modified, config.AVATAR_COOLDOWN_DAYS);
+        if (!cooldown.canChange) { alert('头像每15天只能修改一次'); return; }
+
+        const ext = file.name.split('.').pop();
+        const path = `${auth.currentUser.id}_${Date.now()}.${ext}`;
+        const { error: upErr } = await supabase.storage.from('avatars').upload(path, file, { upsert: true });
+        if (upErr) { alert('上传失败: ' + upErr.message); return; }
+
+        const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(path);
+        await this._updateProfileField('avatar_url', urlData.publicUrl, '头像更新成功');
+        await this._updateProfileField('avatar_last_modified', new Date().toISOString(), null);
+    },
+
+    async _updateProfileField(field, value, successMsg) {
+        const auth = window.YYCardAuth;
+        const supabase = window.supabase;
+        const updateData = {}; updateData[field] = value;
+
+        const { error } = await supabase.from('profiles').update(updateData).eq('id', auth.currentUser.id);
+        if (error) { alert('操作失败: ' + error.message); return false; }
+
+        const { data } = await supabase.from('profiles').select('*').eq('id', auth.currentUser.id).single();
+        auth.currentProfile = data;
+        this.update();
+        if(successMsg) alert(successMsg);
+        return true;
+    }
+};
+
+console.log('✅ 头像菜单已修复，透明按钮覆盖，强制用户名设置已生效');
