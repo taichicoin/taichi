@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no, viewport-fit=cover">
+    <title>YY Card · 游戏大厅</title>
+    
+    <!-- ==================== PWA 配置 ==================== -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#1e293b">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="YY Card">
+    
+    <!-- ==================== Three.js 导入映射（用于 3D 武器动画） ==================== -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <!-- ==================== 全屏沉浸样式 ==================== -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        #app {
+            width: 100%;
+            height: 100%;
+            background: url("/assets/lobby.png") no-repeat center;
+            background-size: 100% 100%;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) 
+                     env(safe-area-inset-bottom) env(safe-area-inset-left);
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+        #lobby-view {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        #battle-view {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            background-image: url("/assets/battlebg.png");
+            background-size: 100% 100%;
+            background-position: center;
+            background-repeat: no-repeat;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) 
+                     env(safe-area-inset-bottom) env(safe-area-inset-left);
+            box-sizing: border-box;
+            overflow: hidden;
+            z-index: 1000;
+        }
+        .top-center-info, .top-right-actions {
+            top: max(1vh, env(safe-area-inset-top)) !important;
+        }
+        .hand-area {
+            bottom: env(safe-area-inset-bottom) !important;
+        }
+        .players-status-bar {
+            top: max(0.2vh, env(safe-area-inset-top)) !important;
+        }
+        .shop-area {
+            top: env(safe-area-inset-top) !important;
+        }
+        #battle-progress-wrapper {
+            margin-left: env(safe-area-inset-left) !important;
+            margin-right: env(safe-area-inset-right) !important;
+        }
+
+        /* 3D 武器画布（由 combat.js 动态创建，这里预备样式） */
+        #combat-3d-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
+    <!-- 👇 新增：Telegram Mini App SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script>
+        if(typeof supabase === 'undefined') document.write('<script src="https://unpkg.com/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"><\/script>');
+    </script>
+    <script>
+        if(typeof supabase === 'undefined') document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/supabase-js/2.45.0/supabase.min.js"><\/script>');
+    </script>
+    <script>
+        if(typeof supabase === 'undefined') console.error('❌ Supabase SDK 全部CDN加载失败');
+        else console.log('✅ Supabase SDK 加载成功');
+    </script>
+
+    <link rel="stylesheet" href="/css/lobby.css">
+    <link rel="stylesheet" href="/css/battle.css">
+</head>
+<body>
+<div id="app">
+    <!-- ===== 大厅视图 ===== -->
+    <div id="lobby-view">
+        <div class="top-section">
+            <div class="header-bar">
+                <div class="user-profile">
+                    <img id="lobby-avatar" class="avatar" src="" alt="avatar" onerror="this.src='/assets/default-avatar.png'">
+                    <div class="user-info">
+                        <div id="lobby-username"></div>
+                        <div id="lobby-wallet" class="user-wallet"></div>
+                        <div id="lobby-card-count" class="user-card">改名卡：0张</div>
+                    </div>
+                </div>
+                <!-- 【重点】登出按钮已物理移除 -->
+            </div>
+
+            <!-- 【重点】容器保留：千万不能删，这里留给你签到模块挂载用，里面旧按钮已物理移除 -->
+            <div class="action-buttons"></div>
+
+            <div class="match-row">
+                <div id="match-status"></div>
+                <button class="btn" id="cancel-match-btn">取消匹配</button>
+            </div>
+        </div>
+
+        <div class="spacer">
+            <button class="btn-primary" id="start-match-btn" disabled>请先设置游戏ID</button>
+        </div>
+
+        <div id="debug-panel" class="debug-panel"></div>
+    </div>
+
+    <!-- ===== 对战视图 ===== -->
+    <div id="battle-view" style="display:none;">
+        <span id="round-num" style="display:none;">1</span>
+        <span id="my-health" style="display:none;">100</span>
+
+        <div class="top-center-info prepare-only">
+            <span>🔄 回合 <span id="round-num-top">1</span></span>
+            <span>❤️ <span id="my-health-top">100</span></span>
+        </div>
+
+        <div class="top-right-actions">
+            <button class="btn" id="leave-battle-btn">🚪 退出</button>
+            <button class="btn" id="settings-btn">⚙️</button>
+        </div>
+
+        <div class="players-status-bar">
+            <div id="player-status-list" class="player-status-list"></div>
+        </div>
+
+        <div class="shop-area prepare-only">
+            <div class="shop-info">
+                <span>🏪 Lv.<span id="shop-level">1</span></span>
+                <span>💰 <span id="my-gold">5</span></span>
+            </div>
+            <div id="shop-container" class="shop-cards"></div>
+            <div class="shop-bottom-bar">
+                <div class="shop-actions">
+                    <button class="btn" id="refresh-shop-btn"> 刷新</button>
+                    <button class="btn" id="buy-exp-btn"> 升级</button>
+                </div>
+                <div class="prepare-timer-btn" style="pointer-events: none;">
+                    <div class="prepare-num" id="phase-timer">25</div>
+                    <div class="prepare-text">倒计时</div>
+                </div>
+            </div>
+            <button id="buy-exp-btn-bottom" style="display:none;"></button>
+        </div>
+
+        <div class="board-area">
+            <div class="enemy-board-section battle-only">
+                <div id="enemy-board" class="board"></div>
+            </div>
+
+            <div class="battle-divider battle-only" id="battle-progress-wrapper" style="display: none; flex-direction: column; align-items: center; justify-content: center; gap: 6px; margin: 8px 0;">
+            </div>
+
+            <div class="my-board-section">
+                <div id="my-board" class="board"></div>
+            </div>
+        </div>
+
+        <div class="hand-area">
+            <div class="hand-label"><span id="hand-count">0</span>/15</div>
+            <div id="hand-container" class="hand"></div>
+        </div>
+    </div>
+</div>
+
+<div id="avatar-modal" class="modal">
+    <div class="modal-content">
+        <h3>更换头像</h3>
+        <p id="cooldown-warning"></p>
+        <input type="file" id="avatar-file-input" accept="image/png,image/jpeg,image/webp">
+        <div id="upload-status"></div>
+        <div class="modal-buttons">
+            <button class="btn" id="upload-avatar-btn">上传</button>
+            <button class="btn" id="cancel-avatar-btn">取消</button>
+        </div>
+    </div>
+</div>
+
+<!-- 原有配置层与工具层 -->
+<script src="/js/config.js"></script>
+<script src="/js/utils.js"></script>
+
+<!-- ========== 🆕 新增：独立渲染与拖拽模块（必须在 shop.js 之前） ========== -->
+<script src="/js/render.js"></script>
+<script src="/js/shopRender.js"></script>  
+<script src="/js/drag.js"></script>
+<!-- ================================================================ -->
+
+<script src="/js/combat.js"></script>
+<script src="/js/shop.js"></script>
+<script src="/js/refresh.js"></script>
+<script src="/js/buffs.js"></script>
+<!-- 后续脚本保持不变 -->
+<script src="/js/sounds.js"></script>
+<script src="/js/merge.js"></script>   
+<script src="/js/auth.js"></script>
+<script src="/js/checkin.js"></script>   <!-- 🆕 签到模块 -->
+<script src="/js/profile-ui.js"></script>
+<script src="/js/matchmaking.js"></script>
+<script src="/js/battle.js"></script>
+<script src="/js/consumable.js"></script>
+<script src="/js/cardin.js"></script>
+<script src="/js/reconnect.js"></script>
+
+<script>
+    // ==================== 顶部回合/血量同步 ====================
+    const roundNumTop = document.getElementById('round-num-top');
+    const myHealthTop = document.getElementById('my-health-top');
+    const originalRoundNum = document.getElementById('round-num');
+    const originalMyHealth = document.getElementById('my-health');
+    
+    if(originalRoundNum && roundNumTop) {
+        const roundObserver = new MutationObserver(() => {
+            roundNumTop.textContent = originalRoundNum.textContent;
+        });
+        roundObserver.observe(originalRoundNum, { childList: true, characterData: true, subtree: true });
+    }
+    if(originalMyHealth && myHealthTop) {
+        const healthObserver = new MutationObserver(() => {
+            myHealthTop.textContent = originalMyHealth.textContent;
+        });
+        healthObserver.observe(originalMyHealth, { childList: true, characterData: true, subtree: true });
+    }
+
+    // ==================== 主入口 ====================
+    window.initApp = async function() {
+        if(window.YYCardUtils && window.YYCardUtils.loadCardTemplates) {
+            await window.YYCardUtils.loadCardTemplates();
+        } else {
+            console.error('❌ utils.js 未加载或缺少 loadCardTemplates');
+        }
+
+        const auth = window.YYCardAuth;
+        const profileUI = window.YYCardProfileUI;
+        const matchmaking = window.YYCardMatchmaking;
+
+        const success = await auth.init();
+        if (!success) return;
+
+        profileUI.update();
+        if (window.YYCardCheckin) window.YYCardCheckin.init();   // 🆕 签到模块初始化 (完美挂入空的 action-buttons)
+        profileUI.bindEvents();
+
+        // ========== 登出逻辑已移入点头像弹窗菜单中 ==========
+
+        document.getElementById('start-match-btn').onclick = () => {
+            if (matchmaking?.start) matchmaking.start();
+            else auth.log('❌ 匹配模块未正确加载', true);
+        };
+        document.getElementById('cancel-match-btn').onclick = () => {
+            if (matchmaking?.cancel) matchmaking.cancel();
+        };
+
+        window.addEventListener('beforeunload', () => {
+            const uid = auth.currentUser?.id;
+            if (!uid) return;
+
+            const isInBattle = document.getElementById('battle-view').style.display === 'block';
+            const isMatching = document.getElementById('cancel-match-btn').style.display === 'inline-block';
+
+            if (!isInBattle && !isMatching) {
+                fetch(`${window.YYCardConfig.SUPABASE_URL}/rest/v1/room_players?player_id=eq.${uid}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'apikey': window.YYCardConfig.SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${auth.currentSession?.access_token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    keepalive: true
+                }).catch(e => console.warn('页面关闭清理失败:', e));
+            }
+        });
+
+        await window.YYCardReconnect.check();
+        auth.log('✅ 大厅初始化完成');
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof window.initApp === 'function') window.initApp();
+    });
+</script>
+
+<!-- 👇 新增：Telegram Mini App 初始化 -->
+<script>
+  (function() {
+    if (!window.Telegram || !window.Telegram.WebApp) return;
+    const tg = window.Telegram.WebApp;
+    tg.ready();      // 通知 Telegram 页面就绪
+    tg.expand();     // 全屏展开
+  })();
+</script>
+</body>
+</html>
