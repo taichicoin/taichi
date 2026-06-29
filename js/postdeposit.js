@@ -11,7 +11,7 @@
   ];
 
   // 后端归集接口（Supabase Edge Function 地址）
-  const COLLECT_API = '/api/collect'; // 替换为实际地址
+  const COLLECT_API = 'https://kvflbfdqyehtlfmigaxa.supabase.co/functions/v1/collect';
 
   const CONFIRM_BLOCKS = 3;
   const HISTORY_BLOCKS = 1200; // 回溯约 1 小时
