@@ -4,10 +4,10 @@
   if (!window.__YY_ASSETS__) window.__YY_ASSETS__ = [];
 
   window.__YY_ASSETS__.push({
-    id: 'wood',
-    name: 'Wood',
+    id: 'WOOD',
+    name: 'WOOD',
     icon: '/assets/logo/wood.png',
-    price: null,    // 如果有价格可以填
+    price: 100$,    // 如果有价格可以填
 
     async fetchBalance() {
       const auth = window.YYCardAuth;
