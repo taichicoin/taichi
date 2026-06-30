@@ -7,7 +7,7 @@
     id: 'WOOD',
     name: 'WOOD',
     icon: '/assets/logo/wood.png',
-    price: $0,    // 如果有价格可以填
+    price: '$0',    // 如果有价格可以填
 
     async fetchBalance() {
       const auth = window.YYCardAuth;
