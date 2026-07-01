@@ -141,7 +141,7 @@
             ID: ${userId}
           </span>
           <button id="copy-user-id-btn" style="margin-left: 8px; background: none; border: 1px solid #ccc; border-radius: 8px; padding: 6px 12px; font-size: 13px; cursor: pointer; white-space: nowrap;">
-            📋 复制
+            复制
           </button>
         </div>
       `;
@@ -209,8 +209,8 @@
       if (copyBtn) {
         copyBtn.addEventListener('click', () => {
           copyToClipboard(userId);
-          copyBtn.textContent = '✅ 已复制';
-          setTimeout(() => { copyBtn.textContent = '📋 复制'; }, 1500);
+          copyBtn.textContent = ' 已复制';
+          setTimeout(() => { copyBtn.textContent = ' 复制'; }, 1500);
         });
       }
     } catch (globalError) {
