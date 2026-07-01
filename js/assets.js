@@ -153,7 +153,7 @@
           <button class="assets-btn assets-btn-deposit" onclick="window.openDepositPopup()">充币</button>
           <button class="assets-btn assets-btn-withdraw" disabled>提币</button>
           <button class="assets-btn" style="background:#f59e0b; color:white;" onclick="window.showSelfDeposit()">手动上账</button>
-          <button class="assets-btn" style="background:#e2e8f0; color:#1e293b; border:1px solid #cbd5e1;" onclick="window.showBillModal()">📋 账单</button>
+          <button class="assets-btn" style="background:#e2e8f0; color:#1e293b; border:1px solid #cbd5e1;" onclick="window.showBillModal()"> 账单</button>
         </div>
       `;
 
