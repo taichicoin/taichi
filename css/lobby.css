@@ -87,7 +87,7 @@ body {
 /* ★ 匹配按钮 —— 纯圆形，直径 15vh，视口定位 */
 .btn-primary {
     position: fixed;
-    top: 90vh;                      /* 按钮中心在视口 90% 高度处（可调） */
+    top: 60vh;                      /* 按钮中心在视口 90% 高度处（可调） */
     left: 50vw;
     transform: translate(-50%, -50%);
     width: 15vh;                   /* 直径 = 视口高度的 15% */
