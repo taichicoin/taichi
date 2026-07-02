@@ -35,6 +35,9 @@ body {
 /* ========== 1. 顶部区：用户信息 + 三个按钮，固定在上半部分 ========== */
 .top-section {
     flex-shrink: 0;
+    position: fixed;
+    top: 10vh;
+    left: 5%;
 }
 .header-bar { 
     display: flex; 
