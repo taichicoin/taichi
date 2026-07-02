@@ -183,7 +183,7 @@
     overlay.innerHTML = `
       <div style="background:white; color:#1e293b; max-width:480px; width:90%; max-height:70vh; border-radius:16px; padding:20px; display:flex; flex-direction:column;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
-          <h3 style="margin:0;">📋 历史账单</h3>
+          <h3 style="margin:0;"> 历史账单</h3>
           <button id="close-bill-btn" style="background:none; border:none; font-size:24px; cursor:pointer;">&times;</button>
         </div>
         <div style="overflow-y:auto; flex:1;">
