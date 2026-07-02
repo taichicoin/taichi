@@ -2,6 +2,7 @@
   "name": "YY Card",
   "short_name": "YYCard",
   "start_url": "/ycardy.html",
+  "version": "1.0.1",
   "scope": "/",
   "display": "fullscreen",
   "orientation": "portrait",
