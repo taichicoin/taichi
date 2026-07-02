@@ -1,0 +1,208 @@
+/* ========== 热点预测全屏白底样式 ========== */
+#hotbet-area {
+    background: #ffffff !important;
+    padding: 16px;
+    padding-bottom: 80px; /* 给底部导航留空间 */
+    overflow-y: auto;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 顶部积分栏 */
+.hotbet-points-bar {
+    background: #f8fafc;
+    border-radius: 16px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.hotbet-points-bar .label {
+    font-size: 0.9rem;
+    color: #64748b;
+}
+.hotbet-points-bar .value {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+/* 分类标签栏 */
+.hotbet-categories {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    margin-bottom: 16px;
+    white-space: nowrap;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+.hotbet-categories::-webkit-scrollbar {
+    display: none;
+}
+.hotbet-category {
+    padding: 8px 18px;
+    border-radius: 40px;
+    background: #f1f5f9;
+    color: #334155;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+.hotbet-category.active {
+    background: #3b82f6;
+    color: white;
+    font-weight: 600;
+}
+
+/* 事件卡片 */
+.hotbet-event-card {
+    background: #f8fafc;
+    border-radius: 20px;
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+}
+.hotbet-event-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #0f172a;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.hotbet-event-status {
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: #e2e8f0;
+    color: #475569;
+}
+.hotbet-event-status.live {
+    background: #fee2e2;
+    color: #b91c1c;
+    animation: livePulse 1.5s infinite;
+}
+@keyframes livePulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+.hotbet-event-status.ended {
+    background: #e2e8f0;
+    color: #64748b;
+}
+
+.hotbet-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+}
+.hotbet-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: white;
+    border-radius: 14px;
+    padding: 12px 14px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s;
+}
+.hotbet-option:hover {
+    border-color: #3b82f6;
+    background: #f0f7ff;
+}
+.hotbet-option-name {
+    font-weight: 600;
+    color: #1e293b;
+    font-size: 0.95rem;
+}
+.hotbet-option-odds {
+    background: #3b82f6;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 30px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-right: 10px;
+}
+.hotbet-option-bet-btn {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 8px 16px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.85rem;
+}
+.hotbet-option-bet-btn:disabled {
+    background: #94a3b8;
+    cursor: not-allowed;
+}
+
+/* 下注模态框 */
+.hotbet-modal {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+.hotbet-modal-content {
+    background: white;
+    border-radius: 24px;
+    padding: 24px;
+    width: 85%;
+    max-width: 360px;
+}
+.hotbet-modal h3 {
+    font-size: 1.2rem;
+    margin-bottom: 16px;
+    text-align: center;
+}
+.hotbet-modal .detail {
+    font-size: 0.9rem;
+    margin-bottom: 12px;
+    color: #475569;
+}
+.hotbet-modal input {
+    width: 100%;
+    padding: 14px;
+    border-radius: 40px;
+    border: 1px solid #e2e8f0;
+    margin: 12px 0;
+    font-size: 1rem;
+    text-align: center;
+}
+.hotbet-modal .modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+}
+.hotbet-modal .modal-actions button {
+    flex: 1;
+    padding: 12px;
+    border-radius: 40px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+}
+.btn-confirm {
+    background: #3b82f6;
+    color: white;
+}
+.btn-cancel {
+    background: #f1f5f9;
+    color: #334155;
+}
