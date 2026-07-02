@@ -32,7 +32,6 @@ window.YYCardReconnect = (function() {
             background: url('/assets/recobg.png') no-repeat center center;
             background-size: 100% 100%;
             border: 2px solid #f5d76e;
-            border-radius: 16px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -58,7 +57,6 @@ window.YYCardReconnect = (function() {
                     background: #ffffff;
                     color: #1a1a2e;
                     border: none;
-                    border-radius: 8px;
                     padding: 0.8vh 5vw;
                     font-size: clamp(14px, 4vw, 18px);
                     font-weight: bold;
