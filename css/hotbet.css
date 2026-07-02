@@ -206,3 +206,7 @@
     background: #f1f5f9;
     color: #334155;
 }
+#hotbet-area {
+    /* 原有样式保留... */
+    padding-top: 5vh;   /* 内容从视口顶部向下偏移 12% 的高度 */
+}
