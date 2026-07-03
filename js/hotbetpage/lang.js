@@ -74,7 +74,7 @@ window.YYCardHotBetLang = (() => {
     wcbet_network_error: { zh: '网络错误，请稍后重试', en: 'Network error, please try again later' },
 
     // ---------- 筹码栏 ----------
-    hotbet_my_points:    { zh: '我的WOOD', en: 'My WOOD' }
+    hotbet_my_points:    { zh: '筹码', en: 'CHIPS' }
   };
 
   let currentLang = localStorage.getItem('hotbet_lang') || 'zh';
