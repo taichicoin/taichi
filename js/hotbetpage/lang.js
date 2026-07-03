@@ -11,15 +11,15 @@ window.YYCardHotBetLang = (() => {
     // ---------- 分类标签 ----------
     cat_worldcup:        { zh: '⚽ 世界杯', en: '⚽ World Cup' },
     cat_crypto:          { zh: '₿ 加密货币', en: '₿ Crypto' },
-    cat_politics:        { zh: '🏛️ 政治', en: '🏛️ Politics' },
-    cat_sports:          { zh: '🏀 体育', en: '🏀 Sports' },
+    cat_politics:        { zh: ' 政治', en: ' Politics' },
+    cat_sports:          { zh: ' 体育', en: ' Sports' },
     category_not_available: { zh: '该分类开发中...', en: 'Category under development...' },
 
     // ---------- 子导航 ----------
-    filter_hot:          { zh: '🔥 热门', en: '🔥 Hot' },
-    filter_live:         { zh: '🟢 进行中', en: '🟢 Live' },
-    filter_upcoming:     { zh: '⏳ 即将到来', en: '⏳ Upcoming' },
-    filter_mybets:       { zh: '📋 我的预测', en: '📋 My Bets' },
+    filter_hot:          { zh: ' 热门', en: ' Hot' },
+    filter_live:         { zh: ' 进行中', en: ' Live' },
+    filter_upcoming:     { zh: ' 即将到来', en: ' Upcoming' },
+    filter_mybets:       { zh: ' 我的预测', en: ' My Bets' },
 
     // ---------- 事件卡片 ----------
     status_upcoming:     { zh: '即将开始', en: 'Upcoming' },
@@ -69,7 +69,7 @@ window.YYCardHotBetLang = (() => {
     wcbet_insufficient_balance: { zh: '积分不足', en: 'Insufficient points' },
     wcbet_confirm:       { zh: '确认用 {amount} WOOD 下注？', en: 'Confirm bet with {amount} WOOD?' },
     wcbet_token_expired: { zh: '授权过期，请重新登录', en: 'Authorization expired, please login again' },
-    wcbet_success:       { zh: '✅ 下注成功！剩余积分：{balance} WOOD', en: '✅ Bet successful! Remaining points: {balance} WOOD' },
+    wcbet_success:       { zh: '✅ 下注成功！余额：{balance} WOOD', en: '✅ Bet successful! Balance: {balance} WOOD' },
     wcbet_fail:          { zh: '❌ 失败：{message}', en: '❌ Failed: {message}' },
     wcbet_network_error: { zh: '网络错误，请稍后重试', en: 'Network error, please try again later' },
 
