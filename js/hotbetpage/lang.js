@@ -11,7 +11,7 @@ window.YYCardHotBetLang = (() => {
     // ---------- 分类标签 ----------
     cat_worldcup:        { zh: '⚽ 世界杯', en: '⚽ World Cup' },
     cat_crypto:          { zh: '₿ 加密货币', en: '₿ Crypto' },
-    cat_politics:        { zh: ' 政治', en: ' Politics' },
+    cat_esports:        { zh: ' 电竞', en: ' Esports' },
     cat_sports:          { zh: ' 体育', en: ' Sports' },
     category_not_available: { zh: '该分类开发中...', en: 'Category under development...' },
 
