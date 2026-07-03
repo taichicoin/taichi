@@ -182,7 +182,7 @@ window.YYCardHotBet_worldcup = (() => {
         <div style="font-size:0.8rem;color:#64748b;margin-bottom:12px;">
           ⏰ ${_t('event_match_time')}：${formatTime(event.start_time)} ~ ${formatTime(event.end_time)}
           <br>⛔ ${_t('event_bet_deadline')}：${betEndStr}${countdownHtml}
-          <br>🏆 ${_t('event_base_pool')}：<strong>${event.base_pool || 0} WOOD</strong> | 💰 ${_t('event_total_pool')}：<strong>${totalPool} WOOD</strong>
+          <br> ${_t('event_base_pool')}：<strong>${event.base_pool || 0} WOOD</strong> |  ${_t('event_total_pool')}：<strong>${totalPool} WOOD</strong>
         </div>
         <div class="hotbet-options">
           ${optionsHtml}
