@@ -6,7 +6,7 @@ window.YYCardHotBet = (() => {
   const categories = [
     { id: 'worldcup', name: _t('cat_worldcup'), module: 'worldcup' },
     { id: 'crypto',   name: _t('cat_crypto'), module: 'crypto' },
-    { id: 'esports', name: _t('cat_epsorts'), module: 'esports' },
+    { id: 'esports', name: _t('cat_esports'), module: 'esports' },
     { id: 'sports',   name: _t('cat_sports'), module: 'sports' }
   ];
 
