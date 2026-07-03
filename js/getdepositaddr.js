@@ -155,10 +155,10 @@
     overlay.className = 'deposit-overlay';
     overlay.innerHTML = `
       <div class="deposit-modal">
-        <h3>💰 充值 (BSC 测试网)</h3>
+        <h3> 充值 (BSC 测试网)</h3>
         <p>向此地址转币，系统自动加余额</p>
         <input type="text" value="${addr}" readonly id="dep-addr-input">
-        <button id="copy-addr-btn">📋 复制</button>
+        <button id="copy-addr-btn"> 复制</button>
         <p class="deposit-note">⚠️ 仅限 BSC 链，跨链转账无法找回</p>
         <button class="close-deposit">关闭</button>
       </div>
