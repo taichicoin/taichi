@@ -64,9 +64,9 @@ body {
 }
 .action-buttons .btn {
     flex: none;
-    min-width: 30vw;                /* 按钮最小宽度用视口宽度，保持比例 */
-    max-width: 40vw;
-    padding: 10px 16px;
+    min-width: 20vw;                /* 按钮最小宽度用视口宽度，保持比例 */
+    max-width: 20vw;
+    padding: 5px 8px;
     text-align: center;
     font-size: clamp(0.8rem, 2vw, 1rem);
 }
