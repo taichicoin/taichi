@@ -110,7 +110,7 @@ window.YYCardTgShare = (function() {
     overlay.className = 'checkin-overlay';
     overlay.innerHTML = `
       <div class="checkin-box">
-        <h3>📤 邀请好友</h3>
+        <h3> 邀请好友</h3>
         
         <!-- 应用链接 -->
         <div style="margin: 16px 0 12px;">
@@ -185,9 +185,9 @@ window.YYCardTgShare = (function() {
     if (!shareBtn) return;
 
     if (!isRealTelegramUser()) {
-      shareBtn.textContent = '📤 邀请（需TG）';
+      shareBtn.textContent = ' 在TELEGRAM使用此功能';
     } else {
-      shareBtn.textContent = currentSelfCode ? `📤 邀请 (${currentSelfCode})` : '📤 绑定后分享';
+      shareBtn.textContent = currentSelfCode ? ` 邀请 (${currentSelfCode})` : '📤 绑定后分享';
     }
   }
 
@@ -202,7 +202,7 @@ window.YYCardTgShare = (function() {
     const btn = document.createElement('button');
     btn.id = 'invite-share-btn';
     btn.className = 'btn';
-    btn.textContent = '📤 邀请（需TG）';
+    btn.textContent = '邀请（需TG）';
     btn.style.cssText = 'background:#34c759; color:#fff; border-radius:0;';
     btn.onclick = shareMyLink;
     container.appendChild(btn);
