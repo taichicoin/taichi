@@ -33,7 +33,7 @@
 /* 分类标签栏 */
 .hotbet-categories {
     display: flex;
-    gap: 8px;
+    gap: 4px;
     overflow-x: auto;
     padding: 0 16px 8px 16px;
     margin-bottom: 8px;
@@ -73,7 +73,7 @@
     border-top: 1px solid #e5e7eb;   /* 分割线移到顶部 */
     background: #fff;
     flex-shrink: 0;
-    margin-bottom: 11vh;             /* ★ 用视口高度控制，数值越大越靠上，可根据需要调整 */
+    margin-bottom: 18vh;             /* ★ 用视口高度控制，数值越大越靠上，可根据需要调整 */
 }
 .hotbet-subnav-btn {
     padding: 8px 16px;
