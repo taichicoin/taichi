@@ -90,7 +90,7 @@ window.YYCardHotBet_worldcup = (() => {
       countdownTimer = null;
     }
 
-    containerDiv.innerHTML = `<p style="text-align:center;color:#64748b;">⏳ ${_t('loading')}</p>`;
+    containerDiv.innerHTML = `<p style="text-align:center;color:#64748b;"> ${_t('loading')}</p>`;
 
     const events = await loadWorldcupEvents();
 
