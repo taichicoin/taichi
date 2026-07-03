@@ -103,7 +103,7 @@ window.YYCardCheckin = (function() {
       if (container && !checkinBtn) {
         checkinBtn = document.createElement('button');
         checkinBtn.className = 'btn';
-        checkinBtn.textContent = '📅 签到';
+        checkinBtn.textContent = ' 签到';
         checkinBtn.style.cssText = 'background:#f0ad4e;color:#000;border-radius:0;';
         checkinBtn.onclick = openModal;
         container.appendChild(checkinBtn);
@@ -150,13 +150,13 @@ window.YYCardCheckin = (function() {
     const hasTelegram = auth.currentProfile && auth.currentProfile.telegram_id;
     checkinBtn.disabled = false;
     if (!hasTelegram) {
-      checkinBtn.textContent = '📅 签到';
+      checkinBtn.textContent = ' 签到';
     } else if (state.canCheckin) {
-      checkinBtn.textContent = '📅 签到';
+      checkinBtn.textContent = ' 签到';
     } else if (state.waitHours > 0) {
-      checkinBtn.textContent = `⏳ ${state.waitHours}h后`;
+      checkinBtn.textContent = ` ${state.waitHours}h后`;
     } else {
-      checkinBtn.textContent = '📅 已签到';
+      checkinBtn.textContent = ' 已签到';
     }
   }
 
@@ -191,13 +191,13 @@ window.YYCardCheckin = (function() {
     modal.innerHTML = `
       <div class="checkin-box">
         <div class="checkin-header">
-          <h3>📅 每日签到</h3>
+          <h3> 每日签到</h3>
           <button id="modal-close" class="checkin-close-icon">✕</button>
         </div>
 
         <div class="score-area">
           <span class="score-number">${state.totalPoints}</span>
-          <span class="score-label">积 分</span>
+          <span class="score-label">WOOD</span>
         </div>
 
         <div class="info-row">
