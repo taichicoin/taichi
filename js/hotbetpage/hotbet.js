@@ -73,7 +73,7 @@ window.YYCardHotBet = (() => {
     const langBtnHtml = `
       <button id="lang-toggle-btn" style="
         position: absolute;
-        top: 12vh;
+        bottom: 12vh;
         right: 2vw;
         z-index: 20;
         background: rgba(59, 130, 246, 0.15);
