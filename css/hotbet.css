@@ -73,7 +73,7 @@
     border-top: 1px solid #e5e7eb;   /* 分割线移到顶部 */
     background: #fff;
     flex-shrink: 0;
-    margin-bottom: 10vh;             /* ★ 用视口高度控制，数值越大越靠上，可根据需要调整 */
+    margin-bottom: 6vh;             /* ★ 用视口高度控制，数值越大越靠上，可根据需要调整 */
 }
 .hotbet-subnav-btn {
     padding: 8px 16px;
