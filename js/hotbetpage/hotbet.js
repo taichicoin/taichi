@@ -1,10 +1,10 @@
 // ==================== 热点预测主入口（子导航栏固定在底部） ====================
 window.YYCardHotBet = (() => {
   const categories = [
-    { id: 'worldcup', name: '🏆 世界杯', module: 'worldcup' },
+    { id: 'worldcup', name: '⚽ 世界杯', module: 'worldcup' },
     { id: 'crypto',   name: '₿ 加密货币', module: 'crypto' },
-    { id: 'politics', name: '🏛️ 政治', module: 'politics' },
-    { id: 'sports',   name: '🏀 体育', module: 'sports' }
+    { id: 'politics', name: ' 政治', module: 'politics' },
+    { id: 'sports',   name: ' 体育', module: 'sports' }
   ];
 
   let currentCategory = 'worldcup';
@@ -98,8 +98,8 @@ window.YYCardHotBet = (() => {
     const filters = [
       { key: 'hot', label: '🔥 热门' },
       { key: 'live', label: '🟢 进行中' },
-      { key: 'upcoming', label: '⏳ 即将到来' },
-      { key: 'mybets', label: '📋 我的押注' }
+      { key: 'upcoming', label: ' 即将到来' },
+      { key: 'mybets', label: ' 我的预测' }
     ];
     return `
       <div class="hotbet-subnav" style="
