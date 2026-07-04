@@ -35,6 +35,7 @@ window.YYCardHotBetLang = (() => {
     no_events:           { zh: '暂无预测事件', en: 'No prediction events' },
     tbd:                 { zh: '待定', en: 'TBD' },
     no_limit:            { zh: '无限制', en: 'No limit' },
+    bet_not_started: { zh: '下注尚未开始', en: 'Betting has not started yet' },
     bet_module_not_loaded: { zh: '下注模块未加载，请刷新页面', en: 'Bet module not loaded, please refresh' },
 
     // ---------- 倒计时 ----------
