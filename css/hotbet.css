@@ -19,6 +19,8 @@
     justify-content: space-between;
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     flex-shrink: 0;
+    justify-content: flex-start;
+    gap: 4vw; 
 }
 .hotbet-points-bar .label {
     font-size: 0.9rem;
