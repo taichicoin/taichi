@@ -28,6 +28,8 @@
 
     overflow:hidden;
 
+    display: none !important;
+
     flex-direction:column;
 
     background:#07111f;
