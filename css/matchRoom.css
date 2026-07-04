@@ -499,3 +499,426 @@
     font-size:18px;
 
 }
+/*==================================================
+
+            ARENA
+
+==================================================*/
+
+.arena-section{
+
+    position:relative;
+
+    height:360px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    overflow:hidden;
+
+}
+
+/*========================*/
+
+.arena-glow{
+
+    position:absolute;
+
+    width:340px;
+
+    height:340px;
+
+    border-radius:50%;
+
+    background:
+
+    radial-gradient(
+
+        circle,
+
+        rgba(80,180,255,.45),
+
+        rgba(0,120,255,.18),
+
+        transparent 72%
+
+    );
+
+    filter:blur(35px);
+
+    animation:
+
+    glowPulse 4s ease-in-out infinite;
+
+}
+
+/*========================*/
+
+.arena-ring{
+
+    position:absolute;
+
+    border-radius:50%;
+
+    border:
+
+    2px solid rgba(130,210,255,.25);
+
+    animation:
+
+    rotateRing linear infinite;
+
+}
+
+/*========================*/
+
+.ring1{
+
+    width:260px;
+
+    height:260px;
+
+    animation-duration:12s;
+
+}
+
+/*========================*/
+
+.ring2{
+
+    width:320px;
+
+    height:320px;
+
+    animation-duration:18s;
+
+    animation-direction:reverse;
+
+    border-style:dashed;
+
+    opacity:.65;
+
+}
+
+/*========================*/
+
+.arena-core{
+
+    position:absolute;
+
+    width:150px;
+
+    height:150px;
+
+    border-radius:50%;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:68px;
+
+    color:white;
+
+    background:
+
+    radial-gradient(
+
+        circle,
+
+        #6bd5ff,
+
+        #2c7dff,
+
+        #132d8a
+
+    );
+
+    box-shadow:
+
+        0 0 30px rgba(60,170,255,.7),
+
+        0 0 70px rgba(60,170,255,.45),
+
+        inset 0 0 25px rgba(255,255,255,.45);
+
+    animation:
+
+        coreFloat 3.2s ease-in-out infinite;
+
+}
+
+/*========================*/
+
+.arena-core::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:-18px;
+
+    border-radius:50%;
+
+    border:
+
+    2px solid rgba(255,255,255,.25);
+
+}
+
+/*========================*/
+
+.arena-core::after{
+
+    content:"";
+
+    position:absolute;
+
+    inset:-38px;
+
+    border-radius:50%;
+
+    border:
+
+    1px solid rgba(90,180,255,.15);
+
+}
+
+/*========================*/
+/* 光柱 */
+
+.arena-section::before{
+
+    content:"";
+
+    position:absolute;
+
+    bottom:-50px;
+
+    width:120px;
+
+    height:240px;
+
+    background:
+
+    linear-gradient(
+
+        rgba(120,220,255,.45),
+
+        transparent
+
+    );
+
+    filter:blur(28px);
+
+}
+
+/*========================*/
+/* 地台 */
+
+.arena-section::after{
+
+    content:"";
+
+    position:absolute;
+
+    bottom:42px;
+
+    width:250px;
+
+    height:45px;
+
+    border-radius:50%;
+
+    background:
+
+    radial-gradient(
+
+        ellipse,
+
+        rgba(90,180,255,.45),
+
+        transparent
+
+    );
+
+}
+
+/*========================*/
+
+@keyframes rotateRing{
+
+    from{
+
+        transform:rotate(0deg);
+
+    }
+
+    to{
+
+        transform:rotate(360deg);
+
+    }
+
+}
+
+/*========================*/
+
+@keyframes glowPulse{
+
+    0%{
+
+        transform:scale(.95);
+
+        opacity:.45;
+
+    }
+
+    50%{
+
+        transform:scale(1.08);
+
+        opacity:.9;
+
+    }
+
+    100%{
+
+        transform:scale(.95);
+
+        opacity:.45;
+
+    }
+
+}
+
+/*========================*/
+
+@keyframes coreFloat{
+
+    0%{
+
+        transform:
+
+        translateY(0px);
+
+    }
+
+    50%{
+
+        transform:
+
+        translateY(-12px);
+
+    }
+
+    100%{
+
+        transform:
+
+        translateY(0px);
+
+    }
+
+}
+
+/*==================================================
+
+      PLAYER PANEL
+
+==================================================*/
+
+.player-panel{
+
+    position:relative;
+
+    z-index:10;
+
+}
+
+/*========================*/
+
+.match-avatar{
+
+    transition:.35s;
+
+}
+
+.match-avatar:hover{
+
+    transform:scale(1.06);
+
+}
+
+/*========================*/
+
+.player-name{
+
+    text-shadow:
+
+    0 0 15px rgba(80,180,255,.4);
+
+}
+
+/*========================*/
+
+.player-rank{
+
+    padding:
+
+    6px 18px;
+
+    border-radius:30px;
+
+    background:
+
+    rgba(255,255,255,.08);
+
+    border:
+
+    1px solid rgba(255,255,255,.12);
+
+    margin-top:15px;
+
+}
+
+/*========================*/
+
+.status-panel{
+
+    animation:
+
+    fadeUp .7s ease;
+
+}
+
+/*========================*/
+
+@keyframes fadeUp{
+
+    from{
+
+        opacity:0;
+
+        transform:
+
+        translateY(35px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:
+
+        translateY(0);
+
+    }
+
+    }
