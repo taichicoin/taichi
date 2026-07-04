@@ -72,6 +72,7 @@ window.YYCardHotBetLang = (() => {
     wcbet_token_expired: { zh: '授权过期，请重新登录', en: 'Authorization expired, please login again' },
     wcbet_success:       { zh: '✅ 下注成功！余额：{balance} WOOD', en: '✅ Bet successful! Balance: {balance} WOOD' },
     wcbet_fail:          { zh: '❌ 失败：{message}', en: '❌ Failed: {message}' },
+    event_bet_upcoming: { zh: '即将开始', en: 'Upcoming' },
     wcbet_network_error: { zh: '网络错误，请稍后重试', en: 'Network error, please try again later' },
 
     // ---------- 筹码栏 ----------
