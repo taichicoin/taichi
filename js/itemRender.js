@@ -10,7 +10,7 @@ window.YYCardItemRender = (function() {
     };
 
     // 效果图标项之间的水平间隔（加大了一点）
-    const ICON_GAP = '4px';
+    const ICON_GAP = '6px';
 
     function parseAbilities(abilities) {
         if (!abilities) return [];
@@ -48,7 +48,7 @@ window.YYCardItemRender = (function() {
             font-weight: bold;
             font-size: clamp(0.7rem, 2.2vw, 1rem);
             padding: 0 0.4em;
-            border-radius: 10px;
+            border-radius: 50%;
             text-shadow: 0 0 3px black;
             white-space: nowrap;
             height: auto;
