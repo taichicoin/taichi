@@ -185,7 +185,7 @@ window.YYCardTgShare = (function() {
     if (!shareBtn) return;
 
     if (!isRealTelegramUser()) {
-      shareBtn.textContent = ' 在TELEGRAM使用此功能';
+      shareBtn.textContent = ' 分享应用';
     } else {
       shareBtn.textContent = currentSelfCode ? ` 邀请 (${currentSelfCode})` : '📤 绑定后分享';
     }
@@ -202,7 +202,7 @@ window.YYCardTgShare = (function() {
     const btn = document.createElement('button');
     btn.id = 'invite-share-btn';
     btn.className = 'btn';
-    btn.textContent = '邀请（需TG）';
+    btn.textContent = '分享应用';
     btn.style.cssText = 'background:#34c759; color:#fff; border-radius:0;';
     btn.onclick = shareMyLink;
     container.appendChild(btn);
