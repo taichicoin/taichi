@@ -28,8 +28,6 @@
 
     overflow:hidden;
 
-    display:flex;
-
     flex-direction:column;
 
     background:#07111f;
