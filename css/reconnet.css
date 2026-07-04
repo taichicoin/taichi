@@ -187,3 +187,6 @@
     from { left: -120%; }
     to { left: 140%; }
 }
+.reconnect-mask {
+    display: flex; /* 这个类出现时才显示，移除后自然消失 */
+}
