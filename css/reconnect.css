@@ -1,0 +1,135 @@
+/* ========== 重连弹窗样式（合并版，无冲突） ========== */
+.reconnect-mask {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.72);
+    backdrop-filter: blur(6px);
+    display: none;              /* 默认隐藏，弹窗时才改为 flex */
+    align-items: center;
+    justify-content: center;
+    z-index: 100000;
+    animation: maskFade 0.2s ease-out;
+}
+
+/* JS 创建遮罩时会直接设为 flex，这里用优先级确保生效 */
+.reconnect-mask.active {
+    display: flex;
+}
+
+/* 面板 */
+.reconnect-panel {
+    position: relative;        /* 为了 ::before 定位 */
+    width: min(92vw, 420px);
+    min-height: 260px;
+    border-radius: 18px;
+    background: linear-gradient(145deg, #1b1f2a, #0f1320);
+    border: 1px solid rgba(255, 215, 120, 0.35);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    padding: 22px 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transform-origin: center;
+    animation: panelPop 0.28s cubic-bezier(.2,.9,.2,1);
+}
+
+/* 金色呼吸光 */
+.reconnect-panel::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 18px;
+    pointer-events: none;
+    background: radial-gradient(circle at top, rgba(255, 215, 120, 0.18), transparent 60%);
+    animation: glowPulse 2.5s infinite ease-in-out;
+}
+
+.reconnect-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #ffd77a;
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.reconnect-desc {
+    font-size: 14px;
+    color: #cbd5e1;
+    text-align: center;
+    line-height: 1.5;
+    opacity: 0.9;
+}
+
+.reconnect-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.reconnect-btn {
+    flex: 1;
+    padding: 12px 0;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.reconnect-btn.no {
+    background: rgba(148, 163, 184, 0.15);
+    color: #cbd5e1;
+    border: 1px solid rgba(148,163,184,0.25);
+}
+
+.reconnect-btn.yes {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #f5d76e, #ffb84d);
+    color: #1a1a1a;
+    box-shadow: 0 6px 18px rgba(255, 184, 77, 0.25);
+}
+
+/* 按钮点击反馈 */
+.reconnect-btn:active {
+    transform: scale(0.96);
+}
+
+/* 扫光 */
+.reconnect-btn.yes::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 80%;
+    height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(255,255,255,0.5), transparent);
+    transform: skewX(-20deg);
+}
+
+.reconnect-btn.yes:hover::after {
+    animation: shine 0.6s ease;
+}
+
+/* 动画关键帧 */
+@keyframes maskFade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes panelPop {
+    0% { transform: scale(0.85); opacity: 0; filter: blur(6px); }
+    60% { transform: scale(1.03); opacity: 1; filter: blur(0px); }
+    100% { transform: scale(1); }
+}
+
+@keyframes glowPulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.8; }
+}
+
+@keyframes shine {
+    from { left: -120%; }
+    to { left: 140%; }
+}
