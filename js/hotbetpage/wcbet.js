@@ -1,7 +1,7 @@
 // ==================== 世界杯下注模块 (wcbet.js) ====================
 window.YYCardHotBet_wcbet = (() => {
   const WORKER_URL = 'https://wc-bet.nnsvp1.workers.dev';
-  const MIN_BET = 10; // 最低下注金额
+  const MIN_BET = 50; // 最低下注金额
   const _t = window._t || ((key) => key); // 备用翻译函数
 
   async function placeBet(eventId, optionId, context) {
