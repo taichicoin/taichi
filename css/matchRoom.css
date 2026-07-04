@@ -1,0 +1,501 @@
+/*==================================================
+    YY CARD MATCH ROOM
+==================================================*/
+
+:root{
+
+    --gold:#ffd66b;
+    --gold2:#ffb739;
+
+    --blue:#39a6ff;
+    --blue2:#1565ff;
+
+    --bg:#081220;
+
+    --card:rgba(255,255,255,.08);
+
+    --border:rgba(255,255,255,.15);
+
+}
+
+/*==========================*/
+
+#match-room-view{
+
+    position:fixed;
+
+    inset:0;
+
+    overflow:hidden;
+
+    display:flex;
+
+    flex-direction:column;
+
+    background:#07111f;
+
+    z-index:200;
+
+    color:white;
+
+    font-family:
+    "PingFang SC",
+    "Microsoft YaHei",
+    sans-serif;
+
+}
+
+/*==========================*/
+/* 星空 */
+
+.match-bg{
+
+    position:absolute;
+
+    inset:0;
+
+    overflow:hidden;
+
+    background:
+
+    radial-gradient(circle at top,#18355d 0%,#07111f 55%),
+
+    linear-gradient(#08111f,#03060d);
+
+}
+
+/*==========================*/
+
+.stars{
+
+    position:absolute;
+
+    inset:0;
+
+    opacity:.7;
+
+    background-image:
+
+    radial-gradient(#ffffff 1px,transparent 1px),
+
+    radial-gradient(#ffffff 1px,transparent 1px),
+
+    radial-gradient(#9ad4ff 2px,transparent 2px);
+
+    background-size:
+
+    120px 120px,
+
+    180px 180px,
+
+    260px 260px;
+
+    background-position:
+
+    10px 30px,
+
+    80px 60px,
+
+    150px 120px;
+
+    animation:
+
+    starMove 60s linear infinite;
+
+}
+
+/*==========================*/
+
+.nebula{
+
+    position:absolute;
+
+    width:900px;
+
+    height:900px;
+
+    left:50%;
+
+    top:-400px;
+
+    transform:translateX(-50%);
+
+    border-radius:50%;
+
+    filter:blur(80px);
+
+    background:
+
+    radial-gradient(
+
+        circle,
+
+        rgba(60,140,255,.40),
+
+        rgba(120,70,255,.18),
+
+        transparent 70%
+
+    );
+
+}
+
+/*==========================*/
+
+@keyframes starMove{
+
+    from{
+
+        transform:translateY(0);
+
+    }
+
+    to{
+
+        transform:translateY(220px);
+
+    }
+
+}
+
+/*==========================*/
+
+.match-header{
+
+    position:relative;
+
+    z-index:5;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    padding:
+
+    env(safe-area-inset-top)
+
+    20px
+
+    18px;
+
+}
+
+/*==========================*/
+
+.back-btn{
+
+    width:46px;
+
+    height:46px;
+
+    border:none;
+
+    border-radius:14px;
+
+    cursor:pointer;
+
+    color:white;
+
+    font-size:24px;
+
+    background:
+
+    rgba(255,255,255,.08);
+
+    backdrop-filter:blur(10px);
+
+    border:
+
+    1px solid rgba(255,255,255,.12);
+
+}
+
+/*==========================*/
+
+.back-btn:hover{
+
+    background:
+
+    rgba(255,255,255,.15);
+
+}
+
+/*==========================*/
+
+.header-center{
+
+    text-align:center;
+
+}
+
+/*==========================*/
+
+.match-title{
+
+    font-size:28px;
+
+    font-weight:900;
+
+    letter-spacing:3px;
+
+    color:var(--gold);
+
+    text-shadow:
+
+    0 0 15px rgba(255,215,80,.45);
+
+}
+
+/*==========================*/
+
+.season-text{
+
+    margin-top:4px;
+
+    font-size:13px;
+
+    color:#8ec7ff;
+
+    letter-spacing:2px;
+
+}
+
+/*==========================*/
+
+.online-box{
+
+    min-width:70px;
+
+    text-align:right;
+
+    font-size:13px;
+
+}
+
+/*==========================*/
+
+.online-dot{
+
+    width:10px;
+
+    height:10px;
+
+    display:inline-block;
+
+    border-radius:50%;
+
+    background:#3dff77;
+
+    box-shadow:
+
+    0 0 12px #3dff77;
+
+    margin-right:5px;
+
+}
+
+/*==========================*/
+
+#online-count{
+
+    color:white;
+
+    font-weight:bold;
+
+}
+
+/*==========================*/
+
+.arena-section{
+
+    position:relative;
+
+    z-index:2;
+
+    flex:1;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+}
+
+/*==========================*/
+
+.player-panel{
+
+    position:relative;
+
+    z-index:5;
+
+    margin-top:-40px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+}
+
+/*==========================*/
+
+.match-avatar{
+
+    width:110px;
+
+    height:110px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+    border:
+
+    5px solid rgba(255,255,255,.15);
+
+    box-shadow:
+
+    0 0 35px rgba(80,180,255,.45);
+
+}
+
+/*==========================*/
+
+.player-name{
+
+    margin-top:15px;
+
+    font-size:28px;
+
+    font-weight:bold;
+
+}
+
+/*==========================*/
+
+.player-rank{
+
+    margin-top:10px;
+
+    color:#ffd66a;
+
+    font-size:18px;
+
+}
+
+/*==========================*/
+
+.status-panel{
+
+    position:relative;
+
+    z-index:5;
+
+    text-align:center;
+
+    margin-top:35px;
+
+}
+
+/*==========================*/
+
+#match-status{
+
+    color:#8abef6;
+
+    font-size:18px;
+
+}
+
+/*==========================*/
+
+#match-timer{
+
+    margin-top:10px;
+
+    font-size:36px;
+
+    color:white;
+
+    font-weight:bold;
+
+}
+
+/*==========================*/
+
+.button-area{
+
+    position:relative;
+
+    z-index:5;
+
+    padding:35px;
+
+}
+
+/*==========================*/
+
+.reward-panel{
+
+    position:relative;
+
+    z-index:5;
+
+    display:flex;
+
+    gap:14px;
+
+    padding:
+
+    0 18px 24px;
+
+}
+
+/*==========================*/
+
+.reward-card{
+
+    flex:1;
+
+    padding:14px;
+
+    text-align:center;
+
+    border-radius:18px;
+
+    background:
+
+    rgba(255,255,255,.08);
+
+    backdrop-filter:blur(15px);
+
+    border:
+
+    1px solid rgba(255,255,255,.12);
+
+}
+
+.reward-card div{
+
+    color:#8abef6;
+
+    font-size:13px;
+
+}
+
+.reward-card b{
+
+    display:block;
+
+    margin-top:8px;
+
+    color:white;
+
+    font-size:18px;
+
+}
