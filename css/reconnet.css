@@ -96,3 +96,94 @@
         opacity: 1;
     }
 }
+/* ===== 遮罩淡入 ===== */
+.reconnect-mask {
+    animation: maskFade 0.2s ease-out;
+}
+
+@keyframes maskFade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* ===== 面板“压缩弹出感” ===== */
+.reconnect-panel {
+    animation: panelPop 0.28s cubic-bezier(.2,.9,.2,1);
+    transform-origin: center;
+}
+
+@keyframes panelPop {
+    0% {
+        transform: scale(0.85);
+        opacity: 0;
+        filter: blur(6px);
+    }
+    60% {
+        transform: scale(1.03);
+        opacity: 1;
+        filter: blur(0px);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* ===== 金色轻微呼吸光 ===== */
+.reconnect-panel::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 18px;
+    pointer-events: none;
+
+    background: radial-gradient(
+        circle at top,
+        rgba(255, 215, 120, 0.18),
+        transparent 60%
+    );
+
+    animation: glowPulse 2.5s infinite ease-in-out;
+}
+
+@keyframes glowPulse {
+    0%,100% { opacity: 0.4; }
+    50% { opacity: 0.8; }
+}
+
+/* ===== 按钮点击反馈 ===== */
+.reconnect-btn:active {
+    transform: scale(0.96);
+}
+
+/* ===== YES按钮强化（更“战斗入口感”） ===== */
+.reconnect-btn.yes {
+    position: relative;
+    overflow: hidden;
+}
+
+/* 扫光效果 */
+.reconnect-btn.yes::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 80%;
+    height: 100%;
+    background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(255,255,255,0.5),
+        transparent
+    );
+    transform: skewX(-20deg);
+}
+
+/* hover触发扫光 */
+.reconnect-btn.yes:hover::after {
+    animation: shine 0.6s ease;
+}
+
+@keyframes shine {
+    from { left: -120%; }
+    to { left: 140%; }
+}
