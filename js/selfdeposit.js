@@ -173,7 +173,7 @@
 
     overlay.innerHTML = `
       <div style="background:white;color:#1e293b;max-width:420px;width:90%;padding:24px;border-radius:16px;text-align:left;">
-        <h3 style="margin-bottom:16px;font-size:20px;">📌 手动上账</h3>
+        <h3 style="margin-bottom:16px;font-size:20px;"> 手动上账</h3>
         <label style="font-size:14px;font-weight:600;">选择币种</label>
         <select id="self-token-select" style="width:100%;padding:10px;margin:8px 0 16px;border-radius:8px;border:1px solid #ccc;font-size:14px;">
           ${tokenOptions}
