@@ -1,0 +1,182 @@
+#yy-loading{
+
+position:fixed;
+inset:0;
+
+overflow:hidden;
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+background:
+radial-gradient(circle at 50% 25%,
+#24365e 0%,
+#111b33 35%,
+#070b14 100%);
+
+}
+#yy-sky{
+
+position:absolute;
+
+inset:0;
+
+background:
+
+radial-gradient(circle at 50% 10%,
+rgba(255,215,120,.15),
+transparent 45%);
+
+animation:sky 12s ease-in-out infinite;
+
+}
+@keyframes sky{
+
+50%{
+
+transform:scale(1.08);
+
+opacity:.75;
+
+}
+
+}
+#yy-cloud1,
+#yy-cloud2{
+
+position:absolute;
+
+width:180%;
+
+height:220px;
+
+opacity:.15;
+
+filter:blur(30px);
+
+background:
+
+radial-gradient(circle,
+white 0%,
+transparent 70%);
+
+}
+
+#yy-cloud1{
+
+top:12%;
+
+animation:cloud1 45s linear infinite;
+
+}
+
+#yy-cloud2{
+
+bottom:15%;
+
+animation:cloud2 60s linear infinite;
+
+}
+@keyframes cloud1{
+
+from{
+
+transform:translateX(-30%);
+
+}
+
+to{
+
+transform:translateX(10%);
+
+}
+
+}
+
+@keyframes cloud2{
+
+from{
+
+transform:translateX(10%);
+
+}
+
+to{
+
+transform:translateX(-20%);
+
+}
+
+}
+.logo{
+
+animation:
+
+breath 2.8s infinite,
+
+glow 4s infinite;
+
+}
+@keyframes glow{
+
+50%{
+
+text-shadow:
+
+0 0 15px #ffd76a,
+
+0 0 35px #ffb300,
+
+0 0 70px #ff9100;
+
+}
+
+}
+#progress{
+
+position:relative;
+
+overflow:hidden;
+
+}
+#progress::after{
+
+content:"";
+
+position:absolute;
+
+left:-80px;
+
+top:0;
+
+width:80px;
+
+height:100%;
+
+background:
+
+linear-gradient(
+
+90deg,
+
+transparent,
+
+rgba(255,255,255,.9),
+
+transparent
+
+);
+
+animation:shine 1.6s infinite;
+
+}@keyframes shine{
+
+to{
+
+left:120%;
+
+}
+
+}
+
