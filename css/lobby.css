@@ -56,7 +56,7 @@ body {
 .action-buttons {
     position: fixed;
     right: 7vw;                     /* 距离右边缘 6% 视口宽度 */
-    bottom: 14vh;                   /* 距离底部 12% 视口高度，可根据需要调整 */
+    bottom: 80vh;                   /* 距离底部 12% 视口高度，可根据需要调整 */
     display: flex;
     flex-direction: column;         /* 上下排列 */
     gap: 2vh;                       /* 按钮间隔 2% 视口高度 */
