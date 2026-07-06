@@ -1,0 +1,86 @@
+<div class="genshin-btn">
+    <div class="icon-circle">
+        <svg viewBox="0 0 24 24" class="icon">
+            <path fill="currentColor"
+                d="M19.14,12.94a7.48,7.48,0,0,0,.05-.94,7.48,7.48,0,0,0-.05-.94l2.03-1.58a.5.5,0,0,0,.12-.64l-1.92-3.32a.5.5,0,0,0-.6-.22l-2.39.96a7.14,7.14,0,0,0-1.63-.94l-.36-2.54A.5.5,0,0,0,13.9,2H10.1a.5.5,0,0,0-.49.42L9.25,4.96a7.14,7.14,0,0,0-1.63.94L5.23,4.94a.5.5,0,0,0-.6.22L2.71,8.48a.5.5,0,0,0,.12.64l2.03,1.58a7.48,7.48,0,0,0-.05.94,7.48,7.48,0,0,0,.05.94L2.83,14.16a.5.5,0,0,0-.12.64l1.92,3.32a.5.5,0,0,0,.6.22l2.39-.96a7.14,7.14,0,0,0,1.63.94l.36,2.54a.5.5,0,0,0,.49.42h3.8a.5.5,0,0,0,.49-.42l.36-2.54a7.14,7.14,0,0,0,1.63-.94l2.39.96a.5.5,0,0,0,.6-.22l1.92-3.32a.5.5,0,0,0-.12-.64ZM12,15.5A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"/>
+        </svg>
+    </div>
+</div>
+.genshin-btn{
+
+    width:72px;
+    height:96px;
+
+    border-radius:22px;
+
+    background:rgba(20,20,25,.45);
+
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+
+    border:1px solid rgba(255,255,255,.08);
+
+    box-shadow:
+        inset 0 1px rgba(255,255,255,.10),
+        inset 0 -8px 15px rgba(0,0,0,.18),
+        0 8px 20px rgba(0,0,0,.28);
+
+    display:flex;
+    justify-content:flex-start;
+    align-items:center;
+    flex-direction:column;
+
+    transition:.25s;
+}
+
+.genshin-btn:hover{
+
+    transform:translateY(-2px) scale(1.03);
+
+    background:rgba(25,25,30,.55);
+
+}
+
+.icon-circle{
+
+    width:58px;
+    height:58px;
+
+    margin-top:7px;
+
+    border-radius:50%;
+
+    background:
+        radial-gradient(circle at 35% 25%,
+        rgba(255,255,255,.08),
+        rgba(255,255,255,0) 60%),
+        rgba(15,15,18,.55);
+
+    border:1px solid rgba(255,255,255,.08);
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    box-shadow:
+        inset 0 2px rgba(255,255,255,.05),
+        0 4px 10px rgba(0,0,0,.25);
+
+}
+
+.icon{
+
+    width:34px;
+    height:34px;
+
+    color:white;
+
+    filter:drop-shadow(0 1px 2px rgba(0,0,0,.4));
+
+}
+
+.genshin-btn:active{
+
+    transform:scale(.96);
+
+}
