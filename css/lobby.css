@@ -1,0 +1,241 @@
+/* ==================== 大厅样式【圆形匹配按钮】 ==================== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    background: transparent;
+    min-height: 100dvh;
+    color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    padding: 0;
+    margin: 0;
+    overscroll-behavior: none;
+    touch-action: pan-y;
+}
+#app {
+    max-width: 500px;
+    width: 100%;
+    background: url(/assets/lobby.png) no-repeat center;
+    background-size: 100% 100%;
+    min-height: 100dvh;
+    backdrop-filter: none;
+    border-radius: 0;
+    padding: 20px;
+    border: none;
+    display: flex;
+    flex-direction: column;
+}
+#lobby-view {
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+}
+
+/* ========== 1. 顶部区：用户信息 + 三个按钮，固定在上半部分 ========== */
+.top-section {
+    flex-shrink: 0;
+    position: fixed;
+    top: 5vh;
+    left: 5%;
+}
+.header-bar { 
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between;
+    margin-top: 40px;
+    margin-bottom: 20px;
+}
+.user-profile { display: flex; align-items: center; gap: 10px; }
+.avatar { width: 40px; height: 40px; border-radius: 50%; border: 2px solid #f5d76e; object-fit: cover; background: #2a3a5c; }
+.user-info { font-weight: 600; }
+.user-wallet { font-size: 0.7rem; opacity: 0.8; }
+.user-card { font-size: 0.7rem; color: #f5d76e; opacity: 0.9; }
+
+/* ★ 签到/分享按钮容器：绝对定位到右边偏下，竖排，使用视口单位 */
+.action-buttons {
+    position: fixed;
+    right: 0.1vw;                     /* 距离右边缘 6% 视口宽度 */
+    bottom: 15vh;                   /* 距离底部 12% 视口高度，可根据需要调整 */
+    display: flex;
+    flex-direction: column;         /* 上下排列 */
+    gap: -3vh;                       /* 按钮间隔 2% 视口高度 */
+    z-index: 60;
+}
+.action-buttons .btn {
+    flex: none;
+    min-width: 15vw;                /* 按钮最小宽度用视口宽度，保持比例 */
+    max-width: 15vw;
+    padding: 8px 14px;
+    text-align: center;
+    font-size: clamp(0.8rem, 2vw, 1rem);
+}
+
+.match-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin: 10px 0;
+}
+#match-status {
+    flex: 1;
+    padding: 8px;
+    background: rgba(26, 30, 46, 0.8);
+    border-radius: 20px;
+    text-align: center;
+    font-size: 0.9rem;
+    display: none;
+}
+#cancel-match-btn {
+    background: #e94560;
+    padding: 8px 16px;
+    white-space: nowrap;
+    display: none;
+}
+
+/* ========== 2. 中间区：仅保留占位，不再控制按钮位置 ========== */
+.spacer {
+    flex-grow: 1;
+    min-height: 20vh;
+}
+
+/* ★ 匹配按钮 —— 纯圆形，直径 15vh，视口定位 */
+.btn-primary {
+    position: fixed;
+    top: 72vh;                      /* 按钮中心在视口 90% 高度处（可调） */
+    left: 25vw;
+    transform: translate(-50%, -50%);
+    width: 10vh;                   /* 直径 = 视口高度的 15% */
+    height: 10vh;
+    min-width: 44px;               /* 防止极窄屏幕下过小 */
+    min-height: 44px;
+    border-radius: 50%;            /* 圆形 */
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 50;
+    background: linear-gradient(145deg, #f5d76e, #f0b34b);
+    color: #0b0f1c;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    display: flex;                 /* 文字居中 */
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(0.9rem, 2vw, 1.1rem);
+    padding: 0;                    /* 清除内边距，保证圆形完美 */
+}
+.btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ========== 3. 底部区：透明日志，固定在最底部 ========== */
+.debug-panel {
+    flex-shrink: 0;
+    margin-top: 10px;
+    padding: 10px; 
+    background: transparent;
+    border-radius: 10px; 
+    font-size: 0.8rem; 
+    max-height: 150px; 
+    overflow-y: auto;
+}
+.error-msg { color: #ff7b7b; }
+.success-msg { color: #7bffb1; }
+
+/* 通用按钮 */
+.btn {
+    background: #2e3f5e; color: white; border: none; padding: 10px 16px;
+    border-radius: 40px; font-weight: 600; cursor: pointer;
+}
+.btn:hover { background: #3e5275; }
+
+/* 模态框 */
+.modal {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7); display: none; align-items: center;
+    justify-content: center; z-index: 1000;
+}
+.modal-content {
+    background: #1e2a44; padding: 24px; border-radius: 24px;
+    max-width: 380px; width: 90%; text-align: center;
+}
+.modal-buttons { display: flex; gap: 12px; margin-top: 24px; }
+input {
+    width: 100%; padding: 14px; border-radius: 40px; border: none;
+    background: #0f1a2b; color: white; font-size: 1rem;
+    text-align: center; margin: 10px 0;
+}
+
+/* 底部导航 */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  height: 56px; background: white; display: flex;
+  border-top: 1px solid #e5e7eb;
+  z-index: 1000;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.bottom-nav button {
+  flex: 1; background: none; border: none;
+  font-size: 14px; color: #9ca3af; display: flex;
+  flex-direction: column; align-items: center; justify-content: center;
+  gap: 2px; transition: color 0.2s;
+}
+.bottom-nav button.active { color: #3b82f6; font-weight: 600; }
+
+/* 区域容器 */
+.area-container { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow-y: auto; }
+.area-container.active { display: block; }
+#assets-area { background: white; }
+
+/* ==================== 原神风格按钮（缩小、透明、固定右下角） ==================== */
+.genshin-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: auto;
+    height: auto;
+    background: transparent;          /* 完全透明 */
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: none;
+    box-shadow: none;
+    transform: scale(0.3);            /* 缩小到 30% */
+    transform-origin: right bottom;   /* 以右下角为缩放中心 */
+    transition: transform 0.25s;
+    z-index: 999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+}
+
+.genshin-btn:hover {
+    background: transparent;          /* 悬停也保持透明 */
+    transform: scale(0.35);           /* 悬停微微放大一点，方便点击 */
+}
+
+.genshin-btn:active {
+    transform: scale(0.28);
+}
+
+/* 图标圆圈——也透明，只保留图标可见 */
+.icon-circle {
+    width: 58px;
+    height: 58px;
+    margin-top: 0;                    /* 去掉原来的偏移 */
+    border-radius: 50%;
+    background: transparent;          /* 圆圈背景透明 */
+    border: none;                     /* 去掉边框 */
+    box-shadow: none;                 /* 去掉阴影 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 图标颜色调暗一些，或者保持白色 */
+.icon {
+    width: 34px;
+    height: 34px;
+    color: rgba(255, 255, 255, 0.9); /* 白色半透明，既能看见又不突兀 */
+    filter: drop-shadow(0 0 4px rgba(0,0,0,0.5));
+}
