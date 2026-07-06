@@ -56,17 +56,17 @@ body {
 .action-buttons {
     position: fixed;
     right: 0.1vw;                     /* 距离右边缘 6% 视口宽度 */
-    bottom: 68vh;                   /* 距离底部 12% 视口高度，可根据需要调整 */
+    bottom: 67vh;                   /* 距离底部 12% 视口高度，可根据需要调整 */
     display: flex;
     flex-direction: column;         /* 上下排列 */
-    gap: 2vh;                       /* 按钮间隔 2% 视口高度 */
+    gap: 0vh;                       /* 按钮间隔 2% 视口高度 */
     z-index: 60;
 }
 .action-buttons .btn {
     flex: none;
-    min-width: 20vw;                /* 按钮最小宽度用视口宽度，保持比例 */
-    max-width: 20vw;
-    padding: 5px 8px;
+    min-width: 15vw;                /* 按钮最小宽度用视口宽度，保持比例 */
+    max-width: 15vw;
+    padding: 8px 14px;
     text-align: center;
     font-size: clamp(0.8rem, 2vw, 1rem);
 }
