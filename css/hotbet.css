@@ -68,11 +68,11 @@
 /* 子导航栏 —— 固定在底部，用 margin-bottom 控制距离底部导航栏的距离 */
 .hotbet-subnav {
     display: flex;
-    gap: 8px;
-    padding: 10px 16px;
+    gap: 6px;
+    padding: 8px 14px;
     overflow-x: auto;
     white-space: nowrap;
-    border-top: 1px solid #e5e7eb;   /* 分割线移到顶部 */
+    border-top: 0px solid #e5e7eb;   /* 分割线移到顶部 */
     background: #fff;
     flex-shrink: 0;
     margin-bottom: 7vh;             /* ★ 用视口高度控制，数值越大越靠上，可根据需要调整 */
