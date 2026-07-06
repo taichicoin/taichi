@@ -56,7 +56,7 @@ body {
 .action-buttons {
     position: fixed;
     right: 0.1vw;                     /* 距离右边缘 6% 视口宽度 */
-    bottom: 70vh;                   /* 距离底部 12% 视口高度，可根据需要调整 */
+    bottom: 20vh;                   /* 距离底部 12% 视口高度，可根据需要调整 */
     display: flex;
     flex-direction: column;         /* 上下排列 */
     gap: 0vh;                       /* 按钮间隔 2% 视口高度 */
@@ -102,8 +102,8 @@ body {
 /* ★ 匹配按钮 —— 纯圆形，直径 15vh，视口定位 */
 .btn-primary {
     position: fixed;
-    top: 78vh;                      /* 按钮中心在视口 90% 高度处（可调） */
-    left: 20vw;
+    top: 72vh;                      /* 按钮中心在视口 90% 高度处（可调） */
+    left: 25vw;
     transform: translate(-50%, -50%);
     width: 10vh;                   /* 直径 = 视口高度的 15% */
     height: 10vh;
