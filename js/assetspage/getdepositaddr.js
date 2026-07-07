@@ -136,7 +136,7 @@
         <h3>💰 ${t('deposit_modal_title', '充值 (BSC 测试网)')}</h3>
         <p>${t('deposit_modal_desc', '向此地址转币，系统自动加余额')}</p>
         <input type="text" value="${addr}" readonly id="dep-addr-input">
-        <button id="copy-addr-btn">📋 ${t('copy', '复制')}</button>
+        <button id="copy-addr-btn"> ${t('copy', '复制')}</button>
         <p class="deposit-note">⚠️ ${t('deposit_note', '仅限 BSC 链，跨链转账无法找回')}</p>
         <button class="close-deposit">${t('close', '关闭')}</button>
       </div>
