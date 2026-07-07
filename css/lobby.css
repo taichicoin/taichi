@@ -131,7 +131,7 @@ body {
 /* ========== 3. 底部区：透明日志，固定在最底部 ========== */
 .debug-panel {
     flex-shrink: 0;
-    margin-top: 57vh;
+    margin-top: 56vh;
     padding: 10px; 
     background: transparent;
     border-radius: 10px; 
