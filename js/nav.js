@@ -43,7 +43,7 @@
         z-index: 9999;
     ">
         ${createLink('nav-game', 'game.html', '/assets/logo/game.png', active === 'game')}
-        ${createLink('nav-hotbet', 'hotbet.html', '/assets/logo/yy.webp', active === 'hotbet')}
+        ${createLink('nav-hotbet', 'hotbet.html', '/assets/logo/hotbet.png', active === 'hotbet')}
         ${createLink('nav-assets', 'assetpage.html', '/assets/logo/asset.png', active === 'assets')}
     </nav>`;
 
