@@ -35,6 +35,10 @@ window.YYCardLoginLang = (function () {
       en: "Online {now} / {max}",
       zh: "当前在线 {now} / {max}"
     },
+    login_telegram_web: {
+      en: "Open in Telegram",
+      zh: "在 Telegram 中打开" 
+    },
     login_google: {
       en: "Sign in with Google",
       zh: "使用Google登录"
