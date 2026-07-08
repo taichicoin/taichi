@@ -77,8 +77,8 @@ body::before {
 /* 登录框 */
 .login-box {
     position: absolute;
-    left: 18%;
-    right: 18%;
+    left: 16%;
+    right: 16%;
     top: 36%;
     bottom: 37%;
     z-index: 10;
