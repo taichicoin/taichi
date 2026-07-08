@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>登录 · YY Card</title>
+
+    <script src="/js/config.js"></script>
+    <script src="/index/onlinecheck.js"></script>
+    <link rel="stylesheet" href="/index/loading.css">
+    <script src="/index/loading.js"></script>
+
+    <!-- Telegram WebApp SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <!-- 登录页面样式 -->
+    <link rel="stylesheet" href="/css/login.css">
+</head>
+<body>
+
+<!-- 全屏浮动粒子层 -->
+<div class="particles"></div>
+
+<div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+    <div class="login-box" id="login-box">
+        <div class="logo">⚔️ YY Card</div>
+
+        <!-- Google 登录按钮：图片底图 + 文字 -->
+        <button class="btn-google" id="google-login-btn">
+            <img src="/assets/logo/ggbtn.png" alt="" class="btn-bg-img">
+            <span class="btn-text">使用 Google 登录</span>
+        </button>
+
+        <!-- Telegram 登录按钮：图片底图 + 文字 -->
+        <button class="btn-telegram" id="telegram-login-btn">
+            <img src="/assets/logo/tgbtn.png" alt="" class="btn-bg-img">
+            <span class="btn-text">使用 Telegram 登录</span>
+        </button>
+
+        <div class="footer">山海经 · 西游 · 三国</div>
+    </div>
+
+    <div id="log-panel">
+        <div class="log-title">SYSTEM LOG</div>
+        <div id="log-list"></div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        if (window.Telegram?.WebApp) {
+            window.Telegram.WebApp.ready();
+            window.Telegram.WebApp.expand();
+        }
+    })();
+</script>
+
+<script>
+    const logPanel = document.getElementById('log-panel');
+    const logList = document.getElementById('log-list');
+
+    function pageLog(msg, isError = false) {
+        logPanel.style.display = 'block';
+        const line = document.createElement('div');
+        line.className = 'log-line';
+        if (isError) line.classList.add('log-error');
+        line.textContent = '[' + new Date().toLocaleTimeString() + '] ' + msg;
+        logList.appendChild(line);
+        logPanel.scrollTop = logPanel.scrollHeight;
+    }
+
+    async function loadSupabaseSDK() {
+        const CDN_LIST = [
+            'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js',
+            'https://unpkg.com/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js',
+            'https://cdnjs.cloudflare.com/ajax/libs/supabase-js/2.45.0/supabase.min.js'
+        ];
+        for (const url of CDN_LIST) {
+            if (typeof supabase !== 'undefined' && typeof supabase.createClient === 'function') return true;
+            try {
+                await new Promise((resolve, reject) => {
+                    const script = document.createElement('script');
+                    script.src = url;
+                    script.onload = resolve;
+                    script.onerror = reject;
+                    document.head.appendChild(script);
+                });
+                await new Promise(r => setTimeout(r, 200));
+            } catch(e) {}
+        }
+        return (typeof supabase !== 'undefined' && typeof supabase.createClient === 'function');
+    }
+
+    async function telegramLogin(supabaseClient) {
+        const tg = window.Telegram?.WebApp;
+        if (!tg?.initData) {
+            pageLog('❌ 无法获取 Telegram 登录数据', true);
+            return false;
+        }
+
+        try {
+            const res = await fetch(`${window.YYCardConfig.SUPABASE_URL}/functions/v1/telegram-simple-auth`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    initData: tg.initData,
+                    api_key: 'sk_MyGame_2026_tg_checkin_!@#QwErTy'
+                })
+            });
+            const body = await res.json();
+            if (body.error) {
+                pageLog('Telegram 登录失败: ' + body.error, true);
+                return false;
+            }
+            await supabaseClient.auth.setSession({
+                access_token: body.access_token,
+                refresh_token: body.refresh_token
+            });
+            pageLog('✅ Telegram 登录成功');
+            return true;
+        } catch(e) {
+            pageLog('Telegram 登录异常: ' + e.message, true);
+            return false;
+        }
+    }
+
+    (async function() {
+        pageLog('🚀 开始初始化');
+
+        if (!window.YYCardConfig) {
+            pageLog('❌ 配置加载失败', true);
+            return;
+        }
+
+        const sdkLoaded = await loadSupabaseSDK();
+        if (!sdkLoaded) {
+            pageLog('❌ SDK 加载失败', true);
+            return;
+        }
+
+        let supabaseClient;
+        try {
+            supabaseClient = supabase.createClient(
+                window.YYCardConfig.SUPABASE_URL,
+                window.YYCardConfig.SUPABASE_ANON_KEY,
+                { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } }
+            );
+            pageLog('✅ 客户端创建成功');
+        } catch(e) {
+            pageLog('❌ 客户端创建失败: ' + e.message, true);
+            return;
+        }
+
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (session) {
+            pageLog('✅ 已登录，进入加载');
+            sessionStorage.setItem('yy_logged_in', '1');
+            await YYCardLoading.start(supabaseClient, YYCardOnlineCheck);
+            return;
+        }
+
+        document.getElementById('login-box').style.display = 'block';
+
+        const googleBtn = document.getElementById('google-login-btn');
+        googleBtn.addEventListener('click', async () => {
+            googleBtn.disabled = true;
+            googleBtn.textContent = ' 跳转中...';
+            sessionStorage.setItem('yy_logged_in', '1');
+            const { error } = await supabaseClient.auth.signInWithOAuth({
+                provider: 'google',
+                options: { redirectTo: window.YYCardConfig.LOGIN_PAGE_URL }
+            });
+            if (error) {
+                sessionStorage.removeItem('yy_logged_in');
+                alert('登录失败: ' + error.message);
+                googleBtn.disabled = false;
+                googleBtn.textContent = 'G  使用 Google 登录';
+            }
+        });
+
+        const telegramBtn = document.getElementById('telegram-login-btn');
+        telegramBtn.addEventListener('click', async () => {
+            telegramBtn.disabled = true;
+            telegramBtn.textContent = ' 登录中...';
+            const success = await telegramLogin(supabaseClient);
+            if (!success) {
+                telegramBtn.disabled = false;
+                telegramBtn.textContent = ' 使用 Telegram 登录';
+                return;
+            }
+            sessionStorage.setItem('yy_logged_in', '1');
+            await YYCardLoading.start(supabaseClient, YYCardOnlineCheck);
+        });
+
+        pageLog('👆 显示登录按钮');
+    })();
+</script>
+</body>
+</html>
