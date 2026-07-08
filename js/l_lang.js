@@ -81,7 +81,7 @@ window.YYCardLobbyLang = (function() {
     username_fail:           { zh: '设置失败: {message}', en: 'Failed: {message}' },
 
     // ========== 绑定钱包弹窗 ==========
-    wallet_title:            { zh: '💳 绑定钱包', en: '💳 Bind Wallet' },
+    wallet_title:            { zh: ' 绑定钱包', en: ' Bind Wallet' },
     wallet_sub:              { zh: '请输入以太坊钱包地址 (0x开头，42位)', en: 'Enter Ethereum address (0x..., 42 chars)' },
     wallet_placeholder:      { zh: '0x...', en: '0x...' },
     wallet_save:             { zh: '确认绑定', en: 'Bind' },
