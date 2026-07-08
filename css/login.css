@@ -79,10 +79,10 @@ body::before {
     position: absolute;
     left: 18%;
     right: 18%;
-    top: 32%;
+    top: 34%;
     bottom: 37%;
     z-index: 10;
-    padding: 8px 3px;
+    padding: 10px 3px;
     background: linear-gradient(
         135deg,
         rgba(255, 255, 255, 0.12) 0%,
@@ -211,7 +211,7 @@ body::before {
 .btn-text {
     position: absolute;
     top: 50%;
-    left: 55%;
+    left: 56%;
     transform: translate(-50%, -50%);
     z-index: 1;
     white-space: nowrap;
@@ -254,9 +254,9 @@ body::before {
 
 /* 底部文字 */
 .footer {
-    margin-top: clamp(16px, 2vw, 32px);
+    margin-top: clamp(16px, 2.5vw, 32px);
     opacity: 0.65;
-    font-size: clamp(12px, 0.9vw, 14px);
+    font-size: clamp(14px, 1.1vw, 16px);
     letter-spacing: 2px;
 }
 
