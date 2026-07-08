@@ -17,7 +17,7 @@ body {
             rgba(5, 10, 25, 0.25) 0%,
             rgba(5, 10, 25, 0.85) 100%
         ),
-        url("/assets/login-bg.webp") center center / cover no-repeat;
+        url("/assets/login.webp") center center / cover no-repeat;
     background-size: cover;
     background-position: center;
     display: flex;
