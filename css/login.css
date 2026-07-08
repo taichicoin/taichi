@@ -79,10 +79,10 @@ body::before {
     position: absolute;
     left: 18%;
     right: 18%;
-    top: 33%;
+    top: 32%;
     bottom: 37%;
     z-index: 10;
-    padding: 10px 3px;
+    padding: 12px 3px;
     background: linear-gradient(
         135deg,
         rgba(255, 255, 255, 0.12) 0%,
