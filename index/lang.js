@@ -166,7 +166,7 @@ window.YYCardLoginLang = (function () {
     style.textContent = `
       .lang-switch-btn {
         position: fixed;
-        top: 80px;
+        top: 100px;
         right: 20px;
         z-index: 9999;
         background: rgba(255,255,255,0.15);
