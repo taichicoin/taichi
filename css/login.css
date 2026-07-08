@@ -82,7 +82,7 @@ body::before {
     top: 35%;
     bottom: 30%;
     z-index: 10;
-    padding: 20px 15px;
+    padding: 5px 3px;
     background: linear-gradient(
         135deg,
         rgba(255, 255, 255, 0.12) 0%,
@@ -241,9 +241,9 @@ body::before {
 /* 日志面板：绝对视口定位，全透明容器，仅用来定位文字 */
 #log-panel {
     position: absolute;
-    left: 25%;       /* 左边留25%空白 */
-    right: 25%;      /* 右边留25%空白 */
-    top: 75%;        /* 顶部对齐视口75%位置 */
+    left: 22%;       /* 左边留25%空白 */
+    right: 22%;      /* 右边留25%空白 */
+    top: 72%;        /* 顶部对齐视口75%位置 */
     bottom: 15%;     /* 底部距离视口底部15% → 对应底部位置在85%处 */
     z-index: 10;
     padding: 0;
