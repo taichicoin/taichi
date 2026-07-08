@@ -77,9 +77,9 @@ body::before {
 /* 登录框 —— 四边边距拉伸：左右各20%、上下各30%，中间全是登录框 */
 .login-box {
     position: absolute;
-    left: 20%;       /* 左边留20%空白 */
-    right: 20%;      /* 右边留20%空白 */
-    top: 30%;        /* 上边留30%空白 */
+    left: 21%;       /* 左边留20%空白 */
+    right: 21%;      /* 右边留20%空白 */
+    top: 35%;        /* 上边留30%空白 */
     bottom: 30%;     /* 下边留30%空白 */
     z-index: 10;
     padding: 40px 30px;
@@ -244,7 +244,7 @@ body::before {
 /* 日志面板 —— 全透明背景，四角装饰保留 */
 #log-panel {
     width: 460px;
-    margin-top: 65%;
+    margin-top: 75%;
     padding: 18px;
     border-radius: 22px;
     background: transparent;
