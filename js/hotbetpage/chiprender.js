@@ -90,7 +90,7 @@ window.YYCardHotBetChip = (() => {
     return `
       <div class="hotbet-points-bar">
         <span class="label">
-          <img src="/assets/logo/wood.png" style="width:20px;height:20px;vertical-align:middle;margin-right:4px;" onerror="this.style.display='none'">
+          <img src="/assets/logo/chip.png" style="width:20px;height:20px;vertical-align:middle;margin-right:4px;" onerror="this.style.display='none'">
           ${_t('hotbet_my_points')}
         </span>
         <span class="value">${balance} WOOD</span>
