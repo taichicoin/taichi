@@ -3,7 +3,7 @@ window.YYCardSettings = (function() {
     'use strict';
 
     let supabase = null;
-    let currentLang = 'zh'; // 默认中文
+    let currentLang = 'en'; // 默认中文
 
     // 图标 SVG
     const settingsSvg = `
