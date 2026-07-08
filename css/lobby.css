@@ -138,6 +138,7 @@ body {
     font-size: 0.8rem; 
     max-height: 150px; 
     overflow-y: auto;
+    display: none !important;
 }
 .error-msg { color: #ff7b7b; }
 .success-msg { color: #7bffb1; }
