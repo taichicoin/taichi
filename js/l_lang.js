@@ -57,10 +57,7 @@ window.YYCardLobbyLang = (function() {
     menu_bind_wallet:        { zh: ' 绑定钱包', en: ' Bind Wallet' },
     menu_change_avatar:      { zh: ' 修改头像', en: ' Change Avatar' },
     menu_logout:             { zh: ' 登出', en: ' Logout' },
-    menu_show_email:      { zh: '📧 邮箱', en: ' Email' },
-    email_copied:         { zh: '已复制邮箱', en: ' Email copied' },
-    email_copy_manually:  { zh: '请手动复制邮箱', en: 'Copy email manually' },
-    email_not_available:  { zh: '暂无邮箱信息', en: 'No email info' },
+    menu_email_label:        { zh: '邮箱：', en: 'Email: ' }
 
     
     // ========== 修改用户名弹窗 ==========
