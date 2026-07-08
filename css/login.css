@@ -79,8 +79,8 @@ body::before {
     position: absolute;
     left: 18%;
     right: 18%;
-    top: 38%;
-    bottom: 33%;
+    top: 32%;
+    bottom: 37%;
     z-index: 10;
     padding: 8px 3px;
     background: linear-gradient(
