@@ -62,10 +62,11 @@ window.YYCardLobbyLang = (function() {
     email_copy_manually:  { zh: '请手动复制邮箱', en: 'Copy email manually' },
     email_not_available:  { zh: '暂无邮箱信息', en: 'No email info' },
 
+    
     // ========== 修改用户名弹窗 ==========
     username_title_create:   { zh: ' 创建ID', en: ' Create ID' },
     username_title_modify:   { zh: ' 修改ID', en: ' Modify ID' },
-    username_first_time:     { zh: ' 首次登录，请设置您的专属游戏ID', en: '🔔 First login, please set your unique game ID' },
+    username_first_time:     { zh: ' 首次登录，请设置您的专属游戏ID', en: ' First login, please set your unique game ID' },
     username_normal_sub:     { zh: '请输入 1-7 位小写字母或数字', en: 'Enter 1-7 lowercase letters or numbers' },
     username_cooldown_nocard:{ zh: '修改冷却中（剩余 {days} 天），暂无改名卡', en: 'Cooldown ({days} days left), no rename card' },
     username_cooldown_card:  { zh: '冷却中（剩余 {days} 天），本次将消耗 1 张改名卡', en: 'Cooldown ({days} days left), will use 1 rename card' },
