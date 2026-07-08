@@ -87,23 +87,3 @@
     min-width: 60px;
     text-align: right;
 }
-/* 强制资产内容区全宽，消除桌面端空白 */
-#assets-area,
-#assets-area * {
-    max-width: 100% !important;
-    box-sizing: border-box;
-}
-
-/* 让资产列表项也适当响应式调整 */
-.asset-item {
-    width: 100%;
-    padding-left: 5vw;
-    padding-right: 5vw;
-}
-
-/* 资产标题和按钮容器自适应 */
-.assets-title,
-.assets-actions {
-    margin-left: 5vw;
-    margin-right: 5vw;
-}
