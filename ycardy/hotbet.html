@@ -1,0 +1,112 @@
+---
+permalink: /ycardy/hotbet
+---
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no, viewport-fit=cover">
+    <title>热点预测 · YY Card</title>
+
+    <meta name="theme-color" content="#1e293b">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="YY Card">
+
+    <link rel="stylesheet" href="/css/hotbet.css">
+    <link rel="stylesheet" href="/css/app.css">
+
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script>
+        if (typeof supabase === 'undefined') document.write('<script src="https://unpkg.com/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"><\/script>');
+    </script>
+    <script>
+        if (typeof supabase === 'undefined') document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/supabase-js/2.45.0/supabase.min.js"><\/script>');
+    </script>
+
+    <!-- 全局配置 -->
+    <script src="/js/config.js"></script>
+    <!-- 认证模块 -->
+    <script src="/js/auth.js"></script>
+    <!-- 心跳模块 -->
+    <script src="/js/heartbeat.js"></script>
+    <!-- 登录守卫 -->
+    <script>
+        (function() {
+            const params = new URLSearchParams(location.search);
+            if (params.get('auth') === '1') {
+                // 来自其他已登录页面的跳转，直接放行
+                sessionStorage.setItem('yy_logged_in', '1');
+                // 清除 URL 参数
+                if (window.history && window.history.replaceState) {
+                    const cleanUrl = location.pathname + location.hash;
+                    window.history.replaceState({}, document.title, cleanUrl);
+                }
+            } else {
+                // 正常入口，检查登录
+                if (window.YYCardAuth && window.YYCardAuth.requireAuth) {
+                    window.YYCardAuth.requireAuth();
+                } else {
+                    if (sessionStorage.getItem('yy_logged_in') !== '1') {
+                        window.location.replace('/ycardy/');
+                    }
+                }
+            }
+        })();
+    </script>
+</head>
+<body>
+    <!-- 热点预测容器 -->
+    <div id="hotbet-area" style="display:flex; flex-direction:column; overflow:hidden; min-height:100vh; padding-bottom:60px;"></div>
+
+    <!-- 公共导航 -->
+    <script src="/js/nav.js"></script>
+
+    <!-- 热点预测专属脚本 -->
+    <script src="/js/utils.js"></script>
+    <script src="/js/hotbetpage/lang.js"></script>
+    <script src="/js/hotbetpage/chiprender.js"></script>
+    <script src="/js/hotbetpage/worldcup.js"></script>
+    <script src="/js/hotbetpage/crypto.js"></script>
+    <script src="/js/hotbetpage/wcbet.js"></script>
+    <script src="/js/hotbetpage/mybets.js"></script>
+    <script src="/js/hotbetpage/hotbet.js"></script>
+
+    <script>
+        (async function() {
+            const auth = window.YYCardAuth;
+            if (!auth.currentUser) {
+                await auth.init();
+                if (!auth.currentUser) return;
+            }
+
+            // 认证成功后确保标记存在
+            sessionStorage.setItem('yy_logged_in', '1');
+
+            // 启动心跳（每20秒更新在线状态）
+            if (window.YYCardHeartbeat && auth.currentUser) {
+                window.YYCardHeartbeat.startHeartbeat(auth.currentUser.id);
+            }
+
+            if (window.YYCardHotBetLang && window.YYCardHotBetLang.init) {
+                await window.YYCardHotBetLang.init();
+            }
+
+            if (window.YYCardHotBet && window.YYCardHotBet.init) {
+                try {
+                    await window.YYCardHotBet.init();
+                } catch (err) {
+                    console.error('热点预测初始化失败:', err);
+                }
+            }
+
+            if (window.Telegram?.WebApp) {
+                window.Telegram.WebApp.ready();
+                window.Telegram.WebApp.expand();
+            }
+        })();
+    </script>
+</body>
+</html>
