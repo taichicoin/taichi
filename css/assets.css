@@ -16,7 +16,7 @@
 
 /* 资产标题 */
 .assets-title {
-    font-size: 28px;
+    font-size: 26px;
     font-weight: 700;
     margin: 0 0 20px 20px;
 }
@@ -24,15 +24,15 @@
 /* 充提按钮容器 */
 .assets-actions {
     display: flex;
-    gap: 12px;
-    margin: 0 20px 30px;
+    gap: 10px;
+    margin: 0 18px 27px;
 }
 .assets-btn {
     flex: 1;
-    padding: 12px;
+    padding: 10px;
     border: none;
     border-radius: 12px;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
     cursor: pointer;
 }
@@ -57,7 +57,7 @@
 .asset-left {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
 }
 .asset-icon {
     width: 40px;
