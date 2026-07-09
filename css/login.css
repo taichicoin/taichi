@@ -210,7 +210,7 @@ body::before {
 /* 按钮文字：绝对居中，位于图片上方 */
 .btn-text {
     position: absolute;
-    top: 50%;
+    top: 45%;
     left: 57%;
     transform: translate(-50%, -50%);
     z-index: 1;
