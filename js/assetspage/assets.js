@@ -144,7 +144,7 @@
         )
       );
 
-      let html = `<div style="padding-top: 10vh;">`;
+      let html = `<div style="padding-top: 8vh;">`;
 
       // 用户ID + 复制按钮
       html += `
