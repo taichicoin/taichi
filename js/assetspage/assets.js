@@ -13,7 +13,7 @@
   const TOKEN_LIST = [
     {
       symbol: 'TEST',
-      address: '0xa8d9bb561dab406a90ca1dcc0589edfbbcac1832',
+      address: '0xed8deeCBbA6Cc5DD4B583392AeA6191ED142e1CA',
       decimals: 18,
       price: '$98'
     }
