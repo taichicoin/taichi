@@ -172,7 +172,7 @@
       TOKEN_LIST.forEach(token => {
         const rawBalance = isError ? '0' : (balances[token.address.toLowerCase()] || '0');
         const formatted = formatBalance(rawBalance, token.decimals);
-        html += renderAssetRow('/assets/default-avatar.png', token.symbol, formatted, token.price);
+        html += renderAssetRow('/assets/jingwei.webp', token.symbol, formatted, token.price);
       });
 
       // 动态模块
