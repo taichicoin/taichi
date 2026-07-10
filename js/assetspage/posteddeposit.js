@@ -17,7 +17,7 @@
   ];
 
   const SUPPORTED_TOKENS = [
-    '0xa8d9bb561dab406a90ca1dcc0589edfbbcac1832'
+    '0x6C29DA96F77297192d51eE6f4742e3c3EbC0e1de'
   ];
 
   const COLLECT_API = `${SUPABASE_URL}/functions/v1/collect`;
