@@ -78,7 +78,7 @@ window.YYCardCombat = (function() {
                     const slotEl = utils.getSlotElement(step.playerId, step.position, isEnemy);
                     if (slotEl) {
                         const isBoss = (step.sourceCard === 'MEME羁绊');
-                        const image = isBoss ? '/assets/card/zjz.png' : '/assets/card/daodun1.png';
+                        const image = isBoss ? '/assets/card/zjz.webp' : '/assets/card/daodun1.webp';
                         const uniqueId = 'spirit_' + Date.now() + '_' + Math.random();
                         const cardObj = {
                             card_id: uniqueId,
@@ -275,7 +275,7 @@ window.YYCardCombat = (function() {
                             star: 0,
                             shield: 0,
                             chi: 0,
-                            image: '/assets/card/daodun1.png',
+                            image: '/assets/card/daodun1.webp',
                             weapon: null,
                             item1: null,
                             item2: null,
