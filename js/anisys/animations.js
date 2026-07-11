@@ -67,7 +67,7 @@ window.YYCombatAnimations = (function() {
             // ★ 播放增益音效
             try {
                 const buffAudio = new Audio('/assets/wanv/vup.wav');
-                buffAudio.volume = 0.5;
+                buffAudio.volume = 1;
                 buffAudio.play();
             } catch (e) {}
 
