@@ -4,7 +4,7 @@ window.YYCardTgShare = (function() {
   const auth = window.YYCardAuth;
 
   const BIND_WORKER_URL = 'https://bind-code-worker.nnsvp1.workers.dev';
-  const BOT_USERNAME = 'YYCARDbot';
+  const BOT_USERNAME = 'masaappbot';
   const BOT_LINK = `https://t.me/${BOT_USERNAME}`;
 
   let isInit = false;
