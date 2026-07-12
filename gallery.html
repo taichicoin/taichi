@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>卡牌图鉴 · 透明磨砂版</title>
+    <style>
+        :root {
+            --bg: #fdf2cc;
+            --text: #3d2b00;
+            --gold: #8b5e00;
+        }
+
+        body {
+            background: var(--bg);
+            background-image:
+                radial-gradient(ellipse at 20% 20%, rgba(255, 215, 80, 0.3) 0%, transparent 55%),
+                radial-gradient(ellipse at 80% 70%, rgba(255, 180, 50, 0.25) 0%, transparent 55%),
+                radial-gradient(ellipse at 50% 50%, rgba(255, 240, 180, 0.45) 0%, transparent 70%);
+            color: var(--text);
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--gold);
+            margin-bottom: 30px;
+            font-size: 1.5em;
+            letter-spacing: 0.04em;
+            text-shadow: 0 1px 3px rgba(255, 255, 255, 0.6);
+        }
+
+        #card-gallery {
+            display: grid;
+            grid-template-columns: repeat(2, 130px);
+            gap: 18px 22px;
+            justify-content: center;
+            padding: 10px;
+            align-items: start;
+        }
+
+        /* ========== 卡片外层容器 - 透明背景 ========== */
+        .card-wrapper {
+            display: flex;
+            flex-direction: column;
+            width: 130px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 6px 20px rgba(60, 30, 0, 0.2), 0 2px 6px rgba(0,0,0,0.1);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            /* 核心：完全透明背景 */
+            background: transparent;
+            backdrop-filter: none;
+        }
+        .card-wrapper:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 28px rgba(60, 30, 0, 0.35), 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        /* ========== 卡片图片区域 ========== */
+        .card-image-area {
+            position: relative;
+            width: 130px;
+            height: 178px;
+            overflow: hidden;
+            flex-shrink: 0;
+            border-radius: 12px 12px 0 0; /* 上方圆角 */
+        }
+        .card-image-area img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* 攻击力 & 生命值 */
+        .card-atk, .card-hp {
+            position: absolute;
+            top: 65%;
+            transform: translateY(-50%);
+            font-weight: bold;
+            text-shadow: 0 0 6px #000, 0 0 10px rgba(0,0,0,0.7);
+            font-size: 0.95em;
+            z-index: 3;
+            pointer-events: none;
+            letter-spacing: 0.4px;
+        }
+        .card-atk {
+            left: 6%;
+            color: #ff6b6b;
+        }
+        .card-hp {
+            right: 6%;
+            color: #6bff6b;
+        }
+
+        /* ========== 卡片信息栏 - 磨砂毛玻璃透明背景 ========== */
+        .card-info {
+            padding: 8px 10px 10px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            /* 透明磨砂核心 */
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-top: none;
+            border-radius: 0 0 12px 12px; /* 下方圆角与卡片一致 */
+            min-height: 52px;
+            box-sizing: border-box;
+            color: #2b1a00;
+            transition: background 0.2s;
+        }
+        .card-wrapper:hover .card-info {
+            background: rgba(255, 255, 255, 0.22);
+            border-color: rgba(255, 255, 255, 0.35);
+        }
+
+        /* 阵营 + 稀有度行 */
+        .card-meta-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.68em;
+            line-height: 1;
+            padding: 0 1px;
+        }
+        .card-faction {
+            color: #4d3b1a;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            max-width: 58%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.6);
+        }
+        .card-rarity {
+            font-weight: bold;
+            letter-spacing: 0.3px;
+            flex-shrink: 0;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+        .rarity-Common { color: #5a5a5a; }
+        .rarity-Rare { color: #1e5fbb; }
+        .rarity-Epic { color: #7b2cbf; }
+        .rarity-Legendary { color: #b8730a; }
+
+        /* ========== 技能描述 - 叠加的半透明磨砂小窗 ========== */
+        .card-skill-desc {
+            color: #1e1e0f;
+            font-weight: 600;
+            text-align: center;
+            line-height: 1.4;
+            word-break: break-word;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            /* 内部磨砂玻璃，双重透明效果 */
+            background: rgba(255, 255, 255, 0.35);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 7px;
+            padding: 5px 7px;
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            box-shadow: inset 0 1px 2px rgba(255,255,255,0.2), 0 2px 4px rgba(0,0,0,0.1);
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .card-wrapper:hover .card-skill-desc {
+            background: rgba(255, 255, 255, 0.5);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* 响应式单列 */
+        @media (max-width: 340px) {
+            #card-gallery {
+                grid-template-columns: repeat(1, 130px);
+                gap: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>📜 全卡牌图鉴（共 <span id="card-count">0</span> 张）</h1>
+    <div id="card-gallery"></div>
+
+    <script>
+        (async function() {
+            const container = document.getElementById('card-gallery');
+            const countSpan = document.getElementById('card-count');
+
+            async function loadJSON(url) {
+                const res = await fetch(url);
+                if (!res.ok) throw new Error(`无法加载 ${url}`);
+                return res.json();
+            }
+
+            function parseSkillDesc(rawSkill) {
+                if (!rawSkill) return '';
+                try {
+                    const obj = JSON.parse(rawSkill);
+                    return obj.skill_describe || obj.skillName || '';
+                } catch {
+                    return rawSkill;
+                }
+            }
+
+            function calcFontSize(text) {
+                const len = text.length;
+                if (len <= 5) return '0.78em';
+                if (len <= 8) return '0.72em';
+                if (len <= 12) return '0.66em';
+                if (len <= 18) return '0.6em';
+                return '0.54em';
+            }
+
+            function createCardElement(card) {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'card-wrapper';
+
+                // 图片区域
+                const imageArea = document.createElement('div');
+                imageArea.className = 'card-image-area';
+                const img = document.createElement('img');
+                img.src = card.image;
+                img.alt = card.name;
+                img.loading = 'lazy';
+                imageArea.appendChild(img);
+
+                const atk = document.createElement('div');
+                atk.className = 'card-atk';
+                atk.textContent = card.base_atk;
+                imageArea.appendChild(atk);
+
+                const hp = document.createElement('div');
+                hp.className = 'card-hp';
+                hp.textContent = card.base_hp;
+                imageArea.appendChild(hp);
+
+                wrapper.appendChild(imageArea);
+
+                // 信息栏
+                const info = document.createElement('div');
+                info.className = 'card-info';
+
+                const metaRow = document.createElement('div');
+                metaRow.className = 'card-meta-row';
+                metaRow.innerHTML = `
+                    <span class="card-faction">${card.faction}</span>
+                    <span class="card-rarity rarity-${card.rarity}">${card.rarity}</span>
+                `;
+                info.appendChild(metaRow);
+
+                const desc = document.createElement('div');
+                desc.className = 'card-skill-desc';
+                const descText = card.skillDesc || '未知技能';
+                desc.textContent = descText;
+                desc.style.fontSize = calcFontSize(descText);
+                info.appendChild(desc);
+
+                wrapper.appendChild(info);
+                return wrapper;
+            }
+
+            try {
+                const [images, charactersArr] = await Promise.all([
+                    loadJSON('data/image.json'),
+                    loadJSON('data/characters.json')
+                ]);
+
+                const charMap = {};
+                if (Array.isArray(charactersArr)) {
+                    charactersArr.forEach(c => { charMap[c.card_id] = c; });
+                }
+
+                const imageKeys = Object.keys(images);
+                const cardList = [];
+                for (const cardId of imageKeys) {
+                    const imgData = images[cardId];
+                    const charData = charMap[cardId];
+                    cardList.push({
+                        name: imgData.name || cardId,
+                        image: imgData.image,
+                        faction: charData?.faction || '未知',
+                        rarity: charData?.rarity || 'Common',
+                        base_atk: charData?.base_atk ?? 0,
+                        base_hp: charData?.base_hp ?? 0,
+                        skillDesc: charData ? parseSkillDesc(charData.skill) : ''
+                    });
+                }
+
+                countSpan.textContent = cardList.length;
+                if (cardList.length === 0) {
+                    container.innerHTML = '<p style="color:#8b6d30; text-align:center; grid-column:1/-1;">暂无卡牌数据</p>';
+                    return;
+                }
+
+                const fragment = document.createDocumentFragment();
+                cardList.forEach(card => fragment.appendChild(createCardElement(card)));
+                container.innerHTML = '';
+                container.appendChild(fragment);
+            } catch (error) {
+                console.error(error);
+                container.innerHTML = '<p style="color:#c0392b; text-align:center; grid-column:1/-1;">图鉴加载失败，请检查数据文件路径</p>';
+            }
+        })();
+    </script>
+</body>
+</html>
