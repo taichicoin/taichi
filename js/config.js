@@ -3,8 +3,8 @@ window.YYCardConfig = {
   // ==================== 核心项目配置 ====================
   SUPABASE_URL: 'https://kvflbfdqyehtlfmigaxa.supabase.co',
   SUPABASE_ANON_KEY: 'sb_publishable_1bva7rUXiEuVALlbklyW9w_ZqqCLfvQ',
-  BASE_PATH: '/ycardy',
-  LOGIN_PAGE_URL: 'https://taichicoin.xyz/ycardy/',      // ← 改这里：指向 index.html
+  BASE_PATH: '/app',
+  LOGIN_PAGE_URL: 'https://taichicoin.xyz/app/',      // ← 改这里：指向 index.html
   DEFAULT_AVATAR: '/assets/default-avatar.png',
   CARD_ICON_BASE_PATH: '/assets/card/',
 
