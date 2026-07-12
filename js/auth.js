@@ -229,7 +229,7 @@ window.YYCardAuth = {
 
     requireAuth() {
         if (sessionStorage.getItem('yy_logged_in') !== '1') {
-            window.location.replace(window.YYCardConfig.LOGIN_PAGE_URL || '/ycardy/');
+            window.location.replace(window.YYCardConfig.LOGIN_PAGE_URL || '/app/');
         }
     }
 };
