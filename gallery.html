@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>卡牌图鉴</title>
+    <style>
+        :root {
+            --bg: #1a1a2e;
+            --card-bg: #16213e;
+            --text: #eee;
+            --gold: #ffd700;
+        }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: var(--gold);
+            margin-bottom: 30px;
+            font-size: 1.6em;
+        }
+        #card-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            padding: 10px;
+            align-items: flex-start;
+        }
+
+        /* ========== 卡片外层容器 ========== */
+        .card-wrapper {
+            display: flex;
+            flex-direction: column;
+            width: 144px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            background: var(--card-bg);
+        }
+        .card-wrapper:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.65);
+        }
+
+        /* ========== 卡片图片区域 ========== */
+        .card-image-area {
+            position: relative;
+            width: 144px;
+            height: 198px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .card-image-area img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* 攻击力 */
+        .card-atk {
+            position: absolute;
+            left: 6%;
+            top: 65%;
+            transform: translateY(-50%);
+            color: #ff4d4d;
+            font-weight: bold;
+            text-shadow: 0 0 5px #000, 0 0 8px rgba(0, 0, 0, 0.7);
+            font-size: 1.05em;
+            z-index: 3;
+            pointer-events: none;
+            letter-spacing: 0.5px;
+        }
+        /* 生命值 */
+        .card-hp {
+            position: absolute;
+            right: 6%;
+            top: 65%;
+            transform: translateY(-50%);
+            color: #4dff4d;
+            font-weight: bold;
+            text-shadow: 0 0 5px #000, 0 0 8px rgba(0, 0, 0, 0.7);
+            font-size: 1.05em;
+            z-index: 3;
+            pointer-events: none;
+            letter-spacing: 0.5px;
+        }
+
+        /* ========== 卡片下方信息栏 ========== */
+        .card-info {
+            padding: 8px 10px 10px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            border-top: 1px solid #2a3d5e;
+            background: #16213e;
+            min-height: 55px;
+            box-sizing: border-box;
+        }
+
+        /* 阵营 + 稀有度 行 */
+        .card-meta-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.7em;
+            line-height: 1;
+        }
+        .card-faction {
+            color: #aaa;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            max-width: 60%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .card-rarity {
+            font-weight: bold;
+            letter-spacing: 0.3px;
+            flex-shrink: 0;
+        }
+        .rarity-Common {
+            color: #aaa;
+        }
+        .rarity-Rare {
+            color: #4da6ff;
+        }
+        .rarity-Epic {
+            color: #c44dff;
+        }
+        .rarity-Legendary {
+            color: #ffaa00;
+        }
+
+        /* 技能描述 */
+        .card-skill-desc {
+            color: #e0e0e0;
+            font-weight: 600;
+            text-align: center;
+            line-height: 1.4;
+            word-break: break-word;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
+</head>
+<body>
+    <h1>📜 全卡牌图鉴（共 <span id="card-count">0</span> 张）</h1>
+    <div id="card-gallery"></div>
+
+    <script>
+        (async function() {
+            const container = document.getElementById('card-gallery');
+            const countSpan = document.getElementById('card-count');
+
+            // 加载 JSON
+            async function loadJSON(url) {
+                const res = await fetch(url);
+                if (!res.ok) throw new Error(`无法加载 ${url}`);
+                return res.json();
+            }
+
+            // 解析技能描述
+            function parseSkillDesc(rawSkill) {
+                if (!rawSkill) return '';
+                try {
+                    const obj = JSON.parse(rawSkill);
+                    return obj.skill_describe || obj.skillName || '';
+                } catch {
+                    return rawSkill;
+                }
+            }
+
+            // 动态字号（基于信息栏宽度约124px）
+            function calcFontSize(text) {
+                const len = text.length;
+                if (len <= 6) return '0.8em';
+                if (len <= 10) return '0.75em';
+                if (len <= 15) return '0.7em';
+                if (len <= 22) return '0.65em';
+                return '0.58em';
+            }
+
+            // 创建卡片元素
+            function createCardElement(card) {
+                // 外层 wrapper
+                const wrapper = document.createElement('div');
+                wrapper.className = 'card-wrapper';
+
+                // ---- 图片区域 ----
+                const imageArea = document.createElement('div');
+                imageArea.className = 'card-image-area';
+
+                const img = document.createElement('img');
+                img.src = card.image;
+                img.alt = card.name;
+                img.loading = 'lazy';
+                imageArea.appendChild(img);
+
+                // 攻击力
+                const atk = document.createElement('div');
+                atk.className = 'card-atk';
+                atk.textContent = card.base_atk;
+                imageArea.appendChild(atk);
+
+                // 生命值
+                const hp = document.createElement('div');
+                hp.className = 'card-hp';
+                hp.textContent = card.base_hp;
+                imageArea.appendChild(hp);
+
+                wrapper.appendChild(imageArea);
+
+                // ---- 信息栏 ----
+                const info = document.createElement('div');
+                info.className = 'card-info';
+
+                // 阵营 + 稀有度行
+                const metaRow = document.createElement('div');
+                metaRow.className = 'card-meta-row';
+                metaRow.innerHTML = `
+                    <span class="card-faction">${card.faction}</span>
+                    <span class="card-rarity rarity-${card.rarity}">${card.rarity}</span>
+                `;
+                info.appendChild(metaRow);
+
+                // 技能描述
+                const desc = document.createElement('div');
+                desc.className = 'card-skill-desc';
+                const descText = card.skillDesc || '未知技能';
+                desc.textContent = descText;
+                desc.style.fontSize = calcFontSize(descText);
+                info.appendChild(desc);
+
+                wrapper.appendChild(info);
+
+                return wrapper;
+            }
+
+            try {
+                // 1. 加载两个数据源
+                const [images, charactersArr] = await Promise.all([
+                    loadJSON('data/image.json'),
+                    loadJSON('data/characters.json')
+                ]);
+
+                // 2. 将 characters 数组转为以 card_id 为键的 Map
+                const charMap = {};
+                if (Array.isArray(charactersArr)) {
+                    charactersArr.forEach(c => {
+                        charMap[c.card_id] = c;
+                    });
+                }
+
+                // 3. 以 image.json 为主，遍历所有 key
+                const imageKeys = Object.keys(images);
+                const cardList = [];
+
+                for (const cardId of imageKeys) {
+                    const imgData = images[cardId];
+                    const charData = charMap[cardId]; // 可能为 undefined
+
+                    // 合并信息
+                    const card = {
+                        name: imgData.name || cardId,
+                        image: imgData.image,
+                        faction: charData?.faction || '未知',
+                        rarity: charData?.rarity || 'Common',
+                        base_atk: charData?.base_atk ?? 0,
+                        base_hp: charData?.base_hp ?? 0,
+                        skillDesc: charData ? parseSkillDesc(charData.skill) : ''
+                    };
+                    cardList.push(card);
+                }
+
+                // 4. 渲染
+                countSpan.textContent = cardList.length;
+                if (cardList.length === 0) {
+                    container.innerHTML =
+                        '<p style="color:#aaa; text-align:center;">暂无卡牌数据</p>';
+                    return;
+                }
+
+                const fragment = document.createDocumentFragment();
+                for (const card of cardList) {
+                    fragment.appendChild(createCardElement(card));
+                }
+                container.innerHTML = '';
+                container.appendChild(fragment);
+            } catch (error) {
+                console.error(error);
+                container.innerHTML =
+                    '<p style="color:red; text-align:center;">图鉴加载失败，请检查数据文件路径</p>';
+            }
+        })();
+    </script>
+</body>
+</html>
