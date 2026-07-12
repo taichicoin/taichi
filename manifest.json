@@ -1,9 +1,9 @@
 {
-  "name": "YY Card",
-  "short_name": "YYCard",
-  "start_url": "/ycardy/game.html",
+  "name": "Masa world",
+  "short_name": "MASA",
+  "start_url": "/app/game.html",
   "version": "1.0.2",
-  "scope": "/ycardy/",
+  "scope": "/app/",
   "display": "fullscreen",
   "orientation": "portrait",
   "theme_color": "#1e293b",
