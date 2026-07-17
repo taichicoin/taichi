@@ -73,10 +73,10 @@ window.YYCombatAnimations = (function() {
             leftPercent = 50;  // 居中
         } else if (atk > 0) {
             text = `+${utils.clampDisplay(atk)}`;
-            leftPercent = 30;  // 靠左
+            leftPercent = 15;  // 靠左
         } else {
             text = `+${utils.clampDisplay(hp)}`;
-            leftPercent = 70;  // 靠右
+            leftPercent = 85;  // 靠右
         }
 
         const d = document.createElement('div');
