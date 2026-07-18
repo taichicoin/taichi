@@ -1,0 +1,370 @@
+/* ===== 战斗召回弹窗 ===== */
+
+.reconnect-mask {
+    position: fixed;
+    inset:0;
+    background:
+        radial-gradient(circle at center,
+        rgba(255,180,60,.18),
+        rgba(0,0,0,.85) 70%);
+    backdrop-filter: blur(10px);
+
+    display:none;
+    align-items:center;
+    justify-content:center;
+
+    z-index:100000;
+
+    animation: warFade .35s ease;
+}
+
+
+.reconnect-mask.active{
+    display:flex;
+}
+
+
+
+/* 主卡片 */
+
+.reconnect-panel{
+
+    width:min(90vw,430px);
+    min-height:280px;
+
+    position:relative;
+
+    padding:28px 22px;
+
+    border-radius:22px;
+
+
+    background:
+    linear-gradient(
+        160deg,
+        #252b3b,
+        #090c14
+    );
+
+
+    border:
+
+    1px solid rgba(255,215,120,.5);
+
+
+    box-shadow:
+
+    0 0 40px rgba(255,180,60,.35),
+    inset 0 0 30px rgba(255,215,120,.08);
+
+
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+
+
+    animation:
+
+    battleEnter .45s cubic-bezier(.2,1.4,.3,1);
+
+    overflow:hidden;
+
+}
+
+
+
+/* 金色流光边 */
+
+.reconnect-panel::before{
+
+content:"";
+
+position:absolute;
+
+inset:-2px;
+
+background:
+
+linear-gradient(
+120deg,
+transparent,
+#ffd76a,
+transparent
+);
+
+animation:
+
+borderMove 3s linear infinite;
+
+
+opacity:.6;
+
+}
+
+
+
+/* 内容盖住边框 */
+
+.reconnect-panel>*{
+
+position:relative;
+
+z-index:2;
+
+}
+
+
+
+
+.reconnect-title{
+
+
+font-size:26px;
+
+font-weight:900;
+
+text-align:center;
+
+
+color:#ffd86a;
+
+
+text-shadow:
+
+0 0 15px rgba(255,215,100,.8);
+
+
+margin-bottom:15px;
+
+}
+
+
+
+.reconnect-desc{
+
+
+font-size:15px;
+
+line-height:1.7;
+
+text-align:center;
+
+color:#d6d9e0;
+
+
+}
+
+
+
+.reconnect-desc::after{
+
+content:"";
+
+display:block;
+
+margin:18px auto 0;
+
+
+width:120px;
+
+height:2px;
+
+
+background:
+
+linear-gradient(
+90deg,
+transparent,
+#ffd76a,
+transparent
+);
+
+}
+
+
+
+/* 按钮区域 */
+
+
+.reconnect-actions{
+
+display:flex;
+
+gap:14px;
+
+margin-top:25px;
+
+}
+
+
+
+.reconnect-btn{
+
+
+height:50px;
+
+border-radius:14px;
+
+
+font-size:15px;
+
+font-weight:800;
+
+
+transition:.2s;
+
+
+}
+
+
+
+/* 退出 */
+
+
+.reconnect-btn.no{
+
+
+background:
+
+rgba(255,255,255,.08);
+
+
+border:
+
+1px solid rgba(255,255,255,.15);
+
+
+color:#ddd;
+
+}
+
+
+
+/* 战斗按钮 */
+
+
+.reconnect-btn.yes{
+
+
+background:
+
+linear-gradient(
+135deg,
+#ffe38a,
+#ff9f2e
+);
+
+
+color:#241600;
+
+
+box-shadow:
+
+0 0 25px rgba(255,170,50,.5);
+
+
+}
+
+
+
+.reconnect-btn.yes:hover{
+
+
+transform:
+
+translateY(-3px);
+
+
+box-shadow:
+
+0 0 40px rgba(255,190,60,.8);
+
+}
+
+
+
+/* 点击 */
+
+
+.reconnect-btn:active{
+
+transform:scale(.92);
+
+}
+
+
+
+/* 动画 */
+
+
+@keyframes warFade{
+
+from{
+opacity:0;
+}
+
+to{
+opacity:1;
+}
+
+}
+
+
+@keyframes battleEnter{
+
+
+0%{
+
+transform:
+scale(.6)
+rotateX(50deg);
+
+
+opacity:0;
+
+
+filter:blur(10px);
+
+}
+
+
+70%{
+
+transform:
+scale(1.05);
+
+}
+
+
+100%{
+
+transform:
+scale(1);
+
+opacity:1;
+
+filter:none;
+
+}
+
+}
+
+
+
+@keyframes borderMove{
+
+
+0%{
+
+transform:translateX(-100%);
+
+}
+
+
+100%{
+
+transform:translateX(100%);
+
+}
+
+}
