@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>卡牌 · 图鉴</title>
+    <style>
+        :root {
+            --bg: #fdf2cc;
+            --text: #3d2b00;
+            --gold: #8b5e00;
+            --nav-bottom: 4vh;
+        }
+
+        html {
+            min-height: 100%;
+            background-color: #1a1206;
+        }
+
+        body {
+            background-color: #1a1206;
+            background-image:
+                radial-gradient(ellipse at 20% 20%, rgba(255, 215, 80, 0.22) 0%, transparent 55%),
+                radial-gradient(ellipse at 80% 70%, rgba(255, 180, 50, 0.18) 0%, transparent 55%),
+                radial-gradient(ellipse at 50% 50%, rgba(255, 240, 180, 0.20) 0%, transparent 70%),
+                linear-gradient(rgba(30, 18, 0, 0.28), rgba(30, 18, 0, 0.28)),
+                url('/assets/webp/bg2.webp');
+            background-size: auto, auto, auto, auto, cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed, fixed, fixed, fixed, fixed;
+
+            color: var(--text);
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            /* 顶部距离从 16px 缩小一半到 8px */
+            padding: 8px 8px calc(var(--nav-bottom) + 110px) 8px;
+            min-height: 100vh;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ========== 顶部标题：左对齐到卡片最左边 ========== */
+        h1 {
+            /* 与网格同宽、同水平位置，保证左边对齐 */
+            max-width: 360px;
+            margin: 0 auto 10px auto;   /* 底部间距从 20px 缩小一半到 10px */
+            padding-left: 4px;          /* 与网格 padding 一致 */
+            box-sizing: border-box;
+
+            text-align: left;
+            color: #fff6d6;
+            font-size: 1.3em;
+            letter-spacing: 0.04em;
+            text-shadow:
+                0 1px 3px rgba(0, 0, 0, 0.75),
+                0 0 14px rgba(255, 215, 120, 0.35);
+        }
+
+        /* ========== 卡牌网格：三列等分自适应 ========== */
+        #card-gallery {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px 8px;
+            width: 100%;
+            max-width: 360px;
+            margin: 0 auto;
+            padding: 4px;
+            align-items: start;
+            box-sizing: border-box;
+        }
+
+        /* ========== 卡片外层容器 - 透明背景 ========== */
+        .card-wrapper {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            min-width: 0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 16px rgba(0, 0, 0, 0.45), 0 2px 5px rgba(0,0,0,0.3);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            background: transparent;
+            backdrop-filter: none;
+            animation: cardIn 0.34s ease backwards;
+        }
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(10px) scale(0.96); }
+            to   { opacity: 1; transform: none; }
+        }
+        .card-wrapper:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 22px rgba(0, 0, 0, 0.55), 0 4px 10px rgba(0,0,0,0.35);
+        }
+
+        /* ========== 卡片图片区域（竖框）—— 背景全透明 ========== */
+        .card-image-area {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 100 / 137;
+            overflow: hidden;
+            flex-shrink: 0;
+            border-radius: 10px 10px 0 0;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-image-area img {
+            width: 90%;
+            height: 90%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .img-placeholder {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 6px;
+            font-size: 0.66em;
+            font-weight: 600;
+            color: #5c4410;
+            background: linear-gradient(135deg, rgba(255,248,220,0.92), rgba(255,225,150,0.8));
+            border-radius: 10px 10px 0 0;
+        }
+
+        /* 攻击力 & 生命值 */
+        .card-atk, .card-hp {
+            position: absolute;
+            top: 65%;
+            transform: translateY(-50%);
+            font-weight: bold;
+            text-shadow: 0 0 5px #000, 0 0 9px rgba(0,0,0,0.85);
+            font-size: 0.82em;
+            z-index: 3;
+            pointer-events: none;
+            letter-spacing: 0.3px;
+        }
+        .card-atk { left: 5%; color: #ff6b6b; }
+        .card-hp  { right: 5%; color: #6bff6b; }
+
+        /* ========== 卡片信息栏 - 磨砂毛玻璃透明背景 ========== */
+        .card-info {
+            padding: 6px 7px 7px 7px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            background: rgba(255, 255, 255, 0.16);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            border-top: none;
+            border-radius: 0 0 10px 10px;
+            min-height: 44px;
+            box-sizing: border-box;
+            color: #2b1a00;
+            transition: background 0.2s;
+        }
+        .card-wrapper:hover .card-info {
+            background: rgba(255, 255, 255, 0.24);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .card-meta-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.6em;
+            line-height: 1;
+            padding: 0 1px;
+        }
+        .card-faction {
+            color: #2f2208;
+            font-weight: 700;
+            letter-spacing: 0.2px;
+            max-width: 58%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.7);
+        }
+        .card-rarity {
+            font-weight: bold;
+            letter-spacing: 0.2px;
+            flex-shrink: 0;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.5);
+        }
+        .rarity-Common    { color: #4a4a4a; }
+        .rarity-Rare      { color: #1e5fbb; }
+        .rarity-Epic      { color: #7b2cbf; }
+        .rarity-Legendary { color: #b8730a; }
+
+        .card-skill-desc {
+            color: #14140a;
+            font-weight: 600;
+            text-align: center;
+            line-height: 1.35;
+            word-break: break-word;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            background: rgba(255, 255, 255, 0.38);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 6px;
+            padding: 4px 5px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: inset 0 1px 2px rgba(255,255,255,0.25), 0 2px 4px rgba(0,0,0,0.18);
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .card-wrapper:hover .card-skill-desc {
+            background: rgba(255, 255, 255, 0.55);
+            border-color: rgba(255, 255, 255, 0.65);
+        }
+
+        .gallery-status {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: #ffe9b0;
+            font-size: 0.85em;
+            padding: 40px 0;
+            letter-spacing: 0.05em;
+            line-height: 1.7;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+        }
+        .gallery-status.error { color: #ff9d8a; }
+        .gallery-status small { font-size: 0.85em; opacity: 0.8; }
+
+        /* ========== 底部透明磨砂导航栏 ========== */
+        .bottom-nav {
+            position: fixed;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: var(--nav-bottom);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(18px) saturate(180%);
+            -webkit-backdrop-filter: blur(18px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.42);
+            box-shadow:
+                0 10px 30px rgba(0, 0, 0, 0.35),
+                inset 0 1px 0 rgba(255, 255, 255, 0.55);
+            z-index: 999;
+            white-space: nowrap;
+            max-width: calc(100vw - 24px);
+        }
+
+        .nav-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1px;
+            border: none;
+            background: transparent;
+            color: #f3e3b8;
+            font-family: inherit;
+            font-size: 0.7em;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            padding: 7px 16px;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: background 0.22s ease, color 0.22s ease,
+                        box-shadow 0.22s ease, transform 0.12s ease;
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+        }
+        .nav-btn .nav-icon {
+            font-size: 1.35em;
+            line-height: 1;
+            transition: transform 0.22s ease;
+        }
+        .nav-btn:hover { color: #fff6d6; }
+        .nav-btn:active { transform: scale(0.94); }
+
+        .nav-btn.active {
+            background: rgba(255, 255, 255, 0.82);
+            color: #3d2b00;
+            text-shadow: none;
+            box-shadow:
+                0 3px 12px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.95);
+        }
+        .nav-btn.active .nav-icon { transform: scale(1.1); }
+
+        @media (max-width: 300px) {
+            #card-gallery { gap: 10px 6px; padding: 2px; }
+            h1 { padding-left: 2px; }
+            .card-info { padding: 5px 6px 6px 6px; min-height: 40px; gap: 4px; }
+            .card-meta-row { font-size: 0.56em; }
+            .nav-btn { padding: 7px 11px; font-size: 0.64em; }
+        }
+    </style>
+</head>
+<body>
+    <h1>📜 <span id="title-cat">角色牌</span>图鉴（共 <span id="card-count">0</span> 张）</h1>
+    <div id="card-gallery"></div>
+
+    <nav class="bottom-nav" id="bottom-nav" aria-label="卡牌分类切换"></nav>
+
+    <script>
+    (function () {
+        'use strict';
+
+        const CATEGORIES = [
+            { id: 'card',   label: '角色牌', icon: '🎴', dir: '/assets/card'   },
+            { id: 'weapon', label: '武器牌', icon: '⚔️', dir: '/assets/weapon' },
+            { id: 'item',   label: '道具牌', icon: '🧪', dir: '/assets/item'   }
+        ];
+
+        const DATA_URLS = {
+            images:     ['data/image.json'],
+            characters: ['data/characters.json']
+        };
+
+        const container = document.getElementById('card-gallery');
+        const countSpan = document.getElementById('card-count');
+        const titleCat  = document.getElementById('title-cat');
+        const navEl     = document.getElementById('bottom-nav');
+
+        const state = {
+            activeId: CATEGORIES[0].id,
+            cards: null,
+            loading: null,
+            token: 0
+        };
+
+        async function loadFirst(urls) {
+            for (const url of (urls || [])) {
+                try {
+                    const res = await fetch(url);
+                    if (!res.ok) continue;
+                    return await res.json();
+                } catch (_) { /* 换下一个 */ }
+            }
+            return null;
+        }
+
+        function toMap(data) {
+            const map = {};
+            if (!data) return map;
+            if (Array.isArray(data)) {
+                data.forEach((item, i) => {
+                    if (item == null) return;
+                    const key = item.card_id ?? item.id ?? item.name ?? String(i);
+                    map[key] = item;
+                });
+            } else if (typeof data === 'object') {
+                Object.keys(data).forEach(k => { map[k] = data[k]; });
+            }
+            return map;
+        }
+
+        function detectCategory(src) {
+            const s = String(src || '').toLowerCase();
+            if (/(^|\/)(weapon|weapons)\//.test(s)) return 'weapon';
+            if (/(^|\/)(item|items)\//.test(s))       return 'item';
+            return 'card';
+        }
+
+        function normalizeImagePath(src, catId) {
+            let s = String(src || '').trim();
+            if (!s) return '';
+            if (/^(https?:)?\/\//i.test(s) || /^data:/i.test(s)) return s;
+            if (s.startsWith('/')) return s;
+            if (s.includes('/')) return '/' + s;
+            const cat = CATEGORIES.find(c => c.id === catId) || CATEGORIES[0];
+            return `${cat.dir}/${s}`;
+        }
+
+        function parseSkillDesc(rawSkill) {
+            if (!rawSkill) return '';
+            if (typeof rawSkill === 'object') {
+                return rawSkill.skill_describe || rawSkill.skillName || rawSkill.name || '';
+            }
+            try {
+                const obj = JSON.parse(rawSkill);
+                if (obj && typeof obj === 'object') {
+                    return obj.skill_describe || obj.skillName || obj.name || '';
+                }
+                return String(rawSkill);
+            } catch {
+                return rawSkill;
+            }
+        }
+
+        function calcFontSize(text) {
+            const len = (text || '').length;
+            if (len <= 5)  return '0.66em';
+            if (len <= 8)  return '0.62em';
+            if (len <= 12) return '0.58em';
+            if (len <= 18) return '0.54em';
+            return '0.5em';
+        }
+
+        async function loadAllCards() {
+            if (state.cards) return state.cards;
+            if (state.loading) return state.loading;
+
+            state.loading = (async () => {
+                const [imageData, charData] = await Promise.all([
+                    loadFirst(DATA_URLS.images),
+                    loadFirst(DATA_URLS.characters)
+                ]);
+
+                const imgMap  = toMap(imageData);
+                const charMap = toMap(charData);
+
+                const ids = Array.from(new Set([
+                    ...Object.keys(imgMap),
+                    ...Object.keys(charMap)
+                ]));
+
+                const cards = ids.map(id => {
+                    const rawImg    = imgMap[id];
+                    const imgEntry  = (rawImg && typeof rawImg === 'object') ? rawImg : {};
+                    const charEntry = (charMap[id] && typeof charMap[id] === 'object') ? charMap[id] : {};
+
+                    const rawSrc = String(
+                        imgEntry.image || imgEntry.src || charEntry.image || ''
+                    ).trim();
+
+                    const category = detectCategory(rawSrc);
+                    const image    = normalizeImagePath(rawSrc, category);
+
+                    return {
+                        id,
+                        category,
+                        image,
+                        name: imgEntry.name || charEntry.name || id,
+                        faction: charEntry.faction || '未知',
+                        rarity: charEntry.rarity || 'Common',
+                        base_atk: charEntry.base_atk ?? null,
+                        base_hp: charEntry.base_hp ?? null,
+                        skillDesc: parseSkillDesc(
+                            charEntry.skill ?? charEntry.skillDesc ?? charEntry.skill_desc ?? ''
+                        )
+                    };
+                });
+
+                state.cards = cards;
+                state.loading = null;
+                return cards;
+            })();
+
+            return state.loading;
+        }
+
+        function createCardElement(card, index) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'card-wrapper';
+            wrapper.style.animationDelay = Math.min(index * 0.02, 0.4) + 's';
+
+            const imageArea = document.createElement('div');
+            imageArea.className = 'card-image-area';
+
+            if (card.image) {
+                const img = document.createElement('img');
+                img.src = card.image;
+                img.alt = card.name;
+                img.loading = 'lazy';
+                img.addEventListener('error', () => {
+                    img.remove();
+                    const ph = document.createElement('div');
+                    ph.className = 'img-placeholder';
+                    ph.textContent = card.name;
+                    imageArea.appendChild(ph);
+                }, { once: true });
+                imageArea.appendChild(img);
+            } else {
+                const ph = document.createElement('div');
+                ph.className = 'img-placeholder';
+                ph.textContent = card.name;
+                imageArea.appendChild(ph);
+            }
+
+            if (card.base_atk !== null && card.base_atk !== undefined) {
+                const atk = document.createElement('div');
+                atk.className = 'card-atk';
+                atk.textContent = card.base_atk;
+                imageArea.appendChild(atk);
+            }
+            if (card.base_hp !== null && card.base_hp !== undefined) {
+                const hp = document.createElement('div');
+                hp.className = 'card-hp';
+                hp.textContent = card.base_hp;
+                imageArea.appendChild(hp);
+            }
+
+            wrapper.appendChild(imageArea);
+
+            const info = document.createElement('div');
+            info.className = 'card-info';
+
+            const metaRow = document.createElement('div');
+            metaRow.className = 'card-meta-row';
+
+            const faction = document.createElement('span');
+            faction.className = 'card-faction';
+            faction.textContent = card.faction;
+
+            const rarity = document.createElement('span');
+            rarity.className = 'card-rarity rarity-' + card.rarity;
+            rarity.textContent = card.rarity;
+
+            metaRow.appendChild(faction);
+            metaRow.appendChild(rarity);
+            info.appendChild(metaRow);
+
+            const descText = card.skillDesc || '未知技能';
+            const desc = document.createElement('div');
+            desc.className = 'card-skill-desc';
+            desc.textContent = descText;
+            desc.style.fontSize = calcFontSize(descText);
+            info.appendChild(desc);
+
+            wrapper.appendChild(info);
+            return wrapper;
+        }
+
+        async function renderCategory(cat) {
+            const token = ++state.token;
+
+            titleCat.textContent = cat.label;
+            countSpan.textContent = '0';
+            container.innerHTML = '<p class="gallery-status">正在加载…</p>';
+
+            let all;
+            try {
+                all = await loadAllCards();
+            } catch (err) {
+                console.error(err);
+                if (token !== state.token) return;
+                container.innerHTML = '<p class="gallery-status error">图鉴加载失败，请检查数据文件路径</p>';
+                return;
+            }
+
+            if (token !== state.token) return;
+
+            const cards = all.filter(c => c.category === cat.id);
+
+            if (cards.length === 0) {
+                container.innerHTML = `
+                    <p class="gallery-status">
+                        该分类暂无卡牌<br>
+                        <small>请确认 data/image.json 中对应图片路径包含 /${cat.id}/ 目录</small>
+                    </p>`;
+                return;
+            }
+
+            const fragment = document.createDocumentFragment();
+            cards.forEach((card, i) => fragment.appendChild(createCardElement(card, i)));
+
+            container.innerHTML = '';
+            container.appendChild(fragment);
+            countSpan.textContent = cards.length;
+        }
+
+        function updateNavActive() {
+            navEl.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.catId === state.activeId);
+            });
+        }
+
+        function switchCategory(id) {
+            if (state.activeId === id) return;
+            const cat = CATEGORIES.find(c => c.id === id);
+            if (!cat) return;
+            state.activeId = id;
+            updateNavActive();
+            renderCategory(cat);
+        }
+
+        function buildNav() {
+            const frag = document.createDocumentFragment();
+            CATEGORIES.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'nav-btn';
+                btn.dataset.catId = cat.id;
+                btn.setAttribute('aria-label', cat.label);
+
+                const icon = document.createElement('span');
+                icon.className = 'nav-icon';
+                icon.textContent = cat.icon;
+
+                const text = document.createElement('span');
+                text.textContent = cat.label;
+
+                btn.appendChild(icon);
+                btn.appendChild(text);
+                btn.addEventListener('click', () => switchCategory(cat.id));
+                frag.appendChild(btn);
+            });
+            navEl.appendChild(frag);
+        }
+
+        buildNav();
+        updateNavActive();
+        renderCategory(CATEGORIES[0]);
+    })();
+    </script>
+</body>
+</html>
