@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>卡牌图鉴 · 透明磨砂版</title>
+    <style>
+        :root {
+            --bg: #fdf2cc;
+            --text: #3d2b00;
+            --gold: #8b5e00;
+            /* 导航栏距离底部的高度：15vh（可改小，比如 6vh） */
+            --nav-bottom: clamp(24px, 15vh, 150px);
+        }
+
+        body {
+            background: var(--bg);
+            background-image:
+                radial-gradient(ellipse at 20% 20%, rgba(255, 215, 80, 0.3) 0%, transparent 55%),
+                radial-gradient(ellipse at 80% 70%, rgba(255, 180, 50, 0.25) 0%, transparent 55%),
+                radial-gradient(ellipse at 50% 50%, rgba(255, 240, 180, 0.45) 0%, transparent 70%);
+            color: var(--text);
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding: 20px 20px calc(var(--nav-bottom) + 96px) 20px;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--gold);
+            margin-bottom: 30px;
+            font-size: 1.5em;
+            letter-spacing: 0.04em;
+            text-shadow: 0 1px 3px rgba(255, 255, 255, 0.6);
+        }
+
+        #card-gallery {
+            display: grid;
+            grid-template-columns: repeat(2, 130px);
+            gap: 18px 22px;
+            justify-content: center;
+            padding: 10px;
+            align-items: start;
+        }
+
+        /* ========== 卡片外层容器 - 透明背景 ========== */
+        .card-wrapper {
+            display: flex;
+            flex-direction: column;
+            width: 130px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 6px 20px rgba(60, 30, 0, 0.2), 0 2px 6px rgba(0,0,0,0.1);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            background: transparent;
+            backdrop-filter: none;
+            animation: cardIn 0.34s ease backwards;
+        }
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(10px) scale(0.96); }
+            to   { opacity: 1; transform: none; }
+        }
+        .card-wrapper:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 28px rgba(60, 30, 0, 0.35), 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        /* ========== 卡片图片区域 ========== */
+        .card-image-area {
+            position: relative;
+            width: 130px;
+            height: 178px;
+            overflow: hidden;
+            flex-shrink: 0;
+            border-radius: 12px 12px 0 0;
+            background: rgba(255, 255, 255, 0.25);
+        }
+        .card-image-area img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .img-placeholder {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 8px;
+            font-size: 0.72em;
+            font-weight: 600;
+            color: #8b6d30;
+            background: linear-gradient(135deg, rgba(255,248,220,0.9), rgba(255,225,150,0.75));
+        }
+
+        /* 攻击力 & 生命值 */
+        .card-atk, .card-hp {
+            position: absolute;
+            top: 65%;
+            transform: translateY(-50%);
+            font-weight: bold;
+            text-shadow: 0 0 6px #000, 0 0 10px rgba(0,0,0,0.7);
+            font-size: 0.95em;
+            z-index: 3;
+            pointer-events: none;
+            letter-spacing: 0.4px;
+        }
+        .card-atk { left: 6%; color: #ff6b6b; }
+        .card-hp  { right: 6%; color: #6bff6b; }
+
+        /* ========== 卡片信息栏 - 磨砂毛玻璃透明背景 ========== */
+        .card-info {
+            padding: 8px 10px 10px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-top: none;
+            border-radius: 0 0 12px 12px;
+            min-height: 52px;
+            box-sizing: border-box;
+            color: #2b1a00;
+            transition: background 0.2s;
+        }
+        .card-wrapper:hover .card-info {
+            background: rgba(255, 255, 255, 0.22);
+            border-color: rgba(255, 255, 255, 0.35);
+        }
+
+        /* 阵营 + 稀有度行 */
+        .card-meta-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.68em;
+            line-height: 1;
+            padding: 0 1px;
+        }
+        .card-faction {
+            color: #4d3b1a;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            max-width: 58%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.6);
+        }
+        .card-rarity {
+            font-weight: bold;
+            letter-spacing: 0.3px;
+            flex-shrink: 0;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+        .rarity-Common    { color: #5a5a5a; }
+        .rarity-Rare      { color: #1e5fbb; }
+        .rarity-Epic      { color: #7b2cbf; }
+        .rarity-Legendary { color: #b8730a; }
+
+        /* ========== 技能描述 - 叠加的半透明磨砂小窗 ========== */
+        .card-skill-desc {
+            color: #1e1e0f;
+            font-weight: 600;
+            text-align: center;
+            line-height: 1.4;
+            word-break: break-word;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            background: rgba(255, 255, 255, 0.35);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-radius: 7px;
+            padding: 5px 7px;
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            box-shadow: inset 0 1px 2px rgba(255,255,255,0.2), 0 2px 4px rgba(0,0,0,0.1);
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .card-wrapper:hover .card-skill-desc {
+            background: rgba(255, 255, 255, 0.5);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* ========== 状态提示 ========== */
+        .gallery-status {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: #8b6d30;
+            font-size: 0.85em;
+            padding: 40px 0;
+            letter-spacing: 0.05em;
+        }
+        .gallery-status.error { color: #c0392b; }
+
+        /* ========== 底部透明磨砂导航栏 ========== */
+        .bottom-nav {
+            position: fixed;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: var(--nav-bottom);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(18px) saturate(180%);
+            -webkit-backdrop-filter: blur(18px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow:
+                0 10px 30px rgba(60, 30, 0, 0.18),
+                inset 0 1px 0 rgba(255, 255, 255, 0.55);
+            z-index: 999;
+            white-space: nowrap;
+            max-width: calc(100vw - 28px);
+        }
+
+        .nav-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1px;
+            border: none;
+            background: transparent;
+            color: #6b5220;
+            font-family: inherit;
+            font-size: 0.7em;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            padding: 7px 16px;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: background 0.22s ease, color 0.22s ease,
+                        box-shadow 0.22s ease, transform 0.12s ease;
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
+        }
+        .nav-btn .nav-icon {
+            font-size: 1.35em;
+            line-height: 1;
+            transition: transform 0.22s ease;
+        }
+        .nav-btn:hover { color: #4d3b1a; }
+        .nav-btn:active { transform: scale(0.94); }
+
+        .nav-btn.active {
+            background: rgba(255, 255, 255, 0.8);
+            color: #3d2b00;
+            box-shadow:
+                0 3px 12px rgba(139, 94, 0, 0.22),
+                inset 0 1px 0 rgba(255, 255, 255, 0.95);
+        }
+        .nav-btn.active .nav-icon { transform: scale(1.1); }
+
+        /* 响应式单列 */
+        @media (max-width: 340px) {
+            #card-gallery {
+                grid-template-columns: repeat(1, 130px);
+                gap: 16px;
+            }
+            .nav-btn { padding: 7px 12px; font-size: 0.66em; }
+        }
+    </style>
+</head>
+<body>
+    <h1>📜 <span id="title-cat">角色牌</span>图鉴（共 <span id="card-count">0</span> 张）</h1>
+    <div id="card-gallery"></div>
+
+    <!-- 底部透明磨砂导航栏 -->
+    <nav class="bottom-nav" id="bottom-nav" aria-label="卡牌分类切换"></nav>
+
+    <script>
+    (function () {
+        'use strict';
+
+        /* ============================================================
+         * 分类配置：每个分类对应一个图片目录 + 数据文件
+         * 图片找不到时会自动回退到 assets/xxx/<卡片ID>.png
+         * ============================================================ */
+        const CATEGORIES = [
+            {
+                id: 'card',
+                label: '角色牌',
+                icon: '🎴',
+                imageDir: 'assets/card',
+                dataUrls: ['data/characters.json'],
+                imageIndexUrls: ['data/image.json']
+            },
+            {
+                id: 'weapon',
+                label: '武器牌',
+                icon: '⚔️',
+                imageDir: 'assets/weapon',
+                dataUrls: ['data/weapons.json', 'data/weapon.json'],
+                imageIndexUrls: [
+                    'data/weapon_image.json',
+                    'data/images_weapon.json',
+                    'data/image_weapon.json'
+                ]
+            },
+            {
+                id: 'item',
+                label: '道具牌',
+                icon: '🧪',
+                imageDir: 'assets/item',
+                dataUrls: ['data/items.json', 'data/item.json'],
+                imageIndexUrls: [
+                    'data/item_image.json',
+                    'data/images_item.json',
+                    'data/image_item.json'
+                ]
+            }
+        ];
+
+        const container = document.getElementById('card-gallery');
+        const countSpan = document.getElementById('card-count');
+        const titleCat  = document.getElementById('title-cat');
+        const navEl     = document.getElementById('bottom-nav');
+
+        const state = {
+            activeId: CATEGORIES[0].id,
+            cache: new Map(),   // 分类数据缓存
+            token: 0            // 防竞态令牌
+        };
+
+        /* ---------------- 工具函数 ---------------- */
+
+        async function loadFirst(urls) {
+            for (const url of (urls || [])) {
+                try {
+                    const res = await fetch(url);
+                    if (!res.ok) continue;
+                    return await res.json();
+                } catch (_) { /* 换下一个候选地址 */ }
+            }
+            return null;
+        }
+
+        function toMap(data) {
+            const map = {};
+            if (!data) return map;
+            if (Array.isArray(data)) {
+                data.forEach((item, i) => {
+                    if (item == null) return;
+                    const key = item.card_id ?? item.id ?? item.name ?? String(i);
+                    map[key] = item;
+                });
+            } else if (typeof data === 'object') {
+                Object.keys(data).forEach(k => { map[k] = data[k]; });
+            }
+            return map;
+        }
+
+        function resolveImageSrc(id, imgEntry, charEntry, cat) {
+            let src = '';
+            if (typeof imgEntry === 'string') {
+                src = imgEntry;
+            } else if (imgEntry && typeof imgEntry === 'object') {
+                src = imgEntry.image || imgEntry.src || imgEntry.path || '';
+            }
+            if (!src && charEntry) {
+                src = charEntry.image || charEntry.image_path || '';
+            }
+            src = String(src || '').trim();
+
+            // 没有记录 → 按约定回退到 <imageDir>/<id>.png
+            if (!src) return `${cat.imageDir}/${id}.png`;
+
+            // 完整 URL / data URI / 绝对路径 → 直接使用
+            if (/^(https?:)?\/\//i.test(src) || /^data:/i.test(src) || src.startsWith('/')) {
+                return src;
+            }
+            // 已带目录的相对路径 → 原样使用
+            if (src.includes('/')) return src;
+
+            // 只有文件名 → 拼到分类目录下
+            return `${cat.imageDir}/${src}`;
+        }
+
+        function parseSkillDesc(rawSkill) {
+            if (!rawSkill) return '';
+            if (typeof rawSkill === 'object') {
+                return rawSkill.skill_describe || rawSkill.skillName || rawSkill.name || '';
+            }
+            try {
+                const obj = JSON.parse(rawSkill);
+                if (obj && typeof obj === 'object') {
+                    return obj.skill_describe || obj.skillName || obj.name || '';
+                }
+                return String(rawSkill);
+            } catch {
+                return rawSkill;
+            }
+        }
+
+        function calcFontSize(text) {
+            const len = (text || '').length;
+            if (len <= 5)  return '0.78em';
+            if (len <= 8)  return '0.72em';
+            if (len <= 12) return '0.66em';
+            if (len <= 18) return '0.6em';
+            return '0.54em';
+        }
+
+        /* ---------------- 数据组装 ---------------- */
+
+        function buildCardList(charData, imageIndex, cat) {
+            const charMap = toMap(charData);
+            const imgMap  = toMap(imageIndex);
+
+            const ids = Array.from(new Set([
+                ...Object.keys(imgMap),
+                ...Object.keys(charMap)
+            ]));
+
+            return ids.map(id => {
+                const rawImg    = imgMap[id];
+                const imgEntry  = (rawImg && typeof rawImg === 'object') ? rawImg : {};
+                const rawChar   = charMap[id];
+                const charEntry = (rawChar && typeof rawChar === 'object') ? rawChar : {};
+
+                return {
+                    id,
+                    name: imgEntry.name || charEntry.name || id,
+                    image: resolveImageSrc(id, rawImg, charEntry, cat),
+                    faction: charEntry.faction || charEntry.camp || '未知',
+                    rarity: charEntry.rarity || charEntry.quality || 'Common',
+                    base_atk: charEntry.base_atk ?? charEntry.atk ?? null,
+                    base_hp: charEntry.base_hp ?? charEntry.hp ?? null,
+                    skillDesc: parseSkillDesc(
+                        charEntry.skill ?? charEntry.skillDesc ?? charEntry.skill_desc ?? ''
+                    )
+                };
+            });
+        }
+
+        async function getCards(cat) {
+            if (state.cache.has(cat.id)) return state.cache.get(cat.id);
+
+            const [charData, imageIndex] = await Promise.all([
+                loadFirst(cat.dataUrls),
+                loadFirst(cat.imageIndexUrls)
+            ]);
+
+            const cards = buildCardList(charData, imageIndex, cat);
+            state.cache.set(cat.id, cards);
+            return cards;
+        }
+
+        /* ---------------- 卡片 DOM ---------------- */
+
+        function createCardElement(card, index) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'card-wrapper';
+            wrapper.style.animationDelay = Math.min(index * 0.02, 0.4) + 's';
+
+            // 图片区域
+            const imageArea = document.createElement('div');
+            imageArea.className = 'card-image-area';
+
+            const img = document.createElement('img');
+            img.src = card.image;
+            img.alt = card.name;
+            img.loading = 'lazy';
+            img.addEventListener('error', () => {
+                img.style.display = 'none';
+                const ph = document.createElement('div');
+                ph.className = 'img-placeholder';
+                ph.textContent = card.name;
+                imageArea.insertBefore(ph, imageArea.firstChild);
+            }, { once: true });
+            imageArea.appendChild(img);
+
+            if (card.base_atk !== null && card.base_atk !== undefined) {
+                const atk = document.createElement('div');
+                atk.className = 'card-atk';
+                atk.textContent = card.base_atk;
+                imageArea.appendChild(atk);
+            }
+            if (card.base_hp !== null && card.base_hp !== undefined) {
+                const hp = document.createElement('div');
+                hp.className = 'card-hp';
+                hp.textContent = card.base_hp;
+                imageArea.appendChild(hp);
+            }
+
+            wrapper.appendChild(imageArea);
+
+            // 信息栏
+            const info = document.createElement('div');
+            info.className = 'card-info';
+
+            const metaRow = document.createElement('div');
+            metaRow.className = 'card-meta-row';
+
+            const faction = document.createElement('span');
+            faction.className = 'card-faction';
+            faction.textContent = card.faction;
+
+            const rarity = document.createElement('span');
+            rarity.className = 'card-rarity rarity-' + card.rarity;
+            rarity.textContent = card.rarity;
+
+            metaRow.appendChild(faction);
+            metaRow.appendChild(rarity);
+            info.appendChild(metaRow);
+
+            const descText = card.skillDesc || '未知技能';
+            const desc = document.createElement('div');
+            desc.className = 'card-skill-desc';
+            desc.textContent = descText;
+            desc.style.fontSize = calcFontSize(descText);
+            info.appendChild(desc);
+
+            wrapper.appendChild(info);
+            return wrapper;
+        }
+
+        /* ---------------- 渲染 ---------------- */
+
+        async function renderCategory(cat) {
+            const token = ++state.token;
+
+            titleCat.textContent = cat.label;
+            countSpan.textContent = '0';
+            container.innerHTML = '<p class="gallery-status">正在加载…</p>';
+
+            let cards;
+            try {
+                cards = await getCards(cat);
+            } catch (err) {
+                console.error(err);
+                if (token !== state.token) return;
+                container.innerHTML = '<p class="gallery-status error">加载失败，请检查数据文件路径</p>';
+                return;
+            }
+
+            if (token !== state.token) return; // 用户已切到别的分类
+
+            if (!cards || cards.length === 0) {
+                container.innerHTML = '<p class="gallery-status">该分类暂无卡牌数据</p>';
+                return;
+            }
+
+            const fragment = document.createDocumentFragment();
+            cards.forEach((card, i) => fragment.appendChild(createCardElement(card, i)));
+
+            container.innerHTML = '';
+            container.appendChild(fragment);
+            countSpan.textContent = cards.length;
+        }
+
+        /* ---------------- 导航 ---------------- */
+
+        function updateNavActive() {
+            navEl.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.catId === state.activeId);
+            });
+        }
+
+        function switchCategory(id) {
+            if (state.activeId === id) return;
+            const cat = CATEGORIES.find(c => c.id === id);
+            if (!cat) return;
+            state.activeId = id;
+            updateNavActive();
+            renderCategory(cat);
+        }
+
+        function buildNav() {
+            const frag = document.createDocumentFragment();
+            CATEGORIES.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'nav-btn';
+                btn.dataset.catId = cat.id;
+                btn.setAttribute('aria-label', cat.label);
+
+                const icon = document.createElement('span');
+                icon.className = 'nav-icon';
+                icon.textContent = cat.icon;
+
+                const text = document.createElement('span');
+                text.textContent = cat.label;
+
+                btn.appendChild(icon);
+                btn.appendChild(text);
+                btn.addEventListener('click', () => switchCategory(cat.id));
+                frag.appendChild(btn);
+            });
+            navEl.appendChild(frag);
+        }
+
+        /* ---------------- 启动 ---------------- */
+
+        buildNav();
+        updateNavActive();
+        renderCategory(CATEGORIES[0]);
+    })();
+    </script>
+</body>
+</html>
