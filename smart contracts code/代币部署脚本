@@ -1,0 +1,90 @@
+require("dotenv").config();
+const { ethers } = require("ethers");
+const fs = require("fs");
+
+async function main() {
+  const RPC = process.env.RPC;
+  const PRIVKEY = process.env.PRIVKEY;
+
+  if (!RPC) throw new Error("缺少 RPC");
+  if (!PRIVKEY) throw new Error("缺少 PRIVKEY");
+  if (!/^0x[0-9a-fA-F]{64}$/.test(PRIVKEY)) {
+    throw new Error("PRIVKEY 格式不对，必须是 0x + 64 位十六进制字符，当前长度 = " + PRIVKEY.length);
+  }
+
+  const provider = new ethers.providers.JsonRpcProvider(RPC);
+  const wallet = new ethers.Wallet(PRIVKEY, provider);
+
+  const net = await provider.getNetwork();
+  console.log("Chain ID :", net.chainId.toString(), "（BSC 主网应为 56）");
+  if (net.chainId !== 56) {
+    throw new Error(`当前链不是 BSC 主网（56），而是 ${net.chainId}，检查 RPC`);
+  }
+  console.log("Deployer :", wallet.address);
+
+  const bal = await provider.getBalance(wallet.address);
+  console.log("Balance  :", ethers.utils.formatEther(bal), "BNB");
+  if (bal.isZero()) throw new Error("部署钱包余额为 0，先充主网 BNB");
+  if (bal.lt(ethers.utils.parseEther("0.01"))) {
+    console.warn("⚠️ 余额较少，部署 + 加池可能不够");
+  }
+
+  const abiPath = "./a_sol_SimpleTaxToken.abi";
+  const binPath = "./a_sol_SimpleTaxToken.bin";
+
+  if (!fs.existsSync(abiPath) || !fs.existsSync(binPath)) {
+    throw new Error("找不到 a_sol_SimpleTaxToken.abi / .bin");
+  }
+
+  const abi = JSON.parse(fs.readFileSync(abiPath, "utf8"));
+  const bytecode = "0x" + fs.readFileSync(binPath, "utf8").trim();
+
+  console.log("\n使用产物：");
+  console.log("  ABI :", abiPath);
+  console.log("  BIN :", binPath);
+  console.log("  BIN 文件大小 :", fs.statSync(binPath).size, "字节");
+  console.log("  字节码长度   :", (bytecode.length - 2) / 2, "bytes");
+  console.log("  字节码哈希   :", ethers.utils.keccak256(bytecode).slice(0, 12), "...");
+
+  const factory = new ethers.ContractFactory(abi, bytecode, wallet);
+
+  const name_        = "My Token";
+  const symbol_      = "MTK";
+  const decimals_    = 18;
+  const totalSupply_ = "1000000000";
+  const initialOwner = wallet.address;
+
+  // ✅ BSC 主网 Pancake V2 Router
+  const router_      = "0x10ED43C718714eb63d5aA57B78B54704E256024E";
+  const taxWallet_   = wallet.address;
+
+  if (taxWallet_ === ethers.constants.AddressZero) {
+    throw new Error("taxWallet_ 不能是零地址");
+  }
+
+  console.log("\n部署参数：");
+  console.log("  name        :", name_);
+  console.log("  symbol      :", symbol_);
+  console.log("  decimals    :", decimals_);
+  console.log("  totalSupply :", totalSupply_);
+  console.log("  initialOwner:", initialOwner);
+  console.log("  router      :", router_);
+  console.log("  taxWallet   :", taxWallet_);
+
+  console.log("\nDeploying...");
+  const token = await factory.deploy(
+    name_, symbol_, decimals_, totalSupply_,
+    initialOwner, router_, taxWallet_
+  );
+
+  console.log("Tx hash:", token.deployTransaction.hash);
+  await token.deployed();
+
+  console.log("\n✅ Token deployed at:", token.address);
+  console.log("区块浏览器:", `https://bscscan.com/address/${token.address}`);
+}
+
+main().catch((e) => {
+  console.error("\n❌ 部署失败：", e.message || e);
+  process.exit(1);
+});
