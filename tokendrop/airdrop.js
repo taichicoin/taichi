@@ -516,16 +516,16 @@ First check that Developer Mode is on, then preview the call and show me the ass
         frag.appendChild(progressCard);
 
         frag.appendChild(createCard({
-            title: '🇨🇳 中文提示词',
+            title: '提示词',
             text: PROMPT_ZH,
-            copyLabel: '📋 复制提示词',
+            copyLabel: ' 复制提示词',
             copiedLabel: '✓ 已复制'
         }));
 
         frag.appendChild(createCard({
-            title: '🇬🇧 English Prompt',
+            title: 'Prompt',
             text: PROMPT_EN,
-            copyLabel: '📋 Copy Prompt',
+            copyLabel: ' Copy Prompt',
             copiedLabel: '✓ Copied'
         }));
 
