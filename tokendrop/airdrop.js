@@ -13,7 +13,7 @@
     const CONFIG = {
         RPC: 'https://bsc-dataseed.binance.org',
         RPC_FALLBACK: 'https://bsc-dataseed1.defibit.io',
-        AIRDROP: '0xa66bb210FE0b96664a79Bec77995AC9F95ff4F8D',
+        AIRDROP: '0xD32F3Ac8DE9008C1eA5457207675d87c9b02598D',
         TOTAL_CLAIMS: 1000,
         REFRESH_MS: 15000,
     };
