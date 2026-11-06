@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>代币预售</title>
+<style>
+  :root {
+    --gold: #ffd166;
+    --gold-deep: #f0a800;
+    --gold-glow: rgba(255, 209, 102, 0.4);
+    --bg-1: #08080d;
+    --bg-2: #1a1428;
+    --border: rgba(255, 255, 255, 0.15);
+    --text-dim: rgba(255, 255, 255, 0.55);
+    --success: #8ce6a0;
+    --error: #ff8080;
+    --warn: #ffb84d;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(ellipse at top, var(--bg-2) 0%, var(--bg-1) 70%);
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                 "Microsoft YaHei", sans-serif;
+    padding: 20px;
+  }
+  .card {
+    width: 100%;
+    max-width: 480px;
+    padding: 28px 24px;
+    border-radius: 24px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.10), rgba(255,255,255,0.04));
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid var(--border);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.12);
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(circle at 30% 20%, var(--gold-glow) 0%, transparent 45%);
+    pointer-events: none;
+    opacity: 0.35;
+  }
+  .header { position: relative; text-align: center; margin-bottom: 20px; }
+  .badge {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--gold);
+    background: rgba(255, 209, 102, 0.12);
+    border: 1px solid rgba(255, 209, 102, 0.3);
+    margin-bottom: 12px;
+  }
+  .title { font-size: 22px; font-weight: 700; letter-spacing: 0.02em; }
+  .stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 18px;
+    position: relative;
+  }
+  .stat {
+    padding: 12px;
+    border-radius: 10px;
+    background: rgba(0,0,0,0.25);
+    border: 1px solid rgba(255,255,255,0.06);
+    text-align: center;
+  }
+  .stat .label { font-size: 11px; color: var(--text-dim); margin-bottom: 4px; }
+  .stat .value { font-size: 16px; font-weight: 700; color: var(--gold); }
+  .progress-wrap { margin-bottom: 16px; }
+  .progress-bar {
+    height: 10px;
+    background: rgba(0,0,0,0.35);
+    border-radius: 999px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--gold-deep), var(--gold));
+    border-radius: 999px;
+    box-shadow: 0 0 12px var(--gold-glow);
+    transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 6px;
+  }
+  .info {
+    padding: 12px 14px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+    line-height: 1.6;
+  }
+  .info .row { display: flex; justify-content: space-between; }
+  .info .row .v { color: #fff; font-weight: 600; }
+  .input-group {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .input-group input {
+    flex: 1;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(0,0,0,0.3);
+    color: #fff;
+    font-size: 15px;
+    font-family: inherit;
+    outline: none;
+  }
+  .input-group input:focus { border-color: var(--gold); }
+  .input-group button {
+    padding: 0 18px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,209,102,0.3);
+    background: rgba(255,209,102,0.1);
+    color: var(--gold);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .input-group button:active { transform: scale(0.97); }
+  .btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s ease;
+    margin-bottom: 10px;
+  }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--gold), var(--gold-deep));
+    color: #3d2b00;
+  }
+  .btn-primary:hover:not(:disabled) { box-shadow: 0 0 20px var(--gold-glow); }
+  .btn-secondary {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #fff;
+  }
+  .btn-secondary:hover:not(:disabled) { background: rgba(255,255,255,0.1); }
+  .status {
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    text-align: center;
+    margin-top: 10px;
+    line-height: 1.5;
+  }
+  .status.ok { color: var(--success); background: rgba(140,230,160,0.08); border: 1px solid rgba(140,230,160,0.2); }
+  .status.err { color: var(--error); background: rgba(255,128,128,0.08); border: 1px solid rgba(255,128,128,0.2); }
+  .status.warn { color: var(--warn); background: rgba(255,184,77,0.08); border: 1px solid rgba(255,184,77,0.2); }
+  .status.info { color: var(--text-dim); background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); }
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 14px;
+  }
+  .spinner {
+    display: inline-block;
+    width: 12px; height: 12px;
+    border: 2px solid rgba(255,255,255,0.15);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    vertical-align: middle;
+    margin-right: 4px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ===== 管理员面板样式 ===== */
+  #ownerPanel {
+    display: none;
+    margin-bottom: 16px;
+    padding: 14px;
+    border-radius: 10px;
+    background: rgba(255, 209, 102, 0.06);
+    border: 1px solid rgba(255, 209, 102, 0.3);
+  }
+  .owner-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .owner-badge {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(255, 209, 102, 0.15);
+    color: var(--gold);
+    border: 1px solid rgba(255, 209, 102, 0.3);
+    letter-spacing: 0.05em;
+  }
+  .owner-label {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+  }
+  .owner-label strong { color: #fff; font-weight: 600; }
+  .quick-btns {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+  .quick-btn {
+    flex: 1;
+    min-width: 60px;
+    padding: 6px 8px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,209,102,0.3);
+    background: rgba(255,209,102,0.08);
+    color: var(--gold);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s ease;
+  }
+  .quick-btn:hover { background: rgba(255,209,102,0.16); }
+  .quick-btn:active { transform: scale(0.96); }
+  .datetime-row {
+    display: flex;
+    gap: 6px;
+  }
+  .datetime-row input[type="datetime-local"] {
+    flex: 1;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(0,0,0,0.3);
+    color: #fff;
+    font-size: 12px;
+    font-family: inherit;
+    outline: none;
+  }
+  .datetime-row input[type="datetime-local"]:focus { border-color: var(--gold); }
+  .datetime-row input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.8);
+    cursor: pointer;
+  }
+  .datetime-row button {
+    padding: 0 16px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,209,102,0.35);
+    background: rgba(255,209,102,0.15);
+    color: var(--gold);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .datetime-row button:hover { background: rgba(255,209,102,0.25); }
+  .datetime-row button:active { transform: scale(0.97); }
+  .datetime-row button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* ===== 结束销售按钮 ===== */
+  .end-btn {
+    width: 100%;
+    margin-top: 6px;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 107, 107, 0.4);
+    background: rgba(255, 107, 107, 0.12);
+    color: #ff8080;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s ease;
+  }
+  .end-btn:hover:not(:disabled) { background: rgba(255, 107, 107, 0.22); }
+  .end-btn:active:not(:disabled) { transform: scale(0.98); }
+  .end-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .end-hint {
+    font-size: 11px;
+    color: var(--text-dim);
+    text-align: center;
+    margin-top: 6px;
+    line-height: 1.4;
+  }
+  .end-hint.ok { color: var(--success); }
+  .end-hint.warn { color: var(--warn); }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="header">
+    <div class="badge">🎁 TOKEN SALE</div>
+    <div class="title" id="tokenName">加载中...</div>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="label">已售份数</div>
+      <div class="value" id="soldShares">--</div>
+    </div>
+    <div class="stat">
+      <div class="label">总份数</div>
+      <div class="value" id="totalShares">--</div>
+    </div>
+    <div class="stat">
+      <div class="label">每份价格</div>
+      <div class="value" id="price">--</div>
+    </div>
+    <div class="stat">
+      <div class="label">每份代币</div>
+      <div class="value" id="tokensPerShare">--</div>
+    </div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-meta">
+      <span id="softcapText">软顶: --</span>
+      <span id="timeText">剩余: --</span>
+    </div>
+  </div>
+
+  <!-- ===== 管理员面板（只有 owner 才能看到） ===== -->
+  <div id="ownerPanel">
+    <div class="owner-title">
+      <span>🔧 管理员面板</span>
+      <span class="owner-badge">OWNER</span>
+    </div>
+    <div class="owner-label">当前结束时间：<strong id="currentEndTime">--</strong></div>
+    <div class="owner-label">快捷调整：</div>
+    <div class="quick-btns">
+      <button class="quick-btn" onclick="quickSetEnd(5*60)">+5分</button>
+      <button class="quick-btn" onclick="quickSetEnd(30*60)">+30分</button>
+      <button class="quick-btn" onclick="quickSetEnd(3600)">+1时</button>
+      <button class="quick-btn" onclick="quickSetEnd(6*3600)">+6时</button>
+      <button class="quick-btn" onclick="quickSetEnd(86400)">+1天</button>
+    </div>
+    <div class="owner-label">或精确选择结束时间：</div>
+    <div class="datetime-row">
+      <input type="datetime-local" id="endTimeInput">
+      <button id="applyEndBtn" onclick="applyEndTime()">应用</button>
+    </div>
+
+    <div class="owner-label" style="margin-top:14px;">一键结束销售（必须达软顶）：</div>
+    <button class="end-btn" id="endSaleBtn" onclick="endSale()" disabled>
+      ⏹ 结束销售并立即加池
+    </button>
+    <div class="end-hint" id="endSaleHint">检查软顶中...</div>
+  </div>
+
+  <div class="info">
+    <div class="row"><span>我的已购份数</span><span class="v" id="myShares">--</span></div>
+    <div class="row"><span>我的剩余额度</span><span class="v" id="myQuota">--</span></div>
+    <div class="row"><span>我的可退 BNB</span><span class="v" id="myRefundable">--</span></div>
+  </div>
+
+  <div class="input-group">
+    <input type="number" id="buyShares" placeholder="购买份数" min="1" value="1">
+    <button onclick="setMax()">最大</button>
+  </div>
+
+  <button class="btn btn-primary" id="buyBtn" onclick="buy()">连接钱包</button>
+  <button class="btn btn-secondary" id="refundBtn" onclick="refund()" style="display:none;">退款（需先 approve 代币）</button>
+
+  <div class="status info" id="status">请连接钱包</div>
+
+  <div class="footer">
+    <span id="networkText">未连接</span>
+    <span id="contractText">--</span>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+<script>
+// ============================================================
+//  配置区
+// ============================================================
+const CONFIG = {
+  CHAIN_ID: 97,
+  RPC: "https://bsc-testnet-rpc.publicnode.com",
+  SALE: "0x571eB1A6D3ada3c28767B42C7236f7c2b911f9FA",
+  TOKEN: "0x914b1526BB7690A224B0E424D185Ce5D70e10000",
+  NFT:   "0x60B9262456dE011F7d15a54CdD8c48bAaa8B022F",
+  CHECK_NFT: false,
+};
+// ============================================================
+
+const SALE_ABI = [
+  "function buy(uint256) payable",
+  "function refund(uint256)",
+  "function setEndTime(uint256)",
+  "function endSale()",
+  "function owner() view returns (address)",
+  "function PRICE_PER_SHARE() view returns (uint256)",
+  "function TOKENS_PER_SHARE() view returns (uint256)",
+  "function TOTAL_SHARES() view returns (uint256)",
+  "function SOFT_CAP_SHARES() view returns (uint256)",
+  "function MAX_PER_USER() view returns (uint256)",
+  "function totalSharesSold() view returns (uint256)",
+  "function totalBNBRaised() view returns (uint256)",
+  "function userShares(address) view returns (uint256)",
+  "function userBNB(address) view returns (uint256)",
+  "function finalized() view returns (bool)",
+  "function success() view returns (bool)",
+  "function liquidityAdded() view returns (bool)",
+  "function startTime() view returns (uint256)",
+  "function endTime() view returns (uint256)",
+];
+const TOKEN_ABI = [
+  "function approve(address,uint256) returns (bool)",
+  "function allowance(address,address) view returns (uint256)",
+  "function balanceOf(address) view returns (uint256)",
+  "function symbol() view returns (string)",
+];
+const NFT_ABI = [
+  "function balanceOf(address) view returns (uint256)",
+];
+
+let provider = null;
+let signer = null;
+let saleContract = null;
+let tokenContract = null;
+let nftContract = null;
+let userAddress = null;
+let saleOwner = null;
+let isOwner = false;
+let state = {};
+let timerStarted = false;
+
+const $ = id => document.getElementById(id);
+const fmt = (v, d = 18) => Number(ethers.utils.formatUnits(v, d));
+const fmtBNB = v => Number(ethers.utils.formatEther(v)).toFixed(6);
+const shortAddr = a => a ? a.slice(0,6) + "..." + a.slice(-4) : "--";
+
+function setStatus(type, msg) {
+  const el = $("status");
+  el.className = "status " + type;
+  el.innerHTML = msg;
+}
+
+function fmtDateTime(ts) {
+  const d = new Date(ts * 1000);
+  return d.toLocaleString('zh-CN', { hour12: false });
+}
+
+function localInputToTs(v) {
+  if (!v) return 0;
+  return Math.floor(new Date(v).getTime() / 1000);
+}
+
+function tsToLocalInput(ts) {
+  const d = new Date(ts * 1000);
+  const pad = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function getReadProvider() {
+  if (provider) return provider;
+  return new ethers.providers.JsonRpcProvider(CONFIG.RPC);
+}
+
+// ========== 连接钱包 ==========
+async function connectWallet() {
+  if (!window.ethereum) {
+    setStatus("err", "❌ 未检测到 MetaMask，请安装钱包");
+    return;
+  }
+  try {
+    setStatus("info", '<span class="spinner"></span> 连接钱包...');
+
+    try {
+      await window.ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: "0x" + CONFIG.CHAIN_ID.toString(16) }],
+      });
+    } catch (e) {
+      if (e.code === 4902) {
+        await window.ethereum.request({
+          method: "wallet_addEthereumChain",
+          params: [{
+            chainId: "0x" + CONFIG.CHAIN_ID.toString(16),
+            chainName: CONFIG.CHAIN_ID === 56 ? "BNB Smart Chain" : "BSC Testnet",
+            nativeCurrency: { name: "BNB", symbol: "BNB", decimals: 18 },
+            rpcUrls: [CONFIG.RPC],
+            blockExplorerUrls: [CONFIG.CHAIN_ID === 56 ? "https://bscscan.com" : "https://testnet.bscscan.com"],
+          }],
+        });
+      }
+    }
+
+    await window.ethereum.request({ method: "eth_requestAccounts" });
+
+    provider = new ethers.providers.Web3Provider(window.ethereum);
+    signer = provider.getSigner();
+    userAddress = await signer.getAddress();
+
+    saleContract = new ethers.Contract(CONFIG.SALE, SALE_ABI, signer);
+    tokenContract = new ethers.Contract(CONFIG.TOKEN, TOKEN_ABI, signer);
+    nftContract = new ethers.Contract(CONFIG.NFT, NFT_ABI, provider);
+
+    saleOwner = await saleContract.owner();
+    isOwner = (saleOwner.toLowerCase() === userAddress.toLowerCase());
+    $("ownerPanel").style.display = isOwner ? "block" : "none";
+
+    $("buyBtn").textContent = "购买";
+    $("networkText").textContent = "BSC " + (CONFIG.CHAIN_ID === 56 ? "主网" : "测试网");
+    $("contractText").textContent = shortAddr(CONFIG.SALE);
+
+    await refresh();
+    setStatus("ok", "✅ 已连接: " + shortAddr(userAddress) + (isOwner ? " (owner)" : ""));
+  } catch (e) {
+    console.error(e);
+    setStatus("err", "❌ 连接失败: " + (e.message || e));
+  }
+}
+
+// ========== 刷新数据 ==========
+async function refresh() {
+  try {
+    const readProvider = getReadProvider();
+    const sale = new ethers.Contract(CONFIG.SALE, SALE_ABI, readProvider);
+
+    const [
+      price, tokensPerShare, totalShares, softcap, maxPerUser,
+      totalSharesSold, totalBNBRaised, finalized, success, liquidityAdded,
+      startTime, endTime
+    ] = await Promise.all([
+      sale.PRICE_PER_SHARE(),
+      sale.TOKENS_PER_SHARE(),
+      sale.TOTAL_SHARES(),
+      sale.SOFT_CAP_SHARES(),
+      sale.MAX_PER_USER(),
+      sale.totalSharesSold(),
+      sale.totalBNBRaised(),
+      sale.finalized(),
+      sale.success(),
+      sale.liquidityAdded(),
+      sale.startTime(),
+      sale.endTime(),
+    ]);
+
+    const tokenSymbol = await new ethers.Contract(CONFIG.TOKEN, TOKEN_ABI, readProvider).symbol();
+
+    let myShares = ethers.BigNumber.from(0);
+    let myBNB = ethers.BigNumber.from(0);
+
+    if (userAddress) {
+      myShares = await sale.userShares(userAddress);
+      myBNB = await sale.userBNB(userAddress);
+    }
+
+    state = {
+      price, tokensPerShare, totalShares, softcap, maxPerUser,
+      totalSharesSold, totalBNBRaised, finalized, success, liquidityAdded,
+      startTime: Number(startTime), endTime: Number(endTime),
+      myShares: myShares.toNumber(), myBNB,
+    };
+
+    $("tokenName").textContent = tokenSymbol + " 预售";
+    $("soldShares").textContent = totalSharesSold.toString();
+    $("totalShares").textContent = totalShares.toString();
+    $("price").textContent = fmtBNB(price) + " BNB";
+    $("tokensPerShare").textContent = fmt(tokensPerShare).toFixed(2);
+
+    const pct = Math.min(Number(totalSharesSold) / Number(totalShares) * 100, 100);
+    $("progressFill").style.width = pct.toFixed(2) + "%";
+    $("softcapText").textContent = "软顶: " + softcap.toString() + " 份";
+
+    $("currentEndTime").textContent = fmtDateTime(state.endTime);
+    if (isOwner) {
+      const input = $("endTimeInput");
+      if (!input.value) input.value = tsToLocalInput(state.endTime);
+      const minTs = Math.max(state.startTime + 1, Math.floor(Date.now() / 1000) + 60);
+      input.min = tsToLocalInput(minTs);
+    }
+
+    if (userAddress) {
+      $("myShares").textContent = myShares.toString() + " 份";
+      $("myQuota").textContent = (maxPerUser.toNumber() - myShares.toNumber()) + " 份";
+      $("myRefundable").textContent = fmtBNB(myBNB) + " BNB";
+      $("refundBtn").style.display = myShares.toNumber() > 0 ? "block" : "none";
+    } else {
+      $("myShares").textContent = "--（未连接）";
+      $("myQuota").textContent = "--";
+      $("myRefundable").textContent = "--";
+    }
+
+    if (!timerStarted) {
+      updateTimeText();
+      setInterval(updateTimeText, 1000);
+      timerStarted = true;
+    }
+
+    // ===== 更新结束销售按钮状态 =====
+    if (isOwner) {
+      const sold = totalSharesSold.toNumber();
+      const softcapN = softcap.toNumber();
+      const btn = $("endSaleBtn");
+      const hint = $("endSaleHint");
+
+      if (finalized) {
+        btn.disabled = true;
+        btn.textContent = success ? "✅ 已成功加池" : "❌ 销售失败（未达软顶）";
+        hint.textContent = success
+          ? "已自动加池，20% BNB 已转项目方"
+          : "用户可退款，owner 需 withdrawTokensOnFailure";
+        hint.className = "end-hint " + (success ? "ok" : "warn");
+      } else if (sold < softcapN) {
+        btn.disabled = true;
+        btn.textContent = "⏹ 结束销售并立即加池";
+        hint.textContent = `当前 ${sold} 份，未达软顶 ${softcapN} 份，无法结束`;
+        hint.className = "end-hint warn";
+      } else {
+        btn.disabled = false;
+        btn.textContent = "⏹ 结束销售并立即加池";
+        hint.textContent = `已达软顶（${sold}/${softcapN}），可随时结束`;
+        hint.className = "end-hint ok";
+      }
+    }
+
+    const now = Math.floor(Date.now() / 1000);
+    if (finalized) {
+      if (success) {
+        setStatus("ok", "🎉 销售成功！已加池，代币可在 PancakeSwap 交易");
+      } else {
+        setStatus("warn", "❌ 销售失败（未达软顶），可点击下方退款");
+      }
+    } else if (now < state.startTime) {
+      setStatus("info", "⏳ 销售未开始，请等待");
+    } else if (now > state.endTime) {
+      setStatus("warn", "⏰ 销售已结束，等待 finalize");
+    } else {
+      setStatus("ok", "🔥 销售进行中，可购买");
+    }
+  } catch (e) {
+    console.error(e);
+    setStatus("err", "❌ 加载失败: " + (e.message || e));
+  }
+}
+
+function updateTimeText() {
+  if (!state.endTime) return;
+  const now = Math.floor(Date.now() / 1000);
+  const remaining = state.endTime - now;
+  if (remaining <= 0) {
+    $("timeText").textContent = "已结束";
+    return;
+  }
+  const d = Math.floor(remaining / 86400);
+  const h = Math.floor((remaining % 86400) / 3600);
+  const m = Math.floor((remaining % 3600) / 60);
+  const s = remaining % 60;
+  if (d > 0) $("timeText").textContent = `剩余 ${d}天 ${h}时`;
+  else if (h > 0) $("timeText").textContent = `剩余 ${h}时 ${m}分`;
+  else $("timeText").textContent = `剩余 ${m}分 ${s}秒`;
+}
+
+// ========== 购买 ==========
+async function buy() {
+  if (!saleContract) return connectWallet();
+
+  const shares = parseInt($("buyShares").value);
+  if (!shares || shares < 1) {
+    setStatus("err", "❌ 请输入有效份数");
+    return;
+  }
+
+  try {
+    $("buyBtn").disabled = true;
+    setStatus("info", '<span class="spinner"></span> 检查资格...');
+
+    if (CONFIG.CHECK_NFT) {
+      const nftBal = await nftContract.balanceOf(userAddress);
+      if (nftBal.isZero()) {
+        setStatus("err", "❌ 你需要持有 NFT 才能购买");
+        $("buyBtn").disabled = false;
+        return;
+      }
+    }
+
+    if (shares > state.maxPerUser.toNumber() - state.myShares) {
+      setStatus("err", `❌ 超过限购，你最多还能买 ${state.maxPerUser.toNumber() - state.myShares} 份`);
+      $("buyBtn").disabled = false;
+      return;
+    }
+
+    const cost = state.price.mul(shares);
+    setStatus("info", `<span class="spinner"></span> 购买 ${shares} 份，支付 ${fmtBNB(cost)} BNB...`);
+
+    const tx = await saleContract.buy(shares, { value: cost, gasLimit: 300000 });
+    setStatus("info", `<span class="spinner"></span> 等待确认... Tx: ${shortAddr(tx.hash)}`);
+    await tx.wait();
+
+    setStatus("ok", `✅ 购买成功！${shares} 份，收到 ${fmt(state.tokensPerShare.mul(shares)).toFixed(2)} 代币`);
+    await refresh();
+  } catch (e) {
+    console.error(e);
+    let msg = e.message || String(e);
+    if (msg.includes("exceeds user limit")) msg = "超过每人限购";
+    else if (msg.includes("exceeds total")) msg = "份数不足";
+    else if (msg.includes("not started")) msg = "销售未开始";
+    else if (msg.includes("sale ended")) msg = "销售已结束";
+    else if (msg.includes("not NFT holder")) msg = "未持有 NFT";
+    setStatus("err", "❌ " + msg);
+  } finally {
+    $("buyBtn").disabled = false;
+  }
+}
+
+// ========== 退款 ==========
+async function refund() {
+  if (!saleContract) return;
+
+  const shares = state.myShares;
+  if (!shares) {
+    setStatus("err", "❌ 你没有可退的份数");
+    return;
+  }
+
+  try {
+    $("refundBtn").disabled = true;
+
+    const tokensNeeded = state.tokensPerShare.mul(shares);
+    const allowance = await tokenContract.allowance(userAddress, CONFIG.SALE);
+
+    if (allowance.lt(tokensNeeded)) {
+      setStatus("info", '<span class="spinner"></span> 第 1/2 步：授权代币给销售合约...');
+      const approveTx = await tokenContract.approve(CONFIG.SALE, ethers.constants.MaxUint256, { gasLimit: 100000 });
+      await approveTx.wait();
+    }
+
+    setStatus("info", `<span class="spinner"></span> 第 2/2 步：退款 ${shares} 份...`);
+    const tx = await saleContract.refund(shares, { gasLimit: 300000 });
+    await tx.wait();
+
+    setStatus("ok", `✅ 退款成功！拿回 ${fmtBNB(state.myBNB)} BNB`);
+    await refresh();
+  } catch (e) {
+    console.error(e);
+    setStatus("err", "❌ 退款失败: " + (e.message || e));
+  } finally {
+    $("refundBtn").disabled = false;
+  }
+}
+
+// ========== 最大 ==========
+function setMax() {
+  if (!state.maxPerUser) return;
+  const max = state.maxPerUser.toNumber() - state.myShares;
+  $("buyShares").value = Math.max(max, 1);
+}
+
+// ========== 修改结束时间（owner） ==========
+async function quickSetEnd(secondsFromNow) {
+  if (!isOwner || !saleContract) return;
+  const newTs = Math.floor(Date.now() / 1000) + secondsFromNow;
+  await doSetEndTime(newTs);
+}
+
+async function applyEndTime() {
+  if (!isOwner || !saleContract) return;
+  const v = $("endTimeInput").value;
+  if (!v) {
+    setStatus("err", "❌ 请选择新的结束时间");
+    return;
+  }
+  const newTs = localInputToTs(v);
+  if (newTs <= Math.floor(Date.now() / 1000)) {
+    setStatus("err", "❌ 结束时间必须是未来时间");
+    return;
+  }
+  await doSetEndTime(newTs);
+}
+
+async function doSetEndTime(newTs) {
+  try {
+    $("applyEndBtn").disabled = true;
+    setStatus("info", `<span class="spinner"></span> 修改结束时间 → ${fmtDateTime(newTs)}`);
+
+    const tx = await saleContract.setEndTime(newTs, {
+      gasLimit: 100000,
+      gasPrice: ethers.utils.parseUnits("5", "gwei"),
+    });
+    setStatus("info", `<span class="spinner"></span> 等待确认... Tx: ${shortAddr(tx.hash)}`);
+    await tx.wait();
+
+    setStatus("ok", `✅ 结束时间已更新为 ${fmtDateTime(newTs)}`);
+    $("endTimeInput").value = "";
+    await refresh();
+  } catch (e) {
+    console.error(e);
+    let msg = e.message || String(e);
+    if (msg.includes("must be future")) msg = "必须是未来时间";
+    else if (msg.includes("must be after start")) msg = "必须晚于开始时间";
+    else if (msg.includes("finalized")) msg = "销售已结束，无法修改";
+    else if (msg.includes("not owner")) msg = "不是 owner";
+    setStatus("err", "❌ 修改失败: " + msg);
+  } finally {
+    $("applyEndBtn").disabled = false;
+  }
+}
+
+// ========== 一键结束销售（owner，必须达软顶） ==========
+async function endSale() {
+  if (!isOwner || !saleContract) return;
+
+  const sold = state.totalSharesSold.toNumber();
+  const softcap = state.softcap.toNumber();
+
+  if (sold < softcap) {
+    setStatus("err", `❌ 未达软顶（${sold}/${softcap}），无法结束`);
+    return;
+  }
+  if (state.finalized) {
+    setStatus("err", "❌ 销售已结束");
+    return;
+  }
+
+  const bnbRaised = fmtBNB(state.totalBNBRaised);
+  const bnbForLiq = fmtBNB(state.totalBNBRaised.mul(8000).div(10000));
+  const bnbForProject = fmtBNB(state.totalBNBRaised.mul(2000).div(10000));
+
+  const ok = confirm(
+    `确认结束销售？\n\n` +
+    `已售：${sold}/${state.totalShares.toNumber()} 份\n` +
+    `募集：${bnbRaised} BNB\n\n` +
+    `点击确认后立即执行：\n` +
+    `  1. 结束销售（不可撤销）\n` +
+    `  2. ${bnbForLiq} BNB（80%）自动加池\n` +
+    `  3. ${bnbForProject} BNB（20%）转项目方\n\n` +
+    `此操作不可撤销！`
+  );
+  if (!ok) return;
+
+  try {
+    $("endSaleBtn").disabled = true;
+    setStatus("info", '<span class="spinner"></span> 结束销售并加池中...');
+
+    const tx = await saleContract.endSale({
+      gasLimit: 800000,
+      gasPrice: ethers.utils.parseUnits("5", "gwei"),
+    });
+    setStatus("info", `<span class="spinner"></span> 等待确认... Tx: ${shortAddr(tx.hash)}`);
+    await tx.wait();
+
+    setStatus("ok", `🎉 销售成功结束！已自动加池，20% BNB 已转项目方`);
+    await refresh();
+  } catch (e) {
+    console.error(e);
+    let msg = e.message || String(e);
+    if (msg.includes("softcap not reached")) msg = "未达软顶，无法结束";
+    else if (msg.includes("finalized")) msg = "已结束";
+    else if (msg.includes("not owner")) msg = "不是 owner";
+    setStatus("err", "❌ 结束失败: " + msg);
+  } finally {
+    $("endSaleBtn").disabled = false;
+  }
+}
+
+// ========== 监听 ==========
+if (window.ethereum) {
+  window.ethereum.on("accountsChanged", () => location.reload());
+  window.ethereum.on("chainChanged", () => location.reload());
+}
+
+async function autoConnect() {
+  if (!window.ethereum) return refresh();
+  try {
+    const accounts = await window.ethereum.request({ method: "eth_accounts" });
+    if (accounts.length > 0) {
+      await connectWallet();
+    } else {
+      await refresh();
+    }
+  } catch (e) {
+    await refresh();
+  }
+}
+
+$("buyBtn").addEventListener("click", () => {
+  if (!saleContract) return connectWallet();
+  buy();
+});
+
+refresh();
+autoConnect();
+</script>
+
+</body>
+</html>
