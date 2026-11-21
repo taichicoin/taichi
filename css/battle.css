@@ -53,8 +53,8 @@ body {
 /* ==================== 顶部信息区 ==================== */
 .top-center-info {
     position: fixed;
-    top: 4vh;
-    left: 50%;
+    top: 5vh;
+    left: 48%;
     transform: translateX(-50%);
     z-index: 999;
     display: flex;
@@ -71,8 +71,8 @@ body {
 
 .top-right-actions {
     position: fixed;
-    top: 2vh;
-    right: 1vw;
+    top: 5vh;
+    right: 2vw;
     z-index: 999;
     display: flex;
     gap: 2vw;
