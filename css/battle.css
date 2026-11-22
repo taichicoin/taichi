@@ -165,7 +165,7 @@ body {
 .shop-area .shop-cards {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 2vw;
+    gap: 1.8vw;
     justify-content: unset;
     align-items: unset;
     overflow: visible;
@@ -194,7 +194,7 @@ body {
     aspect-ratio: 0.72;
     z-index: 1;
 
-    transform: scale(0.7);
+    transform: scale(0.75);
     transform-origin: center center;
 }
 
