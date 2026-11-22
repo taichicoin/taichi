@@ -53,7 +53,7 @@ body {
 /* ==================== 顶部信息区 ==================== */
 .top-center-info {
     position: fixed;
-    top: 5vh;
+    top: 8vh;
     left: 48%;
     transform: translateX(-50%);
     z-index: 999;
@@ -71,7 +71,7 @@ body {
 
 .top-right-actions {
     position: fixed;
-    top: 5vh;
+    top: 8vh;
     right: 2vw;
     z-index: 999;
     display: flex;
@@ -103,7 +103,7 @@ body {
 .battle-view-mode .top-left-actions {
     display: flex;
     position: fixed;
-    top: 2vh;
+    top: 8vh;
     left: 3vw;
     z-index: 999;
     gap: 2vw;
